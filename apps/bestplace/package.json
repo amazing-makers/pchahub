@@ -1,0 +1,37 @@
+{
+  "name": "bestplace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3006",
+    "build": "next build",
+    "start": "next start -p 3006",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@amakers/ui": "workspace:*",
+    "@amakers/auth": "workspace:*",
+    "@amakers/db": "workspace:*",
+    "@amakers/design-system": "workspace:*",
+    "@amakers/api-client": "workspace:*",
+    "@amakers/utils": "workspace:*",
+    "next": "^14.2.21",
+    "next-auth": "^4.24.11",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@amakers/config": "workspace:*",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.16",
+    "@types/react-dom": "^18.3.5",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.21",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2"
+  }
+}

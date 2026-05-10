@@ -1,0 +1,425 @@
+// amakers Platform — Unified Database Schema
+// Shared across all 9 apps
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ========================================
+// Unified User (shared across 9 sites)
+// ========================================
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  phone         String?
+  avatarUrl     String?
+  role          UserRole  @default(USER)
+  isFranchisee  Boolean   @default(false)
+  isHQ          Boolean   @default(false)
+  isContractor  Boolean   @default(false)
+  isInvestor    Boolean   @default(false)
+  emailVerified DateTime?
+  phoneVerified Boolean   @default(false)
+  bizVerified   Boolean   @default(false)
+  posts         Post[]
+  listings      Listing[]
+  reviews       Review[]
+  comments      Comment[]
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ========================================
+// Brand (HQ)
+// ========================================
+model Brand {
+  id             String            @id @default(cuid())
+  name           String
+  category       String
+  logoUrl        String?
+  description    String?           @db.Text
+  websiteUrl     String?
+  hqName         String
+  hqContact      String?
+  hqAddress      String?
+  hqEmail        String?
+  storeCount     Int               @default(0)
+  startupCost    Int?
+  monthlyRoyalty Int?
+  disclosureUrl  String?
+  isVerified     Boolean           @default(false)
+  verifiedAt     DateTime?
+  listings       Listing[]
+  reviews        Review[]
+  awards         Award[]
+  courses        Course[]
+  rounds         InvestmentRound[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([category])
+  @@index([isVerified])
+}
+
+// ========================================
+// Listing (themyungdang)
+// ========================================
+model Listing {
+  id              String        @id @default(cuid())
+  title           String
+  description     String?       @db.Text
+  type            ListingType
+  status          ListingStatus @default(ACTIVE)
+  address         String
+  detailAddress   String?
+  latitude        Float?
+  longitude       Float?
+  area            Float
+  rightFee        Int?
+  deposit         Int?
+  monthlyRent     Int?
+  brandId         String?
+  brand           Brand?        @relation(fields: [brandId], references: [id])
+  monthlyRevenue  Int?
+  revenueVerified Boolean       @default(false)
+  isVerified      Boolean       @default(false)
+  verifiedAt      DateTime?
+  ownerId         String
+  owner           User          @relation(fields: [ownerId], references: [id])
+  images          Image[]
+  viewCount       Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([type, status])
+  @@index([brandId])
+  @@index([latitude, longitude])
+}
+
+enum ListingType {
+  TRANSFER
+  NEW
+  SALE
+}
+
+enum ListingStatus {
+  ACTIVE
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+// ========================================
+// Post (jangsanote)
+// ========================================
+model Post {
+  id          String      @id @default(cuid())
+  title       String
+  content     String      @db.Text
+  category    String
+  channelType ChannelType
+  channelKey  String
+  isAnonymous Boolean     @default(false)
+  isPinned    Boolean     @default(false)
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id])
+  views       Int         @default(0)
+  likes       Int         @default(0)
+  comments    Comment[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([channelType, channelKey])
+  @@index([authorId])
+}
+
+enum ChannelType {
+  CATEGORY
+  REGION
+  GENERAL
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  content     String   @db.Text
+  isAnonymous Boolean  @default(false)
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  parentId    String?
+  createdAt   DateTime @default(now())
+}
+
+// ========================================
+// Review (bestplace)
+// ========================================
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  content   String   @db.Text
+  brandId   String
+  brand     Brand    @relation(fields: [brandId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  helpful   Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([brandId])
+}
+
+// ========================================
+// Award (bestplace)
+// ========================================
+model Award {
+  id        String   @id @default(cuid())
+  title     String
+  year      Int
+  quarter   Int?
+  category  String
+  rank      Int
+  brandId   String
+  brand     Brand    @relation(fields: [brandId], references: [id])
+  certUrl   String?
+  createdAt DateTime @default(now())
+
+  @@index([year, quarter])
+}
+
+// ========================================
+// Course (themanual)
+// ========================================
+model Course {
+  id            String   @id @default(cuid())
+  title         String
+  description   String   @db.Text
+  thumbnailUrl  String?
+  price         Int
+  discountPrice Int?
+  instructorId  String
+  duration      Int
+  lessonCount   Int      @default(0)
+  category      String
+  brandId       String?
+  brand         Brand?   @relation(fields: [brandId], references: [id])
+  isPublished   Boolean  @default(false)
+  enrolledCount Int      @default(0)
+  rating        Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+}
+
+// ========================================
+// Contractor / Portfolio (gongganhansu)
+// ========================================
+model Contractor {
+  id             String      @id @default(cuid())
+  companyName    String
+  description    String      @db.Text
+  specialties    String[]
+  pricePerPyeong Int?
+  isVerified     Boolean     @default(false)
+  rating         Float       @default(0)
+  reviewCount    Int         @default(0)
+  projectCount   Int         @default(0)
+  portfolios     Portfolio[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Portfolio {
+  id           String     @id @default(cuid())
+  title        String
+  description  String?    @db.Text
+  contractorId String
+  contractor   Contractor @relation(fields: [contractorId], references: [id])
+  brandId      String?
+  category     String?
+  area         Float?
+  budget       Int?
+  duration     Int?
+  images       Image[]
+  createdAt    DateTime   @default(now())
+}
+
+// ========================================
+// Investment (pchabridge)
+// ========================================
+model InvestmentRound {
+  id            String      @id @default(cuid())
+  brandId       String
+  brand         Brand       @relation(fields: [brandId], references: [id])
+  type          RoundType
+  targetAmount  BigInt
+  currentAmount BigInt      @default(0)
+  minInvestment BigInt?
+  status        RoundStatus @default(OPEN)
+  irPdfUrl      String?
+  pitchVideoUrl String?
+  startDate     DateTime
+  endDate       DateTime
+  createdAt     DateTime    @default(now())
+}
+
+enum RoundType {
+  SEED
+  SERIES_A
+  SERIES_B
+  SERIES_C
+  MA
+  CROWD
+  STORE_FUND
+}
+
+enum RoundStatus {
+  OPEN
+  CLOSED
+  COMPLETED
+  CANCELLED
+}
+
+// ========================================
+// Documentary (changupdocu)
+// ========================================
+model Documentary {
+  id           String    @id @default(cuid())
+  title        String
+  description  String    @db.Text
+  thumbnailUrl String?
+  videoUrl     String?
+  type         DocuType
+  brandId      String?
+  views        Int       @default(0)
+  likes        Int       @default(0)
+  isPublished  Boolean   @default(false)
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+enum DocuType {
+  SUCCESS
+  FAILURE
+  BRAND
+  TREND
+  INTERVIEW
+}
+
+// ========================================
+// Campaign (openrun)
+// ========================================
+model Campaign {
+  id           String         @id @default(cuid())
+  title        String
+  description  String         @db.Text
+  type         CampaignType
+  targetUserId String
+  budget       Int
+  status       CampaignStatus @default(DRAFT)
+  startDate    DateTime?
+  endDate      DateTime?
+  impressions  Int            @default(0)
+  clicks       Int            @default(0)
+  conversions  Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+enum CampaignType {
+  GRAND_OPEN
+  RECRUIT
+  BRAND
+  PROMOTION
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+// ========================================
+// Common: Image
+// ========================================
+model Image {
+  id          String     @id @default(cuid())
+  url         String
+  alt         String?
+  order       Int        @default(0)
+  listingId   String?
+  listing     Listing?   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  portfolioId String?
+  portfolio   Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+}
+
+// ========================================
+// User Activity Log (cross-platform recommendations)
+// ========================================
+model UserActivity {
+  id           String   @id @default(cuid())
+  userId       String
+  platform     String
+  action       String
+  resourceType String
+  resourceId   String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([platform])
+}

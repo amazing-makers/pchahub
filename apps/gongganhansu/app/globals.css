@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-primary: #64748B;
+}
+
+html { font-family: 'Pretendard', 'Inter', sans-serif; }
+body { color: #0F172A; background: #ffffff; }
