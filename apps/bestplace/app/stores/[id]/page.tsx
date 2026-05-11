@@ -41,13 +41,11 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
   return (
     <main className="bg-gray-50">
       {/* Hero image */}
-      <div
-        className="relative h-48 w-full sm:h-64"
-        style={{
-          background: `linear-gradient(135deg, ${store.imageColor}, ${store.imageColor}AA)`,
-        }}
-        aria-hidden
-      />
+      <div className="relative h-56 w-full overflow-hidden sm:h-72">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={store.heroImage} alt={store.name} className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/40" />
+      </div>
 
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-6">
@@ -133,6 +131,31 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
       <div className="container mx-auto py-8">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-6 min-w-0">
+            {/* Store photos */}
+            {store.gallery.length > 0 && (
+              <SectionCard title="매장 사진">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {store.gallery.slice(0, 8).map((src, i) => (
+                    <div
+                      key={i}
+                      className={
+                        'relative overflow-hidden rounded-xl bg-gray-100 ' +
+                        (i === 0 ? 'col-span-2 row-span-2 aspect-square' : 'aspect-square')
+                      }
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={`${store.name} ${i + 1}`}
+                        className="h-full w-full object-cover transition-transform hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </SectionCard>
+            )}
+
             {/* Awards */}
             {awards.length > 0 && (
               <SectionCard title="수상 내역">

@@ -14,16 +14,18 @@ export function StoreCard({ store }: StoreCardProps) {
     <a href={`/stores/${store.id}`} className="group block h-full">
       <Card className="h-full transition-shadow hover:shadow-md">
         <CardContent className="p-0">
-          <div
-            className="relative h-32 w-full overflow-hidden rounded-t-xl"
-            style={{
-              background: `linear-gradient(135deg, ${store.imageColor}, ${store.imageColor}AA)`,
-            }}
-            aria-hidden
-          >
+          <div className="relative h-40 w-full overflow-hidden rounded-t-xl bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={store.heroImage}
+              alt={store.name}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
               {brand && (
-                <Badge variant="default" className="bg-white/90 text-gray-900">
+                <Badge variant="default" className="bg-white/95 text-gray-900">
                   {brand.categoryLabel}
                 </Badge>
               )}

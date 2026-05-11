@@ -2,6 +2,8 @@
 // Cross-links: brand keys/labels match pchahub so brand → bestplace stores
 // flows make sense. Future Supabase migration will share the Brand table.
 
+import { storePhotoSet } from './store-images'
+
 export interface MockBrand {
   id: string
   name: string
@@ -30,6 +32,10 @@ export interface MockStore {
   verified: boolean
   highlights: string[]
   recentReview?: { author: string; rating: number; text: string }
+  /** Real hero image — auto-filled below. */
+  heroImage: string
+  /** Real gallery images — auto-filled below. */
+  gallery: string[]
 }
 
 export type AwardRank = 1 | 2 | 3
@@ -73,7 +79,9 @@ export function brandById(id: string): MockBrand | undefined {
   return BRANDS.find((b) => b.id === id)
 }
 
-export const STORES: MockStore[] = [
+type RawStore = Omit<MockStore, 'heroImage' | 'gallery'>
+
+const RAW_STORES: RawStore[] = [
   {
     id: 's1',
     name: '치킨다이스 강남역점',
@@ -360,6 +368,16 @@ export const STORES: MockStore[] = [
     recentReview: { author: '강남직장인', rating: 5, text: '미팅 장소로 좋아요. 마카롱 + 음료 조합 굿.' },
   },
 ]
+
+export const STORES: MockStore[] = RAW_STORES.map((s) => {
+  const brand = BRANDS.find((b) => b.id === s.brandId)
+  const photos = storePhotoSet(s.id, brand?.category ?? 'korean')
+  return {
+    ...s,
+    heroImage: photos.hero,
+    gallery: photos.gallery,
+  }
+})
 
 export function storeById(id: string): MockStore | undefined {
   return STORES.find((s) => s.id === id)

@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
@@ -45,10 +46,21 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
     <main className="bg-gray-50">
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h3 font-bold text-gray-900">매장 디렉토리</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            전국 프랜차이즈 인증 매장 {STORES.length}곳. 평점·방문객·신규 오픈 기준 정렬.
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">매장 디렉토리</h1>
+              <p className="mt-1 text-sm text-gray-500">
+                전국 프랜차이즈 인증 매장 {STORES.length}곳. 평점·방문객·신규 오픈 기준 정렬.
+              </p>
+            </div>
+            <a
+              href="/stores/new"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            >
+              <Plus className="h-4 w-4" />
+              매장 등록
+            </a>
+          </div>
         </div>
       </section>
 
