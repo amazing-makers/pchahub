@@ -1,16 +1,24 @@
-import { Card, CardContent } from '@amakers/ui'
+import { CalculatorForm } from './form'
 
-export default function CalculatorPage() {
+interface CalculatorPageProps {
+  searchParams: { brand?: string }
+}
+
+export default function CalculatorPage({ searchParams }: CalculatorPageProps) {
   return (
-    <main className="container mx-auto py-section">
-      <Card>
-        <CardContent className="p-12 text-center">
-          <h1 className="text-h2 font-bold text-gray-900">수익 계산기</h1>
-          <p className="mt-4 text-gray-600">
-            매장 평수, 입지, 인건비 등을 입력하면 예상 매출과 순이익을 추정하는 도구입니다. 준비 중입니다.
+    <main className="bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto py-8">
+          <h1 className="text-h3 font-bold text-gray-900">수익 계산기</h1>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            매장 조건과 운영 가정을 입력하면 예상 월매출, 비용, 영업이익, 회수 기간을 실시간으로 보여드립니다.
+            브랜드를 선택하면 협회 등록 정보공개서 기반 기본값을 자동으로 채워줍니다.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </section>
+      <div className="container mx-auto py-8">
+        <CalculatorForm initialBrandId={searchParams.brand} />
+      </div>
     </main>
   )
 }
