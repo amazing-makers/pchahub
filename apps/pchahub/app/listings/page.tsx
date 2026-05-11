@@ -1,36 +1,51 @@
-import { ArrowRight, CheckCircle2, MapPin } from 'lucide-react'
+import { ArrowRight, Plus } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
-import { formatNumber } from '@amakers/utils'
 import { CATEGORIES } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
+import { ListingCard } from '@/components/listing-card'
 
 interface ListingsPageProps {
-  searchParams: { category?: string }
+  searchParams: { category?: string; type?: string }
 }
 
 export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const active = searchParams.category
-  const filtered = active ? LISTINGS.filter((l) => l.fitCategories.includes(active)) : LISTINGS
+  const activeType = searchParams.type
+  let filtered = LISTINGS
+  if (active) filtered = filtered.filter((l) => l.fitCategories.includes(active))
+  if (activeType === '양도' || activeType === '신규임대') {
+    filtered = filtered.filter((l) => l.listingType === activeType)
+  }
+
+  const transferCount = LISTINGS.filter((l) => l.listingType === '양도').length
+  const newCount = LISTINGS.filter((l) => l.listingType === '신규임대').length
 
   return (
     <main className="bg-gray-50">
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h3 font-bold text-gray-900">가맹 입점 매물</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            프차허브가 협력 부동산 플랫폼{' '}
-            <a href="https://themyungdang.kr" className="text-gray-900 underline">
-              더명당
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">가맹 입점 매물</h1>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                전국 양도·신규임대 매물을 검색하세요. 모든 매물은 amakers 운영팀의 실사를 거쳐 등록됩니다.
+              </p>
+            </div>
+            <a
+              href="/listings/new"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            >
+              <Plus className="h-4 w-4" />
+              매물 등록
             </a>
-            에서 가맹 운영에 적합한 매물을 큐레이션합니다. 전체 매물은 더명당에서 확인하세요.
-          </p>
+          </div>
         </div>
       </section>
 
       <div className="container mx-auto py-8">
-        <div className="mb-5 flex flex-wrap gap-2">
-          <FilterChip href="/listings" active={!active}>
-            전체
+        <div className="mb-3 flex flex-wrap gap-2 text-sm">
+          <FilterChip href={pathFor(undefined, activeType)} active={!active}>
+            전체 업종 ({LISTINGS.length})
           </FilterChip>
           {CATEGORIES.map((c) => {
             const count = LISTINGS.filter((l) => l.fitCategories.includes(c.key)).length
@@ -38,7 +53,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             return (
               <FilterChip
                 key={c.key}
-                href={`/listings?category=${c.key}`}
+                href={pathFor(c.key, activeType)}
                 active={active === c.key}
               >
                 {c.label} ({count})
@@ -47,98 +62,59 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           })}
         </div>
 
+        <div className="mb-5 flex flex-wrap gap-2 text-sm">
+          <FilterChip href={pathFor(active, undefined)} active={!activeType}>
+            전체 유형
+          </FilterChip>
+          <FilterChip href={pathFor(active, '양도')} active={activeType === '양도'}>
+            양도 ({transferCount})
+          </FilterChip>
+          <FilterChip href={pathFor(active, '신규임대')} active={activeType === '신규임대'}>
+            신규임대 ({newCount})
+          </FilterChip>
+        </div>
+
         {filtered.length === 0 ? (
           <Card>
             <CardContent className="p-10 text-center text-sm text-gray-500">
-              해당 업종 매물이 없습니다. 필터를 변경해보세요.
+              조건에 맞는 매물이 없습니다. 필터를 변경해보세요.
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((l) => (
-              <a
-                key={l.id}
-                href={`https://themyungdang.kr/listings/${l.id}`}
-                className="group block"
-              >
-                <Card className="h-full transition-shadow hover:shadow-md">
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <div className="text-base font-semibold text-gray-900">{l.title}</div>
-                        <div className="mt-1 inline-flex items-center gap-1 text-xs text-gray-500">
-                          <MapPin className="h-3 w-3" />
-                          {l.region} {l.district} · {l.area}평
-                        </div>
-                      </div>
-                      {l.verified && (
-                        <CheckCircle2
-                          className="mt-0.5 h-4 w-4 shrink-0 text-blue-500"
-                          aria-label="검증 매물"
-                        />
-                      )}
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg bg-gray-50 p-3 text-xs">
-                      <div>
-                        <div className="text-gray-500">권리금</div>
-                        <div className="mt-0.5 font-semibold text-gray-900">
-                          {l.rightFee === 0 ? '없음' : `${formatNumber(l.rightFee)}만`}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500">보증금</div>
-                        <div className="mt-0.5 font-semibold text-gray-900">
-                          {formatNumber(l.deposit)}만
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500">월세</div>
-                        <div className="mt-0.5 font-semibold text-gray-900">
-                          {formatNumber(l.monthlyRent)}만
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {l.tags.map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-3 border-t border-gray-100 pt-3 text-xs text-gray-500">
-                      일 평균 유동인구 약 {formatNumber(l.footTraffic)}명 · 입점 가능{' '}
-                      {l.availableFrom}
-                    </div>
-                  </CardContent>
-                </Card>
-              </a>
-            ))}
-          </div>
+          <>
+            <div className="mb-3 text-sm text-gray-700">{filtered.length}건의 매물</div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {filtered.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </div>
+          </>
         )}
 
-        <div className="mt-10 rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center">
-          <div className="text-sm text-gray-500">전국 매물 검색은 더명당에서</div>
-          <h2 className="mt-1 text-h4 font-bold text-gray-900">상권 분석부터 거래까지</h2>
+        <div className="mt-12 rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center">
+          <div className="text-sm text-gray-500">전국 부동산 매물 + 상권 분석</div>
+          <h2 className="mt-1 text-h4 font-bold text-gray-900">더명당에서 상권 분석까지</h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600">
-            더명당은 amakers의 부동산 전문 플랫폼입니다. 양도·신규임대·매각 매물 외에 상권 분석,
-            안전 거래 기능을 제공합니다.
+            가맹 입점 외 일반 상가 매물, 상권 분석, 안전 거래까지 부동산 전문 서비스는 더명당에서 제공합니다.
           </p>
           <a
             href="https://themyungdang.kr"
             className="mt-4 inline-flex items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
           >
-            더명당에서 전체 매물 보기 <ArrowRight className="h-3.5 w-3.5" />
+            더명당으로 이동 <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>
     </main>
   )
+}
+
+function pathFor(category: string | undefined, type: string | undefined): string {
+  const params = new URLSearchParams()
+  if (category) params.set('category', category)
+  if (type) params.set('type', type)
+  const qs = params.toString()
+  return qs ? `/listings?${qs}` : '/listings'
 }
 
 function FilterChip({
@@ -154,7 +130,7 @@ function FilterChip({
     <a
       href={href}
       className={
-        'rounded-full px-3 py-1.5 text-sm transition-colors ' +
+        'rounded-full px-3 py-1.5 transition-colors ' +
         (active
           ? 'bg-gray-900 text-white'
           : 'border border-gray-200 bg-white text-gray-700 hover:border-gray-300')

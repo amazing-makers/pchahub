@@ -3,6 +3,7 @@
 // All figures are illustrative until real KFA data is wired in.
 
 import type { MockBrand } from './mock-data'
+import { brandImageSet } from './brand-images'
 
 export interface BrandHQ {
   companyName: string
@@ -78,6 +79,57 @@ export interface BrandFAQ {
   a: string
 }
 
+/** Sourced from 정보공개서 X-2 ~ X-7 sections. */
+export interface BrandDisclosureExtras {
+  /** 본사 광고비 부담 비율 (%) — 100이면 본사가 전액 부담 */
+  hqAdvertisingShare: number
+  /** 점주 광고/판촉 분담 (매출의 %) — 0이면 없음 */
+  storeAdvertisingShare: number
+  /** 계약 기간 (년) */
+  contractYears: number
+  /** 계약 갱신 조건 */
+  renewalTerms: string
+  /** 영업지역 보호 정책 */
+  territoryProtection: string
+  /** 상표 등록 여부 */
+  trademarkRegistered: boolean
+  /** 가맹사업 등록번호 (정보공개서 등록 번호) */
+  registrationNumber: string
+  /** 정보공개서 최종 갱신일 */
+  disclosureUpdatedAt: string
+}
+
+export interface BrandMenuItem {
+  name: string
+  /** 만원 단위가 아닌 원 단위 가격 */
+  priceWon: number
+  image: string
+  /** 시그니처 메뉴 표시 */
+  signature?: boolean
+  /** 한 줄 소개 */
+  description?: string
+}
+
+export interface BrandRecentOpening {
+  storeName: string
+  region: string
+  district: string
+  /** 오픈일 (ISO date) */
+  openedAt: string
+  /** 매장 평수 */
+  area: number
+  image: string
+}
+
+export interface BrandPhotos {
+  /** 매장 대표 이미지 (히어로) */
+  hero: string
+  /** 매장 인테리어 사진 모음 */
+  store: string[]
+  /** 메뉴/제품 사진 모음 (메뉴 이미지와 별개) */
+  gallery: string[]
+}
+
 export interface BrandDetail {
   hq: BrandHQ
   costs: BrandCosts
@@ -87,6 +139,10 @@ export interface BrandDetail {
   reviews: BrandReview[]
   ratingDistribution: { stars: number; count: number }[]
   faqs: BrandFAQ[]
+  disclosure: BrandDisclosureExtras
+  menu: BrandMenuItem[]
+  recentOpenings: BrandRecentOpening[]
+  photos: BrandPhotos
 }
 
 /** Compute total startup cost from cost components. */
@@ -528,6 +584,131 @@ const SAMPLE_REVIEWS: Record<string, BrandReview[]> = {
   ],
 }
 
+// ============================================================
+// 메뉴 데이터 — 카테고리별 대표 메뉴 라인업 (실제 본사 사진 자리)
+// ============================================================
+
+const MENU_BY_CATEGORY: Record<string, Array<{ name: string; priceWon: number; signature?: boolean; description?: string }>> = {
+  chicken: [
+    { name: '시그니처 후라이드', priceWon: 19800, signature: true, description: '24시간 저온 숙성 + 자체 튀김옷' },
+    { name: '매콤양념치킨', priceWon: 21800, description: '본사 제조 양념 소스' },
+    { name: '간장갈릭치킨', priceWon: 22800 },
+    { name: '치킨버거 세트', priceWon: 9800, description: '단품 + 감자튀김 + 음료' },
+  ],
+  cafe: [
+    { name: '시그니처 라떼', priceWon: 4800, signature: true, description: '본사 자체 블렌딩 원두' },
+    { name: '아메리카노', priceWon: 3500 },
+    { name: '플랫화이트', priceWon: 5000 },
+    { name: '계절 디저트 (월 변경)', priceWon: 6500 },
+  ],
+  korean: [
+    { name: '한솥 정식', priceWon: 9500, signature: true, description: '주반찬 + 5종 반찬' },
+    { name: '제육 도시락', priceWon: 8500 },
+    { name: '불고기 도시락', priceWon: 9000 },
+    { name: '김치찌개 정식', priceWon: 9800 },
+  ],
+  japanese: [
+    { name: '오마카세 런치 세트', priceWon: 18800, signature: true, description: '셰프 추천 8피스 + 미소국' },
+    { name: '회전 모듬 (10pcs)', priceWon: 22800 },
+    { name: '돈코츠 라멘', priceWon: 11800 },
+    { name: '치킨가츠 정식', priceWon: 13800 },
+  ],
+  snack: [
+    { name: '국물떡볶이 (2인)', priceWon: 7500, signature: true },
+    { name: '참치김밥', priceWon: 3800 },
+    { name: '치즈라면', priceWon: 5800 },
+    { name: '튀김 모듬', priceWon: 6800 },
+  ],
+  dessert: [
+    { name: '시즌 케이크 (조각)', priceWon: 8500, signature: true, description: '월 1회 신메뉴 출시' },
+    { name: '마카롱 (5pcs)', priceWon: 12000 },
+    { name: '크림 파스타 라떼', priceWon: 6800 },
+    { name: '바닐라 슈크림', priceWon: 4800 },
+  ],
+  beverage: [
+    { name: '생과일 딸기 스무디', priceWon: 6500, signature: true },
+    { name: '청포도 에이드', priceWon: 5500 },
+    { name: 'ABC 주스 (사과·비트·당근)', priceWon: 7500 },
+    { name: '망고 요거트 볼', priceWon: 8800 },
+  ],
+  bar: [
+    { name: '모듬 안주 플래터', priceWon: 28000, signature: true, description: '4인 기준 안주 모듬' },
+    { name: '치즈 떡볶이', priceWon: 14800 },
+    { name: '계란말이', priceWon: 9800 },
+    { name: '소주·맥주 (병)', priceWon: 5000 },
+  ],
+}
+
+function menuFor(brand: MockBrand): BrandMenuItem[] {
+  const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean
+  const images = brandImageSet(brand.id, brand.category).menu
+  return base.map((m, i) => ({
+    ...m,
+    image: images[i % images.length],
+  }))
+}
+
+// ============================================================
+// 최근 오픈 정보 — 매장 신규 오픈 데이터
+// ============================================================
+
+const RECENT_OPENING_LOCATIONS = [
+  { region: '서울', district: '강남구', storeSuffix: '강남역점' },
+  { region: '서울', district: '마포구', storeSuffix: '연남점' },
+  { region: '경기', district: '성남시 분당구', storeSuffix: '서현역점' },
+  { region: '경기', district: '수원시 영통구', storeSuffix: '광교점' },
+  { region: '인천', district: '연수구', storeSuffix: '송도점' },
+  { region: '부산', district: '해운대구', storeSuffix: '해운대점' },
+  { region: '대구', district: '수성구', storeSuffix: '수성못점' },
+  { region: '대전', district: '서구 둔산동', storeSuffix: '둔산점' },
+  { region: '광주', district: '동구', storeSuffix: '충장로점' },
+]
+
+function recentOpeningsFor(brand: MockBrand): BrandRecentOpening[] {
+  const images = brandImageSet(brand.id, brand.category).store
+  const seed = brand.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+  const startIdx = seed % RECENT_OPENING_LOCATIONS.length
+  // 신규 매장이 많을수록 더 많은 오픈 표시
+  const count = brand.growthRate >= 30 ? 5 : brand.growthRate >= 15 ? 4 : 3
+  const today = new Date('2026-05-11')
+  return Array.from({ length: count }).map((_, i) => {
+    const loc = RECENT_OPENING_LOCATIONS[(startIdx + i * 2) % RECENT_OPENING_LOCATIONS.length]
+    const daysAgo = 14 + i * 21 + ((seed + i) % 11)
+    const date = new Date(today)
+    date.setDate(date.getDate() - daysAgo)
+    return {
+      storeName: `${brand.name} ${loc.storeSuffix}`,
+      region: loc.region,
+      district: loc.district,
+      openedAt: date.toISOString().slice(0, 10),
+      area: 10 + ((seed + i * 3) % 22),
+      image: images[i % images.length] ?? images[0],
+    }
+  })
+}
+
+// ============================================================
+// 정보공개서 추가 필드
+// ============================================================
+
+function disclosureExtrasFor(brand: MockBrand): BrandDisclosureExtras {
+  const hasStrongHQ = brand.storeCount >= 50 && brand.hqVerified
+  return {
+    hqAdvertisingShare: hasStrongHQ ? 70 : 50,
+    storeAdvertisingShare: hasStrongHQ ? 1 : 2,
+    contractYears: 3,
+    renewalTerms:
+      '계약 만료 6개월 전 본사 평가를 통해 갱신 가능. 본사 운영 가이드 위반 사항이 없으면 갱신 거절 사유 없음.',
+    territoryProtection:
+      brand.category === 'cafe' || brand.category === 'snack'
+        ? '반경 300m 이내 직영·가맹점 중복 출점 제한'
+        : '반경 500m 이내 직영·가맹점 중복 출점 제한',
+    trademarkRegistered: true,
+    registrationNumber: `KFA-2024-${brand.id.replace('b', '').padStart(4, '0')}`,
+    disclosureUpdatedAt: '2026-04-15',
+  }
+}
+
 function fallbackReviewsFor(brand: MockBrand): BrandReview[] {
   return [
     {
@@ -651,6 +832,13 @@ export function getBrandDetail(brand: MockBrand): BrandDetail {
   const reviews = SAMPLE_REVIEWS[brand.id] ?? fallbackReviewsFor(brand)
   const ratingDistribution = computeRatingDistribution(reviews)
 
+  const imgs = brandImageSet(brand.id, brand.category)
+  const photos: BrandPhotos = {
+    hero: imgs.hero,
+    store: imgs.store,
+    gallery: imgs.menu,
+  }
+
   return {
     hq,
     costs,
@@ -660,6 +848,10 @@ export function getBrandDetail(brand: MockBrand): BrandDetail {
     reviews,
     ratingDistribution,
     faqs: FAQ_DEFAULTS,
+    disclosure: disclosureExtrasFor(brand),
+    menu: menuFor(brand),
+    recentOpenings: recentOpeningsFor(brand),
+    photos,
   }
 }
 

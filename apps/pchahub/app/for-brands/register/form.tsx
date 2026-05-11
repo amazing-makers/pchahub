@@ -1,9 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle2, FileUp, Send, Shield } from 'lucide-react'
+import { CheckCircle2, FileUp, ImagePlus, Plus, Send, Shield, Trash2, X } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { CATEGORIES } from '@/lib/mock-data'
+
+interface MenuItemDraft {
+  name: string
+  priceWon: string
+  signature: boolean
+}
 
 interface FormState {
   // 회사
@@ -22,6 +28,16 @@ interface FormState {
   // 자료
   hasDisclosure: boolean
   hasLogo: boolean
+  // 사진
+  heroPhotoUploaded: boolean
+  storePhotoCount: number
+  // 메뉴
+  menuItems: MenuItemDraft[]
+  // KFA 확장
+  contractYears: string
+  hqAdvertisingShare: string
+  territoryProtection: string
+  trademarkRegistered: boolean
   // 담당자
   managerName: string
   managerRole: string
@@ -55,6 +71,13 @@ export function RegisterForm() {
     franchiseStartYear: '',
     hasDisclosure: false,
     hasLogo: false,
+    heroPhotoUploaded: false,
+    storePhotoCount: 0,
+    menuItems: [{ name: '', priceWon: '', signature: true }],
+    contractYears: '3',
+    hqAdvertisingShare: '70',
+    territoryProtection: '',
+    trademarkRegistered: false,
     managerName: '',
     managerRole: '',
     managerEmail: '',
@@ -273,6 +296,189 @@ export function RegisterForm() {
           </CardContent>
         </Card>
 
+        {/* 브랜드 사진 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-6">
+            <SectionHeader
+              title="브랜드 사진"
+              helper="실제 매장과 메뉴 사진을 등록하면 가맹 문의가 평균 2배 이상 증가합니다."
+            />
+
+            <div>
+              <div className="text-xs font-medium text-gray-700">대표 매장 사진 (필수)</div>
+              <button
+                type="button"
+                onClick={() => update('heroPhotoUploaded', !state.heroPhotoUploaded)}
+                className={
+                  'mt-2 flex h-40 w-full items-center justify-center rounded-xl border-2 border-dashed transition-colors ' +
+                  (state.heroPhotoUploaded
+                    ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                    : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300')
+                }
+              >
+                {state.heroPhotoUploaded ? (
+                  <div className="text-center">
+                    <CheckCircle2 className="mx-auto h-8 w-8" />
+                    <div className="mt-2 text-sm font-medium">대표 사진 업로드 완료</div>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <ImagePlus className="mx-auto h-8 w-8 text-gray-400" />
+                    <div className="mt-2 text-sm">대표 매장 사진을 업로드하세요</div>
+                    <div className="mt-0.5 text-xs">권장 1920×1080 · 5MB 이하</div>
+                  </div>
+                )}
+              </button>
+            </div>
+
+            <div>
+              <div className="text-xs font-medium text-gray-700">매장 추가 사진 (최대 6장)</div>
+              <PhotoUploadGrid
+                count={state.storePhotoCount}
+                max={6}
+                onChange={(c) => update('storePhotoCount', c)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 대표 메뉴 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-6">
+            <SectionHeader
+              title="대표 메뉴"
+              helper="시그니처 메뉴 1개를 포함해 3-4개의 대표 메뉴를 등록해주세요. 메뉴 사진은 등록 후 대시보드에서 업로드할 수 있습니다."
+            />
+            <div className="space-y-2">
+              {state.menuItems.map((m, idx) => (
+                <div key={idx} className="grid gap-2 sm:grid-cols-[1fr_140px_120px_auto]">
+                  <input
+                    type="text"
+                    value={m.name}
+                    onChange={(e) =>
+                      setState((p) => ({
+                        ...p,
+                        menuItems: p.menuItems.map((it, i) =>
+                          i === idx ? { ...it, name: e.target.value } : it,
+                        ),
+                      }))
+                    }
+                    placeholder="메뉴명"
+                    className="form-input"
+                  />
+                  <input
+                    type="number"
+                    value={m.priceWon}
+                    onChange={(e) =>
+                      setState((p) => ({
+                        ...p,
+                        menuItems: p.menuItems.map((it, i) =>
+                          i === idx ? { ...it, priceWon: e.target.value } : it,
+                        ),
+                      }))
+                    }
+                    placeholder="가격 (원)"
+                    className="form-input"
+                  />
+                  <label className="flex items-center gap-1.5 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={m.signature}
+                      onChange={(e) =>
+                        setState((p) => ({
+                          ...p,
+                          menuItems: p.menuItems.map((it, i) =>
+                            i === idx ? { ...it, signature: e.target.checked } : it,
+                          ),
+                        }))
+                      }
+                      className="h-4 w-4 rounded border-gray-300"
+                    />
+                    시그니처
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setState((p) => ({
+                        ...p,
+                        menuItems: p.menuItems.filter((_, i) => i !== idx),
+                      }))
+                    }
+                    className="inline-flex items-center justify-center rounded-md border border-gray-200 px-2 text-rose-500 hover:bg-rose-50"
+                    aria-label="메뉴 제거"
+                    disabled={state.menuItems.length <= 1}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setState((p) => ({
+                    ...p,
+                    menuItems: [...p.menuItems, { name: '', priceWon: '', signature: false }],
+                  }))
+                }
+                className="inline-flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                <Plus className="h-4 w-4" />
+                메뉴 추가
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 가맹 조건 (KFA 정보공개서 추가 정보) */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-6">
+            <SectionHeader
+              title="가맹 조건"
+              helper="정보공개서에 기재되는 핵심 조건입니다. 정확한 정보 제공 시 가맹 문의 품질이 향상됩니다."
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="계약 기간 (년)">
+                <input
+                  type="number"
+                  value={state.contractYears}
+                  onChange={(e) => update('contractYears', e.target.value)}
+                  placeholder="3"
+                  className="form-input"
+                />
+              </Field>
+              <Field label="본사 광고비 부담 (%)">
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={state.hqAdvertisingShare}
+                  onChange={(e) => update('hqAdvertisingShare', e.target.value)}
+                  placeholder="70"
+                  className="form-input"
+                />
+              </Field>
+              <Field label="영업지역 보호 정책" className="sm:col-span-2">
+                <input
+                  type="text"
+                  value={state.territoryProtection}
+                  onChange={(e) => update('territoryProtection', e.target.value)}
+                  placeholder="예: 반경 500m 이내 직영·가맹점 중복 출점 제한"
+                  className="form-input"
+                />
+              </Field>
+            </div>
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={state.trademarkRegistered}
+                onChange={(e) => update('trademarkRegistered', e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300"
+              />
+              <span className="text-gray-700">상표권이 본사 명의로 등록되어 있습니다.</span>
+            </label>
+          </CardContent>
+        </Card>
+
         {/* 담당자 정보 */}
         <Card className="border-gray-200 shadow-sm">
           <CardContent className="space-y-4 p-6">
@@ -405,6 +611,14 @@ export function RegisterForm() {
                 <Row label="담당자" value={state.managerName || '-'} />
                 <Row label="이메일" value={state.managerEmail || '-'} />
                 <Row
+                  label="사진"
+                  value={`대표 ${state.heroPhotoUploaded ? '✓' : '×'} · 매장 ${state.storePhotoCount}장`}
+                />
+                <Row
+                  label="메뉴"
+                  value={`${state.menuItems.filter((m) => m.name.trim()).length}개 등록`}
+                />
+                <Row
                   label="시작 등급"
                   value={TIERS.find((t) => t.key === state.tier)?.label.split(' (')[0] ?? '-'}
                 />
@@ -503,6 +717,52 @@ function UploadRow({
         <span className="text-xs text-gray-600">{checked ? '보유' : '미보유'}</span>
       </div>
     </label>
+  )
+}
+
+function PhotoUploadGrid({
+  count,
+  max,
+  onChange,
+}: {
+  count: number
+  max: number
+  onChange: (c: number) => void
+}) {
+  return (
+    <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
+      {Array.from({ length: max }).map((_, i) => {
+        const filled = i < count
+        return (
+          <button
+            key={i}
+            type="button"
+            onClick={() => {
+              if (filled) onChange(Math.max(0, count - 1))
+              else onChange(Math.min(max, count + 1))
+            }}
+            className={
+              'group relative flex aspect-square items-center justify-center rounded-xl border-2 border-dashed text-xs transition-colors ' +
+              (filled
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300')
+            }
+          >
+            {filled ? (
+              <div className="text-center">
+                <CheckCircle2 className="mx-auto h-5 w-5" />
+                <div className="mt-1">{i + 1}</div>
+                <div className="mt-0.5 inline-flex items-center gap-0.5 text-[10px] text-rose-500 opacity-0 group-hover:opacity-100">
+                  <Trash2 className="h-3 w-3" />
+                </div>
+              </div>
+            ) : (
+              <Plus className="h-5 w-5" />
+            )}
+          </button>
+        )
+      })}
+    </div>
   )
 }
 

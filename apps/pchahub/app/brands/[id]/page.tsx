@@ -1,14 +1,19 @@
 import { notFound } from 'next/navigation'
 import {
   ArrowRight,
+  Award,
   Building2,
   Calendar,
   CheckCircle2,
   ChevronRight,
   Clock,
+  FileText,
   Globe,
   MapPin,
+  Megaphone,
   Phone,
+  Shield,
+  Sparkles,
   Star,
   Store,
   TrendingUp,
@@ -54,10 +59,14 @@ export default function BrandDetailPage({ params }: BrandDetailPageProps) {
       <div className="container mx-auto py-12">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0 space-y-8">
+            <PhotoGallerySection detail={detail} brand={brand} />
+            <MenuSection detail={detail} />
             <HQSection detail={detail} />
             <CostsSection detail={detail} totalCost={totalCost} />
+            <DisclosureExtrasSection detail={detail} />
             <OperationsSection detail={detail} />
             <RevenueSection detail={detail} />
+            <RecentOpeningsSection detail={detail} brand={brand} />
             <StoreHistorySection detail={detail} />
             <ListingsSection listings={listings} category={brand.categoryLabel} />
             <ReviewsSection brand={brand} detail={detail} avgRating={avgRating} />
@@ -137,6 +146,16 @@ function BrandHero({
 
   return (
     <section className="border-b border-gray-200 bg-white">
+      <div className="relative h-64 w-full overflow-hidden bg-gray-100 sm:h-80">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={detail.photos.hero}
+          alt={`${brand.name} 매장 대표 이미지`}
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/50" />
+      </div>
+
       <div className="container mx-auto py-10">
         <nav className="flex items-center gap-1 text-sm text-gray-500">
           <a href="/brands" className="hover:text-gray-900">
@@ -152,7 +171,7 @@ function BrandHero({
 
         <div className="mt-6 flex items-start gap-5">
           <span
-            className="h-20 w-20 shrink-0 rounded-2xl"
+            className="-mt-16 h-24 w-24 shrink-0 rounded-2xl border-4 border-white shadow-md"
             style={{ background: brand.logoColor }}
             aria-hidden
           />
@@ -823,6 +842,211 @@ function StatBlock({
       <Icon className="h-4 w-4 text-gray-400" />
       <div className="mt-2 text-xs text-gray-500">{label}</div>
       <div className="mt-0.5 text-base font-semibold text-gray-900">{value}</div>
+    </div>
+  )
+}
+
+// ========================================================================
+// Photo Gallery Section — 매장 사진
+// ========================================================================
+
+function PhotoGallerySection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
+  const photos = [...detail.photos.store, ...detail.photos.gallery]
+  if (photos.length === 0) return null
+  return (
+    <SectionCard
+      title="매장 · 메뉴 사진"
+      subtitle={`${brand.name} 본사가 등록한 실제 매장 사진과 메뉴`}
+    >
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {photos.slice(0, 8).map((src, i) => (
+          <div
+            key={i}
+            className={
+              'relative overflow-hidden rounded-xl bg-gray-100 ' +
+              (i === 0 ? 'col-span-2 row-span-2 aspect-square sm:aspect-auto sm:h-full' : 'aspect-square')
+            }
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={`${brand.name} 사진 ${i + 1}`}
+              className="h-full w-full object-cover transition-transform hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  )
+}
+
+// ========================================================================
+// Menu Section — 메뉴 라인업
+// ========================================================================
+
+function MenuSection({ detail }: { detail: BrandDetail }) {
+  if (detail.menu.length === 0) return null
+  return (
+    <SectionCard
+      title="대표 메뉴"
+      subtitle="시그니처 메뉴와 인기 메뉴 라인업"
+    >
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {detail.menu.map((m, i) => (
+          <div key={i} className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+            <div className="relative aspect-square overflow-hidden bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.image} alt={m.name} className="h-full w-full object-cover" loading="lazy" />
+              {m.signature && (
+                <span className="absolute left-2 top-2 inline-flex items-center gap-0.5 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-900">
+                  <Sparkles className="h-2.5 w-2.5" />
+                  시그니처
+                </span>
+              )}
+            </div>
+            <div className="p-3">
+              <div className="line-clamp-1 text-sm font-semibold text-gray-900">{m.name}</div>
+              {m.description && (
+                <div className="mt-0.5 line-clamp-2 text-xs text-gray-500">{m.description}</div>
+              )}
+              <div className="mt-2 text-sm font-bold text-gray-900">
+                {formatNumber(m.priceWon)}<span className="text-xs font-medium text-gray-500">원</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  )
+}
+
+// ========================================================================
+// Recent Openings — 최근 신규 오픈 매장
+// ========================================================================
+
+function RecentOpeningsSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
+  if (detail.recentOpenings.length === 0) return null
+  return (
+    <SectionCard
+      title="최근 신규 오픈 매장"
+      subtitle={`최근 ${detail.recentOpenings.length}개 매장의 오픈 정보`}
+    >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {detail.recentOpenings.map((o, i) => (
+          <div key={i} className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+            <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={o.image} alt={o.storeName} className="h-full w-full object-cover" loading="lazy" />
+              <span className="absolute left-2 top-2 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                NEW OPEN
+              </span>
+            </div>
+            <div className="p-4">
+              <div className="text-sm font-semibold text-gray-900">{o.storeName}</div>
+              <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                <MapPin className="h-3 w-3" />
+                {o.region} {o.district}
+              </div>
+              <div className="mt-2 flex items-center justify-between text-xs">
+                <span className="inline-flex items-center gap-1 text-gray-500">
+                  <Calendar className="h-3 w-3" />
+                  {o.openedAt} 오픈
+                </span>
+                <span className="font-medium text-gray-700">{o.area}평</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  )
+}
+
+// ========================================================================
+// Disclosure Extras — 정보공개서 추가 정보
+// ========================================================================
+
+function DisclosureExtrasSection({ detail }: { detail: BrandDetail }) {
+  const d = detail.disclosure
+  return (
+    <SectionCard
+      title="정보공개서 추가 정보"
+      subtitle={`등록번호 ${d.registrationNumber} · ${d.disclosureUpdatedAt} 갱신`}
+    >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <DisclosureRow
+          icon={Megaphone}
+          label="본사 광고비 부담"
+          value={`${d.hqAdvertisingShare}%`}
+          sub={
+            d.storeAdvertisingShare === 0
+              ? '점주 분담 없음'
+              : `점주 분담 매출의 ${d.storeAdvertisingShare}%`
+          }
+        />
+        <DisclosureRow
+          icon={Calendar}
+          label="계약 기간"
+          value={`${d.contractYears}년`}
+          sub="갱신 가능"
+        />
+        <DisclosureRow
+          icon={Shield}
+          label="영업지역 보호"
+          value={d.territoryProtection}
+          isLong
+        />
+        <DisclosureRow
+          icon={FileText}
+          label="계약 갱신 조건"
+          value={d.renewalTerms}
+          isLong
+        />
+        <DisclosureRow
+          icon={Award}
+          label="상표권 등록"
+          value={d.trademarkRegistered ? '등록 완료' : '미등록'}
+          sub={d.trademarkRegistered ? '본사 상표권 보호' : ''}
+        />
+        <DisclosureRow
+          icon={FileText}
+          label="가맹사업 등록번호"
+          value={d.registrationNumber}
+          sub={`${d.disclosureUpdatedAt} 최종 갱신`}
+        />
+      </div>
+    </SectionCard>
+  )
+}
+
+function DisclosureRow({
+  icon: Icon,
+  label,
+  value,
+  sub,
+  isLong,
+}: {
+  icon: typeof Building2
+  label: string
+  value: string
+  sub?: string
+  isLong?: boolean
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-4">
+      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
+      <div className="min-w-0">
+        <div className="text-xs text-gray-500">{label}</div>
+        <div
+          className={
+            'mt-0.5 font-semibold text-gray-900 ' + (isLong ? 'text-sm leading-relaxed' : 'text-base')
+          }
+        >
+          {value}
+        </div>
+        {sub && <div className="mt-0.5 text-xs text-gray-500">{sub}</div>}
+      </div>
     </div>
   )
 }

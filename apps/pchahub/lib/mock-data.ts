@@ -2,6 +2,8 @@
 // once Supabase is connected. Brand names are fictional to avoid trademark
 // issues; figures are illustrative and not based on actual KFA disclosures.
 
+import { brandImageSet } from './brand-images'
+
 export interface MockCategory {
   key: string
   label: string
@@ -29,6 +31,8 @@ export interface MockBrand {
   featured: boolean
   /** Rough new-store growth rate this year (%). */
   growthRate: number
+  /** Hero image URL — real photo for brand card / detail page. */
+  heroImage: string
 }
 
 export const CATEGORIES: MockCategory[] = [
@@ -44,7 +48,9 @@ export const CATEGORIES: MockCategory[] = [
   { key: 'education', label: '교육', brandCount: 41 },
 ]
 
-export const BRANDS: MockBrand[] = [
+type RawBrand = Omit<MockBrand, 'heroImage'>
+
+const RAW_BRANDS: RawBrand[] = [
   {
     id: 'b1',
     name: '치킨다이스',
@@ -226,6 +232,11 @@ export const BRANDS: MockBrand[] = [
     growthRate: 19,
   },
 ]
+
+export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => ({
+  ...b,
+  heroImage: brandImageSet(b.id, b.category).hero,
+}))
 
 export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)
