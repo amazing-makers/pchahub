@@ -20,7 +20,7 @@ export const platformColors: Record<PlatformKey, PlatformBrand> = {
   pchahub: {
     primary: '#4F46E5',
     name: '프차허브',
-    role: '정보검색+중개',
+    role: '프랜차이즈',
     domain: 'pchahub.kr',
   },
   openrun: {

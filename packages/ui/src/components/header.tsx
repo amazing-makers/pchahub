@@ -12,10 +12,21 @@ export interface HeaderProps {
   platform: PlatformKey
   navItems?: HeaderNavItem[]
   showSearch?: boolean
+  /** Show the small "· {role}" label next to the brand name. Default true. */
+  showRole?: boolean
+  /** Show the 9-site dropdown switcher in the header. Default true. */
+  showSiteSwitcher?: boolean
   rightSlot?: React.ReactNode
 }
 
-export function Header({ platform, navItems = [], showSearch = false, rightSlot }: HeaderProps) {
+export function Header({
+  platform,
+  navItems = [],
+  showSearch = false,
+  showRole = true,
+  showSiteSwitcher = true,
+  rightSlot,
+}: HeaderProps) {
   const brand = platformColors[platform]
 
   return (
@@ -29,7 +40,9 @@ export function Header({ platform, navItems = [], showSearch = false, rightSlot 
               aria-hidden
             />
             <span className="text-base font-semibold text-gray-900">{brand.name}</span>
-            <span className="hidden text-xs text-gray-400 sm:inline">· {brand.role}</span>
+            {showRole && (
+              <span className="hidden text-xs text-gray-400 sm:inline">· {brand.role}</span>
+            )}
           </a>
           {navItems.length > 0 && (
             <nav className="hidden items-center gap-6 md:flex">
@@ -56,7 +69,7 @@ export function Header({ platform, navItems = [], showSearch = false, rightSlot 
               <Search className="h-4 w-4" />
             </button>
           )}
-          <SiteSwitcher current={platform} />
+          {showSiteSwitcher && <SiteSwitcher current={platform} />}
           {rightSlot ?? (
             <a
               href="/auth/signin"
