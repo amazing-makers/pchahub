@@ -15,7 +15,8 @@ import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { LISTINGS, listingById, type MockListing } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
-import { CATEGORIES } from '@/lib/mock-data'
+import { BrandCard } from '@/components/brand-card'
+import { BRANDS, CATEGORIES } from '@/lib/mock-data'
 
 interface ListingDetailProps {
   params: { id: string }
@@ -32,6 +33,22 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
   const others = LISTINGS.filter((l) => l.id !== listing.id && l.region === listing.region).slice(0, 3)
   const totalMonthly = listing.monthlyRent
   const totalUpfront = listing.deposit + listing.rightFee
+
+  // 매물 면적·예산·업종에 맞는 브랜드 추천
+  const recommendedBrands = BRANDS
+    .filter((b) => listing.fitCategories.includes(b.category))
+    .filter((b) => b.recruiting)
+    // 매물 비용 대비 적정 창업비 — 권리금+보증금 합계 ~ 창업비 2배 범위
+    .map((b) => {
+      const totalListingCost = listing.deposit + listing.rightFee
+      // 매물 부담이 창업비의 30~80% 정도면 적정 (가맹비 + 인테리어 별도)
+      const ratio = totalListingCost / b.startupCost
+      const fitScore = ratio >= 0.3 && ratio <= 1.5 ? 1 : 0.3
+      return { brand: b, score: fitScore * (b.growthRate + b.storeCount / 10) }
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map((x) => x.brand)
 
   return (
     <main className="bg-gray-50">
@@ -144,6 +161,34 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 </div>
               </CardContent>
             </Card>
+
+            {recommendedBrands.length > 0 && (
+              <Card className="border-gray-200">
+                <CardContent className="p-6">
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <h2 className="text-h4 font-semibold text-gray-900">
+                        이 매물에 어울리는 가맹 브랜드
+                      </h2>
+                      <p className="mt-1 text-sm text-gray-500">
+                        매물 부담({formatNumber(totalUpfront)}만)과 업종에 맞춰 성장률·매장 수 기준으로 추천
+                      </p>
+                    </div>
+                    <a
+                      href={`/brands?category=${listing.fitCategories[0]}`}
+                      className="hidden text-sm text-gray-700 hover:text-gray-900 sm:inline"
+                    >
+                      전체 보기 →
+                    </a>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {recommendedBrands.map((b) => (
+                      <BrandCard key={b.id} brand={b} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {others.length > 0 && (
               <Card className="border-gray-200">

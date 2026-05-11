@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ArrowLeft, ArrowRight, CheckCircle2, RotateCcw, Star, Trophy } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { BrandActions } from '@/components/brand-actions'
 import { CATEGORIES } from '@/lib/mock-data'
 import { matchBrands, type ScannerAnswers, type ScannerMatch } from '@/lib/scanner'
 
@@ -478,6 +479,10 @@ function MatchCard({ match, rank }: { match: ScannerMatch; rank: number }) {
               수익 계산
             </Button>
           </a>
+        </div>
+
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <BrandActions brandId={brand.id} brandName={brand.name} />
         </div>
       </CardContent>
     </Card>

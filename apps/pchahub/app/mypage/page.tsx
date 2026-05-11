@@ -10,6 +10,7 @@ import {
   PencilLine,
   Settings,
   Sparkles,
+  Star,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
@@ -82,11 +83,12 @@ export default async function MyPage() {
 
       <div className="container mx-auto py-8">
         {/* Quick stats */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatBlock icon={Heart} label="찜한 브랜드" value={`${savedBrands.length}개`} />
-          <StatBlock icon={MessageSquare} label="상담 신청" value={`${inquiries.length}건`} />
-          <StatBlock icon={Calculator} label="저장한 계산" value="0건" />
-          <StatBlock icon={Sparkles} label="스캐너 결과" value="1건" />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          <StatLink href="/mypage/saved" icon={Heart} label="찜한 브랜드" value={`${savedBrands.length}개`} />
+          <StatLink href="/mypage/inquiries" icon={MessageSquare} label="상담 신청" value={`${inquiries.length}건`} />
+          <StatLink href="/mypage/reviews" icon={Star} label="작성한 후기" value="3건" />
+          <StatLink href="/calculator" icon={Calculator} label="저장한 계산" value="0건" />
+          <StatLink href="/scanner" icon={Sparkles} label="스캐너 결과" value="1건" />
         </div>
 
         {/* Recent inquiries */}
@@ -187,52 +189,70 @@ export default async function MyPage() {
           </section>
         )}
 
+        {/* Reviews CTA */}
         <section className="mt-8">
-          <Card className="border-gray-200">
+          <Card className="border-gray-200 bg-amber-50">
             <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
               <div className="flex items-center gap-3">
-                <Bell className="h-5 w-5 text-amber-500" />
+                <Star className="h-5 w-5 text-amber-600" />
                 <div>
-                  <div className="text-sm font-semibold text-gray-900">
-                    이 페이지는 아직 mock 데이터입니다
+                  <div className="text-sm font-semibold text-amber-900">
+                    가맹점주 후기 작성
                   </div>
-                  <div className="mt-0.5 text-xs text-gray-500">
-                    Supabase 연결과 인증 OAuth 설정이 끝나면 실제 데이터로 교체됩니다.
+                  <div className="mt-0.5 text-xs text-amber-800">
+                    운영 중인 브랜드의 솔직한 경험을 공유하면 예비 점주의 의사결정에 큰 도움이 됩니다.
                   </div>
                 </div>
               </div>
-              <a
-                href="/mypage/reviews/new"
-                className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-              >
-                <PencilLine className="h-3.5 w-3.5" />
-                후기 작성
-              </a>
+              <div className="flex flex-wrap items-center gap-2">
+                <a
+                  href="/mypage/reviews"
+                  className="inline-flex items-center gap-1 rounded-md border border-amber-200 bg-white px-3 py-1.5 text-sm text-amber-900 hover:bg-amber-50"
+                >
+                  내 후기 보기
+                </a>
+                <a
+                  href="/mypage/reviews/new"
+                  className="inline-flex items-center gap-1 rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700"
+                >
+                  <PencilLine className="h-3.5 w-3.5" />
+                  후기 작성
+                </a>
+              </div>
             </CardContent>
           </Card>
+        </section>
+
+        <section className="mt-4 text-center text-xs text-gray-400">
+          <Bell className="mr-1 inline-block h-3 w-3" />
+          현재 모든 데이터는 mock입니다. Supabase 연결 + 인증 OAuth 후 실 데이터로 교체됩니다.
         </section>
       </div>
     </main>
   )
 }
 
-function StatBlock({
+function StatLink({
+  href,
   icon: Icon,
   label,
   value,
 }: {
+  href: string
   icon: typeof Heart
   label: string
   value: string
 }) {
   return (
-    <Card className="border-gray-200">
-      <CardContent className="p-4">
-        <Icon className="h-4 w-4 text-gray-400" />
-        <div className="mt-2 text-xs text-gray-500">{label}</div>
-        <div className="mt-0.5 text-base font-semibold text-gray-900">{value}</div>
-      </CardContent>
-    </Card>
+    <a href={href} className="group block">
+      <Card className="h-full border-gray-200 transition-shadow group-hover:shadow-md">
+        <CardContent className="p-4">
+          <Icon className="h-4 w-4 text-gray-400 transition-colors group-hover:text-gray-700" />
+          <div className="mt-2 text-xs text-gray-500">{label}</div>
+          <div className="mt-0.5 text-base font-semibold text-gray-900">{value}</div>
+        </CardContent>
+      </Card>
+    </a>
   )
 }
 
