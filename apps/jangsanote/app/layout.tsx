@@ -11,9 +11,10 @@ export const metadata: Metadata = {
 }
 
 const navItems = [
-  { href: '/', label: '전체' },
+  { href: '/', label: '피드' },
   { href: '/categories/cafe', label: '업종방' },
   { href: '/regions/seoul', label: '지역방' },
+  { href: '/meetings', label: '모임' },
   { href: '/general', label: '자유' },
 ]
 

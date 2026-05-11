@@ -1,9 +1,16 @@
-import { ArrowRight, Flame } from 'lucide-react'
+import { ArrowRight, Calendar, Flame } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { ChannelList } from '@/components/channel-list'
 import { PostCard } from '@/components/post-card'
-import { HOT_POSTS, PINNED_POSTS, popularPosts, POSTS } from '@/lib/mock-data'
+import { MeetingCard } from '@/components/meeting-card'
+import {
+  HOT_POSTS,
+  PINNED_POSTS,
+  popularPosts,
+  POSTS,
+  UPCOMING_MEETINGS,
+} from '@/lib/mock-data'
 
 export default function HomePage() {
   const recent = [...POSTS]
@@ -41,13 +48,40 @@ export default function HomePage() {
           </aside>
 
           {/* Main feed */}
-          <div className="space-y-3">
-            {PINNED_POSTS.map((p) => (
-              <PostCard key={p.id} post={p} />
-            ))}
-            {recent.map((p) => (
-              <PostCard key={p.id} post={p} />
-            ))}
+          <div className="space-y-6">
+            {/* Upcoming meetings row */}
+            {UPCOMING_MEETINGS.length > 0 && (
+              <div>
+                <div className="mb-3 flex items-end justify-between">
+                  <h2 className="inline-flex items-center gap-2 text-base font-semibold text-gray-900">
+                    <Calendar className="h-4 w-4 text-amber-500" />
+                    이번 주 모임
+                  </h2>
+                  <a
+                    href="/meetings"
+                    className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900"
+                  >
+                    전체 모임 <ArrowRight className="h-3 w-3" />
+                  </a>
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {UPCOMING_MEETINGS.slice(0, 4).map((m) => (
+                    <MeetingCard key={m.id} meeting={m} compact />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Posts feed */}
+            <div className="space-y-3">
+              <h2 className="text-base font-semibold text-gray-900">최근 글</h2>
+              {PINNED_POSTS.map((p) => (
+                <PostCard key={p.id} post={p} />
+              ))}
+              {recent.map((p) => (
+                <PostCard key={p.id} post={p} />
+              ))}
+            </div>
           </div>
 
           {/* Right: hot + popular */}

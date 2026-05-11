@@ -517,6 +517,273 @@ export const POSTS: MockPost[] = [
 export const PINNED_POSTS = POSTS.filter((p) => p.pinned)
 export const HOT_POSTS = POSTS.filter((p) => p.hot).sort((a, b) => b.likes - a.likes)
 
+// ================================
+// Meetings — first-class community content
+// ================================
+
+export type MeetingType = 'offline' | 'online' | 'hybrid'
+
+export interface MeetingAgendaItem {
+  time: string
+  topic: string
+}
+
+export interface MockMeeting {
+  id: string
+  title: string
+  description: string
+  type: MeetingType
+  /** Offline 매장명·동·도 또는 '온라인 (Zoom)' */
+  location: string
+  region: string
+  /** ISO date — yyyy-mm-dd */
+  date: string
+  startTime: string
+  endTime: string
+  hostId: string
+  /** Channel context — e.g. 'cafe' (업종방) or 'seoul' (지역방) */
+  channelType: ChannelType
+  channelKey: string
+  maxParticipants: number
+  currentParticipants: number
+  isFree: boolean
+  /** 만원 단위 */
+  feeWon: number
+  agenda: MeetingAgendaItem[]
+  tags: string[]
+  status: 'upcoming' | 'closed' | 'ongoing'
+  featured: boolean
+}
+
+export const MEETINGS: MockMeeting[] = [
+  {
+    id: 'mt1',
+    title: '카페 점주 월간 정기 모임 — 5월',
+    description:
+      '서울·경기 카페 점주 정기 모임. 이번 달은 SNS 마케팅 사례 공유 + 신규 메뉴 시식 + 친목 시간으로 진행합니다. 점주 누구나 참여 가능.',
+    type: 'offline',
+    location: '서울 마포 연남동 카페 모먼트',
+    region: '서울',
+    date: '2026-05-18',
+    startTime: '19:00',
+    endTime: '21:30',
+    hostId: 'u2',
+    channelType: 'category',
+    channelKey: 'cafe',
+    maxParticipants: 24,
+    currentParticipants: 18,
+    isFree: false,
+    feeWon: 20000,
+    agenda: [
+      { time: '19:00', topic: '오프닝 + 자기소개' },
+      { time: '19:20', topic: 'SNS 마케팅 사례 5건 — 박지영 점주' },
+      { time: '20:20', topic: '신규 메뉴 시식 + 피드백' },
+      { time: '21:00', topic: '자유 친목 시간' },
+    ],
+    tags: ['카페', '서울', 'SNS', '월간정기'],
+    status: 'upcoming',
+    featured: true,
+  },
+  {
+    id: 'mt2',
+    title: '치킨 가맹 점주 모임 — 본사 협상 대비 회의',
+    description:
+      '본사 광고비 분담률 인상 통보에 대응하기 위해 점주 협의회 차원에서 모입니다. 협상 카드 정리 + 변호사 자문 시간 포함.',
+    type: 'hybrid',
+    location: '서울 강남 + Zoom 동시 진행',
+    region: '서울',
+    date: '2026-05-15',
+    startTime: '20:00',
+    endTime: '22:00',
+    hostId: 'u4',
+    channelType: 'category',
+    channelKey: 'chicken',
+    maxParticipants: 60,
+    currentParticipants: 42,
+    isFree: true,
+    feeWon: 0,
+    agenda: [
+      { time: '20:00', topic: '현황 공유 + 광고비 인상 통보 분석' },
+      { time: '20:40', topic: '협상 카드 정리 (15년차 컨설턴트 진행)' },
+      { time: '21:20', topic: '변호사 Q&A (가맹사업법 자문)' },
+      { time: '21:50', topic: '점주 협의회 다음 행동 계획' },
+    ],
+    tags: ['치킨', '본사협상', '광고비', '협의회'],
+    status: 'upcoming',
+    featured: true,
+  },
+  {
+    id: 'mt3',
+    title: '자영업 회계·세무 워크샵 — 5월 부가세 신고 대비',
+    description:
+      '회계사가 직접 진행하는 부가세 신고 실전 워크샵. 본인 매장 자료 가져오시면 함께 신고 화면 체크.',
+    type: 'offline',
+    location: '서울 강남 위워크',
+    region: '서울',
+    date: '2026-05-22',
+    startTime: '14:00',
+    endTime: '17:00',
+    hostId: 'u1',
+    channelType: 'general',
+    channelKey: 'general',
+    maxParticipants: 16,
+    currentParticipants: 12,
+    isFree: false,
+    feeWon: 50000,
+    agenda: [
+      { time: '14:00', topic: '부가세 신고 흐름 강의' },
+      { time: '15:00', topic: '본인 매장 자료로 신고 실습' },
+      { time: '16:30', topic: '개별 Q&A' },
+    ],
+    tags: ['세무', '부가세', '회계', '실습'],
+    status: 'upcoming',
+    featured: false,
+  },
+  {
+    id: 'mt4',
+    title: '야간 운영 매장 노하우 공유회',
+    description:
+      '주점·심야 식당·야간 카페 점주가 모여 인력 관리·매출 안정화·소음 민원 대응 노하우 공유.',
+    type: 'offline',
+    location: '부산 서면 포차모임 매장',
+    region: '부산',
+    date: '2026-05-20',
+    startTime: '22:00',
+    endTime: '24:00',
+    hostId: 'u13',
+    channelType: 'category',
+    channelKey: 'bar',
+    maxParticipants: 12,
+    currentParticipants: 9,
+    isFree: false,
+    feeWon: 15000,
+    agenda: [
+      { time: '22:00', topic: '야간 인력 채용 노하우' },
+      { time: '22:40', topic: '심야 자동화 사례' },
+      { time: '23:20', topic: '소음 민원 대응 + 자유 토론' },
+    ],
+    tags: ['주점', '야간운영', '부산', '인력'],
+    status: 'upcoming',
+    featured: false,
+  },
+  {
+    id: 'mt5',
+    title: '1인 매장 운영자 줌 모임 — 매월 둘째 주 금요일',
+    description:
+      '1인 운영하는 카페·분식·디저트 점주 정기 줌 모임. 매장 비우지 않고 참여 가능. 매번 1-2가지 주제로 30분 발제 + 30분 토론.',
+    type: 'online',
+    location: '온라인 (Zoom)',
+    region: '전국',
+    date: '2026-05-15',
+    startTime: '14:00',
+    endTime: '15:00',
+    hostId: 'u2',
+    channelType: 'general',
+    channelKey: 'general',
+    maxParticipants: 30,
+    currentParticipants: 22,
+    isFree: true,
+    feeWon: 0,
+    agenda: [
+      { time: '14:00', topic: '인사 + 이달의 매출 공유' },
+      { time: '14:15', topic: '오늘의 주제: 1인 운영자 휴무 만드는 법' },
+      { time: '14:45', topic: '자유 Q&A' },
+    ],
+    tags: ['1인운영', '온라인', '정기모임'],
+    status: 'upcoming',
+    featured: true,
+  },
+  {
+    id: 'mt6',
+    title: '광주 분식 점주 모임',
+    description: '광주 지역 분식 점주끼리 모이는 첫 번째 자리. 학원가·주거지 입지 운영 비교 토론.',
+    type: 'offline',
+    location: '광주 동구 충장로',
+    region: '광주',
+    date: '2026-05-19',
+    startTime: '19:30',
+    endTime: '21:30',
+    hostId: 'u12',
+    channelType: 'region',
+    channelKey: 'gwangju',
+    maxParticipants: 10,
+    currentParticipants: 6,
+    isFree: false,
+    feeWon: 10000,
+    agenda: [
+      { time: '19:30', topic: '자기소개 + 매장 소개' },
+      { time: '20:00', topic: '학원가 vs 주거지 입지 운영 비교' },
+      { time: '21:00', topic: '식자재·메뉴 노하우 자유 토론' },
+    ],
+    tags: ['분식', '광주', '지역모임'],
+    status: 'upcoming',
+    featured: false,
+  },
+  {
+    id: 'mt7',
+    title: '카페·디저트 점주 SNS 마케팅 스터디',
+    description: '6주 SNS 마케팅 스터디 모임. 매주 화요일 저녁, 인스타·블로그·릴스 실전 위주 학습.',
+    type: 'offline',
+    location: '서울 강남역 인근 카페',
+    region: '서울',
+    date: '2026-05-21',
+    startTime: '20:00',
+    endTime: '21:30',
+    hostId: 'u6',
+    channelType: 'category',
+    channelKey: 'cafe',
+    maxParticipants: 8,
+    currentParticipants: 8,
+    isFree: false,
+    feeWon: 40000,
+    agenda: [
+      { time: '20:00', topic: '1주차: 인스타그램 SEO 기본' },
+      { time: '20:45', topic: '본인 매장 인스타 진단' },
+      { time: '21:15', topic: '다음 주 과제 안내' },
+    ],
+    tags: ['카페', 'SNS', '스터디', '6주과정'],
+    status: 'closed',
+    featured: false,
+  },
+  {
+    id: 'mt8',
+    title: '가맹사업법 분쟁 사례 강연 — 변호사 주관',
+    description: '권리금 분쟁·인테리어 재시공·영업지역 보호 등 실제 분쟁 사례 10건 분석 강연.',
+    type: 'offline',
+    location: '서울 종로구 광화문',
+    region: '서울',
+    date: '2026-05-25',
+    startTime: '19:00',
+    endTime: '21:30',
+    hostId: 'u8',
+    channelType: 'general',
+    channelKey: 'general',
+    maxParticipants: 50,
+    currentParticipants: 31,
+    isFree: false,
+    feeWon: 30000,
+    agenda: [
+      { time: '19:00', topic: '권리금 분쟁 사례 3건' },
+      { time: '19:50', topic: '인테리어 재시공 분쟁 3건' },
+      { time: '20:40', topic: '영업지역 보호 분쟁 4건 + Q&A' },
+    ],
+    tags: ['가맹사업법', '법률', '변호사', '강연'],
+    status: 'upcoming',
+    featured: false,
+  },
+]
+
+export const UPCOMING_MEETINGS = MEETINGS.filter((m) => m.status === 'upcoming').sort((a, b) =>
+  a.date.localeCompare(b.date),
+)
+export const FEATURED_MEETINGS = MEETINGS.filter((m) => m.featured && m.status === 'upcoming')
+
+export const MEETING_TYPE_LABEL: Record<MeetingType, string> = {
+  offline: '오프라인',
+  online: '온라인',
+  hybrid: '온·오프 동시',
+}
+
 export function postsByChannel(channelType: ChannelType, channelKey: string): MockPost[] {
   return POSTS.filter((p) => p.channelType === channelType && p.channelKey === channelKey).sort(
     (a, b) => b.createdAt.localeCompare(a.createdAt),
