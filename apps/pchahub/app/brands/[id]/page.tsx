@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { BrandActions } from '@/components/brand-actions'
 import { BRANDS, type MockBrand } from '@/lib/mock-data'
 import {
   getBrandDetail,
@@ -192,6 +193,9 @@ function BrandHero({
               {brand.categoryLabel} · {detail.hq.companyName}
             </div>
             <p className="mt-3 max-w-2xl text-gray-700">{brand.description}</p>
+            <div className="mt-5">
+              <BrandActions brandId={brand.id} brandName={brand.name} />
+            </div>
           </div>
         </div>
 
