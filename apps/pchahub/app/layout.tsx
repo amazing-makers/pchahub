@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 const navItems = [
   { href: '/brands', label: '브랜드 검색' },
+  { href: '/themes', label: '테마별' },
   { href: '/listings', label: '매물' },
   { href: '/community', label: '커뮤니티' },
   { href: '/scanner', label: '창업 스캐너' },
   { href: '/calculator', label: '수익 계산기' },
-  { href: '/inquiry', label: '상담 신청' },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,6 +26,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           navItems={navItems}
           showRole={false}
           showSiteSwitcher={false}
+          rightSlot={
+            <div className="flex items-center gap-1">
+              <a
+                href="/for-brands"
+                className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 sm:inline-flex"
+              >
+                본사 회원
+              </a>
+              <a
+                href="/inquiry"
+                className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-white sm:inline-flex"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                상담 신청
+              </a>
+            </div>
+          }
         />
         <div className="flex-1">{children}</div>
         <Footer platform="pchahub" />

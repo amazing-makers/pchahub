@@ -1,0 +1,134 @@
+import { notFound } from 'next/navigation'
+import { AlertCircle, ArrowRight, ChevronRight } from 'lucide-react'
+import { Card, CardContent } from '@amakers/ui'
+import { BrandCard } from '@/components/brand-card'
+import { ThemeIcon } from '@/components/theme-icon'
+import { THEMES, THEME_COUNTS, brandsForTheme } from '@/lib/themes'
+
+export function generateStaticParams() {
+  return THEMES.map((t) => ({ type: t.key }))
+}
+
+interface ThemePageProps {
+  params: { type: string }
+}
+
+export default function ThemePage({ params }: ThemePageProps) {
+  const theme = THEMES.find((t) => t.key === params.type)
+  if (!theme) notFound()
+
+  const brands = brandsForTheme(theme.key)
+  const otherThemes = THEMES.filter((t) => t.key !== theme.key).slice(0, 4)
+
+  return (
+    <main className="bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto py-10">
+          <nav className="flex items-center gap-1 text-sm text-gray-500">
+            <a href="/themes" className="hover:text-gray-900">
+              테마별
+            </a>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="text-gray-700">{theme.label}</span>
+          </nav>
+
+          <div className="mt-6 flex items-start gap-4">
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              <ThemeIcon iconKey={theme.iconKey} className="h-7 w-7 text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-h2 font-bold text-gray-900">{theme.label}</h1>
+              <p className="mt-1 text-gray-600">{theme.description}</p>
+            </div>
+          </div>
+
+          <p className="mt-6 max-w-3xl text-base leading-relaxed text-gray-700">{theme.guide}</p>
+        </div>
+      </section>
+
+      <div className="container mx-auto py-8 space-y-8">
+        {/* Considerations */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+              <h2 className="text-base font-semibold text-gray-900">
+                이 테마 선택 시 고려할 점
+              </h2>
+            </div>
+            <ul className="mt-4 space-y-2.5">
+              {theme.considerations.map((c, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700">
+                  <span
+                    className="mt-2 inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ background: 'var(--brand-primary)' }}
+                  />
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Matched brands */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-h4 font-semibold text-gray-900">
+              이 테마에 맞는 {brands.length}개 브랜드
+            </h2>
+            <a
+              href="/brands"
+              className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+            >
+              전체 브랜드 보기 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          {brands.length === 0 ? (
+            <Card>
+              <CardContent className="p-10 text-center text-sm text-gray-500">
+                이 테마에 해당하는 브랜드가 아직 없습니다.
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {brands.map((b) => (
+                <BrandCard key={b.id} brand={b} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Related themes */}
+        <div>
+          <h2 className="text-h4 font-semibold text-gray-900">다른 테마</h2>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {otherThemes.map((t) => (
+              <a key={t.key} href={`/themes/${t.key}`} className="group">
+                <Card className="h-full transition-shadow hover:shadow-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 group-hover:bg-gray-200">
+                        <ThemeIcon iconKey={t.iconKey} className="h-4 w-4 text-gray-700" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-semibold text-gray-900">
+                          {t.label}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {THEME_COUNTS[t.key] ?? 0}개 브랜드
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
+  )
+}
