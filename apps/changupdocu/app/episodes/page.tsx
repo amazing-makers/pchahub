@@ -1,0 +1,99 @@
+import { EpisodeCard } from '@/components/episode-card'
+import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
+
+interface EpisodesPageProps {
+  searchParams: { category?: string; sort?: string }
+}
+
+export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
+  const { category, sort = 'recent' } = searchParams
+
+  let results = EPISODES.slice()
+  if (category) results = results.filter((e) => e.category === category)
+  results = [...results].sort((a, b) => {
+    switch (sort) {
+      case 'views':
+        return b.views - a.views
+      case 'likes':
+        return b.likes - a.likes
+      default:
+        return b.publishedAt.localeCompare(a.publishedAt)
+    }
+  })
+
+  const categories: Array<EpisodeCategory | ''> = ['', 'success', 'failure', 'brand', 'trend', 'interview']
+
+  return (
+    <main className="bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto py-8">
+          <h1 className="text-h3 font-bold text-gray-900">
+            {category ? `${CATEGORY_LABEL[category as EpisodeCategory]} 에피소드` : '전체 에피소드'}
+          </h1>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            성공·실패·브랜드·트렌드·인터뷰. 자영업·가맹의 실제 데이터와 이야기.
+          </p>
+
+          {/* Category chips */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {categories.map((c) => (
+              <a
+                key={c || 'all'}
+                href={c ? `/episodes?category=${c}` : '/episodes'}
+                className={
+                  'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
+                  ((c === '' && !category) || category === c
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
+                }
+              >
+                {c === '' ? '전체' : CATEGORY_LABEL[c]}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="container mx-auto py-8">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="text-sm text-gray-700">{results.length}편</div>
+          <div className="flex gap-2 text-sm">
+            {SORT_OPTIONS.map((s) => (
+              <a
+                key={s.key}
+                href={makeHref(searchParams, s.key)}
+                className={
+                  'rounded-md px-2 py-1 transition-colors ' +
+                  (sort === s.key
+                    ? 'bg-gray-900 text-white'
+                    : 'text-gray-600 hover:bg-gray-100')
+                }
+              >
+                {s.label}
+              </a>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {results.map((e) => (
+            <EpisodeCard key={e.id} episode={e} />
+          ))}
+        </div>
+      </div>
+    </main>
+  )
+}
+
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신순' },
+  { key: 'views', label: '조회 많은 순' },
+  { key: 'likes', label: '좋아요 많은 순' },
+]
+
+function makeHref(current: EpisodesPageProps['searchParams'], sort: string) {
+  const params = new URLSearchParams()
+  if (current.category) params.set('category', current.category)
+  if (sort !== 'recent') params.set('sort', sort)
+  const qs = params.toString()
+  return qs ? `/episodes?${qs}` : '/episodes'
+}
