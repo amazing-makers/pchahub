@@ -48,17 +48,27 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
       {/* Page header */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h3 font-bold text-gray-900">
-            {categoryLabel ? `${categoryLabel} 브랜드` : '전체 브랜드'}
-            {q && (
-              <span className="ml-2 text-base font-normal text-gray-500">
-                ‘{q}’ 검색 결과
-              </span>
-            )}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            협회 등록 정보공개서 기준 · 총 {BRANDS.length}개 브랜드
-          </p>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">
+                {categoryLabel ? `${categoryLabel} 브랜드` : '전체 브랜드'}
+                {q && (
+                  <span className="ml-2 text-base font-normal text-gray-500">
+                    ‘{q}’ 검색 결과
+                  </span>
+                )}
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">
+                협회 등록 정보공개서 기준 · 총 {BRANDS.length}개 브랜드
+              </p>
+            </div>
+            <a
+              href="/brands/compare"
+              className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              브랜드 비교하기 →
+            </a>
+          </div>
         </div>
       </section>
 

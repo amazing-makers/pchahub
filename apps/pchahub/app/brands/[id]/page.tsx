@@ -729,6 +729,12 @@ function CTASidebar({
             </Button>
           </a>
           <a
+            href={`/brands/compare?ids=${brand.id}`}
+            className="block text-center text-sm text-gray-600 hover:text-gray-900"
+          >
+            다른 브랜드와 비교하기 →
+          </a>
+          <a
             href={`/scanner?seedBrand=${brand.id}`}
             className="block text-center text-xs text-gray-500 hover:text-gray-700"
           >
