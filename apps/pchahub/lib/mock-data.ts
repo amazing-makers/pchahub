@@ -31,6 +31,8 @@ export interface MockBrand {
   featured: boolean
   /** Rough new-store growth rate this year (%). */
   growthRate: number
+  /** HQ headquarters region (시·도). Used for /brands region filter. */
+  hqRegion: string
   /** Hero image URL — real photo for brand card / detail page. */
   heroImage: string
 }
@@ -48,7 +50,7 @@ export const CATEGORIES: MockCategory[] = [
   { key: 'education', label: '교육', brandCount: 41 },
 ]
 
-type RawBrand = Omit<MockBrand, 'heroImage'>
+type RawBrand = Omit<MockBrand, 'heroImage' | 'hqRegion'> & { hqRegion?: string }
 
 const RAW_BRANDS: RawBrand[] = [
   {
@@ -233,8 +235,27 @@ const RAW_BRANDS: RawBrand[] = [
   },
 ]
 
+/** Brand HQ region map. Used by the /brands region filter and brand detail
+ *  page. Real KFA disclosure address per brand will replace this once Supabase
+ *  is connected. */
+const BRAND_HQ_REGION: Record<string, string> = {
+  b1: '서울',
+  b2: '서울',
+  b3: '경기',
+  b4: '서울',
+  b5: '경기',
+  b6: '서울',
+  b7: '인천',
+  b8: '서울',
+  b9: '경기',
+  b10: '서울',
+  b11: '부산',
+  b12: '서울',
+}
+
 export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => ({
   ...b,
+  hqRegion: b.hqRegion ?? BRAND_HQ_REGION[b.id] ?? '서울',
   heroImage: brandImageSet(b.id, b.category).hero,
 }))
 

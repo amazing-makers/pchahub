@@ -190,7 +190,7 @@ function BrandHero({
               )}
             </div>
             <div className="mt-1.5 text-sm text-gray-500">
-              {brand.categoryLabel} · {detail.hq.companyName}
+              {brand.categoryLabel} · {detail.hq.companyName} · 본사 {brand.hqRegion}
             </div>
             <p className="mt-3 max-w-2xl text-gray-700">{brand.description}</p>
             <div className="mt-5">
@@ -762,6 +762,22 @@ function CTASidebar({
             className="block text-center text-xs text-gray-500 hover:text-gray-700"
           >
             나에게 맞는 브랜드인지 확인 →
+          </a>
+        </CardContent>
+      </Card>
+
+      <Card className="border-gray-200 bg-amber-50">
+        <CardContent className="p-5">
+          <div className="text-xs font-semibold uppercase tracking-wider text-amber-900">
+            점주이신가요?
+          </div>
+          <p className="mt-1.5 text-sm text-amber-900">
+            실제 운영 경험을 공유해주시면 예비 가맹점주의 의사결정에 큰 도움이 됩니다.
+          </p>
+          <a href={`/mypage/reviews/new?brand=${brand.id}`} className="mt-3 block">
+            <Button size="md" variant="outline" className="w-full">
+              {brand.name} 후기 작성하기
+            </Button>
           </a>
         </CardContent>
       </Card>

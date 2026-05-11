@@ -5,16 +5,22 @@ import { LISTINGS } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
 
 interface ListingsPageProps {
-  searchParams: { category?: string; type?: string }
+  searchParams: { category?: string; type?: string; region?: string }
 }
+
+const REGION_OPTIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산']
 
 export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const active = searchParams.category
   const activeType = searchParams.type
+  const activeRegion = searchParams.region
   let filtered = LISTINGS
   if (active) filtered = filtered.filter((l) => l.fitCategories.includes(active))
   if (activeType === '양도' || activeType === '신규임대') {
     filtered = filtered.filter((l) => l.listingType === activeType)
+  }
+  if (activeRegion) {
+    filtered = filtered.filter((l) => l.region === activeRegion)
   }
 
   const transferCount = LISTINGS.filter((l) => l.listingType === '양도').length
@@ -44,7 +50,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
 
       <div className="container mx-auto py-8">
         <div className="mb-3 flex flex-wrap gap-2 text-sm">
-          <FilterChip href={pathFor(undefined, activeType)} active={!active}>
+          <FilterChip href={pathFor({ ...searchParams, category: undefined })} active={!active}>
             전체 업종 ({LISTINGS.length})
           </FilterChip>
           {CATEGORIES.map((c) => {
@@ -53,7 +59,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             return (
               <FilterChip
                 key={c.key}
-                href={pathFor(c.key, activeType)}
+                href={pathFor({ ...searchParams, category: c.key })}
                 active={active === c.key}
               >
                 {c.label} ({count})
@@ -62,14 +68,36 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           })}
         </div>
 
+        <div className="mb-3 flex flex-wrap gap-2 text-sm">
+          <FilterChip href={pathFor({ ...searchParams, region: undefined })} active={!activeRegion}>
+            전국
+          </FilterChip>
+          {REGION_OPTIONS.map((r) => {
+            const count = LISTINGS.filter((l) => l.region === r).length
+            if (count === 0) return null
+            return (
+              <FilterChip
+                key={r}
+                href={pathFor({ ...searchParams, region: r })}
+                active={activeRegion === r}
+              >
+                {r} ({count})
+              </FilterChip>
+            )
+          })}
+        </div>
+
         <div className="mb-5 flex flex-wrap gap-2 text-sm">
-          <FilterChip href={pathFor(active, undefined)} active={!activeType}>
+          <FilterChip href={pathFor({ ...searchParams, type: undefined })} active={!activeType}>
             전체 유형
           </FilterChip>
-          <FilterChip href={pathFor(active, '양도')} active={activeType === '양도'}>
+          <FilterChip href={pathFor({ ...searchParams, type: '양도' })} active={activeType === '양도'}>
             양도 ({transferCount})
           </FilterChip>
-          <FilterChip href={pathFor(active, '신규임대')} active={activeType === '신규임대'}>
+          <FilterChip
+            href={pathFor({ ...searchParams, type: '신규임대' })}
+            active={activeType === '신규임대'}
+          >
             신규임대 ({newCount})
           </FilterChip>
         </div>
@@ -109,11 +137,12 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   )
 }
 
-function pathFor(category: string | undefined, type: string | undefined): string {
-  const params = new URLSearchParams()
-  if (category) params.set('category', category)
-  if (type) params.set('type', type)
-  const qs = params.toString()
+function pathFor(params: { category?: string; type?: string; region?: string }): string {
+  const usp = new URLSearchParams()
+  if (params.category) usp.set('category', params.category)
+  if (params.type) usp.set('type', params.type)
+  if (params.region) usp.set('region', params.region)
+  const qs = usp.toString()
   return qs ? `/listings?${qs}` : '/listings'
 }
 

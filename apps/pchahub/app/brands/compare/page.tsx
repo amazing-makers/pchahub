@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Plus, X } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { CompareRestoreBanner } from '@/components/compare-redirect'
 import { BRANDS, type MockBrand } from '@/lib/mock-data'
 import {
   getBrandDetail,
@@ -52,7 +53,10 @@ export default function ComparePage({ searchParams }: ComparePageProps) {
 
       <div className="container mx-auto py-8">
         {entries.length === 0 ? (
-          <EmptyState />
+          <>
+            <CompareRestoreBanner />
+            <EmptyState />
+          </>
         ) : (
           <>
             <CompareTable entries={entries} ids={ids} />

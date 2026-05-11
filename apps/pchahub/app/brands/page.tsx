@@ -8,11 +8,14 @@ interface BrandsPageProps {
 }
 
 export default function BrandsPage({ searchParams }: BrandsPageProps) {
-  const { category: activeCategory, q, sort = 'recommended' } = searchParams
+  const { category: activeCategory, region: activeRegion, q, sort = 'recommended' } = searchParams
 
   let results = BRANDS.filter((b) => !b.featured)
   if (activeCategory) {
     results = results.filter((b) => b.category === activeCategory)
+  }
+  if (activeRegion) {
+    results = results.filter((b) => b.hqRegion === activeRegion)
   }
   if (q) {
     const needle = q.toLowerCase()
@@ -97,6 +100,27 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
               </div>
             </FilterGroup>
 
+            <FilterGroup title="본사 지역">
+              <div className="space-y-1">
+                <FilterLink href={makeHref(searchParams, { region: undefined })} active={!activeRegion}>
+                  전국 ({BRANDS.length})
+                </FilterLink>
+                {REGION_OPTIONS.map((r) => {
+                  const count = BRANDS.filter((b) => b.hqRegion === r).length
+                  if (count === 0) return null
+                  return (
+                    <FilterLink
+                      key={r}
+                      href={makeHref(searchParams, { region: r })}
+                      active={activeRegion === r}
+                    >
+                      {r} ({count})
+                    </FilterLink>
+                  )
+                })}
+              </div>
+            </FilterGroup>
+
             <FilterGroup title="정렬">
               <div className="space-y-1">
                 {SORT_OPTIONS.map((s) => (
@@ -170,6 +194,10 @@ const SORT_OPTIONS = [
   { key: 'cost-asc', label: '창업비 낮은 순' },
   { key: 'cost-desc', label: '창업비 높은 순' },
   { key: 'stores-desc', label: '매장 수 많은 순' },
+]
+
+const REGION_OPTIONS = [
+  '서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산',
 ]
 
 function makeHref(
