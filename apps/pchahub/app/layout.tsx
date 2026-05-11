@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Header, Footer } from '@amakers/ui'
+import { Header, Footer, type HeaderAction } from '@amakers/ui'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -17,6 +17,11 @@ const navItems = [
   { href: '/calculator', label: '수익 계산기' },
 ]
 
+const actions: HeaderAction[] = [
+  { href: '/for-brands', label: '본사 회원' },
+  { href: '/inquiry', label: '상담 신청', variant: 'primary' },
+]
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
@@ -24,25 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header
           platform="pchahub"
           navItems={navItems}
+          actions={actions}
           showRole={false}
           showSiteSwitcher={false}
-          rightSlot={
-            <div className="flex items-center gap-1">
-              <a
-                href="/for-brands"
-                className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 sm:inline-flex"
-              >
-                본사 회원
-              </a>
-              <a
-                href="/inquiry"
-                className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-white sm:inline-flex"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                상담 신청
-              </a>
-            </div>
-          }
         />
         <div className="flex-1">{children}</div>
         <Footer platform="pchahub" />

@@ -1,33 +1,48 @@
 import * as React from 'react'
 import { Search } from 'lucide-react'
+import { cn } from '@amakers/utils'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SiteSwitcher } from './site-switcher'
+import { MobileMenu } from './mobile-menu'
 
 export interface HeaderNavItem {
   href: string
   label: string
 }
 
+export interface HeaderAction {
+  href: string
+  label: string
+  /** Visual emphasis. Defaults to plain link. */
+  variant?: 'default' | 'primary'
+}
+
 export interface HeaderProps {
   platform: PlatformKey
   navItems?: HeaderNavItem[]
+  /** Right-side CTAs. Rendered on desktop AND inside the mobile drawer. */
+  actions?: HeaderAction[]
   showSearch?: boolean
   /** Show the small "· {role}" label next to the brand name. Default true. */
   showRole?: boolean
   /** Show the 9-site dropdown switcher in the header. Default true. */
   showSiteSwitcher?: boolean
+  /** Escape hatch for arbitrary right-side content; takes precedence over `actions`. */
   rightSlot?: React.ReactNode
 }
 
 export function Header({
   platform,
   navItems = [],
+  actions,
   showSearch = false,
   showRole = true,
   showSiteSwitcher = true,
   rightSlot,
 }: HeaderProps) {
   const brand = platformColors[platform]
+
+  const resolvedRight = rightSlot ?? (actions ? <DesktopActions actions={actions} /> : <DefaultRight />)
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/90 backdrop-blur">
@@ -70,16 +85,45 @@ export function Header({
             </button>
           )}
           {showSiteSwitcher && <SiteSwitcher current={platform} />}
-          {rightSlot ?? (
-            <a
-              href="/auth/signin"
-              className="hidden items-center rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 sm:inline-flex"
-            >
-              로그인
-            </a>
-          )}
+          <div className="hidden md:flex md:items-center md:gap-1">{resolvedRight}</div>
+          <MobileMenu navItems={navItems} actions={actions} />
         </div>
       </div>
     </header>
+  )
+}
+
+function DesktopActions({ actions }: { actions: HeaderAction[] }) {
+  return (
+    <>
+      {actions.map((a) => (
+        <a
+          key={a.href}
+          href={a.href}
+          className={cn(
+            'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+            a.variant === 'primary'
+              ? 'text-white hover:opacity-90'
+              : 'text-gray-700 hover:bg-gray-100',
+          )}
+          style={
+            a.variant === 'primary' ? { background: 'var(--brand-primary)' } : undefined
+          }
+        >
+          {a.label}
+        </a>
+      ))}
+    </>
+  )
+}
+
+function DefaultRight() {
+  return (
+    <a
+      href="/auth/signin"
+      className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+    >
+      로그인
+    </a>
   )
 }

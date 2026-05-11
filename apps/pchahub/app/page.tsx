@@ -1,10 +1,10 @@
-import { ArrowRight, Building2, CheckCircle2, Users } from 'lucide-react'
+import { ArrowRight, Building2, CheckCircle2, Flame, Users } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
-import { CATEGORIES, FEATURED_BRANDS, RECRUITING_BRANDS } from '@/lib/mock-data'
+import { CATEGORIES, FEATURED_BRANDS, RECRUITING_BRANDS, TRENDING_BRANDS } from '@/lib/mock-data'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -86,6 +86,32 @@ export default function HomePage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {CATEGORIES.map((c) => (
             <CategoryChip key={c.key} category={c} />
+          ))}
+        </div>
+      </section>
+
+      {/* Trending */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <Flame className="h-6 w-6 text-orange-500" />
+              지금 뜨고 있는 브랜드
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              최근 매장 성장률과 검색량 기준 · 지난 7일
+            </p>
+          </div>
+          <a
+            href="/brands?sort=growth-desc"
+            className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex"
+          >
+            성장률 높은 순 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TRENDING_BRANDS.map((b) => (
+            <BrandCard key={b.id} brand={b} />
           ))}
         </div>
       </section>

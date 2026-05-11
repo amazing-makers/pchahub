@@ -229,3 +229,8 @@ export const BRANDS: MockBrand[] = [
 
 export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)
+
+/** Brands currently trending — combined signal of recent growth + store base. */
+export const TRENDING_BRANDS = [...BRANDS]
+  .sort((a, b) => b.growthRate * Math.log(b.storeCount + 1) - a.growthRate * Math.log(a.storeCount + 1))
+  .slice(0, 6)
