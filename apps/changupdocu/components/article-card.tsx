@@ -13,15 +13,17 @@ export function ArticleCard({ article, compact = false }: ArticleCardProps) {
     <a href={`/magazine/${article.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
         <CardContent className="p-0">
-          <div
-            className={'relative w-full overflow-hidden ' + (compact ? 'h-28' : 'h-40')}
-            style={{
-              background: `linear-gradient(135deg, ${article.coverColors[0]}, ${article.coverColors[1] ?? article.coverColors[0]})`,
-            }}
-            aria-hidden
-          >
+          <div className={'relative w-full overflow-hidden bg-gray-100 ' + (compact ? 'h-28' : 'h-44')}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute left-3 top-3">
-              <Badge variant="default" className="bg-white/90 text-gray-900">
+              <Badge variant="default" className="bg-white/95 text-gray-900">
                 {article.category}
               </Badge>
             </div>
@@ -34,10 +36,12 @@ export function ArticleCard({ article, compact = false }: ArticleCardProps) {
             )}
 
             <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-              <span
-                className="h-5 w-5 shrink-0 rounded-full"
-                style={{ background: article.authorAvatarColor }}
-                aria-hidden
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={article.authorAvatar}
+                alt={article.authorName}
+                className="h-6 w-6 shrink-0 rounded-full object-cover"
+                loading="lazy"
               />
               <span className="truncate">{article.authorName}</span>
               <span>·</span>

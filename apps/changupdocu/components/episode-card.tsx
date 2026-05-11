@@ -16,13 +16,17 @@ export function EpisodeCard({ episode, large = false }: EpisodeCardProps) {
         <CardContent className="p-0">
           <div
             className={
-              'relative w-full overflow-hidden ' + (large ? 'h-56 sm:h-64' : 'h-40')
+              'relative w-full overflow-hidden bg-gray-100 ' + (large ? 'h-56 sm:h-64' : 'h-40')
             }
-            style={{
-              background: `linear-gradient(135deg, ${episode.thumbnailColors[0]}, ${episode.thumbnailColors[1] ?? episode.thumbnailColors[0]})`,
-            }}
-            aria-hidden
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={episode.thumbnailImage}
+              alt={episode.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/40" />
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
               <Badge
                 variant="default"
@@ -36,7 +40,7 @@ export function EpisodeCard({ episode, large = false }: EpisodeCardProps) {
 
             {/* Play button */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="rounded-full bg-white/90 p-3 shadow-lg transition-transform group-hover:scale-110">
+              <div className="rounded-full bg-white/95 p-3 shadow-lg transition-transform group-hover:scale-110">
                 <PlayCircle className="h-8 w-8 text-gray-900" />
               </div>
             </div>

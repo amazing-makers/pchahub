@@ -20,13 +20,11 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
   return (
     <main className="bg-white">
       {/* Hero cover */}
-      <div
-        className="relative h-56 w-full sm:h-72"
-        style={{
-          background: `linear-gradient(135deg, ${article.coverColors[0]}, ${article.coverColors[1] ?? article.coverColors[0]})`,
-        }}
-        aria-hidden
-      />
+      <div className="relative h-72 w-full overflow-hidden bg-gray-100 sm:h-96">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={article.coverImage} alt={article.title} className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/30" />
+      </div>
 
       <section className="border-b border-gray-100 bg-white">
         <div className="container mx-auto py-8">
@@ -43,13 +41,12 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
 
             <div className="mt-6 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white"
-                  style={{ background: article.authorAvatarColor }}
-                  aria-hidden
-                >
-                  {article.authorName.charAt(0)}
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={article.authorAvatar}
+                  alt={article.authorName}
+                  className="h-12 w-12 shrink-0 rounded-full object-cover"
+                />
                 <div className="text-sm">
                   <div className="font-semibold text-gray-900">{article.authorName}</div>
                   <div className="text-xs text-gray-500">{article.authorRole}</div>

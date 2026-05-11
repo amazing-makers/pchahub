@@ -35,19 +35,16 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
     <main className="bg-gray-50">
       {/* Video player placeholder */}
       <section className="bg-black">
-        <div
-          className="relative aspect-video w-full"
-          style={{
-            background: `linear-gradient(135deg, ${ep.thumbnailColors[0]}, ${ep.thumbnailColors[1] ?? ep.thumbnailColors[0]})`,
-          }}
-          aria-hidden
-        >
+        <div className="relative aspect-video w-full overflow-hidden bg-gray-900">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ep.thumbnailImage} alt={ep.title} className="h-full w-full object-cover opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="rounded-full bg-white/90 p-5 shadow-lg">
+            <div className="rounded-full bg-white/95 p-5 shadow-2xl transition-transform hover:scale-105 cursor-pointer">
               <PlayCircle className="h-12 w-12 text-gray-900" />
             </div>
           </div>
-          <div className="absolute bottom-4 right-4 rounded bg-black/70 px-3 py-1 text-sm font-medium text-white">
+          <div className="absolute bottom-4 right-4 rounded bg-black/80 px-3 py-1 text-sm font-medium text-white">
             {ep.duration}
           </div>
         </div>

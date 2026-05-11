@@ -1,5 +1,7 @@
 // Mock data for changupdocu — franchise documentaries + magazine.
 
+import { authorAvatarFor, coverPhotoFor, magazineCoverFor } from './media-images'
+
 export type EpisodeCategory = 'success' | 'failure' | 'brand' | 'trend' | 'interview'
 
 export interface MockEpisode {
@@ -25,6 +27,8 @@ export interface MockEpisode {
   tags: string[]
   featured: boolean
   trending: boolean
+  /** Real thumbnail image — auto-filled. */
+  thumbnailImage: string
 }
 
 export interface MockArticle {
@@ -49,6 +53,10 @@ export interface MockArticle {
   keyPoints: string[]
   tags: string[]
   featured: boolean
+  /** Real cover image — auto-filled. */
+  coverImage: string
+  /** Real author avatar — auto-filled. */
+  authorAvatar: string
 }
 
 export const CATEGORY_LABEL: Record<EpisodeCategory, string> = {
@@ -67,7 +75,9 @@ export const CATEGORY_COLOR: Record<EpisodeCategory, string> = {
   interview: '#8B5CF6',
 }
 
-export const EPISODES: MockEpisode[] = [
+type RawEpisode = Omit<MockEpisode, 'thumbnailImage'>
+
+const RAW_EPISODES: RawEpisode[] = [
   {
     id: 'e1',
     title: '강남에서 5년, 한식 가맹의 진짜 손익',
@@ -282,7 +292,14 @@ export const EPISODES: MockEpisode[] = [
   },
 ]
 
-export const ARTICLES: MockArticle[] = [
+export const EPISODES: MockEpisode[] = RAW_EPISODES.map((e) => ({
+  ...e,
+  thumbnailImage: coverPhotoFor(e.id, e.category),
+}))
+
+type RawArticle = Omit<MockArticle, 'coverImage' | 'authorAvatar'>
+
+const RAW_ARTICLES: RawArticle[] = [
   {
     id: 'a1',
     title: '월매출 3,000만원이 되기까지 — 한 점주의 회계 분석',
@@ -455,6 +472,12 @@ export const ARTICLES: MockArticle[] = [
     featured: false,
   },
 ]
+
+export const ARTICLES: MockArticle[] = RAW_ARTICLES.map((a) => ({
+  ...a,
+  coverImage: magazineCoverFor(a.id),
+  authorAvatar: authorAvatarFor(a.authorName),
+}))
 
 export const FEATURED_EPISODES = EPISODES.filter((e) => e.featured)
 export const TRENDING_EPISODES = EPISODES.filter((e) => e.trending).sort(
