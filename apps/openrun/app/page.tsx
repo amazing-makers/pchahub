@@ -134,13 +134,13 @@ export default function HomePage() {
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-gray-700">{t.quote}</p>
                 <div className="mt-5 flex items-center gap-3 border-t border-gray-100 pt-4">
-                  <span
-                    className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white"
-                    style={{ background: t.avatarColor }}
-                    aria-hidden
-                  >
-                    {t.author.charAt(0)}
-                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={t.avatarUrl}
+                    alt={t.author}
+                    className="h-10 w-10 shrink-0 rounded-full object-cover"
+                    loading="lazy"
+                  />
                   <div className="text-sm">
                     <div className="font-semibold text-gray-900">{t.author}</div>
                     <div className="text-xs text-gray-500">{t.role}</div>

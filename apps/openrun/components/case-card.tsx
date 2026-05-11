@@ -11,15 +11,17 @@ export function CaseCard({ case: c }: CaseCardProps) {
     <a href={`/portfolio/${c.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
         <CardContent className="p-0">
-          <div
-            className="relative h-36 w-full"
-            style={{
-              background: `linear-gradient(135deg, ${c.imageColors[0]}, ${c.imageColors[1] ?? c.imageColors[0]})`,
-            }}
-            aria-hidden
-          >
+          <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={c.coverImage}
+              alt={c.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/60" />
             <div className="absolute left-4 top-4 flex flex-wrap gap-1">
-              <Badge variant="default" className="bg-white/90 text-gray-900">
+              <Badge variant="default" className="bg-white/95 text-gray-900">
                 {c.serviceLabel}
               </Badge>
               {c.featured && (
@@ -28,10 +30,10 @@ export function CaseCard({ case: c }: CaseCardProps) {
             </div>
             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
               <div className="text-white">
-                <div className="text-xs opacity-80">{c.client}</div>
+                <div className="text-xs opacity-90">{c.client}</div>
                 <div className="text-sm font-semibold">{c.industry} · {c.region}</div>
               </div>
-              <ArrowUpRight className="h-5 w-5 text-white opacity-80 group-hover:opacity-100" />
+              <ArrowUpRight className="h-5 w-5 text-white opacity-90 group-hover:opacity-100" />
             </div>
           </div>
 

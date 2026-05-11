@@ -1,5 +1,7 @@
 // Mock data for openrun — franchise marketing agency services.
 
+import { caseImageFor, testimonialAvatarFor } from './campaign-images'
+
 export type ServiceSlug = 'grand-open' | 'recruit' | 'brand-marketing'
 
 export interface MockService {
@@ -49,6 +51,8 @@ export interface MockPortfolioCase {
   metrics: Array<{ label: string; value: string; delta?: string }>
   /** Image accent colors (gradient placeholder) */
   imageColors: string[]
+  /** Real cover photo — auto-filled. */
+  coverImage: string
   /** Tags */
   tags: string[]
   featured: boolean
@@ -61,6 +65,8 @@ export interface MockTestimonial {
   role: string
   brand: string
   avatarColor: string
+  /** Real avatar — auto-filled. */
+  avatarUrl: string
 }
 
 export const SERVICES: MockService[] = [
@@ -183,7 +189,9 @@ export const SERVICE_LABEL: Record<ServiceSlug, string> = {
   'brand-marketing': '본사 마케팅',
 }
 
-export const PORTFOLIO: MockPortfolioCase[] = [
+type RawCase = Omit<MockPortfolioCase, 'coverImage'>
+
+const RAW_PORTFOLIO: RawCase[] = [
   {
     id: 'c1',
     title: '치킨다이스 강남역점 그랜드 오픈 30일 캠페인',
@@ -401,6 +409,11 @@ export const PORTFOLIO: MockPortfolioCase[] = [
   },
 ]
 
+export const PORTFOLIO: MockPortfolioCase[] = RAW_PORTFOLIO.map((c) => ({
+  ...c,
+  coverImage: caseImageFor(c.id, c.industry),
+}))
+
 export const FEATURED_PORTFOLIO = PORTFOLIO.filter((c) => c.featured)
 
 export function serviceBySlug(slug: string): MockService | undefined {
@@ -415,7 +428,9 @@ export function casesByService(slug: ServiceSlug): MockPortfolioCase[] {
   return PORTFOLIO.filter((c) => c.service === slug)
 }
 
-export const TESTIMONIALS: MockTestimonial[] = [
+type RawTestimonial = Omit<MockTestimonial, 'avatarUrl'>
+
+const RAW_TESTIMONIALS: RawTestimonial[] = [
   {
     id: 't1',
     quote:
@@ -444,6 +459,11 @@ export const TESTIMONIALS: MockTestimonial[] = [
     avatarColor: '#EC4899',
   },
 ]
+
+export const TESTIMONIALS: MockTestimonial[] = RAW_TESTIMONIALS.map((t) => ({
+  ...t,
+  avatarUrl: testimonialAvatarFor(t.id),
+}))
 
 export const STATS = {
   campaigns: 480,
