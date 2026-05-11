@@ -18,13 +18,15 @@ export function CourseCard({ course, featured = false }: CourseCardProps) {
       <Card className="h-full transition-shadow hover:shadow-md">
         <CardContent className="p-0">
           {/* Thumbnail */}
-          <div
-            className="relative h-32 w-full overflow-hidden rounded-t-xl"
-            style={{
-              background: `linear-gradient(135deg, ${course.thumbnailColor}, ${course.thumbnailColor}AA)`,
-            }}
-            aria-hidden
-          >
+          <div className="relative h-40 w-full overflow-hidden rounded-t-xl bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={course.thumbnailImage}
+              alt={course.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/40" />
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
               <Badge variant="default" className="bg-white/90 text-gray-900">
                 {category?.label ?? course.category}
@@ -43,7 +45,7 @@ export function CourseCard({ course, featured = false }: CourseCardProps) {
                 <Badge variant="warning">추천</Badge>
               </div>
             )}
-            <div className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90">
+            <div className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-md">
               <PlayCircle className="h-5 w-5 text-gray-900" />
             </div>
           </div>
@@ -54,10 +56,12 @@ export function CourseCard({ course, featured = false }: CourseCardProps) {
 
             {firstInstructor && (
               <div className="mt-3 flex items-center gap-2">
-                <span
-                  className="h-5 w-5 shrink-0 rounded-full"
-                  style={{ background: firstInstructor.avatarColor }}
-                  aria-hidden
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={firstInstructor.avatarUrl}
+                  alt={firstInstructor.name}
+                  className="h-6 w-6 shrink-0 rounded-full object-cover"
+                  loading="lazy"
                 />
                 <span className="text-xs text-gray-700">
                   {firstInstructor.name}

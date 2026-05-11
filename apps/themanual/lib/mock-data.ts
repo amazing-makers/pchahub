@@ -1,6 +1,8 @@
 // Mock data for themanual (franchise operations education).
 // Shape mirrors the eventual Course + Mentor + Curriculum tables.
 
+import { courseThumbnailFor, mentorAvatarFor } from './course-images'
+
 export type CourseLevel = 'beginner' | 'intermediate' | 'advanced'
 
 export interface CourseCategory {
@@ -29,6 +31,8 @@ export interface MockCourse {
   category: string
   level: CourseLevel
   thumbnailColor: string
+  /** Real thumbnail photo — auto-filled below. */
+  thumbnailImage: string
   instructorIds: string[]
   /** Total runtime in minutes. */
   durationMin: number
@@ -59,6 +63,8 @@ export interface MockMentor {
   specialties: string[]
   bio: string
   avatarColor: string
+  /** Real avatar photo — auto-filled below. */
+  avatarUrl: string
   hourlyRate: number
   rating: number
   totalConsultations: number
@@ -83,7 +89,9 @@ export const LEVEL_LABEL: Record<CourseLevel, string> = {
   advanced: '고급',
 }
 
-export const MENTORS: MockMentor[] = [
+type RawMentor = Omit<MockMentor, 'avatarUrl'>
+
+const RAW_MENTORS: RawMentor[] = [
   {
     id: 'm1',
     name: '김민호',
@@ -190,7 +198,14 @@ export const MENTORS: MockMentor[] = [
   },
 ]
 
-export const COURSES: MockCourse[] = [
+export const MENTORS: MockMentor[] = RAW_MENTORS.map((m) => ({
+  ...m,
+  avatarUrl: mentorAvatarFor(m.id),
+}))
+
+type RawCourse = Omit<MockCourse, 'thumbnailImage'>
+
+const RAW_COURSES: RawCourse[] = [
   {
     id: 'c1',
     title: '가맹창업 첫걸음 — 정보공개서 읽는 법',
@@ -633,6 +648,11 @@ export const COURSES: MockCourse[] = [
     createdAt: '2026-04-12',
   },
 ]
+
+export const COURSES: MockCourse[] = RAW_COURSES.map((c) => ({
+  ...c,
+  thumbnailImage: courseThumbnailFor(c.id, c.category),
+}))
 
 export const FEATURED_COURSES = COURSES.filter((c) => c.featured)
 export const FREE_COURSES = COURSES.filter((c) => c.price === 0)

@@ -13,12 +13,14 @@ export function MentorCard({ mentor }: MentorCardProps) {
       <Card className="h-full transition-shadow hover:shadow-md">
         <CardContent className="p-5">
           <div className="flex items-start gap-4">
-            <div
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-white"
-              style={{ background: mentor.avatarColor }}
-              aria-hidden
-            >
-              {mentor.name.charAt(0)}
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={mentor.avatarUrl}
+                alt={mentor.name}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
