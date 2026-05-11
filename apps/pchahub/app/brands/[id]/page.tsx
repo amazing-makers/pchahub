@@ -22,6 +22,7 @@ import {
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { BrandActions } from '@/components/brand-actions'
+import { BrandLogo } from '@/components/brand-logo'
 import { BRANDS, type MockBrand } from '@/lib/mock-data'
 import {
   getBrandDetail,
@@ -147,17 +148,43 @@ function BrandHero({
 
   return (
     <section className="border-b border-gray-200 bg-white">
-      <div className="relative h-64 w-full overflow-hidden bg-gray-100 sm:h-80">
+      <div className="relative h-56 w-full overflow-hidden bg-gray-100 sm:h-72">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={detail.photos.hero}
           alt={`${brand.name} 매장 대표 이미지`}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/0 to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/60" />
+
+        {/* Brand identity overlay — inside hero, no conflict with breadcrumb */}
+        <div className="container mx-auto absolute inset-x-0 bottom-5 px-4">
+          <div className="flex items-end gap-4">
+            <BrandLogo brand={brand} size="xl" bordered />
+            <div className="min-w-0 flex-1 pb-1 text-white">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-h2 font-bold drop-shadow">{brand.name}</h1>
+                {brand.hqVerified && (
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-500/95 px-2 py-0.5 text-xs font-medium">
+                    <CheckCircle2 className="h-3 w-3" />
+                    협회 등록
+                  </span>
+                )}
+                {brand.recruiting && (
+                  <span className="inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-0.5 text-xs font-medium">
+                    가맹 모집중
+                  </span>
+                )}
+              </div>
+              <div className="mt-1 text-sm text-white/90 drop-shadow">
+                {brand.categoryLabel} · {detail.hq.companyName} · 본사 {brand.hqRegion}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto py-8">
         <nav className="flex items-center gap-1 text-sm text-gray-500">
           <a href="/brands" className="hover:text-gray-900">
             브랜드 검색
@@ -170,32 +197,10 @@ function BrandHero({
           <span className="text-gray-700">{brand.name}</span>
         </nav>
 
-        <div className="mt-6 flex items-start gap-5">
-          <span
-            className="-mt-16 h-24 w-24 shrink-0 rounded-2xl border-4 border-white shadow-md"
-            style={{ background: brand.logoColor }}
-            aria-hidden
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-h2 font-bold text-gray-900">{brand.name}</h1>
-              {brand.hqVerified && (
-                <Badge variant="primary" className="gap-1">
-                  <CheckCircle2 className="h-3 w-3" />
-                  협회 등록
-                </Badge>
-              )}
-              {brand.recruiting && (
-                <Badge variant="success">가맹 모집중</Badge>
-              )}
-            </div>
-            <div className="mt-1.5 text-sm text-gray-500">
-              {brand.categoryLabel} · {detail.hq.companyName} · 본사 {brand.hqRegion}
-            </div>
-            <p className="mt-3 max-w-2xl text-gray-700">{brand.description}</p>
-            <div className="mt-5">
-              <BrandActions brandId={brand.id} brandName={brand.name} />
-            </div>
+        <div className="mt-5 max-w-3xl">
+          <p className="text-base text-gray-700">{brand.description}</p>
+          <div className="mt-4">
+            <BrandActions brandId={brand.id} brandName={brand.name} />
           </div>
         </div>
 

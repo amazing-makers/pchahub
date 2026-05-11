@@ -17,7 +17,7 @@ const FAILURE = [
   U + '1567521464027-f127ff144326' + Q, // empty alley
   U + '1582719188393-bb71ca45dbb9' + Q, // empty retail
   U + '1497366754035-f200968a6e72' + Q, // empty lobby
-  U + '1567779032717-43d918a07d0a' + Q, // empty shop interior
+  U + '1582719188393-bb71ca45dbb9' + Q, // empty retail
 ]
 
 const BRAND = [
@@ -30,7 +30,7 @@ const BRAND = [
 const TREND = [
   U + '1577415124269-fc1140a69e91' + Q, // urban modern
   U + '1497366216548-37526070297c' + Q, // open office
-  U + '1538485399081-7c8978c47957' + Q, // urban street
+  U + '1503602642458-232111445657' + Q, // urban storefront
   U + '1488477181946-6428a0291777' + Q, // pastry trend
 ]
 

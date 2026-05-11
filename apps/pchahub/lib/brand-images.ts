@@ -22,7 +22,7 @@ const BY_CATEGORY: Record<string, CategoryImages> = {
     menu: [
       U + '1562967914-608f82629710' + QS,
       U + '1626082927389-6cd097cdc6ec' + QS,
-      U + '1606755962773-d324e1d0788d' + QS,
+      U + '1610057099431-d73a1c9d2f2f' + QS,
       U + '1599487488170-d11ec9c172f0' + QS,
     ],
     store: [
@@ -154,9 +154,9 @@ export function brandImageSet(brandId: string, category: string) {
   }
 }
 
-/** Korean store / commercial space photos used for /listings. */
+/** Korean store / commercial space photos used for /listings.
+ *  All IDs verified to return 200 on images.unsplash.com (2026-05). */
 export const LISTING_PHOTOS = [
-  U + '1582037928769-181f2644cf99' + Q, // commercial corner
   U + '1486325212027-8081e485255e' + Q, // office building ground floor
   U + '1565538810643-b5bdb714032a' + Q, // street corner shop
   U + '1582719188393-bb71ca45dbb9' + Q, // empty retail interior
@@ -164,8 +164,13 @@ export const LISTING_PHOTOS = [
   U + '1567521464027-f127ff144326' + Q, // commercial alley
   U + '1556760544-74068565f05c' + Q, // commercial space
   U + '1554435493-93422e8220c8' + Q, // shop front
-  U + '1551522435-a13afa10a9d7' + Q, // street level retail
-  U + '1567779032717-43d918a07d0a' + Q, // shop interior empty
+  U + '1503602642458-232111445657' + Q, // urban storefront
+  U + '1497366216548-37526070297c' + Q, // open commercial floor
+  U + '1497366811353-6870744d04b2' + Q, // bright studio
+  U + '1497366754035-f200968a6e72' + Q, // commercial lobby
+  U + '1568992687947-868a62a9f521' + Q, // cafe interior empty
+  U + '1497366858526-0766cadbe8fa' + Q, // commercial ceiling
+  U + '1577415124269-fc1140a69e91' + Q, // new building exterior
 ]
 
 export function listingPhotoSet(listingId: string): string[] {

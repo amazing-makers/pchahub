@@ -52,7 +52,7 @@ const BY_CATEGORY: Record<string, CategoryPhotoSet> = {
       U + '1559925393-8be0ec4767c8' + QS,
       U + '1517248135467-4c7edcad34c4' + QS,
       U + '1554118811-1e0d58224f24' + QS,
-      U + '1567779032717-43d918a07d0a' + QS,
+      U + '1503602642458-232111445657' + QS,
     ],
   },
   snack: {
@@ -61,7 +61,7 @@ const BY_CATEGORY: Record<string, CategoryPhotoSet> = {
       U + '1517248135467-4c7edcad34c4' + QS,
       U + '1559925393-8be0ec4767c8' + QS,
       U + '1582719188393-bb71ca45dbb9' + QS,
-      U + '1567779032717-43d918a07d0a' + QS,
+      U + '1503602642458-232111445657' + QS,
     ],
   },
   dessert: {
@@ -123,8 +123,8 @@ const CONTRACTOR_HEROES = [
   U + '1497366754035-f200968a6e72' + Q, // bright lobby
   U + '1503676260728-1c00da094a0b' + Q, // classroom / studio
   U + '1577415124269-fc1140a69e91' + Q, // new building
-  U + '1538485399081-7c8978c47957' + Q, // urban street
-  U + '1567779032717-43d918a07d0a' + Q, // shop interior empty
+  U + '1577415124269-fc1140a69e91' + Q, // new building
+  U + '1503602642458-232111445657' + Q, // shop interior empty
 ]
 
 export function contractorHero(contractorId: string): string {
