@@ -26,6 +26,16 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
 
   return (
     <main className="bg-gray-50">
+      <div className="relative h-56 w-full overflow-hidden bg-gray-100 sm:h-72">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={c.heroImage}
+          alt={`${c.name} 시공 스튜디오`}
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/40" />
+      </div>
+
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">
@@ -38,7 +48,7 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <div
-                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-white"
+                  className="-mt-20 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border-4 border-white text-2xl font-bold text-white shadow-md"
                   style={{ background: c.brandColor }}
                 >
                   {c.name.charAt(0)}

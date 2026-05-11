@@ -28,13 +28,15 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
   return (
     <main className="bg-gray-50">
       {/* Hero image */}
-      <div
-        className="relative h-72 w-full sm:h-96"
-        style={{
-          background: `linear-gradient(135deg, ${item.imageColors[0]}, ${item.imageColors[1] ?? item.imageColors[0]}, ${item.imageColors[2] ?? item.imageColors[0]})`,
-        }}
-        aria-hidden
-      />
+      <div className="relative h-72 w-full overflow-hidden sm:h-96">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={item.heroImage}
+          alt={item.title}
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/40" />
+      </div>
 
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
@@ -108,6 +110,34 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
       </section>
 
       <div className="container mx-auto py-8 space-y-6">
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="p-6 sm:p-8">
+            <h2 className="text-h4 font-semibold text-gray-900">시공 사진</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              총 {item.imageCount}장의 실제 시공 사진 중 {item.gallery.length}장
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {item.gallery.map((src, i) => (
+                <div
+                  key={i}
+                  className={
+                    'relative overflow-hidden rounded-xl bg-gray-100 ' +
+                    (i === 0 ? 'col-span-2 row-span-2 aspect-[4/3]' : 'aspect-square')
+                  }
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src}
+                    alt={`${item.title} ${i + 1}`}
+                    className="h-full w-full object-cover transition-transform hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="border-gray-200 shadow-sm">
           <CardContent className="p-6 sm:p-8">
             <h2 className="text-h4 font-semibold text-gray-900">시공 후기</h2>

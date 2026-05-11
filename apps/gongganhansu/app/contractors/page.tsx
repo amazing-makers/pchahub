@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react'
 import { ContractorCard } from '@/components/contractor-card'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
 
@@ -17,10 +18,21 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
     <main className="bg-gray-50">
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h3 font-bold text-gray-900">시공사 디렉토리</h1>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            F&B 매장 시공 전문 시공사 {CONTRACTORS.length}곳. 평당 단가·예산 범위·시공 카테고리로 비교.
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">시공사 디렉토리</h1>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                F&B 매장 시공 전문 시공사 {CONTRACTORS.length}곳. 평당 단가·예산 범위·시공 카테고리로 비교.
+              </p>
+            </div>
+            <a
+              href="/contractors/new"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            >
+              <Plus className="h-4 w-4" />
+              시공사 등록
+            </a>
+          </div>
         </div>
       </section>
 

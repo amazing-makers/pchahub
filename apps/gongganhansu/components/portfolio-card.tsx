@@ -15,13 +15,15 @@ export function PortfolioCard({ item }: PortfolioCardProps) {
     <a href={`/gallery/${item.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
         <CardContent className="p-0">
-          <div
-            className="relative aspect-[4/3] w-full overflow-hidden"
-            style={{
-              background: `linear-gradient(135deg, ${item.imageColors[0]}, ${item.imageColors[1] ?? item.imageColors[0]}, ${item.imageColors[2] ?? item.imageColors[0]})`,
-            }}
-            aria-hidden
-          >
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.heroImage}
+              alt={item.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent" />
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
               {cat && (
                 <Badge variant="default" className="bg-white/90 text-gray-900">

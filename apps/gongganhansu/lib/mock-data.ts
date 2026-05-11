@@ -1,5 +1,7 @@
 // Mock data for gongganhansu — interior + contractor directory.
 
+import { contractorHero, portfolioPhotoSet } from './portfolio-images'
+
 export interface MockContractor {
   id: string
   name: string
@@ -31,6 +33,8 @@ export interface MockContractor {
   featured: boolean
   /** Portfolio ids */
   portfolioIds: string[]
+  /** Real cover image — auto-filled below. */
+  heroImage: string
 }
 
 export interface MockPortfolioItem {
@@ -60,6 +64,10 @@ export interface MockPortfolioItem {
   featured: boolean
   /** Image count for gallery hint */
   imageCount: number
+  /** Real hero image — auto-filled below. */
+  heroImage: string
+  /** Real gallery images — auto-filled below. */
+  gallery: string[]
 }
 
 export interface MockInsight {
@@ -91,7 +99,9 @@ export const CATEGORIES = [
   { key: 'bar', label: '주점' },
 ]
 
-export const CONTRACTORS: MockContractor[] = [
+type RawContractor = Omit<MockContractor, 'heroImage'>
+
+const RAW_CONTRACTORS: RawContractor[] = [
   {
     id: 'c1',
     name: '한수디자인',
@@ -318,7 +328,14 @@ export const CONTRACTORS: MockContractor[] = [
   },
 ]
 
-export const PORTFOLIO: MockPortfolioItem[] = [
+export const CONTRACTORS: MockContractor[] = RAW_CONTRACTORS.map((c) => ({
+  ...c,
+  heroImage: contractorHero(c.id),
+}))
+
+type RawPortfolio = Omit<MockPortfolioItem, 'heroImage' | 'gallery'>
+
+const RAW_PORTFOLIO: RawPortfolio[] = [
   {
     id: 'p1',
     title: '데일리브루 홍대점',
@@ -690,6 +707,15 @@ export const PORTFOLIO: MockPortfolioItem[] = [
     imageCount: 20,
   },
 ]
+
+export const PORTFOLIO: MockPortfolioItem[] = RAW_PORTFOLIO.map((p) => {
+  const photos = portfolioPhotoSet(p.id, p.category)
+  return {
+    ...p,
+    heroImage: photos.hero,
+    gallery: photos.gallery,
+  }
+})
 
 export const INSIGHTS: MockInsight[] = [
   {

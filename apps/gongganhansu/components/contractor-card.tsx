@@ -1,6 +1,5 @@
 import { CheckCircle2, Star } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
-import { formatNumber } from '@amakers/utils'
 import { CATEGORIES, type MockContractor } from '@/lib/mock-data'
 
 interface ContractorCardProps {
@@ -10,22 +9,36 @@ interface ContractorCardProps {
 export function ContractorCard({ contractor: c }: ContractorCardProps) {
   return (
     <a href={`/contractors/${c.id}`} className="group block h-full">
-      <Card className="h-full transition-shadow hover:shadow-md">
+      <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+        <div className="relative h-32 w-full overflow-hidden bg-gray-100">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={c.heroImage}
+            alt={`${c.name} 시공 스튜디오`}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/0" />
+          {c.featured && (
+            <Badge variant="warning" className="absolute right-2 top-2">
+              추천
+            </Badge>
+          )}
+        </div>
         <CardContent className="p-5">
           <div className="flex items-start gap-3">
             <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-base font-bold text-white"
+              className="-mt-9 flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border-2 border-white text-base font-bold text-white shadow-sm"
               style={{ background: c.brandColor }}
             >
               {c.name.charAt(0)}
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 pt-1">
               <div className="flex items-center gap-1.5">
                 <h3 className="text-base font-bold text-gray-900">{c.name}</h3>
                 {c.verified && (
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" aria-label="인증 시공사" />
                 )}
-                {c.featured && <Badge variant="warning">추천</Badge>}
               </div>
               <div className="mt-0.5 text-xs text-gray-500">
                 {c.region} · {c.foundedYear}년 설립 · {c.projectCount}건
