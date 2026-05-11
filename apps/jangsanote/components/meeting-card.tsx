@@ -24,14 +24,31 @@ export function MeetingCard({ meeting, compact = false }: MeetingCardProps) {
 
   return (
     <a href={`/meetings/${meeting.id}`} className="group block h-full">
-      <Card className="h-full transition-shadow hover:shadow-md">
+      <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
+        {!compact && (
+          <div className="relative h-36 w-full overflow-hidden bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={meeting.coverImage}
+              alt={meeting.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent" />
+            {meeting.featured && (
+              <Badge variant="warning" className="absolute right-3 top-3">
+                추천 모임
+              </Badge>
+            )}
+          </div>
+        )}
         <CardContent className={compact ? 'p-4' : 'p-5'}>
           <div className="flex items-center gap-2">
             <Badge variant={meeting.type === 'online' ? 'primary' : 'default'} className="gap-0.5">
               {meeting.type === 'online' && <Video className="h-3 w-3" />}
               {MEETING_TYPE_LABEL[meeting.type]}
             </Badge>
-            {meeting.featured && <Badge variant="warning">추천</Badge>}
+            {compact && meeting.featured && <Badge variant="warning">추천</Badge>}
             {meeting.status === 'closed' && <Badge variant="default">모집 마감</Badge>}
             {full && meeting.status !== 'closed' && <Badge variant="error">정원 마감</Badge>}
           </div>
@@ -96,10 +113,12 @@ export function MeetingCard({ meeting, compact = false }: MeetingCardProps) {
 
           {!compact && host && (
             <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-500">
-              <span
-                className="h-4 w-4 shrink-0 rounded-full"
-                style={{ background: host.avatarColor }}
-                aria-hidden
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={host.avatarUrl}
+                alt={host.handle}
+                className="h-5 w-5 shrink-0 rounded-full object-cover"
+                loading="lazy"
               />
               주최 · {host.handle}
             </div>

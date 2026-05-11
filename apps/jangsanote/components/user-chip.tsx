@@ -41,13 +41,17 @@ export function UserChip({ user, anonymous = false, size = 'md' }: UserChipProps
     <div className="flex items-center gap-2">
       <div
         className={
-          'flex shrink-0 items-center justify-center rounded-full font-bold text-white ' +
-          (size === 'sm' ? 'h-6 w-6 text-[10px]' : 'h-8 w-8 text-xs')
+          'relative shrink-0 overflow-hidden rounded-full bg-gray-100 ' +
+          (size === 'sm' ? 'h-6 w-6' : 'h-9 w-9')
         }
-        style={{ background: user.avatarColor }}
-        aria-hidden
       >
-        {user.handle.charAt(0)}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={user.avatarUrl}
+          alt={user.handle}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
       </div>
       <div className="min-w-0">
         <div className={'flex items-center gap-1 ' + (size === 'sm' ? 'text-xs' : 'text-sm')}>

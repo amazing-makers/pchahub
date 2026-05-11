@@ -2,6 +2,8 @@
 
 export type ChannelType = 'category' | 'region' | 'general'
 
+import { meetingCoverFor, postHeroFor, userAvatarFor } from './community-images'
+
 export interface MockChannel {
   key: string
   type: ChannelType
@@ -22,6 +24,8 @@ export interface MockUser {
   badge?: 'verified' | 'expert' | 'hq' | null
   postCount: number
   helpfulCount: number
+  /** Real avatar photo — auto-filled below. */
+  avatarUrl: string
 }
 
 export interface MockComment {
@@ -53,6 +57,8 @@ export interface MockPost {
   likes: number
   commentCount: number
   comments: MockComment[]
+  /** Optional hero photo — auto-filled (not all posts have one). */
+  heroImage?: string
 }
 
 export const CATEGORY_LABEL: Record<PostCategory, string> = {
@@ -84,7 +90,9 @@ export const CHANNELS: MockChannel[] = [
   { key: 'general', type: 'general', label: '자유게시판', description: '주제 자유 토론', memberCount: 3680, postCount: 924 },
 ]
 
-export const USERS: MockUser[] = [
+type RawUser = Omit<MockUser, 'avatarUrl'>
+
+const RAW_USERS: RawUser[] = [
   { id: 'u1', handle: '강남치킨3년차', role: '치킨 가맹점주 · 3년차', avatarColor: '#EA580C', badge: 'verified', postCount: 38, helpfulCount: 412 },
   { id: 'u2', handle: '안양카페점주', role: '카페 가맹점주 · 2년차', avatarColor: '#92400E', badge: 'verified', postCount: 24, helpfulCount: 286 },
   { id: 'u3', handle: '예비창업자73', role: '창업 검토자', avatarColor: '#3B82F6', badge: null, postCount: 12, helpfulCount: 38 },
@@ -100,6 +108,11 @@ export const USERS: MockUser[] = [
   { id: 'u13', handle: '심야주점운영', role: '주점 점주 · 7년차', avatarColor: '#DC2626', badge: 'verified', postCount: 16, helpfulCount: 142 },
 ]
 
+export const USERS: MockUser[] = RAW_USERS.map((u) => ({
+  ...u,
+  avatarUrl: userAvatarFor(u.id),
+}))
+
 const C = (authorId: string, content: string, createdAt: string, likes: number): MockComment => ({
   id: `c-${Math.random().toString(36).slice(2, 9)}`,
   authorId,
@@ -108,7 +121,9 @@ const C = (authorId: string, content: string, createdAt: string, likes: number):
   likes,
 })
 
-export const POSTS: MockPost[] = [
+type RawPost = Omit<MockPost, 'heroImage'>
+
+const RAW_POSTS: RawPost[] = [
   {
     id: 'p1',
     title: '치킨 가맹 5년차, 매출 40% 떨어진 이유 분석해봤습니다',
@@ -514,6 +529,11 @@ export const POSTS: MockPost[] = [
   },
 ]
 
+export const POSTS: MockPost[] = RAW_POSTS.map((p) => ({
+  ...p,
+  heroImage: postHeroFor(p.id, p.category),
+}))
+
 export const PINNED_POSTS = POSTS.filter((p) => p.pinned)
 export const HOT_POSTS = POSTS.filter((p) => p.hot).sort((a, b) => b.likes - a.likes)
 
@@ -553,9 +573,13 @@ export interface MockMeeting {
   tags: string[]
   status: 'upcoming' | 'closed' | 'ongoing'
   featured: boolean
+  /** Real cover photo — auto-filled. */
+  coverImage: string
 }
 
-export const MEETINGS: MockMeeting[] = [
+type RawMeeting = Omit<MockMeeting, 'coverImage'>
+
+const RAW_MEETINGS: RawMeeting[] = [
   {
     id: 'mt1',
     title: '카페 점주 월간 정기 모임 — 5월',
@@ -772,6 +796,11 @@ export const MEETINGS: MockMeeting[] = [
     featured: false,
   },
 ]
+
+export const MEETINGS: MockMeeting[] = RAW_MEETINGS.map((m) => ({
+  ...m,
+  coverImage: meetingCoverFor(m.id, m.type),
+}))
 
 export const UPCOMING_MEETINGS = MEETINGS.filter((m) => m.status === 'upcoming').sort((a, b) =>
   a.date.localeCompare(b.date),

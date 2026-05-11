@@ -24,8 +24,22 @@ export function PostCard({ post }: PostCardProps) {
         : `/regions/${post.channelKey}`
 
   return (
-    <Card className="border-gray-200 transition-shadow hover:shadow-sm">
-      <CardContent className="p-5">
+    <Card className="overflow-hidden border-gray-200 transition-shadow hover:shadow-sm">
+      <CardContent className={post.heroImage ? 'p-0' : 'p-5'}>
+        {post.heroImage && (
+          <a href={`/posts/${post.id}`} className="block">
+            <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={post.heroImage}
+                alt={post.title}
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+          </a>
+        )}
+        <div className={post.heroImage ? 'p-5' : ''}>
         <div className="flex items-center justify-between gap-2">
           <a
             href={channelHref}
@@ -81,6 +95,7 @@ export function PostCard({ post }: PostCardProps) {
               {formatRelativeTime(post.createdAt)}
             </span>
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>
