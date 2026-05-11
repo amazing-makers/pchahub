@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 
 const navItems = [
   { href: '/brands', label: '브랜드 검색' },
-  { href: '/themes', label: '테마별' },
+  { href: '/listings', label: '매물' },
+  { href: '/community', label: '커뮤니티' },
   { href: '/scanner', label: '창업 스캐너' },
   { href: '/calculator', label: '수익 계산기' },
   { href: '/inquiry', label: '상담 신청' },
