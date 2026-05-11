@@ -12,7 +12,8 @@
     "./badge": "./src/components/badge.tsx",
     "./header": "./src/components/header.tsx",
     "./footer": "./src/components/footer.tsx",
-    "./site-switcher": "./src/components/site-switcher.tsx"
+    "./site-switcher": "./src/components/site-switcher.tsx",
+    "./brand-logo": "./src/components/brand-logo.tsx"
   },
   "scripts": {
     "type-check": "tsc --noEmit"

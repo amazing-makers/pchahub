@@ -1,7 +1,6 @@
 import { CheckCircle2, TrendingUp } from 'lucide-react'
-import { Card, CardContent, Badge } from '@amakers/ui'
+import { BrandLogo, Card, CardContent, Badge } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { BrandLogo } from './brand-logo'
 import type { MockBrand } from '@/lib/mock-data'
 
 interface BrandCardProps {

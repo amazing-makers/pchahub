@@ -147,6 +147,43 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
           </CardContent>
         </Card>
 
+        {ep.brand && (
+          <Card className="border-gray-200 bg-indigo-50">
+            <CardContent className="p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">
+                    이 에피소드의 브랜드 — {ep.brand}
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-700">
+                    가맹 정보 · 매장 · 운영 강의를 amakers 다른 플랫폼에서 이어서 확인하세요.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <a
+                  href={`https://pchahub.kr/brands?q=${encodeURIComponent(ep.brand)}`}
+                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                >
+                  → 가맹 정보 (프차허브)
+                </a>
+                <a
+                  href={`https://bestplace.kr/stores?q=${encodeURIComponent(ep.brand)}`}
+                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                >
+                  → 매장 보기 (베스트플레이스)
+                </a>
+                <a
+                  href="https://jangsanote.kr"
+                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                >
+                  → 점주 후기 (장사노트)
+                </a>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {related.length > 0 && (
           <Card className="border-gray-200 shadow-sm">
             <CardContent className="p-6">

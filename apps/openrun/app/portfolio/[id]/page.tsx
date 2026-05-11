@@ -110,6 +110,38 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
           </Card>
         )}
 
+        {/* amakers ecosystem — 캠페인 클라이언트 브랜드 cross-link */}
+        <Card className="border-gray-200 bg-indigo-50">
+          <CardContent className="p-6">
+            <h2 className="text-base font-semibold text-gray-900">
+              이 캠페인의 클라이언트 — {c.client}
+            </h2>
+            <p className="mt-1 text-sm text-gray-700">
+              {c.client}에 대해 amakers 다른 플랫폼에서 더 알아보세요.
+            </p>
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <a
+                href={`https://pchahub.kr/brands?q=${encodeURIComponent(c.client)}`}
+                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+              >
+                → 가맹 정보 (프차허브)
+              </a>
+              <a
+                href={`https://bestplace.kr/stores?q=${encodeURIComponent(c.client)}`}
+                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+              >
+                → 매장 보기 (베스트플레이스)
+              </a>
+              <a
+                href={`https://changupdocu.kr/episodes?brand=${encodeURIComponent(c.client)}`}
+                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+              >
+                → 브랜드 다큐 (창업도큐)
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="border-gray-200 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
           <CardContent className="p-8 text-center">
             <h2 className="text-h3 font-bold">비슷한 캠페인을 시작하고 싶으시면</h2>

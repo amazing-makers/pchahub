@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Calendar, ChevronRight, MapPin } from 'lucide-react'
+import { Calendar, ChevronRight, ExternalLink, MapPin, Store } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import {
@@ -101,6 +101,42 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                         이 시공사 견적 받기
                       </Button>
                     </a>
+
+                    <div className="mt-5 space-y-2 border-t border-gray-100 pt-4">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        amakers에서 더 보기
+                      </div>
+                      <a
+                        href={`https://pchahub.kr/brands?q=${encodeURIComponent(item.title.split(' ')[0])}`}
+                        className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
+                      >
+                        <span className="inline-flex items-center gap-1.5">
+                          <Store className="h-3.5 w-3.5 text-indigo-500" />
+                          이 브랜드 가맹 정보
+                        </span>
+                        <ExternalLink className="h-3 w-3 text-gray-400" />
+                      </a>
+                      <a
+                        href={`https://bestplace.kr/stores?q=${encodeURIComponent(item.title)}`}
+                        className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
+                      >
+                        <span className="inline-flex items-center gap-1.5">
+                          <Store className="h-3.5 w-3.5 text-amber-500" />
+                          이 매장 베스트플레이스
+                        </span>
+                        <ExternalLink className="h-3 w-3 text-gray-400" />
+                      </a>
+                      <a
+                        href={`https://themyungdang.kr/listings?region=${encodeURIComponent(item.region)}`}
+                        className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
+                      >
+                        <span className="inline-flex items-center gap-1.5">
+                          <MapPin className="h-3.5 w-3.5 text-emerald-500" />
+                          {item.region} 매물 보기
+                        </span>
+                        <ExternalLink className="h-3 w-3 text-gray-400" />
+                      </a>
+                    </div>
                   </CardContent>
                 </Card>
               </aside>

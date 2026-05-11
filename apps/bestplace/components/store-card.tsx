@@ -1,5 +1,5 @@
 import { Award, CheckCircle2, MapPin, Star, Users } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, BrandLogo, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { brandById, type MockStore } from '@/lib/mock-data'
 
@@ -49,10 +49,9 @@ export function StoreCard({ store }: StoreCardProps) {
           <div className="p-5">
             <div className="flex items-center gap-2">
               {brand && (
-                <span
-                  className="h-5 w-5 shrink-0 rounded-md"
-                  style={{ background: brand.logoColor }}
-                  aria-hidden
+                <BrandLogo
+                  brand={{ name: brand.name, logoColor: brand.logoColor, category: brand.category }}
+                  size="sm"
                 />
               )}
               <span className="text-xs text-gray-500">{brand?.name}</span>

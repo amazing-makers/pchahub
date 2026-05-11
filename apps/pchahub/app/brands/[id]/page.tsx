@@ -7,10 +7,15 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
+  ExternalLink,
   FileText,
   Globe,
+  GraduationCap,
+  Hammer,
+  Heart,
   MapPin,
   Megaphone,
+  Newspaper,
   Phone,
   Shield,
   Sparkles,
@@ -19,10 +24,9 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, BrandLogo, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { BrandActions } from '@/components/brand-actions'
-import { BrandLogo } from '@/components/brand-logo'
 import { BRANDS, type MockBrand } from '@/lib/mock-data'
 import {
   getBrandDetail,
@@ -72,6 +76,7 @@ export default function BrandDetailPage({ params }: BrandDetailPageProps) {
             <StoreHistorySection detail={detail} />
             <ListingsSection listings={listings} category={brand.categoryLabel} />
             <ReviewsSection brand={brand} detail={detail} avgRating={avgRating} />
+            <AmakersEcosystemSection brand={brand} />
             <FAQSection faqs={detail.faqs} />
             {relatedBrands.length > 0 && (
               <RelatedSection brands={relatedBrands} category={brand.categoryLabel} />
@@ -697,6 +702,117 @@ function FAQSection({ faqs }: { faqs: BrandFAQ[] }) {
               {f.a}
             </div>
           </details>
+        ))}
+      </div>
+    </SectionCard>
+  )
+}
+
+// ========================================================================
+// Amakers Ecosystem — cross-links to other 8 sites
+// ========================================================================
+
+function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
+  const links: Array<{
+    site: string
+    href: string
+    icon: typeof Store
+    title: string
+    sub: string
+    accent: string
+  }> = [
+    {
+      site: 'bestplace',
+      href: `https://bestplace.kr/stores?brand=${brand.name}`,
+      icon: Store,
+      title: '이 브랜드 매장 보러가기',
+      sub: '전국 인증 매장 + 어워드 수상 매장 (베스트플레이스)',
+      accent: '#EAB308',
+    },
+    {
+      site: 'themanual',
+      href: `https://themanual.kr/courses?category=${brand.category}`,
+      icon: GraduationCap,
+      title: `${brand.categoryLabel} 운영 강의`,
+      sub: '점주 양성 코스 · 본사 운영 매뉴얼 (더매뉴얼)',
+      accent: '#3B82F6',
+    },
+    {
+      site: 'gongganhansu',
+      href: `https://gongganhansu.kr/contractors?specialty=${brand.category}`,
+      icon: Hammer,
+      title: `${brand.categoryLabel} 시공사`,
+      sub: '본사 가이드라인 통과 검증된 인테리어 시공사 (공간의한수)',
+      accent: '#64748B',
+    },
+    {
+      site: 'themyungdang',
+      href: `https://themyungdang.kr/listings?category=${brand.category}`,
+      icon: MapPin,
+      title: `${brand.categoryLabel} 입점 매물`,
+      sub: '양도·신규임대 매물 + 상권 분석 (더명당)',
+      accent: '#10B981',
+    },
+    {
+      site: 'jangsanote',
+      href: `https://jangsanote.kr/categories/${brand.category}`,
+      icon: Heart,
+      title: '점주 커뮤니티',
+      sub: `${brand.categoryLabel}방 · 점주 후기 + 모임 + 노하우 (장사노트)`,
+      accent: '#F59E0B',
+    },
+    {
+      site: 'changupdocu',
+      href: `https://changupdocu.kr/categories/${brand.category}`,
+      icon: Newspaper,
+      title: '미디어 · 매거진',
+      sub: '브랜드 다큐멘터리 + 시장 분석 기사 (창업도큐)',
+      accent: '#F43F5E',
+    },
+    {
+      site: 'openrun',
+      href: 'https://openrun.kr/services/grand-open',
+      icon: Megaphone,
+      title: '오픈 마케팅 캠페인',
+      sub: '신규 오픈 30일 패키지 + SNS·인플루언서 (오픈런)',
+      accent: '#F97316',
+    },
+    {
+      site: 'pchabridge',
+      href: 'https://pchabridge.kr',
+      icon: TrendingUp,
+      title: '투자 라운드 · M&A',
+      sub: '본사 투자 라운드 + 매각 매물 (프차브릿지)',
+      accent: '#8B5CF6',
+    },
+  ]
+
+  return (
+    <SectionCard
+      title="amakers에서 이어가기"
+      subtitle={`${brand.name}에 대한 정보·매장·운영·투자까지 amakers 전체 플랫폼에서`}
+    >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {links.map((l) => (
+          <a
+            key={l.site}
+            href={l.href}
+            className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-all hover:border-gray-300 hover:shadow-sm"
+          >
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+              style={{ background: l.accent }}
+            >
+              <l.icon className="h-5 w-5 text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1 text-sm font-semibold text-gray-900">
+                {l.title}
+                <ExternalLink className="h-3 w-3 text-gray-400 group-hover:text-gray-700" />
+              </div>
+              <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">{l.sub}</p>
+            </div>
+          </a>
         ))}
       </div>
     </SectionCard>

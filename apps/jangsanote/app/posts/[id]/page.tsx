@@ -224,6 +224,43 @@ export default function PostPage({ params }: PostPageProps) {
                 </p>
               </CardContent>
             </Card>
+
+            {/* amakers ecosystem — category 채널이면 관련 브랜드/매물/강의 link */}
+            {post.channelType === 'category' && (
+              <Card className="mt-4 border-gray-200 bg-amber-50">
+                <CardContent className="p-5">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-amber-900">
+                    {channelName} 더 알아보기
+                  </div>
+                  <div className="mt-3 space-y-2 text-sm">
+                    <a
+                      href={`https://pchahub.kr/categories/${post.channelKey}`}
+                      className="block text-gray-700 hover:text-gray-900"
+                    >
+                      → 가맹 브랜드 (프차허브)
+                    </a>
+                    <a
+                      href={`https://themyungdang.kr/listings?category=${post.channelKey}`}
+                      className="block text-gray-700 hover:text-gray-900"
+                    >
+                      → 입점 매물 (더명당)
+                    </a>
+                    <a
+                      href={`https://themanual.kr/courses?category=${post.channelKey}`}
+                      className="block text-gray-700 hover:text-gray-900"
+                    >
+                      → 운영 강의 (더매뉴얼)
+                    </a>
+                    <a
+                      href={`https://bestplace.kr/stores?category=${post.channelKey}`}
+                      className="block text-gray-700 hover:text-gray-900"
+                    >
+                      → 매장 보기 (베스트플레이스)
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </aside>
         </div>
       </div>
