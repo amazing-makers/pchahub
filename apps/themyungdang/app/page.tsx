@@ -2,16 +2,20 @@ import { Card, CardContent } from '@amakers/ui'
 
 export default function HomePage() {
   return (
-    <main className="container mx-auto py-section">
-      <div className="space-y-6">
-        <header className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
-            amakers · themyungdang.kr
-          </p>
-          <h1 className="text-h1 font-bold">더명당</h1>
-          <p className="text-body text-gray-600">부동산</p>
-        </header>
+    <main>
+      <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              amakers · themyungdang.kr
+            </p>
+            <h1 className="mt-4 text-hero font-bold text-gray-900">더명당</h1>
+            <p className="mt-4 text-lg text-gray-600">부동산</p>
+          </div>
+        </div>
+      </section>
 
+      <section className="container mx-auto py-section">
         <Card>
           <CardContent className="p-8">
             <p className="text-body">
@@ -20,7 +24,7 @@ export default function HomePage() {
             </p>
           </CardContent>
         </Card>
-      </div>
+      </section>
     </main>
   )
 }

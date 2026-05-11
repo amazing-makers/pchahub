@@ -10,12 +10,15 @@
     "./card": "./src/components/card.tsx",
     "./input": "./src/components/input.tsx",
     "./badge": "./src/components/badge.tsx",
-    "./globals.css": "./src/globals.css"
+    "./header": "./src/components/header.tsx",
+    "./footer": "./src/components/footer.tsx",
+    "./site-switcher": "./src/components/site-switcher.tsx"
   },
   "scripts": {
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@amakers/design-system": "workspace:*",
     "@amakers/utils": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.468.0"

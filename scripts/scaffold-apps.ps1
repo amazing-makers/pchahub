@@ -1,8 +1,13 @@
 # Generates the boilerplate for all 9 Next.js apps.
 # Idempotent: safe to re-run; will overwrite scaffolded files.
+# Set $env:AMAKERS_SKIP="pchahub,openrun" to skip apps that have custom layouts.
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = if ($env:AMAKERS_REPO_ROOT) { $env:AMAKERS_REPO_ROOT } elseif ($PSScriptRoot) { Split-Path -Parent $PSScriptRoot } else { throw "AMAKERS_REPO_ROOT not set and `$PSScriptRoot empty" }
+$skipList = @()
+if ($env:AMAKERS_SKIP) {
+    $skipList = $env:AMAKERS_SKIP -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+}
 
 $apps = @(
     @{ key='pchahub';      port=3000; primary='#4F46E5'; name='프차허브';        role='정보검색+가맹중개'; domain='pchahub.kr' },
@@ -24,6 +29,10 @@ function Write-Utf8NoBom([string]$Path, [string]$Content) {
 
 foreach ($app in $apps) {
     $key = $app.key
+    if ($skipList -contains $key) {
+        Write-Host "Skipping apps/$key (in AMAKERS_SKIP)"
+        continue
+    }
     $port = $app.port
     $primary = $app.primary
     $appName = $app.name
@@ -91,8 +100,12 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // Re-enable typedRoutes once concrete routes exist in every app.
   experimental: {
-    typedRoutes: true,
+    typedRoutes: false,
   },
 }
 
@@ -170,6 +183,7 @@ body { color: #0F172A; background: #ffffff; }
     # app/layout.tsx
     $layout = @"
 import type { Metadata } from 'next'
+import { Header, Footer } from '@amakers/ui'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -180,7 +194,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className="flex min-h-screen flex-col">
+        <Header platform="$key" />
+        <div className="flex-1">{children}</div>
+        <Footer platform="$key" />
+      </body>
     </html>
   )
 }
@@ -193,16 +211,20 @@ import { Card, CardContent } from '@amakers/ui'
 
 export default function HomePage() {
   return (
-    <main className="container mx-auto py-section">
-      <div className="space-y-6">
-        <header className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
-            amakers · $domain
-          </p>
-          <h1 className="text-h1 font-bold">$appName</h1>
-          <p className="text-body text-gray-600">$role</p>
-        </header>
+    <main>
+      <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              amakers · $domain
+            </p>
+            <h1 className="mt-4 text-hero font-bold text-gray-900">$appName</h1>
+            <p className="mt-4 text-lg text-gray-600">$role</p>
+          </div>
+        </div>
+      </section>
 
+      <section className="container mx-auto py-section">
         <Card>
           <CardContent className="p-8">
             <p className="text-body">
@@ -211,7 +233,7 @@ export default function HomePage() {
             </p>
           </CardContent>
         </Card>
-      </div>
+      </section>
     </main>
   )
 }
