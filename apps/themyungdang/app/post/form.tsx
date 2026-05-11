@@ -1,0 +1,789 @@
+'use client'
+
+import { useState } from 'react'
+import { CheckCircle2, FileText, ImagePlus, Plus, Send, Shield, Trash2 } from 'lucide-react'
+import { Button, Card, CardContent } from '@amakers/ui'
+import { LISTING_CATEGORIES, type ListingType } from '@/lib/mock-data'
+
+interface FormState {
+  listingType: ListingType
+  title: string
+  region: string
+  district: string
+  fullAddress: string
+  area: string
+  floor: string
+  buildingType: string
+  deposit: string
+  monthlyRent: string
+  rightFee: string
+  salePrice: string
+  availableFrom: string
+  currentBusiness: string
+  monthlyRevenue: string
+  revenueWillVerify: boolean
+  transferorMessage: string
+  fitCategories: string[]
+  tags: string[]
+  photoCount: number
+  hasLease: boolean
+  hasRevenueDoc: boolean
+  ownerName: string
+  ownerPhone: string
+  ownerEmail: string
+  ownerType: 'direct' | 'agent'
+  agencyName: string
+  agreedPrivacy: boolean
+  agreedTerms: boolean
+}
+
+const REGIONS = [
+  '서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산',
+  '세종', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주',
+]
+
+const BUILDING_TYPES = ['상가', '신축 상가', '오피스 빌딩', '단독 상가', '주상복합', '근린생활시설']
+
+const FLOOR_OPTIONS = ['지하 2층', '지하 1층', '1층', '1.5층', '2층', '3층', '4층 이상', '1-2층', '1-3층']
+
+const TAG_OPTIONS = [
+  '역세권', '오피스 상권', '학원가', '주거지 인근', '관광 상권', 'SNS 상권',
+  '대로변', '코너', '신축', '엘리베이터', '주차 가능', '인테리어 양호',
+  '주방 설비', '광장 면', '단독 건물', '대형 아파트 단지',
+]
+
+const TYPE_LABEL_FORM: Record<ListingType, { label: string; sub: string }> = {
+  transfer: { label: '양도', sub: '운영 중인 매장 양도' },
+  new: { label: '신규 임대', sub: '비어있는 상가 임대' },
+  sale: { label: '매각', sub: '건물·상가 매각' },
+}
+
+export function PostForm({ defaultName, defaultEmail }: { defaultName: string; defaultEmail: string }) {
+  const [state, setState] = useState<FormState>({
+    listingType: 'new',
+    title: '',
+    region: '',
+    district: '',
+    fullAddress: '',
+    area: '',
+    floor: '1층',
+    buildingType: '상가',
+    deposit: '',
+    monthlyRent: '',
+    rightFee: '',
+    salePrice: '',
+    availableFrom: '',
+    currentBusiness: '',
+    monthlyRevenue: '',
+    revenueWillVerify: false,
+    transferorMessage: '',
+    fitCategories: [],
+    tags: [],
+    photoCount: 0,
+    hasLease: false,
+    hasRevenueDoc: false,
+    ownerName: defaultName,
+    ownerPhone: '',
+    ownerEmail: defaultEmail,
+    ownerType: 'direct',
+    agencyName: '',
+    agreedPrivacy: false,
+    agreedTerms: false,
+  })
+  const [submitted, setSubmitted] = useState(false)
+
+  const isSale = state.listingType === 'sale'
+  const isTransfer = state.listingType === 'transfer'
+
+  const required = [
+    state.title,
+    state.region,
+    state.district,
+    state.fullAddress,
+    state.area,
+    isSale ? state.salePrice : state.deposit,
+    isSale ? '_' : state.monthlyRent,
+    state.ownerName,
+    state.ownerPhone,
+    state.ownerEmail,
+  ]
+  const allRequired = required.every((v) => v.trim().length > 0)
+  const hasPhoto = state.photoCount >= 3
+  const hasCategory = state.fitCategories.length >= 1 || isSale
+  const hasLease = state.hasLease
+  const isValid = allRequired && hasPhoto && hasCategory && hasLease && state.agreedPrivacy && state.agreedTerms
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isValid) return
+    setSubmitted(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  if (submitted) {
+    return (
+      <div className="mx-auto max-w-2xl">
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="p-10 text-center">
+            <div
+              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              <CheckCircle2 className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="mt-4 text-h3 font-bold text-gray-900">매물 등록 접수 완료</h2>
+            <p className="mt-3 text-gray-600">
+              운영팀에서 영업일 2일 이내 매물 실사를 진행한 뒤 본인 확인 뱃지와 함께 노출됩니다.
+              실사 일정·결과는 등록자 연락처로 전달됩니다.
+            </p>
+            <div className="mt-6 inline-block rounded-lg bg-gray-50 px-4 py-3 text-left text-sm">
+              <div className="text-gray-500">담당자 연락처</div>
+              <div className="mt-0.5 font-medium text-gray-900">
+                {state.ownerName} · {state.ownerPhone}
+              </div>
+            </div>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+              <a href="/listings">
+                <Button size="lg" variant="outline">매물 목록으로</Button>
+              </a>
+              <a href="/mypage">
+                <Button size="lg">마이페이지로</Button>
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+    setState((p) => ({ ...p, [key]: value }))
+
+  const toggleCategory = (key: string) => {
+    setState((p) => ({
+      ...p,
+      fitCategories: p.fitCategories.includes(key)
+        ? p.fitCategories.filter((k) => k !== key)
+        : [...p.fitCategories, key],
+    }))
+  }
+
+  const toggleTag = (tag: string) => {
+    setState((p) => ({
+      ...p,
+      tags: p.tags.includes(tag) ? p.tags.filter((t) => t !== tag) : [...p.tags, tag],
+    }))
+  }
+
+  return (
+    <form onSubmit={submit} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="space-y-6">
+        {/* 유형 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-3 p-6">
+            <SectionHeader title="매물 유형" />
+            <div className="grid grid-cols-3 gap-2">
+              {(['new', 'transfer', 'sale'] as const).map((t) => (
+                <label
+                  key={t}
+                  className={
+                    'flex cursor-pointer items-center justify-center rounded-xl border-2 p-4 transition-colors ' +
+                    (state.listingType === t
+                      ? 'border-gray-900 bg-gray-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300')
+                  }
+                >
+                  <input
+                    type="radio"
+                    name="listingType"
+                    value={t}
+                    checked={state.listingType === t}
+                    onChange={() => update('listingType', t)}
+                    className="sr-only"
+                  />
+                  <div className="text-center">
+                    <div className="text-sm font-semibold text-gray-900">{TYPE_LABEL_FORM[t].label}</div>
+                    <div className="mt-0.5 text-xs text-gray-500">{TYPE_LABEL_FORM[t].sub}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 기본 정보 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-6">
+            <SectionHeader title="기본 정보" />
+            <Field label="매물 제목" required>
+              <input
+                type="text"
+                value={state.title}
+                onChange={(e) => update('title', e.target.value)}
+                placeholder="예: 강남역 도보 5분 1층 코너 매물"
+                className="form-input"
+                required
+              />
+            </Field>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="지역 (시·도)" required>
+                <select
+                  value={state.region}
+                  onChange={(e) => update('region', e.target.value)}
+                  className="form-input"
+                  required
+                >
+                  <option value="">선택</option>
+                  {REGIONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="시·군·구" required>
+                <input
+                  type="text"
+                  value={state.district}
+                  onChange={(e) => update('district', e.target.value)}
+                  placeholder="예: 강남구"
+                  className="form-input"
+                  required
+                />
+              </Field>
+              <Field label="도로명 주소" required className="sm:col-span-2">
+                <input
+                  type="text"
+                  value={state.fullAddress}
+                  onChange={(e) => update('fullAddress', e.target.value)}
+                  placeholder="예: 서울특별시 강남구 강남대로 396"
+                  className="form-input"
+                  required
+                />
+              </Field>
+              <Field label="면적 (평)" required>
+                <input
+                  type="number"
+                  value={state.area}
+                  onChange={(e) => update('area', e.target.value)}
+                  placeholder="28"
+                  className="form-input"
+                  required
+                />
+              </Field>
+              <Field label="층">
+                <select
+                  value={state.floor}
+                  onChange={(e) => update('floor', e.target.value)}
+                  className="form-input"
+                >
+                  {FLOOR_OPTIONS.map((f) => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="건물 형태">
+                <select
+                  value={state.buildingType}
+                  onChange={(e) => update('buildingType', e.target.value)}
+                  className="form-input"
+                >
+                  {BUILDING_TYPES.map((b) => (
+                    <option key={b} value={b}>{b}</option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="입주 가능 시점">
+                <input
+                  type="date"
+                  value={state.availableFrom}
+                  onChange={(e) => update('availableFrom', e.target.value)}
+                  className="form-input"
+                />
+              </Field>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 비용 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-6">
+            <SectionHeader title="비용 정보" helper="단위: 만원" />
+            {isSale ? (
+              <Field label="매각가 (만원)" required>
+                <input
+                  type="number"
+                  value={state.salePrice}
+                  onChange={(e) => update('salePrice', e.target.value)}
+                  placeholder="380000"
+                  className="form-input"
+                  required
+                />
+              </Field>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Field label="보증금 (만원)" required>
+                  <input
+                    type="number"
+                    value={state.deposit}
+                    onChange={(e) => update('deposit', e.target.value)}
+                    placeholder="5000"
+                    className="form-input"
+                    required
+                  />
+                </Field>
+                <Field label="월세 (만원)" required>
+                  <input
+                    type="number"
+                    value={state.monthlyRent}
+                    onChange={(e) => update('monthlyRent', e.target.value)}
+                    placeholder="280"
+                    className="form-input"
+                    required
+                  />
+                </Field>
+                {isTransfer && (
+                  <Field label="권리금 (만원)">
+                    <input
+                      type="number"
+                      value={state.rightFee}
+                      onChange={(e) => update('rightFee', e.target.value)}
+                      placeholder="0 = 없음"
+                      className="form-input"
+                    />
+                  </Field>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 양도 추가 정보 */}
+        {isTransfer && (
+          <Card className="border-gray-200 shadow-sm">
+            <CardContent className="space-y-4 p-6">
+              <SectionHeader
+                title="양도 추가 정보"
+                helper="현재 운영 중인 업종과 매출 정보를 제공하면 문의 전환율이 높아집니다."
+              />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="현재 업종">
+                  <input
+                    type="text"
+                    value={state.currentBusiness}
+                    onChange={(e) => update('currentBusiness', e.target.value)}
+                    placeholder="예: 카페, 한식"
+                    className="form-input"
+                  />
+                </Field>
+                <Field label="월 매출 (만원)">
+                  <input
+                    type="number"
+                    value={state.monthlyRevenue}
+                    onChange={(e) => update('monthlyRevenue', e.target.value)}
+                    placeholder="2280"
+                    className="form-input"
+                  />
+                </Field>
+              </div>
+              <label className="flex items-start gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={state.revenueWillVerify}
+                  onChange={(e) => update('revenueWillVerify', e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300"
+                />
+                <span className="text-gray-700">
+                  매출 자료(POS 캡처·세무 자료)를 운영팀에 제출하여 <strong>매출 검증 뱃지</strong>를 받겠습니다.
+                </span>
+              </label>
+              <Field label="양도인의 한 마디">
+                <textarea
+                  value={state.transferorMessage}
+                  onChange={(e) => update('transferorMessage', e.target.value)}
+                  placeholder="매장 운영 노하우, 주요 단골 비중, 매장의 강점 등을 적어주세요."
+                  className="form-input min-h-[120px]"
+                  rows={4}
+                />
+              </Field>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 적합 업종 */}
+        {!isSale && (
+          <Card className="border-gray-200 shadow-sm">
+            <CardContent className="space-y-3 p-6">
+              <SectionHeader
+                title="적합 업종"
+                helper="이 매물에 어울리는 업종을 1개 이상 선택하세요. 가맹 본사 검색에 사용됩니다."
+              />
+              <div className="flex flex-wrap gap-2">
+                {LISTING_CATEGORIES.map((c) => {
+                  const active = state.fitCategories.includes(c.key)
+                  return (
+                    <button
+                      key={c.key}
+                      type="button"
+                      onClick={() => toggleCategory(c.key)}
+                      className={
+                        'rounded-full px-3 py-1.5 text-sm transition-colors ' +
+                        (active
+                          ? 'bg-gray-900 text-white'
+                          : 'border border-gray-200 bg-white text-gray-700 hover:border-gray-300')
+                      }
+                    >
+                      {c.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 입지 태그 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-3 p-6">
+            <SectionHeader title="입지 특성 태그" />
+            <div className="flex flex-wrap gap-2">
+              {TAG_OPTIONS.map((t) => {
+                const active = state.tags.includes(t)
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => toggleTag(t)}
+                    className={
+                      'rounded-full px-3 py-1.5 text-sm transition-colors ' +
+                      (active
+                        ? 'bg-gray-900 text-white'
+                        : 'border border-gray-200 bg-white text-gray-700 hover:border-gray-300')
+                    }
+                  >
+                    {t}
+                  </button>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 사진 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-3 p-6">
+            <SectionHeader
+              title="매물 사진 (최소 3장, 권장 5장 이상)"
+              helper="외관·내부·주방·화장실·주변 사진을 골고루 등록하면 문의 전환율이 평균 2배 증가합니다."
+            />
+            <PhotoUploadGrid count={state.photoCount} onChange={(c) => update('photoCount', c)} />
+            {state.photoCount > 0 && state.photoCount < 3 && (
+              <p className="text-xs text-rose-500">최소 3장 이상 등록이 필요합니다.</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 자료 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-3 p-6">
+            <SectionHeader
+              title="실사 자료"
+              helper="운영팀의 본인 확인과 매물 검증에 사용됩니다."
+            />
+            <UploadRow
+              icon={FileText}
+              label="임대차계약서 또는 매매계약서 (필수)"
+              note="본인 확인 매물 등록을 위한 필수 자료입니다."
+              checked={state.hasLease}
+              onChange={(v) => update('hasLease', v)}
+            />
+            {isTransfer && (
+              <UploadRow
+                icon={FileText}
+                label="최근 3개월 매출 자료"
+                note="POS 캡처 또는 세무 자료 (검증 뱃지 발급)"
+                checked={state.hasRevenueDoc}
+                onChange={(v) => update('hasRevenueDoc', v)}
+              />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 등록자 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-6">
+            <SectionHeader title="등록자 정보" />
+            <div className="grid grid-cols-2 gap-2">
+              {(['direct', 'agent'] as const).map((t) => (
+                <label
+                  key={t}
+                  className={
+                    'flex cursor-pointer items-center justify-center rounded-xl border-2 p-3 transition-colors ' +
+                    (state.ownerType === t
+                      ? 'border-gray-900 bg-gray-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300')
+                  }
+                >
+                  <input
+                    type="radio"
+                    name="ownerType"
+                    value={t}
+                    checked={state.ownerType === t}
+                    onChange={() => update('ownerType', t)}
+                    className="sr-only"
+                  />
+                  <span className="text-sm font-medium text-gray-900">
+                    {t === 'direct' ? '직접 등록 (점주·소유주)' : '중개사 등록'}
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {state.ownerType === 'agent' && (
+                <Field label="공인중개사명" className="sm:col-span-2">
+                  <input
+                    type="text"
+                    value={state.agencyName}
+                    onChange={(e) => update('agencyName', e.target.value)}
+                    placeholder="예: 강남상권공인중개"
+                    className="form-input"
+                  />
+                </Field>
+              )}
+              <Field label="이름" required>
+                <input
+                  type="text"
+                  value={state.ownerName}
+                  onChange={(e) => update('ownerName', e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </Field>
+              <Field label="휴대전화" required>
+                <input
+                  type="tel"
+                  value={state.ownerPhone}
+                  onChange={(e) => update('ownerPhone', e.target.value)}
+                  placeholder="010-0000-0000"
+                  className="form-input"
+                  required
+                />
+              </Field>
+              <Field label="이메일" required className="sm:col-span-2">
+                <input
+                  type="email"
+                  value={state.ownerEmail}
+                  onChange={(e) => update('ownerEmail', e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </Field>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 동의 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-2 p-6">
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={state.agreedPrivacy}
+                onChange={(e) => update('agreedPrivacy', e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300"
+              />
+              <span className="text-gray-700">
+                [필수] 개인정보 처리방침에 동의합니다. amakers는 매물 실사와 거래 진행을 위해 등록자 정보를 처리합니다.
+              </span>
+            </label>
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={state.agreedTerms}
+                onChange={(e) => update('agreedTerms', e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300"
+              />
+              <span className="text-gray-700">
+                [필수] 매물 등록 약관에 동의합니다. 허위 매물 등록 시 영구 등록 제한 + 법적 책임이 발생할 수 있습니다.
+              </span>
+            </label>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Sticky summary */}
+      <div className="lg:sticky lg:top-20 lg:self-start">
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-4 p-5">
+            <div>
+              <div className="text-xs text-gray-500">등록 요약</div>
+              <div className="mt-2 space-y-1.5 text-sm">
+                <Row label="유형" value={TYPE_LABEL_FORM[state.listingType].label} />
+                <Row label="제목" value={state.title || '-'} />
+                <Row label="지역" value={[state.region, state.district].filter(Boolean).join(' ') || '-'} />
+                <Row label="면적" value={state.area ? `${state.area}평` : '-'} />
+                <Row
+                  label="비용"
+                  value={
+                    isSale
+                      ? state.salePrice
+                        ? `매각가 ${state.salePrice}만`
+                        : '-'
+                      : state.deposit && state.monthlyRent
+                        ? `보 ${state.deposit} / 월 ${state.monthlyRent}만`
+                        : '-'
+                  }
+                />
+                <Row label="업종" value={isSale ? '-' : `${state.fitCategories.length}개`} />
+                <Row label="사진" value={`${state.photoCount}장`} />
+                <Row label="계약서" value={state.hasLease ? '보유 ✓' : '미보유'} />
+              </div>
+            </div>
+
+            <Button type="submit" size="lg" className="w-full gap-1" disabled={!isValid}>
+              <Send className="h-4 w-4" />
+              매물 등록 제출
+            </Button>
+
+            <p className="flex items-start gap-1.5 text-xs text-gray-500">
+              <Shield className="mt-0.5 h-3 w-3 shrink-0" />
+              운영팀 실사 후 본인 확인 뱃지와 함께 노출됩니다. 등록은 무료이며 거래 성사 시에만 표준 수수료가 발생합니다.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <style jsx>{`
+        :global(.form-input) {
+          width: 100%;
+          border-radius: 0.5rem;
+          border: 1px solid #e5e7eb;
+          background: white;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.875rem;
+        }
+        :global(.form-input:focus) {
+          outline: none;
+          box-shadow: 0 0 0 2px var(--brand-primary);
+        }
+      `}</style>
+    </form>
+  )
+}
+
+function PhotoUploadGrid({ count, onChange }: { count: number; onChange: (c: number) => void }) {
+  const max = 10
+  return (
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+      {Array.from({ length: max }).map((_, i) => {
+        const filled = i < count
+        return (
+          <button
+            key={i}
+            type="button"
+            onClick={() => {
+              if (filled) onChange(Math.max(0, count - 1))
+              else onChange(Math.min(max, count + 1))
+            }}
+            className={
+              'group relative flex aspect-square items-center justify-center rounded-xl border-2 border-dashed text-xs transition-colors ' +
+              (filled
+                ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300')
+            }
+          >
+            {filled ? (
+              <div className="text-center">
+                <CheckCircle2 className="mx-auto h-5 w-5" />
+                <div className="mt-1">{i + 1}</div>
+                <div className="mt-0.5 inline-flex items-center gap-0.5 text-[10px] text-rose-500 opacity-0 group-hover:opacity-100">
+                  <Trash2 className="h-3 w-3" />
+                </div>
+              </div>
+            ) : (
+              <div className="text-center">
+                {i === 0 ? <ImagePlus className="mx-auto h-5 w-5" /> : <Plus className="mx-auto h-4 w-4" />}
+                <div className="mt-1">{i === 0 ? '대표' : '+'}</div>
+              </div>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function UploadRow({
+  icon: Icon,
+  label,
+  note,
+  checked,
+  onChange,
+}: {
+  icon: typeof FileText
+  label: string
+  note: string
+  checked: boolean
+  onChange: (v: boolean) => void
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between rounded-xl border border-gray-200 bg-white p-4 text-sm">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 font-medium text-gray-900">
+          <Icon className="h-4 w-4 text-gray-400" />
+          {label}
+        </div>
+        <div className="mt-1 text-xs text-gray-500">{note}</div>
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300"
+        />
+        <span className="text-xs text-gray-600">{checked ? '보유' : '미보유'}</span>
+      </div>
+    </label>
+  )
+}
+
+function SectionHeader({ title, helper }: { title: string; helper?: string }) {
+  return (
+    <div>
+      <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+      {helper && <p className="mt-0.5 text-xs text-gray-500">{helper}</p>}
+    </div>
+  )
+}
+
+function Field({
+  label,
+  required,
+  className,
+  children,
+}: {
+  label: string
+  required?: boolean
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <label className={'block text-sm ' + (className ?? '')}>
+      <span className="text-xs font-medium text-gray-700">
+        {label}
+        {required && <span className="ml-1 text-rose-500">*</span>}
+      </span>
+      <div className="mt-1">{children}</div>
+    </label>
+  )
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-2 border-b border-gray-50 pb-1.5 last:border-0">
+      <span className="text-xs text-gray-500">{label}</span>
+      <span className="max-w-[60%] text-right text-xs font-medium text-gray-900">{value}</span>
+    </div>
+  )
+}

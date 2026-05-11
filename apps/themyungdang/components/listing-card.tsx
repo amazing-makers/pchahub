@@ -12,28 +12,30 @@ interface ListingCardProps {
 export function ListingCard({ listing, featured = false }: ListingCardProps) {
   return (
     <a href={`/listings/${listing.id}`} className="group block h-full">
-      <Card className="h-full transition-shadow hover:shadow-md">
+      <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
         <CardContent className="p-0">
-          {/* Image */}
-          <div
-            className="relative h-36 w-full overflow-hidden rounded-t-xl"
-            style={{
-              background: `linear-gradient(135deg, ${listing.imageColors[0]}, ${listing.imageColors[1] ?? listing.imageColors[0]})`,
-            }}
-            aria-hidden
-          >
+          {/* Hero image */}
+          <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={listing.images[0]}
+              alt={listing.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/30 to-transparent" />
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
-              <Badge variant={listing.type === 'transfer' ? 'primary' : 'default'}>
+              <Badge variant={listing.type === 'transfer' ? 'primary' : listing.type === 'sale' ? 'warning' : 'default'}>
                 {TYPE_LABEL[listing.type]}
               </Badge>
-              {listing.verified && (
-                <Badge variant="success" className="gap-0.5">
-                  <CheckCircle2 className="h-3 w-3" />
-                  검증
-                </Badge>
-              )}
               {featured && <Badge variant="warning">광고</Badge>}
             </div>
+            {listing.verified && (
+              <span className="absolute right-3 top-3 inline-flex items-center gap-0.5 rounded-full bg-blue-500/95 px-2 py-0.5 text-xs font-medium text-white">
+                <CheckCircle2 className="h-3 w-3" />
+                실사 완료
+              </span>
+            )}
           </div>
 
           {/* Body */}
@@ -71,6 +73,13 @@ export function ListingCard({ listing, featured = false }: ListingCardProps) {
                 </>
               )}
             </div>
+
+            {listing.monthlyRevenue && (
+              <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-xs text-emerald-700">
+                <span className="font-medium">검증 월매출</span>
+                <span className="font-semibold">{formatNumber(listing.monthlyRevenue)}만</span>
+              </div>
+            )}
 
             <div className="mt-3 flex flex-wrap gap-1">
               {listing.tags.slice(0, 3).map((tag) => (

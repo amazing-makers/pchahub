@@ -1,6 +1,8 @@
 // Mock data for themyungdang (real-estate for franchise spaces).
 // Mirrors the shape we'd get from the Listings table once Supabase is live.
 
+import { listingPhotoSet } from './listing-images'
+
 export type ListingType = 'transfer' | 'new' | 'sale'
 
 export interface MockListing {
@@ -33,7 +35,12 @@ export interface MockListing {
   createdAt: string
   ownerType: 'direct' | 'agent'
   agencyName?: string
+  /** Fallback gradient colors (kept for backwards compat). */
   imageColors: string[]
+  /** Real photos (hero + interior shots). Filled automatically below. */
+  images: string[]
+  /** Owner / agent's pitch shown on detail page. */
+  transferorMessage?: string
 }
 
 export interface MockArea {
@@ -246,7 +253,9 @@ export const AREAS: MockArea[] = [
   },
 ]
 
-export const LISTINGS: MockListing[] = [
+type RawListing = Omit<MockListing, 'images'>
+
+const RAW_LISTINGS: RawListing[] = [
   // ========= 서울 =========
   {
     id: 'l001',
@@ -955,6 +964,28 @@ export const LISTINGS: MockListing[] = [
     imageColors: ['#7C3AED', '#A78BFA'],
   },
 ]
+
+// 일부 양도 매물에 양도인 메시지 부여 (자료 풍부도 향상)
+const TRANSFEROR_MESSAGES: Record<string, string> = {
+  l001: '7년 운영했던 매장으로 단골 비중 60% 이상입니다. 본사 협의 후 동종 인수 시 권리금 협상 가능.',
+  l003: '오픈 1년차 매장으로 인테리어 컨디션이 매우 좋습니다. 주방 설비 그대로 사용 가능.',
+  l005: '개인 사정으로 양도합니다. 단골 위주 매장이라 인수 후 매출 안정성이 높습니다.',
+  l006: '오피스 푸드코트 자리로 평일 점심 매출이 안정적입니다. 평일 영업만으로 충분히 손익이 맞습니다.',
+  l009: '아파트 단지 코너로 가족 단위 손님이 많습니다. 주방 시설 추가 투자 없이 인수 가능합니다.',
+  l011: '학원가 한복판에 위치해 학생 손님이 꾸준합니다. 본사 협의 시 분식 외 업종 운영도 가능.',
+  l013: '동성로 한복판 1.5층 자리로 야간 상권이 강합니다. 주점·라멘 등 야간 운영에 적합.',
+  l015: '청년층 핫플레이스 골목 코너입니다. SNS 노출이 잘 되는 위치.',
+  l017: '학원가 + 청사 객수가 시간대별로 분산되어 회전율이 좋습니다.',
+  l019: '주방 시설 그대로 인수 가능합니다. 치킨 외 한식·분식 운영도 가능한 입지.',
+  l022: '주거지 인근이라 평일·주말 매출이 균형 잡혀 있습니다. 주차 가능.',
+  l024: '관광 상권에 위치한 2개층 한정식 매장. 외국인 손님 비중 30% 이상.',
+}
+
+export const LISTINGS: MockListing[] = RAW_LISTINGS.map((l) => ({
+  ...l,
+  images: listingPhotoSet(l.id),
+  transferorMessage: TRANSFEROR_MESSAGES[l.id],
+}))
 
 export const FEATURED_LISTINGS = LISTINGS.filter((l) => l.featured)
 export const TRANSFER_LISTINGS = LISTINGS.filter((l) => l.type === 'transfer')

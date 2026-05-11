@@ -93,22 +93,48 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
           <div className="space-y-6 min-w-0">
             {/* Images */}
             <Card className="overflow-hidden border-gray-200 shadow-sm">
-              <div className="grid h-72 grid-cols-3 gap-1">
-                {listing.imageColors.slice(0, 3).map((c, i) => (
-                  <div
-                    key={i}
-                    style={{ background: c }}
-                    className={i === 0 ? 'col-span-3 sm:col-span-2 sm:row-span-2' : ''}
-                    aria-hidden
-                  />
+              <div className="grid h-80 grid-cols-3 gap-1">
+                <div className="col-span-3 sm:col-span-2 sm:row-span-2">
+                  <div className="relative h-full w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={listing.images[0]} alt={listing.title} className="h-full w-full object-cover" />
+                  </div>
+                </div>
+                {listing.images.slice(1, 3).map((src, i) => (
+                  <div key={i} className="relative overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt={`${listing.title} ${i + 2}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 ))}
-                {Array.from({ length: Math.max(0, 3 - listing.imageColors.length) }).map(
-                  (_, i) => (
-                    <div key={`p${i}`} className="bg-gray-100" aria-hidden />
-                  ),
-                )}
               </div>
+              {listing.images.length > 3 && (
+                <div className="grid grid-cols-4 gap-1 border-t border-gray-100 p-1">
+                  {listing.images.slice(0, 4).map((src, i) => (
+                    <div key={i} className="aspect-[16/10] overflow-hidden rounded-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={src} alt={`thumb ${i + 1}`} className="h-full w-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
+
+            {/* Transferor message */}
+            {listing.transferorMessage && (
+              <Card className="border-amber-200 bg-amber-50">
+                <CardContent className="p-6">
+                  <div className="inline-flex items-center gap-2 text-sm font-semibold text-amber-900">
+                    <MessageSquare className="h-4 w-4" />
+                    {listing.ownerType === 'agent' ? '중개사 메시지' : '양도인의 한 마디'}
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-amber-900">{listing.transferorMessage}</p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Specs */}
             <SectionCard title="매물 정보">
