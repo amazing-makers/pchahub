@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '더명당 — 프랜차이즈 입점 매물 + 안전 거래',
-  description:
-    '프랜차이즈 양도·신규 임대·매각 매물을 검증된 정보와 함께. amakers 부동산 플랫폼.',
-}
+export const metadata = buildSiteMetadata('themyungdang')
 
 const navItems = [
   { href: '/listings', label: '매물 검색' },

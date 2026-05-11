@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '더메뉴얼 — 가맹점 운영 교육 플랫폼',
-  description:
-    '협회 정보공개서 해석부터 매장 운영·회계·법률·마케팅까지. 실제 점주와 전문가가 가르치는 가맹 사업 교육.',
-}
+export const metadata = buildSiteMetadata('themanual')
 
 const navItems = [
   { href: '/courses', label: '강의' },

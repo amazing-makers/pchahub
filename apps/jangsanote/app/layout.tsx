@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '장사노트 — 자영업·가맹점주 커뮤니티',
-  description:
-    '본사와의 갈등, 매출 부진, 매물 시세, 인력 운영 — 현직 점주들과 함께 푸는 곳.',
-}
+export const metadata = buildSiteMetadata('jangsanote')
 
 const navItems = [
   { href: '/', label: '피드' },

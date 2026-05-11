@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '프차브릿지 — 프랜차이즈 투자 + M&A',
-  description:
-    '본사 Seed·Series·다점포 펀딩·M&A. amakers 프랜차이즈 자본 거래 플랫폼.',
-}
+export const metadata = buildSiteMetadata('pchabridge')
 
 const navItems = [
   { href: '/investments', label: '투자 라운드' },

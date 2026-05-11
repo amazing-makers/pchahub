@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '창업다큐 — 자영업·가맹의 진짜 이야기',
-  description:
-    '성공·실패·브랜드·트렌드. 한국 프랜차이즈 + 자영업 현장을 영상과 매거진으로 기록합니다.',
-}
+export const metadata = buildSiteMetadata('changupdocu')
 
 const navItems = [
   { href: '/episodes', label: '에피소드' },

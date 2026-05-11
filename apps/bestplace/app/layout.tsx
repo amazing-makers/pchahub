@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '베스트플레이스 — 매장 디렉토리 + 베스트 어워드',
-  description:
-    '전국 프랜차이즈 매장과 매년 베스트 브랜드 시상을 한곳에서. amakers 매장 디렉토리.',
-}
+export const metadata = buildSiteMetadata('bestplace')
 
 const navItems = [
   { href: '/awards', label: '어워드' },

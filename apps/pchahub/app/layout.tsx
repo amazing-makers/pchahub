@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '프차허브 — 한국 프랜차이즈 가맹 정보 플랫폼',
-  description:
-    '협회 등록 정보공개서를 한눈에. 내게 맞는 프랜차이즈를 찾고 본사와 바로 연결되는 가맹 정보 플랫폼.',
-}
+export const metadata = buildSiteMetadata('pchahub')
 
 const navItems = [
   { href: '/brands', label: '브랜드 검색' },

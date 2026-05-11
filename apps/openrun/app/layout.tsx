@@ -1,14 +1,10 @@
-import type { Metadata } from 'next'
 import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import './globals.css'
 
-export const metadata: Metadata = {
-  title: '오픈런 — 프랜차이즈 본사·매장 마케팅 에이전시',
-  description:
-    '그랜드 오픈 + 가맹 모집 + 본사 브랜드 마케팅을 통합 운영하는 amakers 마케팅 파트너.',
-}
+export const metadata = buildSiteMetadata('openrun')
 
 const navItems = [
   { href: '/services', label: '서비스' },
