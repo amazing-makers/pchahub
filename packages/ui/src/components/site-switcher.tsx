@@ -68,8 +68,34 @@ export function SiteSwitcher({ current }: SiteSwitcherProps) {
                     'flex items-center gap-3 rounded-lg px-3 py-2 transition-colors',
                     isCurrent ? 'bg-gray-50' : 'hover:bg-gray-50'
                   )}
-                  onClick={(e) => {
-                    if (isCurrent) e.preventDefault()
+                  onClick={async (e) => {
+                    if (isCurrent) {
+                      e.preventDefault()
+                      return
+                    }
+                    // Try SSO passport flow first; fall back to plain nav.
+                    e.preventDefault()
+                    const fallback = `https://${b.domain}`
+                    try {
+                      const res = await fetch(`/api/sso/passport?to=${encodeURIComponent(b.domain)}`, {
+                        credentials: 'include',
+                      })
+                      if (!res.ok) {
+                        window.location.href = fallback
+                        return
+                      }
+                      const data = (await res.json()) as { token?: string }
+                      if (!data.token) {
+                        window.location.href = fallback
+                        return
+                      }
+                      const acceptUrl = `https://${b.domain}/api/sso/accept?token=${encodeURIComponent(
+                        data.token,
+                      )}&next=${encodeURIComponent('/')}`
+                      window.location.href = acceptUrl
+                    } catch {
+                      window.location.href = fallback
+                    }
                   }}
                 >
                   <span
