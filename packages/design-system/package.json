@@ -10,6 +10,7 @@
     "./typography": "./src/typography.ts",
     "./layout": "./src/layout.ts",
     "./metadata": "./src/metadata.ts",
+    "./og-image": "./src/og-image.tsx",
     "./tailwind-preset": "./src/tailwind-preset.ts"
   },
   "scripts": {

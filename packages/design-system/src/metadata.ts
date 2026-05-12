@@ -100,20 +100,13 @@ export function buildSiteMetadata(platform: PlatformKey): Metadata {
       siteName: brand.name,
       title: copy.title,
       description: copy.description,
-      images: [
-        {
-          url: '/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: copy.title,
-        },
-      ],
+      // og 이미지는 각 사이트 app/opengraph-image.tsx (Next.js file convention)
+      // 에서 동적 생성되어 자동으로 첨부됨.
     },
     twitter: {
       card: 'summary_large_image',
       title: copy.title,
       description: copy.description,
-      images: ['/og-image.png'],
     },
     robots: {
       index: true,
