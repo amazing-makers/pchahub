@@ -16,11 +16,18 @@
 import { BRANDS, CATEGORIES, type MockBrand } from '../mock-data'
 import { getBrandDetail as getMockDetail } from '../mock-brand-detail'
 import { listDisclosures, getDisclosureContent } from './client'
-import { fetchIndutyBrandStats } from './json-apis'
+import {
+  fetchBrandList,
+  fetchBrandStoreStats,
+  fetchHqRegistrations,
+  fetchIndutyBrandStats,
+} from './json-apis'
+import { isConfigured } from './registry'
 import {
   aggregateIndutyBrandStats,
   mapContentToDetail,
   mapListItemToBrand,
+  mergeIntoBrands,
   type CategoryTrend,
 } from './mapper'
 
@@ -30,20 +37,65 @@ function hasKey(): boolean {
 
 /**
  * 모든 브랜드 목록.
- * 캐시는 fetch 단위에서 24시간으로 잡힌다 (lib/kftc/client.ts).
+ *
+ * 데이터 소스 우선순위 (configured 상태에 따라):
+ *   1. JSON API 4종 (브랜드목록 + 페어데이터 + 본부등록) 머지 — 가장 깔끔
+ *   2. 정보공개서 list API (XML) — 1순위가 안 되면 fallback
+ *   3. mock-data.ts — 둘 다 안 되면 최종 fallback
+ *
+ * 캐시는 fetch 단위에서 24시간 (lib/kftc/client.ts).
  */
 export async function getBrands(): Promise<MockBrand[]> {
   if (!hasKey()) return BRANDS
 
-  try {
-    const currentYear = new Date().getFullYear()
-    const res = await listDisclosures(currentYear, { numOfRows: 1000 })
-    return res.items.map((item) => mapListItemToBrand(item))
-  } catch (err) {
-    // API 실패 시 mock으로 graceful fallback — 사용자 화면이 깨지지 않게
-    console.error('[kftc] listDisclosures 실패 — mock으로 fallback:', err)
-    return BRANDS
+  const currentYear = new Date().getFullYear()
+  const prevYear = currentYear - 1
+
+  // 1순위: JSON API 4종 통합 (registry에 configured 상태일 때)
+  if (isConfigured('BrandList')) {
+    try {
+      const [brandList, storeStats, storeStatsPrev, hqReg] = await Promise.all([
+        fetchBrandList({ yr: prevYear, numOfRows: 1000 }),
+        isConfigured('BrandStoreStats')
+          ? fetchBrandStoreStats({ yr: prevYear, numOfRows: 1000 })
+          : Promise.resolve({ body: { items: [] } } as Awaited<
+              ReturnType<typeof fetchBrandStoreStats>
+            >),
+        isConfigured('BrandStoreStats')
+          ? fetchBrandStoreStats({ yr: prevYear - 1, numOfRows: 1000 })
+          : Promise.resolve({ body: { items: [] } } as Awaited<
+              ReturnType<typeof fetchBrandStoreStats>
+            >),
+        isConfigured('HqRegistrations')
+          ? fetchHqRegistrations({ yr: prevYear, numOfRows: 1000 })
+          : Promise.resolve({ body: { items: [] } } as Awaited<
+              ReturnType<typeof fetchHqRegistrations>
+            >),
+      ])
+      const merged = mergeIntoBrands({
+        brandList: brandList.body.items,
+        storeStats: storeStats.body.items,
+        storeStatsPrev: storeStatsPrev.body.items,
+        hqReg: hqReg.body.items,
+      })
+      if (merged.length > 0) return merged
+    } catch (err) {
+      console.error('[kftc] JSON API 머지 실패 — 정보공개서 list로 fallback:', err)
+    }
   }
+
+  // 2순위: 정보공개서 list (XML)
+  if (isConfigured('DisclosureList')) {
+    try {
+      const res = await listDisclosures(currentYear, { numOfRows: 1000 })
+      return res.items.map((item) => mapListItemToBrand(item))
+    } catch (err) {
+      console.error('[kftc] listDisclosures 실패 — mock으로 fallback:', err)
+    }
+  }
+
+  // 3순위: mock
+  return BRANDS
 }
 
 /**

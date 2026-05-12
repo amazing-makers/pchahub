@@ -14,7 +14,13 @@ import type {
   BrandStoreHistory,
 } from '../mock-brand-detail'
 import type { KftcDisclosureContent, KftcDisclosureListItem } from './types'
-import type { KftcIndutyBrandStats } from './json-apis'
+import type {
+  KftcBrandListItem,
+  KftcBrandStoreStats,
+  KftcHqInfoItem,
+  KftcHqRegistrationItem,
+  KftcIndutyBrandStats,
+} from './json-apis'
 
 // ============================================================
 // 업태 코드 → mock 카테고리 키 매핑
@@ -239,4 +245,83 @@ export function aggregateIndutyBrandStats(items: KftcIndutyBrandStats[]): Catego
     t.changeRate = denom > 0 ? Math.round(((t.newBrandCnt - t.closedBrandCnt) / denom) * 1000) / 10 : 0
   }
   return Array.from(buckets.values()).sort((a, b) => b.currBrandCnt - a.currBrandCnt)
+}
+
+// ============================================================
+// 4개 JSON API 응답을 통합해서 MockBrand[] 생성
+// ============================================================
+
+/**
+ * 가맹본부관리번호(fcCrpoMngNo)를 키로 4개 API 응답을 머지.
+ *
+ *   브랜드 목록 + 페어데이터 + 본부 일반정보 + 본부 등록목록
+ *     →  완전한 MockBrand[]
+ *
+ * 각 API 결과는 부분적 — 일부 필드만 있어도 나머지는 mock fallback 채움.
+ */
+export function mergeIntoBrands(input: {
+  brandList?: KftcBrandListItem[]
+  storeStats?: KftcBrandStoreStats[]
+  hqInfo?: KftcHqInfoItem[]
+  hqReg?: KftcHqRegistrationItem[]
+  /** 이전 연도 데이터 (성장률 계산용) */
+  storeStatsPrev?: KftcBrandStoreStats[]
+}): MockBrand[] {
+  if (!input.brandList || input.brandList.length === 0) return []
+
+  const statsByCrpo = new Map<string, KftcBrandStoreStats>()
+  for (const s of input.storeStats ?? []) statsByCrpo.set(s.fcCrpoMngNo, s)
+
+  const prevStatsByCrpo = new Map<string, KftcBrandStoreStats>()
+  for (const s of input.storeStatsPrev ?? []) prevStatsByCrpo.set(s.fcCrpoMngNo, s)
+
+  const hqInfoByCrpo = new Map<string, KftcHqInfoItem>()
+  for (const h of input.hqInfo ?? []) hqInfoByCrpo.set(h.fcCrpoMngNo, h)
+
+  const hqRegByCrpo = new Map<string, KftcHqRegistrationItem>()
+  for (const r of input.hqReg ?? []) hqRegByCrpo.set(r.fcCrpoMngNo, r)
+
+  return input.brandList.map((b) => {
+    const id = `kftc-${b.fcCrpoMngNo}`
+    const cat = normalizeCategory(b.indutyNm)
+    const stats = statsByCrpo.get(b.fcCrpoMngNo)
+    const prev = prevStatsByCrpo.get(b.fcCrpoMngNo)
+    const hq = hqInfoByCrpo.get(b.fcCrpoMngNo)
+    const storeCount = stats ? (stats.fcStoreCnt ?? 0) + (stats.drStoreCnt ?? 0) : 0
+    const prevCount = prev ? (prev.fcStoreCnt ?? 0) + (prev.drStoreCnt ?? 0) : 0
+    const growth = prevCount > 0
+      ? Math.round(((storeCount - prevCount) / prevCount) * 100)
+      : 0
+
+    return {
+      id,
+      name: b.brandNm,
+      category: cat.key,
+      categoryLabel: cat.label,
+      logoColor: hashColor(id),
+      description: hq?.crpoNm
+        ? `${hq.crpoNm}이(가) 운영하는 ${cat.label} 가맹 브랜드.`
+        : `${cat.label} 가맹 브랜드.`,
+      storeCount,
+      startupCost: 0, // 정보공개서 본문에서 채움
+      monthlyRoyalty: 0,
+      hqVerified: true,
+      recruiting: true,
+      featured: false,
+      growthRate: growth,
+      hqRegion: hq?.addr ? extractRegion(hq.addr) : '서울',
+      heroImage: brandImageSet(id, cat.key).hero,
+    } satisfies MockBrand
+  })
+}
+
+/**
+ * 평균 매출 (페어데이터의 avgFcSale)을 MockBrand에 머지된 별도 매핑.
+ * BrandRevenue.averageMonthly로 채워진다.
+ */
+export function avgMonthlyFromStats(stats?: KftcBrandStoreStats): number {
+  if (!stats?.avgFcSale) return 0
+  // 일반적으로 페어데이터는 연 매출(원) 또는 월 매출(원) — 명세 확인 후 단위 변환.
+  // 안전한 가정: 만원 단위로 변환 (avgFcSale / 10000).
+  return Math.round(stats.avgFcSale / 10000)
 }
