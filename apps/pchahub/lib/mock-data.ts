@@ -35,6 +35,25 @@ export interface MockBrand {
   hqRegion: string
   /** Hero image URL — real photo for brand card / detail page. */
   heroImage: string
+  // ── 실 API(KFTC) 전용 필드 ──────────────────────────────
+  /** KFTC 법인명 (실API 브랜드). 없으면 name 기반 표시. */
+  corpNm?: string
+  /** 평균 연매출 (만원). getBrandFrcsStats avrgSlsAmt. */
+  avgAnnualSales?: number
+  /** 가맹사업 시작연도. getBrandBrandStats jngBizStrtDate. */
+  jngBizStartYear?: number
+  /** 계약 종료(폐점) 수. getBrandFrcsStats ctrtEndCnt. */
+  closedCount?: number
+  /** 신규 가맹점 등록 수. getBrandFrcsStats newFrcsRgsCnt. */
+  newOpenCount?: number
+  /** 가맹금 (만원). getBrandFntnStats jngBzmnJngAmt. */
+  fntnFranchiseFee?: number
+  /** 교육비 (만원). getBrandFntnStats jngBzmnEduAmt. */
+  fntnEducationFee?: number
+  /** 보증금 (만원). getBrandFntnStats jngBzmnAssrncAmt. */
+  fntnDeposit?: number
+  /** 기타 (만원). getBrandFntnStats jngBzmnEtcAmt. */
+  fntnOtherFees?: number
 }
 
 export const CATEGORIES: MockCategory[] = [

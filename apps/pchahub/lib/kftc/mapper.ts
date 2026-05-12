@@ -760,9 +760,11 @@ export function mergeRealApiBrands(
     const idSeed = joinKey.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
     const id = `kftc-${idSeed}`
 
+    // smtnAmt = 공정위 공시 총창업비합계 (가장 정확). 없으면 4개 항목 합산.
     const startupCost = fntn
-      ? Number(fntn.jngBzmnJngAmt ?? 0) + Number(fntn.jngBzmnEduAmt ?? 0) +
-        Number(fntn.jngBzmnAssrncAmt ?? 0) + Number(fntn.jngBzmnEtcAmt ?? 0)
+      ? Number(fntn.smtnAmt ?? 0) ||
+        (Number(fntn.jngBzmnJngAmt ?? 0) + Number(fntn.jngBzmnEduAmt ?? 0) +
+         Number(fntn.jngBzmnAssrncAmt ?? 0) + Number(fntn.jngBzmnEtcAmt ?? 0))
       : 0
 
     // 가맹사업 시작연도로 성장률 근사: 최근 5년내 신규는 높게
@@ -794,6 +796,17 @@ export function mergeRealApiBrands(
       growthRate,
       hqRegion: '서울',
       heroImage: brandImageSet(id, cat.key).hero,
+      // KFTC 전용 필드
+      corpNm: s.corpNm ?? undefined,
+      avgAnnualSales: s.avrgSlsAmt ? Number(s.avrgSlsAmt) : undefined,
+      jngBizStartYear: startYear !== 2015 ? startYear : undefined,
+      closedCount: endCnt > 0 ? endCnt : undefined,
+      newOpenCount: newCnt > 0 ? newCnt : undefined,
+      // 창업비 세부내역 (fntn API에서 직접 가져온 실데이터)
+      fntnFranchiseFee: fntn?.jngBzmnJngAmt != null ? Number(fntn.jngBzmnJngAmt) : undefined,
+      fntnEducationFee: fntn?.jngBzmnEduAmt != null ? Number(fntn.jngBzmnEduAmt) : undefined,
+      fntnDeposit: fntn?.jngBzmnAssrncAmt != null ? Number(fntn.jngBzmnAssrncAmt) : undefined,
+      fntnOtherFees: fntn?.jngBzmnEtcAmt != null ? Number(fntn.jngBzmnEtcAmt) : undefined,
     })
   }
   return mapped

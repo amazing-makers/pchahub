@@ -57,7 +57,7 @@ export function BrandCard({ brand, featured = false }: BrandCardProps) {
         <CardContent className="p-5">
           <p className="line-clamp-2 text-sm text-gray-600">{brand.description}</p>
 
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-gray-100 pt-3 text-xs">
+          <div className={`mt-4 grid gap-2 border-t border-gray-100 pt-3 text-xs ${brand.avgAnnualSales ? 'grid-cols-4' : 'grid-cols-3'}`}>
             <div>
               <div className="text-gray-500">매장</div>
               <div className="mt-0.5 font-semibold text-gray-900">
@@ -67,9 +67,17 @@ export function BrandCard({ brand, featured = false }: BrandCardProps) {
             <div>
               <div className="text-gray-500">창업비</div>
               <div className="mt-0.5 font-semibold text-gray-900">
-                {formatNumber(brand.startupCost)}만
+                {brand.startupCost > 0 ? `${formatNumber(brand.startupCost)}만` : '-'}
               </div>
             </div>
+            {brand.avgAnnualSales != null && brand.avgAnnualSales > 0 && (
+              <div>
+                <div className="text-gray-500">평균매출</div>
+                <div className="mt-0.5 font-semibold text-blue-700">
+                  {formatNumber(Math.round(brand.avgAnnualSales / 12))}만/월
+                </div>
+              </div>
+            )}
             <div>
               <div className="text-gray-500 inline-flex items-center gap-0.5">
                 <TrendingUp className="h-3 w-3" />

@@ -7,13 +7,17 @@ import { brandImageSet } from './brand-images'
 
 export interface BrandHQ {
   companyName: string
-  ceo: string
+  /** 대표자 — 실API 브랜드는 제공 안됨 */
+  ceo?: string
   foundedYear: number
   franchiseStartYear: number
-  address: string
-  phone: string
+  /** 본사 주소 — 실API 브랜드는 제공 안됨 */
+  address?: string
+  /** 연락처 — 실API 브랜드는 제공 안됨 */
+  phone?: string
   website?: string
-  bizNumber: string
+  /** 사업자등록번호 — 실API 브랜드는 제공 안됨 */
+  bizNumber?: string
 }
 
 export interface BrandCosts {

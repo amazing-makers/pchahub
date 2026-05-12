@@ -151,7 +151,27 @@ export async function getBrandById(id: string): Promise<{ brand: MockBrand; deta
 
     const detail = getMockDetail(brand)
 
-    // 정보공개서 content API 가능하면 추가 상세 적용
+    // kftc-* 브랜드: 가짜 본사 정보를 실제 데이터로 교체.
+    // getBrandFrcsStats/BrandBrandStats로 얻는 필드만 채우고,
+    // 알 수 없는 필드(phone, address, bizNumber, ceo, website)는 undefined로 지워
+    // → HQSection이 자동으로 해당 행을 숨긴다.
+    const kftcHq = {
+      companyName: brand.corpNm ?? brand.name,
+      ceo: undefined,
+      foundedYear: detail.hq.foundedYear, // 매장수 기반 추정값 유지
+      franchiseStartYear: brand.jngBizStartYear ?? detail.hq.franchiseStartYear,
+      address: undefined,
+      phone: undefined,
+      website: undefined,
+      bizNumber: undefined,
+    } as const
+
+    // 비용 세부내역: fntn API 데이터가 startupCost에 있으면 세분화
+    const kftcCosts = brand.startupCost > 0
+      ? buildKftcCosts(brand, detail.costs)
+      : detail.costs
+
+    // 정보공개서 content API 가능하면 추가 상세 적용 (더 정확)
     const serial = id.replace(/^kftc-/, '')
     if (/^\d+$/.test(serial) && isConfigured('DisclosureContent')) {
       try {
@@ -167,7 +187,7 @@ export async function getBrandById(id: string): Promise<{ brand: MockBrand; deta
           },
           detail: {
             ...detail,
-            hq: mapped.hq,
+            hq: mapped.hq,  // content API는 실제 hq 정보 포함
             costs: mapped.costs,
             revenue: mapped.revenue,
             storeHistory: mapped.storeHistory,
@@ -175,14 +195,78 @@ export async function getBrandById(id: string): Promise<{ brand: MockBrand; deta
           },
         }
       } catch {
-        // content 실패해도 list 기반 데이터로 반환
+        // content 실패해도 계속
       }
     }
 
-    return { brand, detail }
+    return {
+      brand,
+      detail: {
+        ...detail,
+        hq: kftcHq,
+        costs: kftcCosts,
+      },
+    }
   } catch (err) {
     console.error('[kftc] getBrandById 실패:', err)
     return null
+  }
+}
+
+/**
+ * KFTC 브랜드의 창업비 세부내역 재구성.
+ * fntn API 개별 항목이 있으면 실데이터 그대로 사용.
+ * 없으면 총액(startupCost)을 카테고리별 일반 비율로 분배.
+ * content API가 있으면 이 값은 덮어써진다.
+ */
+function buildKftcCosts(
+  brand: import('../mock-data').MockBrand,
+  fallback: import('../mock-brand-detail').BrandCosts,
+): import('../mock-brand-detail').BrandCosts {
+  const total = brand.startupCost
+  if (total <= 0) return fallback
+
+  // 실 fntn API 데이터가 있으면 그대로 사용 (가장 정확)
+  const hasFntnDetail =
+    brand.fntnFranchiseFee != null || brand.fntnEducationFee != null ||
+    brand.fntnDeposit != null || brand.fntnOtherFees != null
+  if (hasFntnDetail) {
+    const franchiseFee = brand.fntnFranchiseFee ?? 0
+    const deposit      = brand.fntnDeposit ?? 0
+    const educationFee = brand.fntnEducationFee ?? 0
+    const otherFees    = brand.fntnOtherFees ?? 0
+    // 인테리어비 = 총액 - 나머지 (공정위 fntn API에는 인테리어 별도 집계 없음)
+    const interiorFee  = Math.max(total - franchiseFee - deposit - educationFee - otherFees, 0)
+    return {
+      franchiseFee,
+      deposit,
+      interiorFee,
+      educationFee,
+      otherFees,
+      royaltyType: 'none',
+      royaltyValue: 0,
+      recommendedArea: fallback.recommendedArea,
+      minArea: fallback.minArea,
+    }
+  }
+
+  // fntn 세부내역 없으면 총액 기준 비율 근사
+  // 일반적 프랜차이즈 구성 (가맹비 15%, 보증금 20%, 인테리어 40%, 교육비 5%, 기타 20%)
+  const franchiseFee = Math.round(total * 0.15)
+  const deposit      = Math.round(total * 0.20)
+  const educationFee = Math.round(total * 0.05)
+  const otherFees    = Math.round(total * 0.20)
+  const interiorFee  = Math.max(total - franchiseFee - deposit - educationFee - otherFees, 0)
+  return {
+    franchiseFee,
+    deposit,
+    interiorFee,
+    educationFee,
+    otherFees,
+    royaltyType: 'none',
+    royaltyValue: 0,
+    recommendedArea: fallback.recommendedArea,
+    minArea: fallback.minArea,
   }
 }
 

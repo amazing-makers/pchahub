@@ -154,23 +154,40 @@ function BrandHero({
   totalCost: number
   avgRating: number
 }) {
+  // 가맹사업 연수 계산
+  const jngYrs = brand.jngBizStartYear
+    ? new Date().getFullYear() - brand.jngBizStartYear
+    : 2026 - detail.hq.franchiseStartYear
+  // 폐점률 계산 (closedCount / storeCount × 100)
+  const closureRate = brand.closedCount && brand.storeCount > 0
+    ? ((brand.closedCount / brand.storeCount) * 100).toFixed(1)
+    : null
+  // KFTC 실 API 평균매출 (있으면 우선 사용)
+  const avgMonthlySales = brand.avgAnnualSales
+    ? Math.round(brand.avgAnnualSales / 12)
+    : detail.revenue.averageMonthly
+
   const stats = [
     {
       label: '매장 수',
       value: `${formatNumber(brand.storeCount)}개`,
-      sub: `+${brand.growthRate}% (전년 대비)`,
+      sub: brand.newOpenCount
+        ? `이번 해 +${brand.newOpenCount}개 신규`
+        : `+${brand.growthRate}% (전년 대비)`,
       subColor: 'text-emerald-600',
     },
     {
       label: '평균 월매출',
-      value: `${formatNumber(detail.revenue.averageMonthly)}만`,
-      sub: `영업이익 약 ${formatNumber(detail.revenue.averageOperatingProfit)}만`,
-      subColor: 'text-gray-500',
+      value: avgMonthlySales > 0 ? `${formatNumber(avgMonthlySales)}만` : '정보 없음',
+      sub: avgMonthlySales > 0
+        ? `연 ${formatNumber(avgMonthlySales * 12)}만 (공정위 공시)`
+        : '창업 상담 시 확인',
+      subColor: avgMonthlySales > 0 ? 'text-gray-500' : 'text-gray-400',
     },
     {
       label: '총 창업비',
-      value: `${formatNumber(totalCost)}만`,
-      sub: `권장 면적 ${detail.costs.recommendedArea}평`,
+      value: totalCost > 0 ? `${formatNumber(totalCost)}만` : '상담 문의',
+      sub: totalCost > 0 ? `권장 면적 ${detail.costs.recommendedArea}평` : '',
       subColor: 'text-gray-500',
     },
     {
@@ -185,17 +202,24 @@ function BrandHero({
       subColor: 'text-gray-500',
     },
     {
-      label: '본사 운영',
-      value: `${2026 - detail.hq.foundedYear}년차`,
-      sub: `${detail.hq.franchiseStartYear}년부터 가맹사업`,
+      label: '가맹사업',
+      value: `${jngYrs}년차`,
+      sub: `${brand.jngBizStartYear ?? detail.hq.franchiseStartYear}년 시작`,
       subColor: 'text-gray-500',
     },
-    {
-      label: '점주 평가',
-      value: `${avgRating.toFixed(1)} / 5`,
-      sub: `${detail.reviews.length}개 후기`,
-      subColor: 'text-gray-500',
-    },
+    closureRate
+      ? {
+          label: '폐점률',
+          value: `${closureRate}%`,
+          sub: `폐점 ${brand.closedCount}개 / 전체 ${brand.storeCount}개`,
+          subColor: parseFloat(closureRate) < 5 ? 'text-emerald-600' : parseFloat(closureRate) < 15 ? 'text-amber-600' : 'text-rose-500',
+        }
+      : {
+          label: '점주 평가',
+          value: `${avgRating.toFixed(1)} / 5`,
+          sub: `${detail.reviews.length}개 후기`,
+          subColor: 'text-gray-500',
+        },
   ]
 
   return (
@@ -279,20 +303,22 @@ function BrandHero({
 
 function HQSection({ detail }: { detail: BrandDetail }) {
   const { hq } = detail
-  const rows: Array<{ icon: typeof Building2; label: string; value: string }> = [
+  const rows: Array<{ icon: typeof Building2; label: string; value: string | undefined }> = [
     { icon: Building2, label: '법인명', value: hq.companyName },
     { icon: Users, label: '대표자', value: hq.ceo },
-    { icon: Calendar, label: '본사 설립', value: `${hq.foundedYear}년` },
+    { icon: Calendar, label: '본사 설립', value: hq.foundedYear ? `${hq.foundedYear}년` : undefined },
     { icon: Calendar, label: '가맹사업 시작', value: `${hq.franchiseStartYear}년` },
     { icon: MapPin, label: '주소', value: hq.address },
     { icon: Phone, label: '연락처', value: hq.phone },
-    { icon: Globe, label: '웹사이트', value: hq.website ?? '-' },
+    { icon: Globe, label: '웹사이트', value: hq.website },
     { icon: Building2, label: '사업자등록번호', value: hq.bizNumber },
   ]
+  // undefined/빈 값 행은 숨김 (실API 브랜드는 일부 정보 미제공)
+  const visibleRows = rows.filter((r) => r.value)
   return (
-    <SectionCard title="본사 정보" subtitle="협회 등록 정보공개서 기준">
+    <SectionCard title="본사 정보" subtitle="공정거래위원회 가맹정보 기준">
       <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
-        {rows.map(({ icon: Icon, label, value }) => (
+        {visibleRows.map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex items-start gap-2.5 border-b border-gray-50 py-2 last:border-0">
             <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
             <div className="min-w-0 flex-1 text-sm">
@@ -302,6 +328,9 @@ function HQSection({ detail }: { detail: BrandDetail }) {
           </div>
         ))}
       </div>
+      {visibleRows.length === 0 && (
+        <p className="text-sm text-gray-400">본사 상세 정보는 가맹 상담 신청 후 제공됩니다.</p>
+      )}
     </SectionCard>
   )
 }
@@ -950,28 +979,32 @@ function CTASidebar({
         </CardContent>
       </Card>
 
-      <Card className="border-gray-200">
-        <CardContent className="p-5">
-          <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-            본사 연락처
-          </div>
-          <div className="mt-2 space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-gray-700">
-              <Phone className="h-4 w-4 text-gray-400" />
-              {detail.hq.phone}
+      {(detail.hq.phone || detail.hq.website) && (
+        <Card className="border-gray-200">
+          <CardContent className="p-5">
+            <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              본사 연락처
             </div>
-            {detail.hq.website && (
-              <a
-                href={detail.hq.website}
-                className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
-              >
-                <Globe className="h-4 w-4 text-gray-400" />
-                <span className="truncate">{detail.hq.website.replace(/^https?:\/\//, '')}</span>
-              </a>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+            <div className="mt-2 space-y-2 text-sm">
+              {detail.hq.phone && (
+                <div className="flex items-center gap-2 text-gray-700">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  {detail.hq.phone}
+                </div>
+              )}
+              {detail.hq.website && (
+                <a
+                  href={detail.hq.website}
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+                >
+                  <Globe className="h-4 w-4 text-gray-400" />
+                  <span className="truncate">{detail.hq.website.replace(/^https?:\/\//, '')}</span>
+                </a>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
