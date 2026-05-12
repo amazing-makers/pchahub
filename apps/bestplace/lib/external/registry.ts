@@ -26,15 +26,15 @@ export interface ExternalEndpointDef {
 export const ENDPOINTS: ExternalEndpointDef[] = [
   {
     key: 'SosanginStoreList',
-    dataName: '소상공인시장진흥공단_상가(상권)정보',
-    endpoint: 'https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInDong',
+    dataName: '소상공인시장진흥공단_상가(상권)정보_API',
+    endpoint: 'https://apis.data.go.kr/B553077/api/open/sdsc2',
     format: 'JSON',
     priority: 'critical',
     fillsFields: [
       'MockStore 1차 디렉토리 (이름·업종·주소·전화)',
       'storeListInDong / storeListInBuilding / storeListInUpjong 등 다중 경로',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'SosanginCommerceArea',
@@ -50,21 +50,21 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
   },
   {
     key: 'StatKosisPopulation',
-    dataName: '통계청_KOSIS_인구통계',
-    endpoint: 'https://kosis.kr/openapi/Param/statisticsParameterData.do',
+    dataName: '국가데이터처_KOSIS 통계자료 조회 서비스',
+    endpoint: 'https://apis.data.go.kr/1240000/statisticsData',
     format: 'JSON',
     priority: 'supplementary',
     fillsFields: ['지역 인구 통계 (매장 입지 분석)'],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'BizRegLookup',
-    dataName: '국세청_사업자등록정보 진위확인',
-    endpoint: 'https://api.odcloud.kr/api/nts-businessman/v1/status',
+    dataName: '국세청_사업자등록정보 진위확인 및 상태조회 서비스',
+    endpoint: '',
     format: 'JSON',
     priority: 'supplementary',
     fillsFields: ['MockStore.verified — 사업자번호 진위 검증'],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
 ]
 

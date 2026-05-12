@@ -16,6 +16,8 @@ export type KftcEndpointKey =
   | 'HqRegistrations'     // 가맹본부 등록 목록 (사업자번호)
   | 'DisclosureList'      // 정보공개서 목록 (franchise.ftc.go.kr)
   | 'DisclosureContent'   // 정보공개서 본문 (franchise.ftc.go.kr)
+  | 'HqFinance'
+  | 'AvgSaleByRegion'
 
 export interface KftcEndpointDef {
   key: KftcEndpointKey
@@ -60,8 +62,8 @@ export const ENDPOINTS: KftcEndpointDef[] = [
   },
   {
     key: 'BrandStoreStats',
-    dataName: '공정거래위원회_페어데이터_브랜드별 가맹점/직영점 집계 및 가맹사업자 평균매출 학습데이터',
-    endpoint: 'https://apis.data.go.kr/1130000/<TBD-페어데이터-endpoint>',
+    dataName: '공정거래위원회_가맹정보_브랜드 가맹점 및 직영점정보 제공 서비스',
+    endpoint: 'https://apis.data.go.kr/1130000/FftcBrandFrcsDropInfo2_Service',
     format: 'JSON',
     priority: 'critical',
     fillsMockFields: [
@@ -70,12 +72,12 @@ export const ENDPOINTS: KftcEndpointDef[] = [
       'BrandRevenue.averageMonthly',
       'BrandStoreHistory[]',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'BrandList',
     dataName: '공정거래위원회_가맹정보_브랜드 목록 정보 제공 서비스',
-    endpoint: 'https://apis.data.go.kr/1130000/<TBD-브랜드목록-endpoint>',
+    endpoint: 'https://apis.data.go.kr/1130000/FftcBrandRlsInfo2_Service',
     format: 'JSON',
     priority: 'critical',
     fillsMockFields: [
@@ -83,12 +85,12 @@ export const ENDPOINTS: KftcEndpointDef[] = [
       'MockBrand.category',
       'MockBrand.categoryLabel',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'HqInfo',
     dataName: '공정거래위원회_가맹정보_가맹본부 일반 정보 상세 제공 서비스',
-    endpoint: 'https://apis.data.go.kr/1130000/<TBD-본부일반-endpoint>',
+    endpoint: 'https://apis.data.go.kr/1130000/FftcJnghdqrtrsGnrlDtl2_Service',
     format: 'JSON',
     priority: 'useful',
     fillsMockFields: [
@@ -98,19 +100,19 @@ export const ENDPOINTS: KftcEndpointDef[] = [
       'BrandHQ.phone',
       'MockBrand.hqRegion',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'HqRegistrations',
     dataName: '공정거래위원회_가맹정보_가맹본부 등록 목록 정보 제공 서비스',
-    endpoint: 'https://apis.data.go.kr/1130000/<TBD-본부등록-endpoint>',
+    endpoint: 'https://apis.data.go.kr/1130000/FftcJnghdqrtrsRgsInfo2_Service',
     format: 'JSON',
     priority: 'supplementary',
     fillsMockFields: [
       'BrandHQ.bizNumber',
       'BrandDisclosureExtras.registrationNumber',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'DisclosureList',
@@ -134,6 +136,24 @@ export const ENDPOINTS: KftcEndpointDef[] = [
       'BrandDisclosureExtras (계약기간/광고비/영업지역)',
       'BrandHQ.foundedYear / franchiseStartYear',
     ],
+    status: 'configured',
+  },
+  {
+    key: 'HqFinance',
+    dataName: '공정거래위원회_가맹정보_가맹본부 재무정보 제공 서비스',
+    endpoint: 'https://apis.data.go.kr/1130000/FftcjnghdqrtrsFnnrInfo2_Service',
+    format: 'JSON+XML',
+    priority: 'supplementary',
+    fillsMockFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'AvgSaleByRegion',
+    dataName: '공정거래위원회_가맹정보_지역별 업종별 평균 매출액 현황 제공 서비스',
+    endpoint: 'https://apis.data.go.kr/1130000/FftcAreaIndutyAvrStatsService',
+    format: 'JSON+XML',
+    priority: 'supplementary',
+    fillsMockFields: ['TBD'],
     status: 'configured',
   },
 ]

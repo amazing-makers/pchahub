@@ -48,24 +48,24 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
   },
   {
     key: 'MoltRtmsCommercial',
-    dataName: '국토교통부_상업업무용부동산_실거래가',
-    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcSHRent',
+    dataName: '국토교통부_상업업무용 부동산 매매 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcNrgTrade',
     format: 'XML',
     priority: 'critical',
     fillsFields: [
       'MockListing.deposit / monthlyRent 검증',
       'MockArea의 실시세 표시',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'MoltApRtmsTrade',
-    dataName: '국토교통부_아파트매매_실거래',
+    dataName: '국토교통부_아파트 매매 실거래가 상세 자료',
     endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev',
     format: 'XML',
     priority: 'supplementary',
     fillsFields: ['지역 부동산 시세 보조 지표'],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'SosanginCommerce',
@@ -81,15 +81,15 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
   },
   {
     key: 'SosanginStores',
-    dataName: '소상공인시장진흥공단_상가(상권)정보',
-    endpoint: 'https://apis.data.go.kr/B553077/api/open/sdsc2/storeListInDong',
+    dataName: '소상공인시장진흥공단_상가(상권)정보_API',
+    endpoint: 'https://apis.data.go.kr/B553077/api/open/sdsc2',
     format: 'JSON',
     priority: 'critical',
     fillsFields: [
       'MockListing의 주변 매장 정보',
       'bestplace의 매장 디렉토리 1차 소스',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
 ]
 
