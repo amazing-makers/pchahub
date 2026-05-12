@@ -14,7 +14,12 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildPageMetadata,
+  buildRealEstateListingJsonLd,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   AREAS,
@@ -60,8 +65,35 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
     .map((k) => LISTING_CATEGORIES.find((c) => c.key === k)?.label)
     .filter(Boolean)
 
+  const listingUrl = `https://themyungdang.kr/listings/${listing.id}`
+  const listingTypeKo =
+    listing.type === 'transfer' ? '양도' : listing.type === 'new' ? '신규임대' : '매각'
+  const priceWon = listing.type === 'sale' ? listing.salePrice : listing.deposit
+  const jsonLd = buildRealEstateListingJsonLd({
+    name: listing.title,
+    description: `${listing.region} ${listing.district} · ${listing.area}평 · ${listing.floor}`,
+    url: listingUrl,
+    image: listing.images?.[0],
+    priceWon,
+    listingType: listingTypeKo,
+    region: listing.region,
+    district: listing.district,
+    fullAddress: listing.fullAddress,
+    areaPyeong: listing.area,
+    availableFrom: listing.availableFrom,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '매물', url: 'https://themyungdang.kr/listings' },
+      { name: `${listing.region} ${listing.district}`, url: `https://themyungdang.kr/listings?region=${listing.region}` },
+      { name: listing.title, url: listingUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

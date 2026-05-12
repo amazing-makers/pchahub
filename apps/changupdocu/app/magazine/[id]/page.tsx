@@ -2,7 +2,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, Clock, Share2, ThumbsUp } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbsJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { ARTICLES, articleById } from '@/lib/mock-data'
 import { ArticleCard } from '@/components/article-card'
 
@@ -29,8 +34,29 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
   if (!article) notFound()
   const related = ARTICLES.filter((a) => a.id !== article.id && a.category === article.category).slice(0, 3)
 
+  const articleUrl = `https://changupdocu.kr/magazine/${article.id}`
+  const articleJsonLd = buildArticleJsonLd({
+    headline: article.title,
+    description: article.subtitle,
+    url: articleUrl,
+    image: article.coverImage,
+    authorName: article.authorName,
+    authorRole: article.authorRole,
+    publishedAt: article.publishedAt,
+    publisher: { name: '창업다큐', url: 'https://changupdocu.kr' },
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '매거진', url: 'https://changupdocu.kr/magazine' },
+      { name: article.category, url: 'https://changupdocu.kr/magazine' },
+      { name: article.title, url: articleUrl },
+    ],
+  })
+
   return (
     <main className="bg-white">
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero cover */}
       <div className="relative h-72 w-full overflow-hidden bg-gray-100 sm:h-96">
         {/* eslint-disable-next-line @next/next/no-img-element */}

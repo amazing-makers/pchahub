@@ -27,6 +27,11 @@ import {
   Users,
 } from 'lucide-react'
 import { Badge, BrandLogo, Button, Card, CardContent } from '@amakers/ui'
+import {
+  buildBrandJsonLd,
+  buildBreadcrumbsJsonLd,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { BrandActions } from '@/components/brand-actions'
 import { BRANDS, type MockBrand } from '@/lib/mock-data'
@@ -70,8 +75,31 @@ export default function BrandDetailPage({ params }: BrandDetailPageProps) {
   const avgRating =
     detail.reviews.reduce((sum, r) => sum + r.rating, 0) / Math.max(detail.reviews.length, 1)
 
+  const brandUrl = `https://pchahub.kr/brands/${brand.id}`
+  const brandJsonLd = buildBrandJsonLd({
+    name: brand.name,
+    description: brand.description,
+    url: brandUrl,
+    image: brand.heroImage,
+    category: brand.categoryLabel,
+    numberOfStores: brand.storeCount,
+    aggregateRating:
+      detail.reviews.length > 0
+        ? { ratingValue: Number(avgRating.toFixed(1)), reviewCount: detail.reviews.length }
+        : undefined,
+  })
+  const breadcrumbsJsonLd = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '브랜드 검색', url: 'https://pchahub.kr/brands' },
+      { name: brand.categoryLabel, url: `https://pchahub.kr/categories/${brand.category}` },
+      { name: brand.name, url: brandUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={brandJsonLd} />
+      <JsonLd data={breadcrumbsJsonLd} />
       <BrandHero brand={brand} detail={detail} totalCost={totalCost} avgRating={avgRating} />
 
       <div className="container mx-auto py-12">

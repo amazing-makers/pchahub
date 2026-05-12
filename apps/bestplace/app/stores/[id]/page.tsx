@@ -11,7 +11,12 @@ import {
   Users,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildLocalBusinessJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   awardsForStore,
@@ -51,8 +56,33 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
   const sameBrand = storesByBrand(store.brandId).filter((s) => s.id !== store.id).slice(0, 3)
   const sameRegion = storesByRegion(store.region).filter((s) => s.id !== store.id).slice(0, 3)
 
+  const storeUrl = `https://bestplace.kr/stores/${store.id}`
+  const businessJsonLd = buildLocalBusinessJsonLd({
+    name: store.name,
+    description: store.highlights.join(' · '),
+    url: storeUrl,
+    image: store.heroImage,
+    region: store.region,
+    district: store.district,
+    fullAddress: store.address,
+    rating: store.rating,
+    reviewCount: store.reviewCount,
+    openedYear: store.openedYear,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '매장 디렉토리', url: 'https://bestplace.kr/stores' },
+      ...(brand
+        ? [{ name: brand.name, url: `https://bestplace.kr/stores?brand=${brand.name}` }]
+        : []),
+      { name: store.name, url: storeUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={businessJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero image */}
       <div className="relative h-56 w-full overflow-hidden sm:h-72">
         {/* eslint-disable-next-line @next/next/no-img-element */}

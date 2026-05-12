@@ -10,7 +10,12 @@ import {
   Users,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildCourseJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   COURSE_CATEGORIES,
@@ -59,8 +64,38 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     0,
   )
 
+  const courseUrl = `https://themanual.kr/courses/${course.id}`
+  const courseJsonLd = buildCourseJsonLd({
+    name: course.title,
+    description: course.description,
+    url: courseUrl,
+    image: course.thumbnailImage,
+    provider: '더메뉴얼',
+    instructors: instructors.map((i) => ({ name: i.name })),
+    price: course.price,
+    durationMin: course.durationMin,
+    rating: course.rating,
+    reviewCount: course.reviewCount,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '강의', url: 'https://themanual.kr/courses' },
+      ...(category
+        ? [
+            {
+              name: category.label,
+              url: `https://themanual.kr/courses?category=${category.key}`,
+            },
+          ]
+        : []),
+      { name: course.title, url: courseUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={courseJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">
