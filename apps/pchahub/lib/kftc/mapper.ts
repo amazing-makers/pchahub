@@ -20,6 +20,16 @@ import type {
   KftcHqInfoItem,
   KftcHqRegistrationItem,
   KftcIndutyBrandStats,
+  KftcBrandFntnStatsItem,
+  KftcBrandFrcsStatsItem,
+  KftcBrandUnitAvrSalItem,
+  KftcJnghdqrtrsGrStatsItem,
+  KftcJnghdqrtrsStableItem,
+  KftcJnghdqrtrsErnItem,
+  KftcBrandFrcsListItem,
+  KftcSclasIndutyFntnItem,
+  KftcIndutyAnaBrandMaintItem,
+  KftcBrandFrcsIntItem,
 } from './json-apis'
 
 // ============================================================
@@ -80,7 +90,7 @@ const BRAND_COLOR_POOL = [
 
 function hashColor(id: string): string {
   const seed = id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
-  return BRAND_COLOR_POOL[seed % BRAND_COLOR_POOL.length]
+  return BRAND_COLOR_POOL[seed % BRAND_COLOR_POOL.length] ?? '#F97316'
 }
 
 // ============================================================
@@ -194,7 +204,7 @@ export function mapContentToDetail(content: KftcDisclosureContent): {
 
 function parseYear(dateStr: string): number {
   const m = dateStr.match(/^(\d{4})/)
-  return m ? parseInt(m[1], 10) : 2020
+  return m ? parseInt(m[1]!, 10) : 2020
 }
 
 // ============================================================
@@ -321,7 +331,264 @@ export function mergeIntoBrands(input: {
  */
 export function avgMonthlyFromStats(stats?: KftcBrandStoreStats): number {
   if (!stats?.avgFcSale) return 0
-  // 일반적으로 페어데이터는 연 매출(원) 또는 월 매출(원) — 명세 확인 후 단위 변환.
   // 안전한 가정: 만원 단위로 변환 (avgFcSale / 10000).
   return Math.round(stats.avgFcSale / 10000)
+}
+
+// ============================================================
+// 브랜드별 창업 금액 → MockBrand.startupCost / BrandCosts 부분 채우기
+// ============================================================
+
+/**
+ * fcCrpoMngNo → 창업비 합계(만원) 맵.
+ * BrandFntnStats API 응답을 인덱싱해서 mergeIntoBrands()에 넘김.
+ */
+export function indexFntnStatsByBrand(
+  items: KftcBrandFntnStatsItem[],
+): Map<string, KftcBrandFntnStatsItem> {
+  const m = new Map<string, KftcBrandFntnStatsItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+/** 창업비 합계 (만원). fntnFee 없으면 각 항목 합산. */
+export function startupCostFromFntn(item: KftcBrandFntnStatsItem): number {
+  if (item.fntnFee) return item.fntnFee
+  return (item.frcsFee ?? 0) + (item.dpstFee ?? 0) + (item.intFee ?? 0) + (item.eduFee ?? 0) + (item.etcFee ?? 0)
+}
+
+/** BrandCosts 부분 채우기 (창업비 세부내역). */
+export function costsFromFntn(item: KftcBrandFntnStatsItem): Partial<BrandCosts> {
+  return {
+    franchiseFee: item.frcsFee ?? 0,
+    deposit: item.dpstFee ?? 0,
+    interiorFee: item.intFee ?? 0,
+    educationFee: item.eduFee ?? 0,
+    otherFees: item.etcFee ?? 0,
+  }
+}
+
+// ============================================================
+// 브랜드별 가맹점 현황 → MockBrand.storeCount (BrandFrcsStats)
+// ============================================================
+
+export function indexFrcsStatsByBrand(
+  items: KftcBrandFrcsStatsItem[],
+): Map<string, KftcBrandFrcsStatsItem> {
+  const m = new Map<string, KftcBrandFrcsStatsItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+export function storeCountFromFrcsStats(item: KftcBrandFrcsStatsItem): number {
+  return (item.fcStoreCnt ?? 0) + (item.drStoreCnt ?? 0)
+}
+
+// ============================================================
+// 단위면적당 평균 매출 → BrandRevenue.averageMonthly
+// ============================================================
+
+export function indexUnitAvrSalByBrand(
+  items: KftcBrandUnitAvrSalItem[],
+): Map<string, KftcBrandUnitAvrSalItem> {
+  const m = new Map<string, KftcBrandUnitAvrSalItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+export function avgMonthlyFromUnitAvrSal(item: KftcBrandUnitAvrSalItem): number {
+  if (item.avrMonthlySal) return item.avrMonthlySal
+  // 단위 면적당 매출 × 표준 면적 ÷ 12 (연→월 변환)
+  if (item.unitAvrSal && item.stdArea) return Math.round((item.unitAvrSal * item.stdArea) / 12)
+  return 0
+}
+
+// ============================================================
+// 가맹본부별 성장성 통계 → MockBrand.growthRate
+// ============================================================
+
+export function indexGrStatsByBrand(
+  items: KftcJnghdqrtrsGrStatsItem[],
+): Map<string, KftcJnghdqrtrsGrStatsItem> {
+  const m = new Map<string, KftcJnghdqrtrsGrStatsItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+/** 가맹점수 증감률을 우선, 없으면 매출 증감률 사용. */
+export function growthRateFromGrStats(item: KftcJnghdqrtrsGrStatsItem): number {
+  return Math.round(item.fcStoreCntCgRate ?? item.slsCgRate ?? 0)
+}
+
+// ============================================================
+// 가맹본부별 안정성 통계 (JnghdqrtrsStableStats)
+// ============================================================
+
+export interface BrandStabilityMetrics {
+  stableScore: number
+  closureRate: number
+  avgRunYrs: number
+}
+
+export function indexStableStatsByBrand(
+  items: KftcJnghdqrtrsStableItem[],
+): Map<string, KftcJnghdqrtrsStableItem> {
+  const m = new Map<string, KftcJnghdqrtrsStableItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+export function stabilityFromStats(item: KftcJnghdqrtrsStableItem): BrandStabilityMetrics {
+  return {
+    stableScore: item.stableScore ?? 0,
+    closureRate: item.closureRate ?? 0,
+    avgRunYrs: item.avgRunYrs ?? 0,
+  }
+}
+
+// ============================================================
+// 가맹본부별 수익성 통계 → BrandRevenue.averageOperatingProfit
+// ============================================================
+
+export function indexErnStatsByBrand(
+  items: KftcJnghdqrtrsErnItem[],
+): Map<string, KftcJnghdqrtrsErnItem> {
+  const m = new Map<string, KftcJnghdqrtrsErnItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+export function operatingProfitFromErnStats(item: KftcJnghdqrtrsErnItem): number {
+  return item.avgFcOprtProfit ?? 0
+}
+
+// ============================================================
+// 브랜드 가맹점 목록 → 지역별 매장 분포
+// ============================================================
+
+export interface StoreLocation {
+  storeName: string
+  address: string
+  region: string
+  openDate?: string
+}
+
+export function mapFrcsListToLocations(items: KftcBrandFrcsListItem[]): StoreLocation[] {
+  return items.map((it) => ({
+    storeName: it.storNm ?? it.brandNm,
+    address: it.addr ?? '',
+    region: it.ctpvNm ?? extractRegion(it.addr ?? ''),
+    openDate: it.openDt,
+  }))
+}
+
+// ============================================================
+// 업종별(소분류) 창업비용 → CategoryTrend 확장
+// ============================================================
+
+export interface CategoryStartupCost {
+  categoryKey: string
+  categoryLabel: string
+  avgFntnFee: number
+  avgFrcsFee: number
+  avgDpstFee: number
+  avgIntFee: number
+}
+
+export function aggregateSclasIndutyFntnStats(
+  items: KftcSclasIndutyFntnItem[],
+): CategoryStartupCost[] {
+  const buckets = new Map<string, { key: string; label: string; fees: number[]; frc: number[]; dpst: number[]; int: number[] }>()
+  for (const it of items) {
+    const induty = it.indutySclasNm ?? it.indutyMlsfcNm ?? it.indutyLclasNm
+    const cat = normalizeCategory(induty)
+    const existing = buckets.get(cat.key)
+    if (existing) {
+      existing.fees.push(it.avgFntnFee ?? 0)
+      existing.frc.push(it.avgFrcsFee ?? 0)
+      existing.dpst.push(it.avgDpstFee ?? 0)
+      existing.int.push(it.avgIntFee ?? 0)
+    } else {
+      buckets.set(cat.key, {
+        key: cat.key,
+        label: cat.label,
+        fees: [it.avgFntnFee ?? 0],
+        frc: [it.avgFrcsFee ?? 0],
+        dpst: [it.avgDpstFee ?? 0],
+        int: [it.avgIntFee ?? 0],
+      })
+    }
+  }
+  const avg = (arr: number[]) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0
+  return Array.from(buckets.values()).map((b) => ({
+    categoryKey: b.key,
+    categoryLabel: b.label,
+    avgFntnFee: avg(b.fees),
+    avgFrcsFee: avg(b.frc),
+    avgDpstFee: avg(b.dpst),
+    avgIntFee: avg(b.int),
+  }))
+}
+
+// ============================================================
+// 업종별 브랜드 유지 현황 → CategoryTrend 유지율 보완
+// ============================================================
+
+export interface CategoryMaintRate {
+  categoryKey: string
+  categoryLabel: string
+  /** 평균 브랜드 유지율 (%) */
+  avgMaintRate: number
+  /** 평균 운영 연차 */
+  avgRunYrs: number
+}
+
+export function aggregateIndutyAnaBrandMaintStats(
+  items: KftcIndutyAnaBrandMaintItem[],
+): CategoryMaintRate[] {
+  const buckets = new Map<string, { key: string; label: string; rates: number[]; yrs: number[] }>()
+  for (const it of items) {
+    const induty = it.indutySclasNm ?? it.indutyLclasNm
+    const cat = normalizeCategory(induty)
+    const existing = buckets.get(cat.key)
+    if (existing) {
+      if (it.maintRate != null) existing.rates.push(it.maintRate)
+      if (it.oprtYrCnt != null) existing.yrs.push(it.oprtYrCnt)
+    } else {
+      buckets.set(cat.key, {
+        key: cat.key,
+        label: cat.label,
+        rates: it.maintRate != null ? [it.maintRate] : [],
+        yrs: it.oprtYrCnt != null ? [it.oprtYrCnt] : [],
+      })
+    }
+  }
+  const avg = (arr: number[]) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length * 10) / 10 : 0
+  return Array.from(buckets.values()).map((b) => ({
+    categoryKey: b.key,
+    categoryLabel: b.label,
+    avgMaintRate: avg(b.rates),
+    avgRunYrs: avg(b.yrs),
+  }))
+}
+
+// ============================================================
+// 브랜드 인테리어 비용 → BrandCosts.interiorFee
+// ============================================================
+
+export function indexIntInfoByBrand(
+  items: KftcBrandFrcsIntItem[],
+): Map<string, KftcBrandFrcsIntItem> {
+  const m = new Map<string, KftcBrandFrcsIntItem>()
+  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  return m
+}
+
+export function interiorFeeFromIntInfo(item: KftcBrandFrcsIntItem): number {
+  // 평균 우선, 없으면 최솟값과 최댓값의 중간값
+  if (item.intFeeAvg) return item.intFeeAvg
+  if (item.intFeeMin != null && item.intFeeMax != null) {
+    return Math.round((item.intFeeMin + item.intFeeMax) / 2)
+  }
+  return item.intFeeMin ?? item.intFeeMax ?? 0
 }

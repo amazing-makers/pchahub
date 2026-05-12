@@ -772,8 +772,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_업종별,연차별 브랜드 유지 현황 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcIndutyAnaBrandMaintStatsService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'CategoryMaintRate — 업종별 평균 유지율·운영연차',
+    ],
     status: 'configured',
   },
   {
@@ -835,8 +837,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_가맹본부별 안정성 통계 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcJnghdqrtrsStableStatsService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'BrandStabilityMetrics (폐점률, 평균운영연차, 안정성점수)',
+    ],
     status: 'configured',
   },
   {
@@ -934,8 +938,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_가맹본부별 수익성통계 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcjnghdqrtrsernstatService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'BrandRevenue.averageOperatingProfit (가맹점 평균 영업이익)',
+    ],
     status: 'configured',
   },
   {
@@ -970,8 +976,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_브랜드 가맹점 인테리어 비용정보 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcBrandFrcsIntInfo2_Service',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'BrandCosts.interiorFee (min/max/avg 기반 추정)',
+    ],
     status: 'configured',
   },
   {
@@ -988,8 +996,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_가맹본부별 성장성 통계 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcJnghdqrtrsGrStatsService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'MockBrand.growthRate (가맹점수 증감률)',
+    ],
     status: 'configured',
   },
   {
@@ -1006,8 +1016,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_브랜드 가맹점 목록 정보 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcbrandfrcslistinfoService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'StoreLocation[] — 매장 주소·지역별 분포 (지도 뷰)',
+    ],
     status: 'configured',
   },
   {
@@ -1015,8 +1027,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_업종별 창업비용 현황 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcSclasIndutyFntnStatsService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'CategoryStartupCost — /categories/[key] 평균 창업비 표시',
+    ],
     status: 'configured',
   },
   {
@@ -1024,8 +1038,11 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_브랜드별 창업 금액 현황 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcBrandFntnStatsService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'MockBrand.startupCost',
+      'BrandCosts.franchiseFee / deposit / interiorFee / educationFee / otherFees',
+    ],
     status: 'configured',
   },
   {
@@ -1033,8 +1050,10 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_브랜드 가맹점 단위면적당 평균 매출액정보 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcBrandFrcsUnitAvrSalInfo2_Service',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'BrandRevenue.averageMonthly (단위면적 × 표준면적 기반)',
+    ],
     status: 'configured',
   },
   {
@@ -1042,8 +1061,11 @@ export const ENDPOINTS: KftcEndpointDef[] = [
     dataName: '공정거래위원회_가맹정보_브랜드별 가맹점 현황 제공 서비스',
     endpoint: 'https://apis.data.go.kr/1130000/FftcBrandFrcsStatsService',
     format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsMockFields: ['TBD'],
+    priority: 'useful',
+    fillsMockFields: [
+      'MockBrand.storeCount (가맹점+직영점 합계)',
+      'BrandStoreHistory 보완',
+    ],
     status: 'configured',
   },
 ]

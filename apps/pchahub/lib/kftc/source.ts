@@ -58,19 +58,13 @@ export async function getBrands(): Promise<MockBrand[]> {
         fetchBrandList({ yr: prevYear, numOfRows: 1000 }),
         isConfigured('BrandStoreStats')
           ? fetchBrandStoreStats({ yr: prevYear, numOfRows: 1000 })
-          : Promise.resolve({ body: { items: [] } } as Awaited<
-              ReturnType<typeof fetchBrandStoreStats>
-            >),
+          : Promise.resolve({ header: { resultCode: '00', resultMsg: '' }, body: { items: [], numOfRows: 0, pageNo: 1, totalCount: 0 } } as Awaited<ReturnType<typeof fetchBrandStoreStats>>),
         isConfigured('BrandStoreStats')
           ? fetchBrandStoreStats({ yr: prevYear - 1, numOfRows: 1000 })
-          : Promise.resolve({ body: { items: [] } } as Awaited<
-              ReturnType<typeof fetchBrandStoreStats>
-            >),
+          : Promise.resolve({ header: { resultCode: '00', resultMsg: '' }, body: { items: [], numOfRows: 0, pageNo: 1, totalCount: 0 } } as Awaited<ReturnType<typeof fetchBrandStoreStats>>),
         isConfigured('HqRegistrations')
           ? fetchHqRegistrations({ yr: prevYear, numOfRows: 1000 })
-          : Promise.resolve({ body: { items: [] } } as Awaited<
-              ReturnType<typeof fetchHqRegistrations>
-            >),
+          : Promise.resolve({ header: { resultCode: '00', resultMsg: '' }, body: { items: [], numOfRows: 0, pageNo: 1, totalCount: 0 } } as Awaited<ReturnType<typeof fetchHqRegistrations>>),
       ])
       const merged = mergeIntoBrands({
         brandList: brandList.body.items,
