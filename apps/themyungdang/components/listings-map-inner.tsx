@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import type { MockListing } from '@/lib/mock-data'
+import type { MockListing, ListingType } from '@/lib/mock-data'
 import { TYPE_LABEL } from '@/lib/mock-data'
 import { formatNumber } from '@amakers/utils'
 
@@ -9,117 +9,82 @@ interface Props {
   listings: MockListing[]
 }
 
-// Type-color map for pin dots
-const TYPE_COLOR: Record<string, string> = {
-  transfer: '#ef4444', // red — 양도
-  new: '#3b82f6',       // blue — 신규 임대
-  sale: '#8b5cf6',      // purple — 매각
+const TYPE_COLOR: Record<ListingType, string> = {
+  transfer: '#ef4444',
+  new:      '#2563eb',
+  sale:     '#7c3aed',
+}
+
+// CartoDB Voyager — clean, professional, free, no API key
+const TILE_URL =
+  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+const TILE_ATTR =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+
+function badgeHtml(listing: MockListing): string {
+  const color = TYPE_COLOR[listing.type]
+  const label =
+    listing.type === 'sale'
+      ? `${formatNumber(listing.salePrice ?? 0)}만`
+      : `월 ${formatNumber(listing.monthlyRent)}만`
+
+  return `<div style="
+    display:inline-flex;align-items:center;
+    padding:5px 11px;border-radius:100px;
+    background:#fff;color:#111827;
+    border:1.5px solid #e5e7eb;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1),0 0 0 0.5px rgba(0,0,0,0.04);
+    font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;
+    transform:translate(-50%,-50%);
+    font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;
+    letter-spacing:-0.5px;
+  ">${label}</div>`
 }
 
 export default function ListingsMapInner({ listings }: Props) {
-  const mapRef = useRef<HTMLDivElement>(null)
+  const mapRef         = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
 
-    // Dynamically import leaflet (client-only)
-    import('leaflet').then((L) => {
-      // Fix default icon paths broken by webpack/next bundler
-      delete (L.Icon.Default.prototype as any)._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      })
+    const link = document.createElement('link')
+    link.rel  = 'stylesheet'
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+    document.head.appendChild(link)
 
-      // Compute bounding center from all pins
+    import('leaflet').then((L) => {
       const lats = listings.map((l) => l.lat!)
       const lngs = listings.map((l) => l.lng!)
-      const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2
-      const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2
+      const center: [number, number] = [
+        (Math.min(...lats) + Math.max(...lats)) / 2,
+        (Math.min(...lngs) + Math.max(...lngs)) / 2,
+      ]
 
       const map = L.map(mapRef.current!, {
-        center: [centerLat, centerLng],
+        center,
         zoom: 7,
-        scrollWheelZoom: true,
+        zoomControl: false,
       })
-
       mapInstanceRef.current = map
 
-      // OpenStreetMap tile layer — free, no API key
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
+      L.control.zoom({ position: 'bottomright' }).addTo(map)
+
+      L.tileLayer(TILE_URL, {
+        attribution: TILE_ATTR,
+        maxZoom:    19,
+        subdomains: 'abcd',
       }).addTo(map)
 
-      // Add a pin per listing
       listings.forEach((listing) => {
-        const color = TYPE_COLOR[listing.type] ?? '#6b7280'
+        const color     = TYPE_COLOR[listing.type]
         const typeLabel = TYPE_LABEL[listing.type]
 
-        // Circle marker (no image dependency)
-        const marker = L.circleMarker([listing.lat!, listing.lng!], {
-          radius: 10,
-          fillColor: color,
-          color: '#fff',
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9,
-        })
-
-        const rentLine =
-          listing.type === 'sale'
-            ? `매각가 ${formatNumber(listing.salePrice ?? 0)}만원`
-            : `보증 ${formatNumber(listing.deposit)}만 / 월세 ${formatNumber(listing.monthlyRent)}만`
-
-        const popup = L.popup({ maxWidth: 260, className: 'listings-map-popup' }).setContent(`
-          <div style="font-family:sans-serif;font-size:13px;line-height:1.5;padding:2px 0">
-            <div style="display:inline-block;background:${color};color:#fff;border-radius:4px;padding:1px 6px;font-size:11px;margin-bottom:4px">${typeLabel}</div>
-            <div style="font-weight:700;margin-bottom:2px">${listing.title}</div>
-            <div style="color:#6b7280;font-size:12px;margin-bottom:6px">${listing.region} ${listing.district} · ${listing.area}평 ${listing.floor}</div>
-            <div style="font-weight:600;color:#111">${rentLine}</div>
-            <a href="/listings/${listing.id}" style="display:inline-block;margin-top:8px;padding:4px 10px;background:#111;color:#fff;border-radius:6px;text-decoration:none;font-size:12px">상세 보기 →</a>
-          </div>
-        `)
-
-        marker.bindPopup(popup).addTo(map)
-      })
-    })
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove()
-        mapInstanceRef.current = null
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // When listings change (filters applied), update map
-  useEffect(() => {
-    if (!mapInstanceRef.current) return
-
-    import('leaflet').then((L) => {
-      const map = mapInstanceRef.current
-      // Remove existing circle markers
-      map.eachLayer((layer: any) => {
-        if (layer instanceof L.CircleMarker) {
-          map.removeLayer(layer)
-        }
-      })
-
-      listings.forEach((listing) => {
-        const color = TYPE_COLOR[listing.type] ?? '#6b7280'
-        const typeLabel = TYPE_LABEL[listing.type]
-
-        const marker = L.circleMarker([listing.lat!, listing.lng!], {
-          radius: 10,
-          fillColor: color,
-          color: '#fff',
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9,
+        const icon = L.divIcon({
+          html:       badgeHtml(listing),
+          className:  '',
+          iconSize:   [0, 0] as any,
+          iconAnchor: [0, 0] as any,
         })
 
         const rentLine =
@@ -128,38 +93,97 @@ export default function ListingsMapInner({ listings }: Props) {
             : `보증 ${formatNumber(listing.deposit)}만 / 월세 ${formatNumber(listing.monthlyRent)}만`
 
         const popup = L.popup({ maxWidth: 260 }).setContent(`
-          <div style="font-family:sans-serif;font-size:13px;line-height:1.5;padding:2px 0">
-            <div style="display:inline-block;background:${color};color:#fff;border-radius:4px;padding:1px 6px;font-size:11px;margin-bottom:4px">${typeLabel}</div>
-            <div style="font-weight:700;margin-bottom:2px">${listing.title}</div>
-            <div style="color:#6b7280;font-size:12px;margin-bottom:6px">${listing.region} ${listing.district} · ${listing.area}평 ${listing.floor}</div>
-            <div style="font-weight:600;color:#111">${rentLine}</div>
-            <a href="/listings/${listing.id}" style="display:inline-block;margin-top:8px;padding:4px 10px;background:#111;color:#fff;border-radius:6px;text-decoration:none;font-size:12px">상세 보기 →</a>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;font-size:13px;line-height:1.6;padding:12px 14px">
+            <div style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;background:${color}18;color:${color};font-size:11px;font-weight:700;margin-bottom:6px">${typeLabel}</div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:3px;color:#111827">${listing.title}</div>
+            <div style="color:#9ca3af;font-size:12px;margin-bottom:8px">${listing.region} ${listing.district} · ${listing.area}평 ${listing.floor}</div>
+            <div style="font-weight:700;color:#111827;font-size:14px">${rentLine}</div>
+            <a href="/listings/${listing.id}" style="display:inline-flex;align-items:center;margin-top:10px;padding:6px 14px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">상세 보기 →</a>
           </div>
         `)
 
-        marker.bindPopup(popup).addTo(map)
+        L.marker([listing.lat!, listing.lng!], { icon })
+          .bindPopup(popup)
+          .addTo(map)
+      })
+    })
+
+    return () => {
+      mapInstanceRef.current?.remove()
+      mapInstanceRef.current = null
+      if (document.head.contains(link)) document.head.removeChild(link)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Re-draw markers if listings change (filter applied)
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+    import('leaflet').then((L) => {
+      mapInstanceRef.current.eachLayer((layer: any) => {
+        if (layer instanceof L.Marker) mapInstanceRef.current.removeLayer(layer)
+      })
+      listings.forEach((listing) => {
+        const color     = TYPE_COLOR[listing.type]
+        const typeLabel = TYPE_LABEL[listing.type]
+        const icon = L.divIcon({
+          html:       badgeHtml(listing),
+          className:  '',
+          iconSize:   [0, 0] as any,
+          iconAnchor: [0, 0] as any,
+        })
+        const rentLine =
+          listing.type === 'sale'
+            ? `매각가 ${formatNumber(listing.salePrice ?? 0)}만원`
+            : `보증 ${formatNumber(listing.deposit)}만 / 월세 ${formatNumber(listing.monthlyRent)}만`
+        const popup = L.popup({ maxWidth: 260 }).setContent(`
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;font-size:13px;line-height:1.6;padding:12px 14px">
+            <div style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;background:${color}18;color:${color};font-size:11px;font-weight:700;margin-bottom:6px">${typeLabel}</div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:3px;color:#111827">${listing.title}</div>
+            <div style="color:#9ca3af;font-size:12px;margin-bottom:8px">${listing.region} ${listing.district} · ${listing.area}평 ${listing.floor}</div>
+            <div style="font-weight:700;color:#111827;font-size:14px">${rentLine}</div>
+            <a href="/listings/${listing.id}" style="display:inline-flex;align-items:center;margin-top:10px;padding:6px 14px;background:#111827;color:#fff;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600">상세 보기 →</a>
+          </div>
+        `)
+        L.marker([listing.lat!, listing.lng!], { icon })
+          .bindPopup(popup)
+          .addTo(mapInstanceRef.current)
       })
     })
   }, [listings])
 
   return (
     <>
-      {/* Leaflet CSS injected via link tag (avoids CSS import issues in Next.js) */}
-      {/* eslint-disable-next-line @next/next/no-head-element */}
       <style>{`
-        @import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
-        .leaflet-container { border-radius: 1rem; }
+        .leaflet-control-zoom {
+          border: none !important;
+          border-radius: 12px !important;
+          overflow: hidden;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.15) !important;
+        }
+        .leaflet-control-zoom a {
+          width: 36px !important; height: 36px !important;
+          line-height: 36px !important; font-size: 18px !important;
+          color: #374151 !important; background: #fff !important;
+          border-bottom: 1px solid #f3f4f6 !important; font-weight: 300 !important;
+        }
+        .leaflet-control-zoom a:hover { background: #f9fafb !important; }
+        .leaflet-popup-content-wrapper {
+          border-radius: 14px !important;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+          padding: 0 !important;
+        }
+        .leaflet-popup-content { margin: 0 !important; }
+        .leaflet-popup-tip { box-shadow: none !important; }
+        .leaflet-control-attribution { font-size: 10px !important; }
       `}</style>
-      <div
-        ref={mapRef}
-        className="h-[600px] w-full overflow-hidden rounded-2xl border border-gray-200"
-      />
+      <div ref={mapRef} className="h-[580px] w-full overflow-hidden rounded-2xl border border-gray-200" />
       {/* Legend */}
-      <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-600">
-        {(Object.entries(TYPE_COLOR) as [keyof typeof TYPE_LABEL, string][]).map(([type, color]) => (
+      <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-500">
+        {(Object.entries(TYPE_COLOR) as [ListingType, string][]).map(([type, color]) => (
           <span key={type} className="flex items-center gap-1.5">
             <span
-              className="inline-block h-3 w-3 rounded-full border-2 border-white shadow-sm"
+              className="inline-block h-2.5 w-2.5 rounded-full"
               style={{ background: color }}
             />
             {TYPE_LABEL[type]}

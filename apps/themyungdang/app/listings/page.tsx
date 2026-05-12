@@ -152,32 +152,42 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             <div className="mb-3 flex items-center justify-between gap-4">
               <h2 className="text-sm font-semibold text-gray-700">{results.length}건</h2>
               {/* List / Map toggle */}
-              <div className="flex overflow-hidden rounded-lg border border-gray-200 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="flex overflow-hidden rounded-lg border border-gray-200 text-sm">
+                  <a
+                    href={makeHref(searchParams, { view: undefined })}
+                    className={
+                      'flex items-center gap-1.5 px-3 py-2 transition-colors ' +
+                      (!isMapView
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-white text-gray-600 hover:bg-gray-50')
+                    }
+                    aria-label="목록 보기"
+                  >
+                    <LayoutGrid className="h-3.5 w-3.5" />
+                    목록
+                  </a>
+                  <a
+                    href={makeHref(searchParams, { view: 'map' })}
+                    className={
+                      'flex items-center gap-1.5 border-l border-gray-200 px-3 py-2 transition-colors ' +
+                      (isMapView
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-white text-gray-600 hover:bg-gray-50')
+                    }
+                    aria-label="지도 보기"
+                  >
+                    <Map className="h-3.5 w-3.5" />
+                    지도
+                  </a>
+                </div>
+                {/* 지도로 검색 — full interactive map search */}
                 <a
-                  href={makeHref(searchParams, { view: undefined })}
-                  className={
-                    'flex items-center gap-1.5 px-3 py-2 transition-colors ' +
-                    (!isMapView
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50')
-                  }
-                  aria-label="목록 보기"
-                >
-                  <LayoutGrid className="h-3.5 w-3.5" />
-                  목록
-                </a>
-                <a
-                  href={makeHref(searchParams, { view: 'map' })}
-                  className={
-                    'flex items-center gap-1.5 border-l border-gray-200 px-3 py-2 transition-colors ' +
-                    (isMapView
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50')
-                  }
-                  aria-label="지도 보기"
+                  href="/listings/map"
+                  className="flex items-center gap-1.5 rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
                 >
                   <Map className="h-3.5 w-3.5" />
-                  지도
+                  지도로 검색
                 </a>
               </div>
             </div>
