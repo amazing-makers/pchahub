@@ -2,7 +2,7 @@
 //
 // KFTC_API_KEY가 설정되어 있으면 실 API를 사용하고, 없으면 mock-data.ts를
 // 그대로 사용한다. 페이지 코드는 항상 이 모듈만 import하여 데이터 소스에
-//신경 쓰지 않는다.
+// 신경 쓰지 않는다.
 //
 // 사용 예:
 //   import { getBrands, getBrandDetailById } from '@/lib/kftc/source'
@@ -10,8 +10,7 @@
 //
 // 키 발급 후 활성화:
 //   1. .env에 KFTC_API_KEY=발급키 추가
-//   2. lib/kftc/client.ts의 XML parser TODO 구현 (fast-xml-parser 설치)
-//   3. 자동으로 실 API 사용
+//   2. 자동으로 실 API 사용 (3개 확인된 endpoint 활용)
 
 import { BRANDS, CATEGORIES, type MockBrand } from '../mock-data'
 import { getBrandDetail as getMockDetail } from '../mock-brand-detail'
@@ -21,13 +20,17 @@ import {
   fetchBrandStoreStats,
   fetchHqRegistrations,
   fetchIndutyBrandStats,
+  fetchBrandFntnStats,
+  fetchBrandBrandStats,
 } from './json-apis'
 import { isConfigured } from './registry'
 import {
   aggregateIndutyBrandStats,
+  aggregateFrcsStatsToCategoryTrend,
   mapContentToDetail,
   mapListItemToBrand,
   mergeIntoBrands,
+  mergeRealApiBrands,
   type CategoryTrend,
 } from './mapper'
 
@@ -38,20 +41,39 @@ function hasKey(): boolean {
 /**
  * 모든 브랜드 목록.
  *
- * 데이터 소스 우선순위 (configured 상태에 따라):
- *   1. JSON API 4종 (브랜드목록 + 페어데이터 + 본부등록) 머지 — 가장 깔끔
- *   2. 정보공개서 list API (XML) — 1순위가 안 되면 fallback
- *   3. mock-data.ts — 둘 다 안 되면 최종 fallback
+ * 데이터 소스 우선순위:
+ *   1. 확인된 3개 실 API 통합
+ *      - getBrandFrcsStats (가맹점수 + 평균매출)
+ *      - getBrandFntnStats (창업비용)
+ *      - getBrandBrandStats (브랜드 개요·가맹연수)
+ *   2. 정보공개서 list API (XML) — 1순위 실패 시 fallback
+ *   3. mock-data.ts — 최종 fallback
  *
- * 캐시는 fetch 단위에서 24시간 (lib/kftc/client.ts).
+ * 캐시: fetch 단위 24시간.
  */
 export async function getBrands(): Promise<MockBrand[]> {
   if (!hasKey()) return BRANDS
 
-  const currentYear = new Date().getFullYear()
-  const prevYear = currentYear - 1
+  const prevYear = new Date().getFullYear() - 1
 
-  // 1순위: JSON API 4종 통합 (registry에 configured 상태일 때)
+  // 1순위: 확인된 3개 실 API 통합
+  try {
+    const [frcsRes, fntnRes, brandRes] = await Promise.all([
+      fetchBrandStoreStats({ yr: prevYear, numOfRows: 1000 }),
+      fetchBrandFntnStats({ yr: prevYear, numOfRows: 1000 }),
+      fetchBrandBrandStats({ yr: prevYear, numOfRows: 1000 }),
+    ])
+    const merged = mergeRealApiBrands(
+      frcsRes.body.items,
+      fntnRes.body.items,
+      brandRes.body.items,
+    )
+    if (merged.length > 0) return merged
+  } catch (err) {
+    console.error('[kftc] 실API 3종 머지 실패 — 정보공개서 list로 fallback:', err)
+  }
+
+  // 2순위: JSON API 4종 통합 (registry configured 상태일 때)
   if (isConfigured('BrandList')) {
     try {
       const [brandList, storeStats, storeStatsPrev, hqReg] = await Promise.all([
@@ -78,9 +100,10 @@ export async function getBrands(): Promise<MockBrand[]> {
     }
   }
 
-  // 2순위: 정보공개서 list (XML)
+  // 3순위: 정보공개서 list (XML)
   if (isConfigured('DisclosureList')) {
     try {
+      const currentYear = new Date().getFullYear()
       const res = await listDisclosures(currentYear, { numOfRows: 1000 })
       return res.items.map((item) => mapListItemToBrand(item))
     } catch (err) {
@@ -88,14 +111,14 @@ export async function getBrands(): Promise<MockBrand[]> {
     }
   }
 
-  // 3순위: mock
+  // 최종 fallback: mock
   return BRANDS
 }
 
 /**
  * 브랜드 ID로 상세 조회.
  * - mock ID (b1, b2…) → mock 데이터
- * - kftc ID (kftc-151420) → 실 API 호출
+ * - kftc ID (kftc-숫자) → 실 API 호출
  */
 export async function getBrandById(id: string): Promise<{ brand: MockBrand; detail: ReturnType<typeof getMockDetail> } | null> {
   // mock 모드
@@ -105,51 +128,46 @@ export async function getBrandById(id: string): Promise<{ brand: MockBrand; deta
     return { brand, detail: getMockDetail(brand) }
   }
 
-  // kftc 실 API 모드
+  // kftc 실 API 모드 — 브랜드 목록에서 찾아서 상세 보완
   try {
+    // 브랜드 목록에서 해당 ID 찾기
+    const allBrands = await getBrands()
+    const brand = allBrands.find((b) => b.id === id)
+    if (!brand) return null
+
+    const detail = getMockDetail(brand)
+
+    // 정보공개서 content API 가능하면 추가 상세 적용
     const serial = id.replace(/^kftc-/, '')
-    const content = await getDisclosureContent(serial)
-    const mapped = mapContentToDetail(content)
-
-    // 브랜드 카드용 base는 list API를 한 번 더 호출하거나, 캐시된 list에서 찾아야 한다.
-    // 여기서는 stub — Supabase 연결 후 content + list 머지 로직 추가.
-    const stub: MockBrand = {
-      id,
-      name: content.ch1_hqInfo.crpoNm,
-      category: 'korean',
-      categoryLabel: '한식',
-      logoColor: '#16A34A',
-      description: '',
-      storeCount: mapped.storeHistory.at(-1)?.totalStores ?? 0,
-      startupCost:
-        mapped.costs.franchiseFee +
-        mapped.costs.deposit +
-        mapped.costs.interiorFee +
-        mapped.costs.educationFee +
-        mapped.costs.otherFees,
-      monthlyRoyalty: mapped.costs.royaltyType === 'fixed' ? mapped.costs.royaltyValue : 0,
-      hqVerified: true,
-      recruiting: true,
-      featured: false,
-      growthRate: 0,
-      hqRegion: '서울',
-      heroImage: '',
+    if (/^\d+$/.test(serial) && isConfigured('DisclosureContent')) {
+      try {
+        const content = await getDisclosureContent(serial)
+        const mapped = mapContentToDetail(content)
+        return {
+          brand: {
+            ...brand,
+            storeCount: mapped.storeHistory.at(-1)?.totalStores ?? brand.storeCount,
+            startupCost:
+              mapped.costs.franchiseFee + mapped.costs.deposit +
+              mapped.costs.interiorFee + mapped.costs.educationFee + mapped.costs.otherFees,
+          },
+          detail: {
+            ...detail,
+            hq: mapped.hq,
+            costs: mapped.costs,
+            revenue: mapped.revenue,
+            storeHistory: mapped.storeHistory,
+            disclosure: mapped.disclosure,
+          },
+        }
+      } catch {
+        // content 실패해도 list 기반 데이터로 반환
+      }
     }
 
-    const detail = getMockDetail(stub)
-    return {
-      brand: stub,
-      detail: {
-        ...detail,
-        hq: mapped.hq,
-        costs: mapped.costs,
-        revenue: mapped.revenue,
-        storeHistory: mapped.storeHistory,
-        disclosure: mapped.disclosure,
-      },
-    }
+    return { brand, detail }
   } catch (err) {
-    console.error('[kftc] getDisclosureContent 실패:', err)
+    console.error('[kftc] getBrandById 실패:', err)
     return null
   }
 }
@@ -176,14 +194,29 @@ export async function getCategoryTrends(): Promise<CategoryTrend[]> {
     })
   }
 
+  // 실 API — getBrandFrcsStats 기반 집계 (IndutyBrandStats API 미확인)
+  try {
+    const yr = new Date().getFullYear() - 1
+    const res = await fetchBrandStoreStats({ yr, numOfRows: 2000 })
+    if (res.body.items.length > 0) {
+      return aggregateFrcsStatsToCategoryTrend(res.body.items)
+    }
+  } catch (err) {
+    console.error('[kftc] fetchBrandStoreStats(카테고리트렌드) 실패:', err)
+  }
+
+  // fallback: fetchIndutyBrandStats 시도
   try {
     const yr = new Date().getFullYear() - 1
     const res = await fetchIndutyBrandStats({ yr, numOfRows: 500 })
-    return aggregateIndutyBrandStats(res.body.items)
+    if (res.body.items.length > 0) {
+      return aggregateIndutyBrandStats(res.body.items)
+    }
   } catch (err) {
     console.error('[kftc] fetchIndutyBrandStats 실패 — mock으로 fallback:', err)
-    return getCategoryTrendsMockFallback()
   }
+
+  return getCategoryTrendsMockFallback()
 }
 
 function getCategoryTrendsMockFallback(): CategoryTrend[] {

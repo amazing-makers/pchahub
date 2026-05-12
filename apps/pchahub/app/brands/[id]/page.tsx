@@ -44,32 +44,39 @@ import {
 } from '@/lib/mock-brand-detail'
 import { listingsForCategory, type MockListing } from '@/lib/mock-listings'
 import { BrandCard } from '@/components/brand-card'
+import { getBrandById, getBrands } from '@/lib/kftc/source'
 
 interface BrandDetailPageProps {
   params: { id: string }
 }
 
+// mock IDs만 빌드 타임 정적 생성; kftc-* 는 런타임 on-demand
 export function generateStaticParams() {
   return BRANDS.map((b) => ({ id: b.id }))
 }
+export const dynamicParams = true
+export const revalidate = 3600
 
-export function generateMetadata({ params }: BrandDetailPageProps): Metadata {
-  const brand = BRANDS.find((b) => b.id === params.id)
-  if (!brand) return {}
+export async function generateMetadata({ params }: BrandDetailPageProps): Promise<Metadata> {
+  const result = await getBrandById(params.id)
+  if (!result) return {}
+  const { brand } = result
   return buildPageMetadata('pchahub', {
     title: `${brand.name} — ${brand.categoryLabel} 가맹 정보`,
-    description: `${brand.description} · 매장 ${brand.storeCount}개 · 창업비 ${brand.startupCost}만원 · 본사 ${brand.hqRegion}. 협회 등록 정보공개서 기준 가맹 정보 + 점주 후기.`,
+    description: `${brand.description} · 매장 ${brand.storeCount}개 · 창업비 ${brand.startupCost}만원 · 본사 ${brand.hqRegion}. 공정거래위원회 가맹 정보 + 점주 후기.`,
     path: `/brands/${brand.id}`,
   })
 }
 
-export default function BrandDetailPage({ params }: BrandDetailPageProps) {
-  const brand = BRANDS.find((b) => b.id === params.id)
-  if (!brand) notFound()
-  const detail = getBrandDetail(brand)
+export default async function BrandDetailPage({ params }: BrandDetailPageProps) {
+  const result = await getBrandById(params.id)
+  if (!result) notFound()
+  const { brand, detail } = result
   const totalCost = totalStartupCost(detail.costs)
   const listings = listingsForCategory(brand.category)
-  const relatedBrands = BRANDS.filter(
+  // 관련 브랜드: 같은 카테고리에서 최대 3개 (실API or mock)
+  const allBrands = await getBrands()
+  const relatedBrands = allBrands.filter(
     (b) => b.category === brand.category && b.id !== brand.id,
   ).slice(0, 3)
   const avgRating =

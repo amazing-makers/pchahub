@@ -1,16 +1,20 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
-import { CATEGORIES, BRANDS, FEATURED_BRANDS, RECRUITING_BRANDS } from '@/lib/mock-data'
+import { CATEGORIES, FEATURED_BRANDS } from '@/lib/mock-data'
+import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
 
 interface BrandsPageProps {
   searchParams: { category?: string; region?: string; q?: string; sort?: string }
 }
 
-export default function BrandsPage({ searchParams }: BrandsPageProps) {
+export const revalidate = 3600 // 1시간 캐시
+
+export default async function BrandsPage({ searchParams }: BrandsPageProps) {
+  const [allBrands, dataSource] = await Promise.all([getBrands(), Promise.resolve(getDataSourceLabel())])
   const { category: activeCategory, region: activeRegion, q, sort = 'recommended' } = searchParams
 
-  let results = BRANDS.filter((b) => !b.featured)
+  let results = allBrands.filter((b) => !b.featured)
   if (activeCategory) {
     results = results.filter((b) => b.category === activeCategory)
   }
@@ -57,12 +61,17 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
                 {categoryLabel ? `${categoryLabel} 브랜드` : '전체 브랜드'}
                 {q && (
                   <span className="ml-2 text-base font-normal text-gray-500">
-                    ‘{q}’ 검색 결과
+                    '{q}' 검색 결과
                   </span>
                 )}
               </h1>
               <p className="mt-1 text-sm text-gray-500">
-                협회 등록 정보공개서 기준 · 총 {BRANDS.length}개 브랜드
+                공정거래위원회 가맹정보 기준 · 총 {allBrands.length.toLocaleString()}개 브랜드
+                {dataSource === 'kftc' && (
+                  <span className="ml-1.5 inline-flex items-center rounded-full bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
+                    실시간
+                  </span>
+                )}
               </p>
             </div>
             <a
@@ -82,10 +91,10 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
             <FilterGroup title="업종">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { category: undefined })} active={!activeCategory}>
-                  전체 ({BRANDS.length})
+                  전체 ({allBrands.length.toLocaleString()})
                 </FilterLink>
                 {CATEGORIES.map((c) => {
-                  const count = BRANDS.filter((b) => b.category === c.key).length
+                  const count = allBrands.filter((b) => b.category === c.key).length
                   if (count === 0) return null
                   return (
                     <FilterLink
@@ -93,7 +102,7 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
                       href={makeHref(searchParams, { category: c.key })}
                       active={activeCategory === c.key}
                     >
-                      {c.label} ({count})
+                      {c.label} ({count.toLocaleString()})
                     </FilterLink>
                   )
                 })}
@@ -103,10 +112,10 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
             <FilterGroup title="본사 지역">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { region: undefined })} active={!activeRegion}>
-                  전국 ({BRANDS.length})
+                  전국 ({allBrands.length.toLocaleString()})
                 </FilterLink>
                 {REGION_OPTIONS.map((r) => {
-                  const count = BRANDS.filter((b) => b.hqRegion === r).length
+                  const count = allBrands.filter((b) => b.hqRegion === r).length
                   if (count === 0) return null
                   return (
                     <FilterLink
@@ -139,8 +148,9 @@ export default function BrandsPage({ searchParams }: BrandsPageProps) {
               <CardContent className="p-4 text-sm">
                 <div className="font-semibold text-gray-900">데이터 출처</div>
                 <p className="mt-1 text-xs text-gray-600">
-                  모든 브랜드 정보는 공정거래위원회 협회 등록 정보공개서 기준이며, 분기마다
-                  업데이트됩니다.
+                  {dataSource === 'kftc'
+                    ? '공정거래위원회 가맹정보 실 API 데이터 · 매일 자동 갱신.'
+                    : '공정거래위원회 협회 등록 정보공개서 기준이며, 분기마다 업데이트됩니다.'}
                 </p>
               </CardContent>
             </Card>

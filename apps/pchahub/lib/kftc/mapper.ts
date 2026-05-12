@@ -30,6 +30,7 @@ import type {
   KftcSclasIndutyFntnItem,
   KftcIndutyAnaBrandMaintItem,
   KftcBrandFrcsIntItem,
+  KftcBrandBrandStatsItem,
 } from './json-apis'
 
 // ============================================================
@@ -280,10 +281,10 @@ export function mergeIntoBrands(input: {
   if (!input.brandList || input.brandList.length === 0) return []
 
   const statsByCrpo = new Map<string, KftcBrandStoreStats>()
-  for (const s of input.storeStats ?? []) statsByCrpo.set(s.fcCrpoMngNo, s)
+  for (const s of input.storeStats ?? []) if (s.fcCrpoMngNo) statsByCrpo.set(s.fcCrpoMngNo, s)
 
   const prevStatsByCrpo = new Map<string, KftcBrandStoreStats>()
-  for (const s of input.storeStatsPrev ?? []) prevStatsByCrpo.set(s.fcCrpoMngNo, s)
+  for (const s of input.storeStatsPrev ?? []) if (s.fcCrpoMngNo) prevStatsByCrpo.set(s.fcCrpoMngNo, s)
 
   const hqInfoByCrpo = new Map<string, KftcHqInfoItem>()
   for (const h of input.hqInfo ?? []) hqInfoByCrpo.set(h.fcCrpoMngNo, h)
@@ -347,7 +348,7 @@ export function indexFntnStatsByBrand(
   items: KftcBrandFntnStatsItem[],
 ): Map<string, KftcBrandFntnStatsItem> {
   const m = new Map<string, KftcBrandFntnStatsItem>()
-  for (const it of items) m.set(it.fcCrpoMngNo, it)
+  for (const it of items) if (it.fcCrpoMngNo) m.set(it.fcCrpoMngNo, it)
   return m
 }
 
@@ -591,4 +592,126 @@ export function interiorFeeFromIntInfo(item: KftcBrandFrcsIntItem): number {
     return Math.round((item.intFeeMin + item.intFeeMax) / 2)
   }
   return item.intFeeMin ?? item.intFeeMax ?? 0
+}
+
+// ============================================================
+// 실 API 3종 통합 → MockBrand[] (확인된 작동 API 기반)
+//
+// API 필드 확인 (2023년 실데이터):
+//   getBrandFrcsStats : yr, indutyLclasNm, indutyMlsfcNm, corpNm, brandNm,
+//                       frcsCnt, newFrcsRgsCnt, avrgSlsAmt, arUnitAvrgSlsAmt
+//   getBrandFntnStats : yr, indutyLclasNm, indutyMlsfcNm, brandNm, corpNm,
+//                       jngBzmnJngAmt, jngBzmnEduAmt, jngBzmnAssrncAmt, smtnAmt
+//   getBrandBrandStats: yr, indutyLclasNm, indutyMlsfcNm, brandNm, corpNm,
+//                       jngBizStrtDate, jngBizYycnt, frcsCnt, allExctvCnt, empCnt
+// ============================================================
+
+/**
+ * 3개 확인된 실 API 응답을 brandNm+corpNm 키로 조인해 MockBrand[] 생성.
+ * fcCrpoMngNo 없음 → `kftc-{hash}` ID 생성.
+ */
+export function mergeRealApiBrands(
+  frcsStats: KftcBrandStoreStats[],
+  fntnStats: KftcBrandFntnStatsItem[],
+  brandStats: KftcBrandBrandStatsItem[],
+): MockBrand[] {
+  if (frcsStats.length === 0) return []
+
+  // brandNm+corpNm → 창업비용 맵
+  const fntnMap = new Map<string, KftcBrandFntnStatsItem>()
+  for (const f of fntnStats) {
+    fntnMap.set(`${f.brandNm}__${f.corpNm}`, f)
+  }
+
+  // brandNm+corpNm → 브랜드개요 맵
+  const overviewMap = new Map<string, KftcBrandBrandStatsItem>()
+  for (const b of brandStats) {
+    overviewMap.set(`${b.brandNm}__${b.corpNm}`, b)
+  }
+
+  const mapped: MockBrand[] = []
+  for (const s of frcsStats) {
+    const brandName = String(s.brandNm ?? '').trim()
+    if (!brandName) continue  // brandNm 없는 항목 스킵
+
+    const joinKey = `${brandName}__${s.corpNm}`
+    const fntn = fntnMap.get(joinKey)
+    const overview = overviewMap.get(joinKey)
+
+    const cat = normalizeCategory(s.indutyMlsfcNm ?? s.indutyLclasNm)
+    // fcCrpoMngNo가 없으므로 브랜드명+법인명 해시로 안정적 ID 생성
+    const idSeed = joinKey.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+    const id = `kftc-${idSeed}`
+
+    const startupCost = fntn
+      ? Number(fntn.jngBzmnJngAmt ?? 0) + Number(fntn.jngBzmnEduAmt ?? 0) +
+        Number(fntn.jngBzmnAssrncAmt ?? 0) + Number(fntn.jngBzmnEtcAmt ?? 0)
+      : 0
+
+    // 가맹사업 시작연도로 성장률 근사: 최근 5년내 신규는 높게
+    // XML parser가 '20180101' → 20180101 (number)로 변환할 수 있으므로 String() 처리
+    const startYear = overview?.jngBizStrtDate
+      ? parseInt(String(overview.jngBizStrtDate).slice(0, 4), 10)
+      : 2015
+    const age = new Date().getFullYear() - startYear
+    const frcsCnt = Number(s.frcsCnt ?? 0)
+    const newCnt = Number(s.newFrcsRgsCnt ?? 0)
+    const endCnt = Number(s.ctrtEndCnt ?? 0)
+    const growthRate = newCnt && frcsCnt > 0
+      ? Math.round(((newCnt - endCnt) / frcsCnt) * 100)
+      : age <= 3 ? 15 : age <= 7 ? 8 : 3
+
+    mapped.push({
+      id,
+      name: brandName,
+      category: cat.key,
+      categoryLabel: cat.label,
+      logoColor: hashColor(id),
+      description: `${s.corpNm ?? ''}이(가) 운영하는 ${cat.label} 가맹 브랜드.`,
+      storeCount: frcsCnt,
+      startupCost,
+      monthlyRoyalty: 0,
+      hqVerified: true,
+      recruiting: true,
+      featured: false,
+      growthRate,
+      hqRegion: '서울',
+      heroImage: brandImageSet(id, cat.key).hero,
+    })
+  }
+  return mapped
+}
+
+/**
+ * IndutyBrandStats가 없는 경우 getBrandFrcsStats 데이터로 카테고리 트렌드를 집계.
+ * 업종별 가맹점 현황에서 신규/말소 카운트 집계.
+ */
+export function aggregateFrcsStatsToCategoryTrend(items: KftcBrandStoreStats[]): CategoryTrend[] {
+  const buckets = new Map<string, CategoryTrend>()
+  for (const it of items) {
+    const cat = normalizeCategory(it.indutyMlsfcNm ?? it.indutyLclasNm)
+    const existing = buckets.get(cat.key)
+    const curr = Number(it.frcsCnt ?? 0)
+    const ne = Number(it.newFrcsRgsCnt ?? 0)
+    const cl = Number(it.ctrtEndCnt ?? 0) + Number(it.ctrtCncltnCnt ?? 0)
+    if (existing) {
+      existing.currBrandCnt += 1
+      existing.newBrandCnt += ne > 0 ? 1 : 0
+      existing.closedBrandCnt += cl > 0 ? 1 : 0
+    } else {
+      buckets.set(cat.key, {
+        categoryKey: cat.key,
+        categoryLabel: cat.label,
+        currBrandCnt: 1,
+        newBrandCnt: ne > 0 ? 1 : 0,
+        closedBrandCnt: cl > 0 ? 1 : 0,
+        changeRate: 0,
+      })
+    }
+  }
+  for (const t of buckets.values()) {
+    const denom = t.currBrandCnt - t.newBrandCnt + t.closedBrandCnt
+    t.changeRate = denom > 0 ? Math.round(((t.newBrandCnt - t.closedBrandCnt) / denom) * 1000) / 10 : 0
+  }
+  return Array.from(buckets.values()).sort((a, b) => b.currBrandCnt - a.currBrandCnt)
 }

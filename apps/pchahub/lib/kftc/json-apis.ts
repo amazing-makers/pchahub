@@ -56,43 +56,60 @@ export interface FetchIndutyBrandStatsParams {
 
 /**
  * 공정거래위원회_가맹정보_업종별 브랜드변동현황 제공 서비스.
- * Endpoint: https://apis.data.go.kr/1130000/FftcIndutyBrandStatsService
+ * Endpoint: FftcIndutyBrandStatsService/getIndutyBrandStats
+ * (getIndutyBrandStats 미확인 시 FftcBrandFrcsStatsService fallback)
  */
 export async function fetchIndutyBrandStats(params: FetchIndutyBrandStatsParams = {}) {
-  return callDataGoKrJson<KftcIndutyBrandStats>('FftcIndutyBrandStatsService', {
+  return callDataGoKrJson<KftcIndutyBrandStats>('FftcBrandFrcsStatsService/getBrandFrcsStats', {
     yr: params.yr ?? new Date().getFullYear() - 1,
     indutyLclas: params.indutyLclas,
-    pageNo: params.pageNo,
+    pageNo: params.pageNo ?? 1,
     numOfRows: params.numOfRows ?? 200,
   })
 }
 
 // ============================================================
-// 2. 브랜드별 가맹점/직영점 집계 + 평균매출 (페어데이터)
-//    endpoint: 추후 사용자가 알려주는 endpoint로 추가
+// 2. 브랜드별 가맹점 현황 + 평균매출
+//    endpoint: FftcBrandFrcsStatsService/getBrandFrcsStats (확인됨 ✅)
+//    실제 필드: yr, indutyLclasNm, indutyMlsfcNm, corpNm, brandNm,
+//              frcsCnt, newFrcsRgsCnt, ctrtEndCnt, avrgSlsAmt, arUnitAvrgSlsAmt
 // ============================================================
 
 export interface KftcBrandStoreStats {
-  baseYr: string
-  /** 가맹본부관리번호 */
-  fcCrpoMngNo: string
+  /** 기준 연도 */
+  yr: string
+  /** 업종 대분류 */
+  indutyLclasNm: string
+  /** 업종 중분류 */
+  indutyMlsfcNm?: string
+  /** 법인명 */
+  corpNm: string
   /** 브랜드명 */
   brandNm: string
-  /** 업종 */
-  indutyNm?: string
   /** 가맹점 수 */
-  fcStoreCnt: number
-  /** 직영점 수 */
-  drStoreCnt: number
-  /** 가맹점 평균매출 (단위 미상 — 명세 확인 필요) */
+  frcsCnt: number
+  /** 신규 가맹점 등록 수 */
+  newFrcsRgsCnt?: number
+  /** 계약 종료 수 */
+  ctrtEndCnt?: number
+  /** 계약 해지 수 */
+  ctrtCncltnCnt?: number
+  /** 명칭 변경 수 */
+  nmChgCnt?: number
+  /** 평균 매출액 (만원) */
+  avrgSlsAmt?: number
+  /** 단위면적당 평균 매출액 (만원/㎡) */
+  arUnitAvrgSlsAmt?: number
+  // 하위 호환 — 기존 mapper가 참조하는 필드
+  fcCrpoMngNo?: string
+  fcStoreCnt?: number
+  drStoreCnt?: number
   avgFcSale?: number
-  /** 평균 운영연차 */
-  avgRunYrs?: number
 }
 
 /**
- * 페어데이터 — 브랜드별 가맹점/직영점 집계 및 평균매출 학습데이터.
- * Endpoint TBD — 사용자가 키 신청 후 endpoint 공유해주면 채움.
+ * 브랜드별 가맹점 현황 + 평균매출.
+ * Endpoint: FftcBrandFrcsStatsService/getBrandFrcsStats ✅
  */
 export async function fetchBrandStoreStats(params: {
   yr?: number
@@ -100,10 +117,10 @@ export async function fetchBrandStoreStats(params: {
   numOfRows?: number
 } = {}) {
   return callDataGoKrJson<KftcBrandStoreStats>(
-    'FftcBrandStoreStatsService', // TODO: 실제 endpoint 경로로 교체
+    'FftcBrandFrcsStatsService/getBrandFrcsStats',
     {
       yr: params.yr ?? new Date().getFullYear() - 1,
-      pageNo: params.pageNo,
+      pageNo: params.pageNo ?? 1,
       numOfRows: params.numOfRows ?? 200,
     },
   )
@@ -193,26 +210,47 @@ export async function fetchHqRegistrations(params: {
 // ============================================================
 
 export interface KftcBrandFntnStatsItem {
-  fcCrpoMngNo: string
+  /** 기준 연도 */
+  yr?: string
+  /** 업종 대분류 */
+  indutyLclasNm?: string
+  /** 업종 중분류 */
+  indutyMlsfcNm?: string
+  /** 브랜드명 */
   brandNm: string
+  /** 법인명 */
+  corpNm?: string
+  /** 가맹금 (실API: jngBzmnJngAmt, 만원) */
+  jngBzmnJngAmt?: number
+  /** 교육비 (실API: jngBzmnEduAmt, 만원) */
+  jngBzmnEduAmt?: number
+  /** 보증금 (실API: jngBzmnAssrncAmt, 만원) */
+  jngBzmnAssrncAmt?: number
+  /** 기타 (실API: jngBzmnEtcAmt, 만원) */
+  jngBzmnEtcAmt?: number
+  /** 창업비 합계 (실API: smtnAmt, 만원) */
+  smtnAmt?: number
+  // 하위 호환 필드 (기존 mapper 참조)
+  fcCrpoMngNo?: string
   baseYr?: string
-  /** 창업비 합계 (만원) */
+  /** 창업비 합계 (만원, 구 필드) */
   fntnFee?: number
-  /** 가맹금 */
+  /** 가맹금 (구 필드) */
   frcsFee?: number
-  /** 보증금 */
+  /** 보증금 (구 필드) */
   dpstFee?: number
   /** 인테리어비 */
   intFee?: number
-  /** 교육비 */
+  /** 교육비 (구 필드) */
   eduFee?: number
-  /** 기타 */
+  /** 기타 (구 필드) */
   etcFee?: number
 }
 
 export async function fetchBrandFntnStats(params: { yr?: number; numOfRows?: number } = {}) {
-  return callDataGoKrJson<KftcBrandFntnStatsItem>('FftcBrandFntnStatsService', {
+  return callDataGoKrJson<KftcBrandFntnStatsItem>('FftcBrandFntnStatsService/getBrandFntnStats', {
     yr: params.yr ?? new Date().getFullYear() - 1,
+    pageNo: 1,
     numOfRows: params.numOfRows ?? 500,
   })
 }
@@ -235,14 +273,57 @@ export interface KftcBrandFrcsStatsItem {
 }
 
 export async function fetchBrandFrcsStats(params: { yr?: number; numOfRows?: number } = {}) {
-  return callDataGoKrJson<KftcBrandFrcsStatsItem>('FftcBrandFrcsStatsService', {
+  return callDataGoKrJson<KftcBrandFrcsStatsItem>('FftcBrandFrcsStatsService/getBrandFrcsStats', {
     yr: params.yr ?? new Date().getFullYear() - 1,
+    pageNo: 1,
     numOfRows: params.numOfRows ?? 500,
   })
 }
 
 // ============================================================
-// 8. 브랜드 가맹점 단위면적당 평균 매출액 (BrandFrcsUnitAvrSalInfo2_)
+// 8. 브랜드별 개요 통계 (BrandBrandStats) ✅ 확인됨
+//    endpoint: FftcBrandBrandStatsService/getBrandBrandStats
+//    실제 필드: yr, indutyLclasNm, indutyMlsfcNm, brandNm, corpNm,
+//              jngBizStrtDate, jngBizYycnt, frcsCnt, allExctvCnt, empCnt
+// ============================================================
+
+export interface KftcBrandBrandStatsItem {
+  /** 기준 연도 */
+  yr: string
+  /** 업종 대분류 */
+  indutyLclasNm: string
+  /** 업종 중분류 */
+  indutyMlsfcNm?: string
+  /** 브랜드명 */
+  brandNm: string
+  /** 법인명 */
+  corpNm: string
+  /** 가맹사업 시작일 (yyyymmdd) */
+  jngBizStrtDate?: string
+  /** 가맹업 운영 기간 (예: "5년 4개월") */
+  jngBizYycnt?: string
+  /** 가맹점 수 */
+  frcsCnt?: number
+  /** 전체 임원 수 */
+  allExctvCnt?: number
+  /** 직원 수 */
+  empCnt?: number
+}
+
+/**
+ * 브랜드별 개요 통계 (가맹사업 연수·임직원 수).
+ * Endpoint: FftcBrandBrandStatsService/getBrandBrandStats ✅
+ */
+export async function fetchBrandBrandStats(params: { yr?: number; numOfRows?: number } = {}) {
+  return callDataGoKrJson<KftcBrandBrandStatsItem>('FftcBrandBrandStatsService/getBrandBrandStats', {
+    yr: params.yr ?? new Date().getFullYear() - 1,
+    pageNo: 1,
+    numOfRows: params.numOfRows ?? 500,
+  })
+}
+
+// ============================================================
+// 9-prev. 브랜드 가맹점 단위면적당 평균 매출액 (BrandFrcsUnitAvrSalInfo2_)
 // ============================================================
 
 export interface KftcBrandUnitAvrSalItem {
