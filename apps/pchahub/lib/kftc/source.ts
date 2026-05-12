@@ -13,10 +13,16 @@
 //   2. lib/kftc/client.ts의 XML parser TODO 구현 (fast-xml-parser 설치)
 //   3. 자동으로 실 API 사용
 
-import { BRANDS, type MockBrand } from '../mock-data'
+import { BRANDS, CATEGORIES, type MockBrand } from '../mock-data'
 import { getBrandDetail as getMockDetail } from '../mock-brand-detail'
 import { listDisclosures, getDisclosureContent } from './client'
-import { mapContentToDetail, mapListItemToBrand } from './mapper'
+import { fetchIndutyBrandStats } from './json-apis'
+import {
+  aggregateIndutyBrandStats,
+  mapContentToDetail,
+  mapListItemToBrand,
+  type CategoryTrend,
+} from './mapper'
 
 function hasKey(): boolean {
   return Boolean(process.env.KFTC_API_KEY)
@@ -100,6 +106,49 @@ export async function getBrandById(id: string): Promise<{ brand: MockBrand; deta
     console.error('[kftc] getDisclosureContent 실패:', err)
     return null
   }
+}
+
+/**
+ * 카테고리별 트렌드 (신규/말소 브랜드 수).
+ * /categories/[key] 페이지에서 "올해 신규 등장 N개" 표시용.
+ *
+ * 키 없으면 mock에서 임의 값 생성.
+ */
+export async function getCategoryTrends(): Promise<CategoryTrend[]> {
+  if (!hasKey()) {
+    // mock — 카테고리별 임의 트렌드
+    return CATEGORIES.map((c) => {
+      const seed = c.key.split('').reduce((a, ch) => a + ch.charCodeAt(0), 0)
+      return {
+        categoryKey: c.key,
+        categoryLabel: c.label,
+        currBrandCnt: c.brandCount,
+        newBrandCnt: 8 + (seed % 20),
+        closedBrandCnt: 3 + (seed % 8),
+        changeRate: 5 + (seed % 12),
+      }
+    })
+  }
+
+  try {
+    const yr = new Date().getFullYear() - 1
+    const res = await fetchIndutyBrandStats({ yr, numOfRows: 500 })
+    return aggregateIndutyBrandStats(res.body.items)
+  } catch (err) {
+    console.error('[kftc] fetchIndutyBrandStats 실패 — mock으로 fallback:', err)
+    return getCategoryTrendsMockFallback()
+  }
+}
+
+function getCategoryTrendsMockFallback(): CategoryTrend[] {
+  return CATEGORIES.map((c) => ({
+    categoryKey: c.key,
+    categoryLabel: c.label,
+    currBrandCnt: c.brandCount,
+    newBrandCnt: 10,
+    closedBrandCnt: 4,
+    changeRate: 6,
+  }))
 }
 
 /**

@@ -14,6 +14,7 @@ import type {
   BrandStoreHistory,
 } from '../mock-brand-detail'
 import type { KftcDisclosureContent, KftcDisclosureListItem } from './types'
+import type { KftcIndutyBrandStats } from './json-apis'
 
 // ============================================================
 // 업태 코드 → mock 카테고리 키 매핑
@@ -188,4 +189,54 @@ export function mapContentToDetail(content: KftcDisclosureContent): {
 function parseYear(dateStr: string): number {
   const m = dateStr.match(/^(\d{4})/)
   return m ? parseInt(m[1], 10) : 2020
+}
+
+// ============================================================
+// 업종별 브랜드변동현황 → 카테고리 트렌드 요약
+// ============================================================
+
+export interface CategoryTrend {
+  categoryKey: string
+  categoryLabel: string
+  currBrandCnt: number
+  newBrandCnt: number
+  closedBrandCnt: number
+  changeRate: number
+}
+
+/**
+ * 업종별 브랜드 변동 통계를 카테고리별로 그룹핑.
+ * /categories/[key] 페이지에 "올해 신규 등장한 브랜드 N개" 표시용.
+ */
+export function aggregateIndutyBrandStats(items: KftcIndutyBrandStats[]): CategoryTrend[] {
+  // 같은 카테고리 키로 모이는 항목들을 합산 (소분류 → 우리 카테고리 8종)
+  const buckets = new Map<string, CategoryTrend>()
+  for (const it of items) {
+    const induty = it.indutySclasNm ?? it.indutyMlsfcNm ?? it.indutyLclasNm
+    const cat = normalizeCategory(induty)
+    const existing = buckets.get(cat.key)
+    const curr = it.currBrandCnt ?? 0
+    const ne = it.newBrandCnt ?? 0
+    const cl = it.closedBrandCnt ?? 0
+    if (existing) {
+      existing.currBrandCnt += curr
+      existing.newBrandCnt += ne
+      existing.closedBrandCnt += cl
+    } else {
+      buckets.set(cat.key, {
+        categoryKey: cat.key,
+        categoryLabel: cat.label,
+        currBrandCnt: curr,
+        newBrandCnt: ne,
+        closedBrandCnt: cl,
+        changeRate: 0,
+      })
+    }
+  }
+  // 변동률 계산
+  for (const t of buckets.values()) {
+    const denom = t.currBrandCnt - t.newBrandCnt + t.closedBrandCnt
+    t.changeRate = denom > 0 ? Math.round(((t.newBrandCnt - t.closedBrandCnt) / denom) * 1000) / 10 : 0
+  }
+  return Array.from(buckets.values()).sort((a, b) => b.currBrandCnt - a.currBrandCnt)
 }
