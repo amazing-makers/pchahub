@@ -11,6 +11,14 @@ export type ThemyungdangEndpointKey =
   | 'MoltRtmsCommercial'    // 국토부 — 상업용 부동산 실거래가
   | 'SosanginCommerce'      // 소상공인진흥공단 — 상권 정보
   | 'SosanginStores'        // 소상공인진흥공단 — 상가 점포 정보
+  | 'RtmsRHRent'
+  | 'RtmsOffiRent'
+  | 'RtmsAptRent'
+  | 'RtmsLandTrade'
+  | 'RtmsInduTrade'
+  | 'RtmsRHTrade'
+  | 'RtmsOffiTrade'
+  | 'RtmsAptTrade'
 
 export interface ExternalEndpointDef {
   key: ThemyungdangEndpointKey
@@ -89,6 +97,78 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
       'MockListing의 주변 매장 정보',
       'bestplace의 매장 디렉토리 1차 소스',
     ],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsRHRent',
+    dataName: '국토교통부_연립다세대 전월세 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcRHRent',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsOffiRent',
+    dataName: '국토교통부_오피스텔 전월세 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcOffiRent',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsAptRent',
+    dataName: '국토교통부_아파트 전월세 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcAptRent',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsLandTrade',
+    dataName: '국토교통부_토지 매매 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcLandTrade',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsInduTrade',
+    dataName: '국토교통부_공장 및 창고 등 부동산 매매 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcInduTrade',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsRHTrade',
+    dataName: '국토교통부_연립다세대 매매 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcRHTrade',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsOffiTrade',
+    dataName: '국토교통부_오피스텔 매매 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcOffiTrade',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'RtmsAptTrade',
+    dataName: '국토교통부_아파트 매매 실거래가 자료',
+    endpoint: 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
     status: 'configured',
   },
 ]

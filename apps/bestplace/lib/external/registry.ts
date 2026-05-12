@@ -12,6 +12,11 @@ export type BestplaceEndpointKey =
   | 'SosanginCommerceArea'   // 소상공인 — 상권 영역
   | 'StatKosisPopulation'    // 통계청 KOSIS — 지역 인구
   | 'BizRegLookup'           // 국세청 — 사업자등록 조회
+  | 'PkNumber'
+  | 'StatisticsMeta'
+  | 'IndExplanation'
+  | 'StatisticsExplData'
+  | 'Indicator'
 
 export interface ExternalEndpointDef {
   key: BestplaceEndpointKey
@@ -64,6 +69,51 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
     format: 'JSON',
     priority: 'supplementary',
     fillsFields: ['MockStore.verified — 사업자번호 진위 검증'],
+    status: 'configured',
+  },
+  {
+    key: 'PkNumber',
+    dataName: '국가데이터처_KOSIS 지표고유번호별 설명자료 조회 서비스',
+    endpoint: 'https://apis.data.go.kr/1240000/PkNumberService',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'StatisticsMeta',
+    dataName: '국가데이터처_KOSIS 통계표설명 조회 서비스',
+    endpoint: 'https://apis.data.go.kr/1240000/statisticsMeta',
+    format: 'JSON+XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'IndExplanation',
+    dataName: '국가데이터처_KOSIS 지표명별 설명자료 조회 서비스',
+    endpoint: 'https://apis.data.go.kr/1240000/IndExplanationService',
+    format: 'XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'StatisticsExplData',
+    dataName: '국가데이터처_KOSIS 통계설명 조회 서비스',
+    endpoint: 'https://apis.data.go.kr/1240000/statisticsExplData',
+    format: 'JSON+XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
+    status: 'configured',
+  },
+  {
+    key: 'Indicator',
+    dataName: '국가데이터처_KOSIS 지표정보 조회 서비스',
+    endpoint: 'https://apis.data.go.kr/1240000/IndicatorService',
+    format: 'JSON+XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD'],
     status: 'configured',
   },
 ]
