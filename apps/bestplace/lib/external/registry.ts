@@ -51,7 +51,7 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
       '상권 단위 정보 (지정상권/주요상권)',
       '/rankings 페이지의 지역별 상권 활성도',
     ],
-    status: 'pending-endpoint',
+    status: 'configured',
   },
   {
     key: 'StatKosisPopulation',
@@ -65,10 +65,10 @@ export const ENDPOINTS: ExternalEndpointDef[] = [
   {
     key: 'BizRegLookup',
     dataName: '국세청_사업자등록정보 진위확인 및 상태조회 서비스',
-    endpoint: '',
+    endpoint: 'https://api.odcloud.kr/api/nts-businessman/v1/status',
     format: 'JSON',
     priority: 'supplementary',
-    fillsFields: ['MockStore.verified — 사업자번호 진위 검증'],
+    fillsFields: ['MockStore.verified — 사업자번호 진위 검증 (POST, NTS_API_KEY 별도)'],
     status: 'configured',
   },
   {
