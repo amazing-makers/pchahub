@@ -247,10 +247,10 @@ export interface KftcBrandFntnStatsItem {
   etcFee?: number
 }
 
-export async function fetchBrandFntnStats(params: { yr?: number; numOfRows?: number } = {}) {
+export async function fetchBrandFntnStats(params: { yr?: number; pageNo?: number; numOfRows?: number } = {}) {
   return callDataGoKrJson<KftcBrandFntnStatsItem>('FftcBrandFntnStatsService/getBrandFntnStats', {
     yr: params.yr ?? new Date().getFullYear() - 1,
-    pageNo: 1,
+    pageNo: params.pageNo ?? 1,
     numOfRows: params.numOfRows ?? 500,
   })
 }
@@ -314,10 +314,10 @@ export interface KftcBrandBrandStatsItem {
  * 브랜드별 개요 통계 (가맹사업 연수·임직원 수).
  * Endpoint: FftcBrandBrandStatsService/getBrandBrandStats ✅
  */
-export async function fetchBrandBrandStats(params: { yr?: number; numOfRows?: number } = {}) {
+export async function fetchBrandBrandStats(params: { yr?: number; pageNo?: number; numOfRows?: number } = {}) {
   return callDataGoKrJson<KftcBrandBrandStatsItem>('FftcBrandBrandStatsService/getBrandBrandStats', {
     yr: params.yr ?? new Date().getFullYear() - 1,
-    pageNo: 1,
+    pageNo: params.pageNo ?? 1,
     numOfRows: params.numOfRows ?? 500,
   })
 }

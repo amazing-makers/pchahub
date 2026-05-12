@@ -6,14 +6,26 @@ import { SearchBar } from '@/components/search-bar'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
 import { ListingCard } from '@/components/listing-card'
-import { CATEGORIES, FEATURED_BRANDS, RECRUITING_BRANDS, TRENDING_BRANDS } from '@/lib/mock-data'
+import { CATEGORIES, FEATURED_BRANDS } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
+import { getBrands } from '@/lib/kftc/source'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
 ).filter(([key]) => key !== 'pchahub')
 
-export default function HomePage() {
+export const revalidate = 3600 // 1시간 캐시
+
+export default async function HomePage() {
+  const allBrands = await getBrands()
+  // 성장률 높은 순 상위 6개 (실데이터 없으면 mock fallback은 이미 source에서 처리)
+  const trendingBrands = [...allBrands]
+    .sort((a, b) => b.growthRate - a.growthRate)
+    .slice(0, 6)
+  // 매장 수 많은 순 상위 6개 (가맹 모집 중 섹션)
+  const recruitingBrands = [...allBrands]
+    .sort((a, b) => b.storeCount - a.storeCount)
+    .slice(0, 6)
   return (
     <main>
       {/* Hero — search-led, matchmaking framing */}
@@ -34,7 +46,7 @@ export default function HomePage() {
             <p className="mt-6 text-lg text-gray-600">
               협회 공식 정보공개서를 바탕으로 내게 맞는 브랜드를 찾고
               <br className="hidden sm:inline" />
-              본사와 바로 연결되는 가맹 중개 플랫폼
+              본사와 바로 연결되는 가맹 정보 플랫폼
             </p>
             <div className="mt-10">
               <SearchBar />
@@ -50,7 +62,7 @@ export default function HomePage() {
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <Building2 className="h-4 w-4" style={{ color: 'var(--brand-primary)' }} />
-                매칭 기반 가맹 중개
+                본사 직접 연결
               </span>
             </div>
           </div>
@@ -113,7 +125,7 @@ export default function HomePage() {
           </a>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TRENDING_BRANDS.map((b) => (
+          {trendingBrands.map((b) => (
             <BrandCard key={b.id} brand={b} />
           ))}
         </div>
@@ -134,7 +146,7 @@ export default function HomePage() {
           </a>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {RECRUITING_BRANDS.slice(0, 6).map((b) => (
+          {recruitingBrands.map((b) => (
             <BrandCard key={b.id} brand={b} />
           ))}
         </div>

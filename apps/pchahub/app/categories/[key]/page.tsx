@@ -5,33 +5,38 @@ import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildPageMetadata } from '@amakers/design-system'
 import { BrandCard } from '@/components/brand-card'
-import { BRANDS, CATEGORIES, type MockBrand } from '@/lib/mock-data'
+import { CATEGORIES } from '@/lib/mock-data'
+import { getBrands } from '@/lib/kftc/source'
 
 export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ key: c.key }))
 }
+
+export const revalidate = 3600
 
 interface CategoryPageProps {
   params: { key: string }
   searchParams: { sort?: string }
 }
 
-export function generateMetadata({ params }: CategoryPageProps): Metadata {
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const category = CATEGORIES.find((c) => c.key === params.key)
   if (!category) return {}
-  const brandCount = BRANDS.filter((b) => b.category === category.key).length
+  const allBrands = await getBrands()
+  const brandCount = allBrands.filter((b) => b.category === category.key).length
   return buildPageMetadata('pchahub', {
     title: `${category.label} 가맹 브랜드 ${brandCount}개`,
-    description: `협회 등록 정보공개서 기준 ${category.label} 카테고리 가맹 브랜드 ${brandCount}곳. 평균 창업비·매장 수·성장률 비교 + 추천.`,
+    description: `공정거래위원회 가맹정보 기준 ${category.label} 카테고리 가맹 브랜드 ${brandCount}곳. 평균 창업비·매장 수·성장률 비교 + 추천.`,
     path: `/categories/${category.key}`,
   })
 }
 
-export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const category = CATEGORIES.find((c) => c.key === params.key)
   if (!category) notFound()
 
-  const brands = BRANDS.filter((b) => b.category === category.key)
+  const allBrands = await getBrands()
+  const brands = allBrands.filter((b) => b.category === category.key)
   const sort = searchParams.sort ?? 'growth-desc'
 
   const sorted = [...brands].sort((a, b) => {
@@ -173,7 +178,7 @@ const SORT_OPTIONS = [
   { key: 'stores-desc', label: '매장 많은순' },
 ]
 
-function computeCategoryStats(brands: MockBrand[]) {
+function computeCategoryStats(brands: { startupCost: number; storeCount: number; growthRate: number }[]) {
   if (brands.length === 0) {
     return {
       avgStartupCost: 0,

@@ -5,14 +5,17 @@ import { CATEGORIES, FEATURED_BRANDS } from '@/lib/mock-data'
 import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
 
 interface BrandsPageProps {
-  searchParams: { category?: string; region?: string; q?: string; sort?: string }
+  searchParams: { category?: string; region?: string; q?: string; sort?: string; page?: string }
 }
+
+const PAGE_SIZE = 48
 
 export const revalidate = 3600 // 1시간 캐시
 
 export default async function BrandsPage({ searchParams }: BrandsPageProps) {
   const [allBrands, dataSource] = await Promise.all([getBrands(), Promise.resolve(getDataSourceLabel())])
-  const { category: activeCategory, region: activeRegion, q, sort = 'recommended' } = searchParams
+  const { category: activeCategory, region: activeRegion, q, sort = 'recommended', page } = searchParams
+  const pageNum = Math.max(1, parseInt(page ?? '1', 10) || 1)
 
   let results = allBrands.filter((b) => !b.featured)
   if (activeCategory) {
@@ -45,6 +48,11 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
         return b.growthRate - a.growthRate
     }
   })
+
+  const totalResults = results.length
+  const totalPages = Math.max(1, Math.ceil(totalResults / PAGE_SIZE))
+  const currentPage = Math.min(pageNum, totalPages)
+  const pagedResults = results.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const categoryLabel = activeCategory
     ? CATEGORIES.find((c) => c.key === activeCategory)?.label
@@ -90,7 +98,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
           <aside className="space-y-5">
             <FilterGroup title="업종">
               <div className="space-y-1">
-                <FilterLink href={makeHref(searchParams, { category: undefined })} active={!activeCategory}>
+                <FilterLink href={makeHref(searchParams, { category: undefined, page: undefined })} active={!activeCategory}>
                   전체 ({allBrands.length.toLocaleString()})
                 </FilterLink>
                 {CATEGORIES.map((c) => {
@@ -99,7 +107,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                   return (
                     <FilterLink
                       key={c.key}
-                      href={makeHref(searchParams, { category: c.key })}
+                      href={makeHref(searchParams, { category: c.key, page: undefined })}
                       active={activeCategory === c.key}
                     >
                       {c.label} ({count.toLocaleString()})
@@ -111,7 +119,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
 
             <FilterGroup title="본사 지역">
               <div className="space-y-1">
-                <FilterLink href={makeHref(searchParams, { region: undefined })} active={!activeRegion}>
+                <FilterLink href={makeHref(searchParams, { region: undefined, page: undefined })} active={!activeRegion}>
                   전국 ({allBrands.length.toLocaleString()})
                 </FilterLink>
                 {REGION_OPTIONS.map((r) => {
@@ -120,7 +128,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                   return (
                     <FilterLink
                       key={r}
-                      href={makeHref(searchParams, { region: r })}
+                      href={makeHref(searchParams, { region: r, page: undefined })}
                       active={activeRegion === r}
                     >
                       {r} ({count})
@@ -135,7 +143,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                 {SORT_OPTIONS.map((s) => (
                   <FilterLink
                     key={s.key}
-                    href={makeHref(searchParams, { sort: s.key })}
+                    href={makeHref(searchParams, { sort: s.key, page: undefined })}
                     active={sort === s.key}
                   >
                     {s.label}
@@ -174,10 +182,15 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
             <div>
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-gray-700">
-                  {results.length}개 브랜드
+                  {totalResults > 0
+                    ? `${((currentPage - 1) * PAGE_SIZE + 1).toLocaleString()}–${Math.min(currentPage * PAGE_SIZE, totalResults).toLocaleString()} / 총 ${totalResults.toLocaleString()}개`
+                    : '0개 브랜드'}
                 </h2>
+                {totalPages > 1 && (
+                  <span className="text-xs text-gray-400">{currentPage} / {totalPages} 페이지</span>
+                )}
               </div>
-              {results.length === 0 ? (
+              {pagedResults.length === 0 ? (
                 <Card>
                   <CardContent className="p-10 text-center text-sm text-gray-500">
                     검색 결과가 없습니다. 필터를 줄여 다시 시도해보세요.
@@ -185,10 +198,18 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                 </Card>
               ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {results.map((b) => (
+                  {pagedResults.map((b) => (
                     <BrandCard key={b.id} brand={b} />
                   ))}
                 </div>
+              )}
+
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  searchParams={searchParams}
+                />
               )}
             </div>
           </div>
@@ -220,6 +241,8 @@ function makeHref(
   if (next.region) params.set('region', next.region)
   if (next.q) params.set('q', next.q)
   if (next.sort && next.sort !== 'recommended') params.set('sort', next.sort)
+  // page=1은 URL에서 생략 (깔끔한 URL)
+  if (next.page && next.page !== '1') params.set('page', next.page)
   const qs = params.toString()
   return qs ? `/brands?${qs}` : '/brands'
 }
@@ -252,5 +275,88 @@ function FilterLink({
     >
       {children}
     </a>
+  )
+}
+
+function Pagination({
+  currentPage,
+  totalPages,
+  searchParams,
+}: {
+  currentPage: number
+  totalPages: number
+  searchParams: BrandsPageProps['searchParams']
+}) {
+  // 현재 페이지 주변 최대 5개 페이지 번호 표시
+  const delta = 2
+  const range: number[] = []
+  for (let i = Math.max(1, currentPage - delta); i <= Math.min(totalPages, currentPage + delta); i++) {
+    range.push(i)
+  }
+  const rangeFirst = range[0] ?? 1
+  const rangeLast = range[range.length - 1] ?? totalPages
+  const showStartEllipsis = rangeFirst > 2
+  const showEndEllipsis = rangeLast < totalPages - 1
+
+  const pageHref = (p: number) => makeHref(searchParams, { page: String(p) })
+
+  return (
+    <nav className="mt-8 flex items-center justify-center gap-1" aria-label="페이지 탐색">
+      <a
+        href={pageHref(currentPage - 1)}
+        aria-disabled={currentPage <= 1}
+        className={
+          'flex h-8 w-8 items-center justify-center rounded-md border text-sm ' +
+          (currentPage <= 1
+            ? 'pointer-events-none border-gray-100 text-gray-300'
+            : 'border-gray-200 text-gray-700 hover:bg-gray-50')
+        }
+      >
+        &lsaquo;
+      </a>
+
+      {rangeFirst > 1 && (
+        <a href={pageHref(1)} className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-sm text-gray-700 hover:bg-gray-50">
+          1
+        </a>
+      )}
+      {showStartEllipsis && <span className="px-1 text-gray-400">…</span>}
+
+      {range.map((p) => (
+        <a
+          key={p}
+          href={pageHref(p)}
+          aria-current={p === currentPage ? 'page' : undefined}
+          className={
+            'flex h-8 w-8 items-center justify-center rounded-md border text-sm ' +
+            (p === currentPage
+              ? 'border-gray-900 bg-gray-900 font-medium text-white'
+              : 'border-gray-200 text-gray-700 hover:bg-gray-50')
+          }
+        >
+          {p}
+        </a>
+      ))}
+
+      {showEndEllipsis && <span className="px-1 text-gray-400">…</span>}
+      {rangeLast < totalPages && (
+        <a href={pageHref(totalPages)} className="flex h-8 w-8 items-center justify-center rounded-md border border-gray-200 text-sm text-gray-700 hover:bg-gray-50">
+          {totalPages}
+        </a>
+      )}
+
+      <a
+        href={pageHref(currentPage + 1)}
+        aria-disabled={currentPage >= totalPages}
+        className={
+          'flex h-8 w-8 items-center justify-center rounded-md border text-sm ' +
+          (currentPage >= totalPages
+            ? 'pointer-events-none border-gray-100 text-gray-300'
+            : 'border-gray-200 text-gray-700 hover:bg-gray-50')
+        }
+      >
+        &rsaquo;
+      </a>
+    </nav>
   )
 }

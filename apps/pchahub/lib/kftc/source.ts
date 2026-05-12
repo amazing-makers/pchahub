@@ -58,16 +58,30 @@ export async function getBrands(): Promise<MockBrand[]> {
 
   // 1순위: 확인된 3개 실 API 통합
   try {
-    const [frcsRes, fntnRes, brandRes] = await Promise.all([
-      fetchBrandStoreStats({ yr: prevYear, numOfRows: 1000 }),
-      fetchBrandFntnStats({ yr: prevYear, numOfRows: 1000 }),
-      fetchBrandBrandStats({ yr: prevYear, numOfRows: 1000 }),
+    // KFTC 연간 데이터는 indutyMlsfcNm 기준으로 정렬됨 (한식 → 분식 → 일식 → 치킨 → 커피… 순).
+    // 따라서 앞부분만 가져오면 한식 위주가 됨. 다양한 업종을 커버하기 위해
+    // 앞 1000건 + 중간 1000건(p40 = 커피/카페 구간)을 병렬로 가져와 합산.
+    // numOfRows=1000 기준 페이지 번호. KFTC yr=2025 데이터는 indutyMlsfcNm 정렬이라
+    // 한식이 p1-p2에 집중됨. 다양한 업종 커버를 위해 3개 구간을 병렬 fetch:
+    //   p1 (1-1000): 한식/분식/일식 위주
+    //   p3 (2001-3000): 치킨/주점/아이스크림/빙수 구간
+    //   p5 (4001-5000): 커피/카페/패스트푸드 구간
+    const [frcsR1, frcsR2, frcsR3, fntnR1, fntnR2, fntnR3, brandR1, brandR2, brandR3] = await Promise.all([
+      fetchBrandStoreStats({ yr: prevYear, pageNo: 1, numOfRows: 1000 }),
+      fetchBrandStoreStats({ yr: prevYear, pageNo: 3, numOfRows: 1000 }),
+      fetchBrandStoreStats({ yr: prevYear, pageNo: 5, numOfRows: 1000 }),
+      fetchBrandFntnStats({ yr: prevYear, pageNo: 1, numOfRows: 1000 }),
+      fetchBrandFntnStats({ yr: prevYear, pageNo: 3, numOfRows: 1000 }),
+      fetchBrandFntnStats({ yr: prevYear, pageNo: 5, numOfRows: 1000 }),
+      fetchBrandBrandStats({ yr: prevYear, pageNo: 1, numOfRows: 1000 }),
+      fetchBrandBrandStats({ yr: prevYear, pageNo: 3, numOfRows: 1000 }),
+      fetchBrandBrandStats({ yr: prevYear, pageNo: 5, numOfRows: 1000 }),
     ])
-    const merged = mergeRealApiBrands(
-      frcsRes.body.items,
-      fntnRes.body.items,
-      brandRes.body.items,
-    )
+    // brandNm+corpNm 키 기반이라 중복 없음 (서로 다른 페이지 = 서로 다른 브랜드)
+    const frcsItems = [...frcsR1.body.items, ...frcsR2.body.items, ...frcsR3.body.items]
+    const fntnItems = [...fntnR1.body.items, ...fntnR2.body.items, ...fntnR3.body.items]
+    const brandItems = [...brandR1.body.items, ...brandR2.body.items, ...brandR3.body.items]
+    const merged = mergeRealApiBrands(frcsItems, fntnItems, brandItems)
     if (merged.length > 0) return merged
   } catch (err) {
     console.error('[kftc] 실API 3종 머지 실패 — 정보공개서 list로 fallback:', err)
@@ -197,9 +211,14 @@ export async function getCategoryTrends(): Promise<CategoryTrend[]> {
   // 실 API — getBrandFrcsStats 기반 집계 (IndutyBrandStats API 미확인)
   try {
     const yr = new Date().getFullYear() - 1
-    const res = await fetchBrandStoreStats({ yr, numOfRows: 2000 })
-    if (res.body.items.length > 0) {
-      return aggregateFrcsStatsToCategoryTrend(res.body.items)
+    const [r1, r2, r3] = await Promise.all([
+      fetchBrandStoreStats({ yr, numOfRows: 1000, pageNo: 1 }),
+      fetchBrandStoreStats({ yr, numOfRows: 1000, pageNo: 3 }),
+      fetchBrandStoreStats({ yr, numOfRows: 1000, pageNo: 5 }),
+    ])
+    const items = [...r1.body.items, ...r2.body.items, ...r3.body.items]
+    if (items.length > 0) {
+      return aggregateFrcsStatsToCategoryTrend(items)
     }
   } catch (err) {
     console.error('[kftc] fetchBrandStoreStats(카테고리트렌드) 실패:', err)
