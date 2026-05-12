@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   ChevronRight,
@@ -8,6 +9,7 @@ import {
   ThumbsUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   CATEGORY_COLOR,
@@ -24,6 +26,16 @@ export function generateStaticParams() {
 
 interface EpisodeDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: EpisodeDetailProps): Metadata {
+  const ep = EPISODES.find((e) => e.id === params.id)
+  if (!ep) return {}
+  return buildPageMetadata('changupdocu', {
+    title: `${ep.title} — ${CATEGORY_LABEL[ep.category]} 다큐`,
+    description: `${ep.subtitle} · ${ep.duration} · 조회 ${formatNumber(ep.views)}회${ep.brand ? ` · ${ep.brand}` : ''}.`,
+    path: `/episodes/${ep.id}`,
+  })
 }
 
 export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {

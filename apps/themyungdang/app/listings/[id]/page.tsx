@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
@@ -13,6 +14,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   AREAS,
@@ -29,6 +31,21 @@ export function generateStaticParams() {
 
 interface ListingDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: ListingDetailProps): Metadata {
+  const listing = LISTINGS.find((l) => l.id === params.id)
+  if (!listing) return {}
+  const typeLabel = TYPE_LABEL[listing.type]
+  const priceDesc =
+    listing.type === 'sale'
+      ? `매각가 ${formatNumber(listing.salePrice ?? 0)}만`
+      : `보증금 ${formatNumber(listing.deposit)}만 / 월세 ${formatNumber(listing.monthlyRent)}만`
+  return buildPageMetadata('themyungdang', {
+    title: `${listing.title} — ${typeLabel}`,
+    description: `${listing.region} ${listing.district} · ${listing.area}평 · ${listing.floor} · ${priceDesc}. 일 유동 ${formatNumber(listing.footTraffic)}명.`,
+    path: `/listings/${listing.id}`,
+  })
 }
 
 export default function ListingDetailPage({ params }: ListingDetailProps) {

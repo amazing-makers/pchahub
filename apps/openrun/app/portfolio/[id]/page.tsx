@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, MapPin } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { CaseCard } from '@/components/case-card'
 import { caseById, PORTFOLIO } from '@/lib/mock-data'
 
@@ -10,6 +12,16 @@ export function generateStaticParams() {
 
 interface CaseDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: CaseDetailProps): Metadata {
+  const c = caseById(params.id)
+  if (!c) return {}
+  return buildPageMetadata('openrun', {
+    title: `${c.title} — ${c.client}`,
+    description: `${c.hook} · ${c.industry} · ${c.region} · ${c.duration} 캠페인.`,
+    path: `/portfolio/${c.id}`,
+  })
 }
 
 export default function CaseDetailPage({ params }: CaseDetailProps) {

@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Calendar, ChevronRight, ExternalLink, MapPin, Store } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   CATEGORIES,
@@ -16,6 +18,17 @@ export function generateStaticParams() {
 
 interface GalleryDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: GalleryDetailProps): Metadata {
+  const item = portfolioById(params.id)
+  if (!item) return {}
+  const cat = CATEGORIES.find((c) => c.key === item.category)
+  return buildPageMetadata('gongganhansu', {
+    title: `${item.title} — ${cat?.label ?? item.category} 시공 사례`,
+    description: `${item.excerpt} · ${item.region} ${item.district} · ${item.area}평 · 예산 ${formatNumber(item.budget)}만 · ${item.durationDays}일 시공.`,
+    path: `/gallery/${item.id}`,
+  })
 }
 
 export default function GalleryDetailPage({ params }: GalleryDetailProps) {

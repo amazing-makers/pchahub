@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   AlertCircle,
@@ -7,6 +8,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   brandById,
@@ -26,6 +28,17 @@ export function generateStaticParams() {
 
 interface RoundDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: RoundDetailProps): Metadata {
+  const round = roundById(params.id)
+  if (!round) return {}
+  const brand = brandById(round.brandId)
+  return buildPageMetadata('pchabridge', {
+    title: `${brand?.name ?? '브랜드'} ${ROUND_TYPE_LABEL[round.type]} — ${ROUND_STATUS_LABEL[round.status]}`,
+    description: `${round.hook} · 목표 ${formatNumber(round.targetAmount)}만 · 현재 ${formatNumber(round.currentAmount)}만 · 예상 ROI ${round.expectedAnnualROI}% · 마감 ${round.closeDate}.`,
+    path: `/investments/${round.id}`,
+  })
 }
 
 export default function RoundDetailPage({ params }: RoundDetailProps) {

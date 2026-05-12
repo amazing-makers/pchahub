@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { buildPageMetadata } from '@amakers/design-system'
 import {
   Calendar,
   CheckCircle2,
@@ -24,6 +26,16 @@ interface ListingDetailProps {
 
 export function generateStaticParams() {
   return LISTINGS.map((l) => ({ id: l.id }))
+}
+
+export function generateMetadata({ params }: ListingDetailProps): Metadata {
+  const listing = listingById(params.id)
+  if (!listing) return {}
+  return buildPageMetadata('pchahub', {
+    title: `${listing.title} — ${listing.listingType}`,
+    description: `${listing.region} ${listing.district} · ${listing.area}평 · 보증금 ${listing.deposit}만 / 월세 ${listing.monthlyRent}만${listing.rightFee ? ` / 권리금 ${listing.rightFee}만` : ''}. ${listing.tags.slice(0, 3).join(' · ')}.`,
+    path: `/listings/${listing.id}`,
+  })
 }
 
 export default function ListingDetailPage({ params }: ListingDetailProps) {

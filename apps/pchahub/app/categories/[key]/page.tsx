@@ -1,7 +1,9 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, TrendingUp, Users, Wallet } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { buildPageMetadata } from '@amakers/design-system'
 import { BrandCard } from '@/components/brand-card'
 import { BRANDS, CATEGORIES, type MockBrand } from '@/lib/mock-data'
 
@@ -12,6 +14,17 @@ export function generateStaticParams() {
 interface CategoryPageProps {
   params: { key: string }
   searchParams: { sort?: string }
+}
+
+export function generateMetadata({ params }: CategoryPageProps): Metadata {
+  const category = CATEGORIES.find((c) => c.key === params.key)
+  if (!category) return {}
+  const brandCount = BRANDS.filter((b) => b.category === category.key).length
+  return buildPageMetadata('pchahub', {
+    title: `${category.label} 가맹 브랜드 ${brandCount}개`,
+    description: `협회 등록 정보공개서 기준 ${category.label} 카테고리 가맹 브랜드 ${brandCount}곳. 평균 창업비·매장 수·성장률 비교 + 추천.`,
+    path: `/categories/${category.key}`,
+  })
 }
 
 export default function CategoryPage({ params, searchParams }: CategoryPageProps) {

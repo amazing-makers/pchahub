@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, Clock, Share2, ThumbsUp } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { ARTICLES, articleById } from '@/lib/mock-data'
 import { ArticleCard } from '@/components/article-card'
 
@@ -10,6 +12,16 @@ export function generateStaticParams() {
 
 interface ArticleDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: ArticleDetailProps): Metadata {
+  const article = articleById(params.id)
+  if (!article) return {}
+  return buildPageMetadata('changupdocu', {
+    title: article.title,
+    description: `${article.subtitle} · ${article.authorName} (${article.authorRole}) · ${article.readTime}분 읽기.`,
+    path: `/magazine/${article.id}`,
+  })
 }
 
 export default function ArticleDetailPage({ params }: ArticleDetailProps) {

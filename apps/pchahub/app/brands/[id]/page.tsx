@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { buildPageMetadata } from '@amakers/design-system'
 import {
   ArrowRight,
   Award,
@@ -44,6 +46,16 @@ interface BrandDetailPageProps {
 
 export function generateStaticParams() {
   return BRANDS.map((b) => ({ id: b.id }))
+}
+
+export function generateMetadata({ params }: BrandDetailPageProps): Metadata {
+  const brand = BRANDS.find((b) => b.id === params.id)
+  if (!brand) return {}
+  return buildPageMetadata('pchahub', {
+    title: `${brand.name} — ${brand.categoryLabel} 가맹 정보`,
+    description: `${brand.description} · 매장 ${brand.storeCount}개 · 창업비 ${brand.startupCost}만원 · 본사 ${brand.hqRegion}. 협회 등록 정보공개서 기준 가맹 정보 + 점주 후기.`,
+    path: `/brands/${brand.id}`,
+  })
 }
 
 export default function BrandDetailPage({ params }: BrandDetailPageProps) {

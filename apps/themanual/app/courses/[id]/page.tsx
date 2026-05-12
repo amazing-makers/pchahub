@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
@@ -9,6 +10,7 @@ import {
   Users,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   COURSE_CATEGORIES,
@@ -25,6 +27,17 @@ export function generateStaticParams() {
 
 interface CourseDetailPageProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: CourseDetailPageProps): Metadata {
+  const course = COURSES.find((c) => c.id === params.id)
+  if (!course) return {}
+  const cat = COURSE_CATEGORIES.find((c) => c.key === course.category)
+  return buildPageMetadata('themanual', {
+    title: `${course.title} — ${cat?.label ?? course.category}`,
+    description: `${course.subtitle} · ${course.lessonCount}강 · ${Math.floor(course.durationMin / 60)}시간 · 평점 ${course.rating} · ${course.price === 0 ? '무료' : `${formatNumber(course.price)}원`}.`,
+    path: `/courses/${course.id}`,
+  })
 }
 
 export default function CourseDetailPage({ params }: CourseDetailPageProps) {

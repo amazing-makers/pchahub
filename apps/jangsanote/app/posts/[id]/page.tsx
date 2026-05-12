@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   ChevronRight,
@@ -8,6 +9,7 @@ import {
   ThumbsUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber, formatRelativeTime } from '@amakers/utils'
 import {
   CATEGORY_LABEL,
@@ -25,6 +27,17 @@ export function generateStaticParams() {
 
 interface PostPageProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: PostPageProps): Metadata {
+  const post = POSTS.find((p) => p.id === params.id)
+  if (!post) return {}
+  const channelName = channelLabel(post.channelType, post.channelKey)
+  return buildPageMetadata('jangsanote', {
+    title: `${post.title} — ${channelName}`,
+    description: `${post.excerpt} · ${CATEGORY_LABEL[post.category]} · 추천 ${post.likes} · 댓글 ${post.commentCount}.`,
+    path: `/posts/${post.id}`,
+  })
 }
 
 export default function PostPage({ params }: PostPageProps) {

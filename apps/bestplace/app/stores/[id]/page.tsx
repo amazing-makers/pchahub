@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   Award,
@@ -10,6 +11,7 @@ import {
   Users,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   awardsForStore,
@@ -28,6 +30,17 @@ export function generateStaticParams() {
 
 interface StoreDetailProps {
   params: { id: string }
+}
+
+export function generateMetadata({ params }: StoreDetailProps): Metadata {
+  const store = STORES.find((s) => s.id === params.id)
+  if (!store) return {}
+  const brand = brandById(store.brandId)
+  return buildPageMetadata('bestplace', {
+    title: `${store.name}${brand ? ` — ${brand.categoryLabel}` : ''}`,
+    description: `${store.region} ${store.district} · ${store.area}평 · 평점 ${store.rating} (${formatNumber(store.reviewCount)}개 리뷰) · 월 방문 ${formatNumber(store.monthlyVisitors)}명${store.awards.length > 0 ? ` · ${store.awards[0]}` : ''}.`,
+    path: `/stores/${store.id}`,
+  })
 }
 
 export default function StoreDetailPage({ params }: StoreDetailProps) {
