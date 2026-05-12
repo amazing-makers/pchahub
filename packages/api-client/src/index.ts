@@ -1,2 +1,5 @@
 export { trackUserActivity } from './tracking'
 export { getCrossRecommendations, getBrandRelated } from './recommendations'
+export { fetchExternal } from './fetch-external'
+export type { FetchOpts, FetchResult } from './fetch-external'
+export { env } from './env'

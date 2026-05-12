@@ -27,7 +27,11 @@
         "CLOUDFLARE_R2_PUBLIC_URL",
         "RESEND_API_KEY",
         "RESEND_FROM_EMAIL",
-        "SENTRY_DSN"
+        "SENTRY_DSN",
+        "KFTC_API_KEY",
+        "DATAGO_API_KEY",
+        "REB_API_KEY",
+        "NTS_API_KEY"
       ]
     },
     "dev": {
