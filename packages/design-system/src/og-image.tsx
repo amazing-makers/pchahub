@@ -65,6 +65,7 @@ export function buildOgImageJsx(platform: PlatformKey) {
       {/* amakers 워터마크 */}
       <div
         style={{
+          display: 'flex',
           position: 'absolute',
           top: 48,
           right: 48,
@@ -98,11 +99,12 @@ export function buildOgImageJsx(platform: PlatformKey) {
 
       {/* 사이트명 + 태그라인 */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: 28, opacity: 0.85, letterSpacing: '0.02em' }}>
+        <div style={{ display: 'flex', fontSize: 28, opacity: 0.85, letterSpacing: '0.02em' }}>
           {brand.role}
         </div>
         <div
           style={{
+            display: 'flex',
             fontSize: 96,
             fontWeight: 800,
             letterSpacing: '-0.02em',
@@ -113,6 +115,7 @@ export function buildOgImageJsx(platform: PlatformKey) {
         </div>
         <div
           style={{
+            display: 'flex',
             fontSize: 36,
             opacity: 0.92,
             marginTop: 8,
@@ -125,6 +128,7 @@ export function buildOgImageJsx(platform: PlatformKey) {
       {/* 도메인 */}
       <div
         style={{
+          display: 'flex',
           marginTop: 24,
           fontSize: 22,
           opacity: 0.7,
@@ -147,4 +151,144 @@ function darken(hex: string, percent: number): string {
   const g = Math.max(0, ((num >> 8) & 0xff) - Math.round((percent / 100) * 255))
   const b = Math.max(0, (num & 0xff) - Math.round((percent / 100) * 255))
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`
+}
+
+/**
+ * 페이지별 OG 이미지 — 페이지 제목 + 부제 + 메타 칩들.
+ *
+ * 사용 예 (apps/pchahub/app/brands/[id]/opengraph-image.tsx):
+ *
+ *   export default async function Image({ params }: { params: { id: string } }) {
+ *     const brand = BRANDS.find(b => b.id === params.id)!
+ *     return new ImageResponse(buildPageOgImageJsx('pchahub', {
+ *       title: brand.name,
+ *       subtitle: brand.description,
+ *       chips: [`매장 ${brand.storeCount}개`, `창업비 ${brand.startupCost}만`, `본사 ${brand.hqRegion}`],
+ *     }), { ...OG_IMAGE_SIZE })
+ *   }
+ */
+export interface PageOgInput {
+  /** 페이지 제목 (브랜드명, 매물 제목 등). */
+  title: string
+  /** 한 줄 부제. */
+  subtitle?: string
+  /** 화면 하단에 표시할 메타 칩 (최대 4개). */
+  chips?: string[]
+  /** "브랜드 정보", "매물", "매장" 등 페이지 종류 라벨. */
+  pageType?: string
+}
+
+export function buildPageOgImageJsx(platform: PlatformKey, input: PageOgInput) {
+  const brand = platformColors[platform]
+
+  return (
+    <div
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        background: `linear-gradient(135deg, ${brand.primary} 0%, ${darken(brand.primary, 22)} 100%)`,
+        padding: 80,
+        color: 'white',
+        fontFamily: 'sans-serif',
+        position: 'relative',
+      }}
+    >
+      {/* 우상단 amakers + 사이트명 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 48,
+          right: 48,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-end',
+          gap: 4,
+        }}
+      >
+        <div style={{ display: 'flex', fontSize: 20, opacity: 0.7, letterSpacing: '0.1em' }}>
+          {`amakers / ${brand.domain}`}
+        </div>
+        <div style={{ display: 'flex', fontSize: 28, fontWeight: 700, opacity: 0.95 }}>
+          {brand.name}
+        </div>
+      </div>
+
+      {/* 좌상단 페이지 타입 라벨 */}
+      {input.pageType && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 20px',
+            borderRadius: 999,
+            background: 'rgba(255,255,255,0.18)',
+            backdropFilter: 'blur(12px)',
+            fontSize: 22,
+            fontWeight: 600,
+            alignSelf: 'flex-start',
+            marginBottom: 32,
+          }}
+        >
+          {input.pageType}
+        </div>
+      )}
+
+      <div style={{ flex: 1 }} />
+
+      {/* 페이지 제목 */}
+      <div
+        style={{
+          display: 'flex',
+          fontSize: input.title.length > 24 ? 64 : 80,
+          fontWeight: 800,
+          letterSpacing: '-0.02em',
+          lineHeight: 1.1,
+          marginBottom: 24,
+          maxWidth: '90%',
+        }}
+      >
+        {input.title}
+      </div>
+
+      {/* 부제 */}
+      {input.subtitle && (
+        <div
+          style={{
+            display: 'flex',
+            fontSize: 30,
+            opacity: 0.92,
+            lineHeight: 1.35,
+            marginBottom: 32,
+            maxWidth: '85%',
+          }}
+        >
+          {input.subtitle.length > 80 ? input.subtitle.slice(0, 80) + '…' : input.subtitle}
+        </div>
+      )}
+
+      {/* 메타 칩들 */}
+      {input.chips && input.chips.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+          {input.chips.slice(0, 4).map((chip, i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '10px 22px',
+                borderRadius: 999,
+                background: 'rgba(255,255,255,0.22)',
+                fontSize: 22,
+                fontWeight: 600,
+              }}
+            >
+              {chip}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
