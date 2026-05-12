@@ -5,7 +5,6 @@
 
 export type GongganhansuEndpointKey =
   | 'FacilStat'   // 국토안전관리원 — 시설물 통계
-  | 'FacilStat'
 
 export interface ExternalEndpointDef {
   key: GongganhansuEndpointKey
@@ -13,27 +12,30 @@ export interface ExternalEndpointDef {
   endpoint: string
   format: 'JSON' | 'XML' | 'JSON+XML'
   priority: 'critical' | 'useful' | 'supplementary'
-  fillsFields: string[
-  {
-    key: 'FacilStat',
-    dataName: '국토안전관리원_시설물 통계 정보조회 서비스',
-    endpoint: 'https://apis.data.go.kr/B552016/FacilStatService',
-    format: 'JSON+XML',
-    priority: 'supplementary',
-    fillsFields: ['TBD'],
-    status: 'configured',
-  },
-]
+  fillsFields: string[]
   status: 'configured' | 'pending-endpoint' | 'not-applied'
 }
 
 export const ENDPOINTS: ExternalEndpointDef[] = [
+  {
+    key: 'FacilStat',
+    dataName: '국토안전관리원_시설물 통계 정보조회 서비스',
+    endpoint: 'https://apis.data.go.kr/B552016/FacilStatService/getFacilStatInfo',
+    format: 'JSON+XML',
+    priority: 'supplementary',
+    fillsFields: ['TBD — 시설물 종류별 통계, 지역별 분포'],
+    status: 'configured',
+  },
 ]
 
 export function endpointFor(key: GongganhansuEndpointKey): string {
   const def = ENDPOINTS.find((e) => e.key === key)
   if (!def) throw new Error(`Unknown endpoint key: ${key}`)
   return def.endpoint
+}
+
+export function isConfigured(key: GongganhansuEndpointKey): boolean {
+  return ENDPOINTS.find((e) => e.key === key)?.status === 'configured'
 }
 
 export function summarizeStatus() {
