@@ -2,7 +2,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, MapPin } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildCreativeWorkJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { CaseCard } from '@/components/case-card'
 import { caseById, PORTFOLIO } from '@/lib/mock-data'
 
@@ -29,8 +34,27 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
   if (!c) notFound()
   const related = PORTFOLIO.filter((x) => x.id !== c.id && x.service === c.service).slice(0, 3)
 
+  const caseUrl = `https://openrun.kr/portfolio/${c.id}`
+  const workJsonLd = buildCreativeWorkJsonLd({
+    name: c.title,
+    description: c.hook,
+    url: caseUrl,
+    image: c.coverImage,
+    publishedAt: c.startedAt,
+    publisher: { name: '오픈런', url: 'https://openrun.kr' },
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '사례', url: 'https://openrun.kr/portfolio' },
+      { name: c.serviceLabel, url: `https://openrun.kr/services/${c.service}` },
+      { name: c.title, url: caseUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={workJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero image */}
       <div
         className="relative h-56 w-full sm:h-72"

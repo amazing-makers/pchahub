@@ -2,7 +2,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Calendar, ChevronRight, ExternalLink, MapPin, Store } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildCreativeWorkJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   CATEGORIES,
@@ -38,8 +43,30 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
   const cat = CATEGORIES.find((c) => c.key === item.category)
   const related = PORTFOLIO.filter((p) => p.id !== item.id && p.category === item.category).slice(0, 3)
 
+  const itemUrl = `https://gongganhansu.kr/gallery/${item.id}`
+  const workJsonLd = buildCreativeWorkJsonLd({
+    name: item.title,
+    description: item.excerpt,
+    url: itemUrl,
+    image: item.heroImage,
+    publishedAt: item.completedAt,
+    authorName: contractor?.name,
+    publisher: { name: '공간의한수', url: 'https://gongganhansu.kr' },
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '갤러리', url: 'https://gongganhansu.kr/gallery' },
+      ...(cat
+        ? [{ name: cat.label, url: `https://gongganhansu.kr/gallery?category=${cat.key}` }]
+        : []),
+      { name: item.title, url: itemUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={workJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero image */}
       <div className="relative h-72 w-full overflow-hidden sm:h-96">
         {/* eslint-disable-next-line @next/next/no-img-element */}

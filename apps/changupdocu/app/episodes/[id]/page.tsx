@@ -9,7 +9,12 @@ import {
   ThumbsUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildPageMetadata,
+  buildVideoJsonLd,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   CATEGORY_COLOR,
@@ -43,8 +48,33 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
   if (!ep) notFound()
   const related = episodesByCategory(ep.category).filter((e) => e.id !== ep.id).slice(0, 3)
 
+  const epUrl = `https://changupdocu.kr/episodes/${ep.id}`
+  // duration "12:34" → "PT12M34S"
+  const durationISO = (() => {
+    const m = ep.duration.match(/^(\d+):(\d+)$/)
+    if (!m) return undefined
+    return `PT${parseInt(m[1], 10)}M${parseInt(m[2], 10)}S`
+  })()
+  const videoJsonLd = buildVideoJsonLd({
+    name: ep.title,
+    description: ep.subtitle,
+    url: epUrl,
+    thumbnailUrl: ep.thumbnailImage,
+    uploadDate: ep.publishedAt,
+    duration: durationISO,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '에피소드', url: 'https://changupdocu.kr/episodes' },
+      { name: CATEGORY_LABEL[ep.category], url: `https://changupdocu.kr/categories/${ep.category}` },
+      { name: ep.title, url: epUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={videoJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Video player placeholder */}
       <section className="bg-black">
         <div className="relative aspect-video w-full overflow-hidden bg-gray-900">

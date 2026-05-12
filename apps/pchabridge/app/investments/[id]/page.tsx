@@ -8,7 +8,12 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildInvestmentJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import {
   brandById,
@@ -50,8 +55,27 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
   const related = ROUNDS.filter((r) => r.id !== round.id && r.status === 'open').slice(0, 3)
   const maxUseShare = Math.max(...round.useOfFunds.map((u) => u.share), 1)
 
+  const roundUrl = `https://pchabridge.kr/investments/${round.id}`
+  const investmentJsonLd = buildInvestmentJsonLd({
+    name: `${brand?.name ?? '브랜드'} ${ROUND_TYPE_LABEL[round.type]}`,
+    description: round.hook,
+    url: roundUrl,
+    targetAmount: round.targetAmount,
+    expectedRoi: round.expectedAnnualROI,
+    closeDate: round.closeDate,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '투자 라운드', url: 'https://pchabridge.kr/investments' },
+      { name: ROUND_TYPE_LABEL[round.type], url: `https://pchabridge.kr/investments?type=${round.type}` },
+      { name: brand?.name ?? '라운드', url: roundUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={investmentJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">

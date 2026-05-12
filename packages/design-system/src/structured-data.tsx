@@ -257,6 +257,126 @@ export function buildArticleJsonLd(input: ArticleJsonLdInput) {
   }
 }
 
+interface CreativeWorkInput {
+  name: string
+  description: string
+  url: string
+  image?: string
+  publishedAt?: string
+  authorName?: string
+  publisher?: { name: string; url: string }
+}
+
+/** 시공 사례·캠페인 사례 같은 일반 콘텐츠. */
+export function buildCreativeWorkJsonLd(input: CreativeWorkInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    ...(input.image && { image: input.image }),
+    ...(input.publishedAt && { datePublished: input.publishedAt }),
+    ...(input.authorName && {
+      author: { '@type': 'Person', name: input.authorName },
+    }),
+    ...(input.publisher && {
+      publisher: {
+        '@type': 'Organization',
+        name: input.publisher.name,
+        url: input.publisher.url,
+      },
+    }),
+  }
+}
+
+interface VideoJsonLdInput {
+  name: string
+  description: string
+  url: string
+  thumbnailUrl: string
+  uploadDate: string
+  duration?: string
+}
+
+/** 다큐멘터리 에피소드 — Google VideoObject. */
+export function buildVideoJsonLd(input: VideoJsonLdInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: input.name,
+    description: input.description,
+    thumbnailUrl: input.thumbnailUrl,
+    uploadDate: input.uploadDate,
+    contentUrl: input.url,
+    ...(input.duration && { duration: input.duration }),
+  }
+}
+
+interface DiscussionInput {
+  headline: string
+  url: string
+  upvoteCount?: number
+  commentCount?: number
+}
+
+export function buildDiscussionJsonLd(input: DiscussionInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DiscussionForumPosting',
+    headline: input.headline,
+    url: input.url,
+    ...(input.upvoteCount && {
+      interactionStatistic: [
+        {
+          '@type': 'InteractionCounter',
+          interactionType: 'https://schema.org/LikeAction',
+          userInteractionCount: input.upvoteCount,
+        },
+        ...(input.commentCount
+          ? [
+              {
+                '@type': 'InteractionCounter',
+                interactionType: 'https://schema.org/CommentAction',
+                userInteractionCount: input.commentCount,
+              },
+            ]
+          : []),
+      ],
+    }),
+  }
+}
+
+interface InvestmentJsonLdInput {
+  name: string
+  description: string
+  url: string
+  image?: string
+  /** 만원 단위 — schema.org 단위는 KRW */
+  targetAmount: number
+  expectedRoi: number
+  closeDate: string
+}
+
+/** 투자 라운드 — InvestmentOrDeposit. */
+export function buildInvestmentJsonLd(input: InvestmentJsonLdInput) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'InvestmentOrDeposit',
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    ...(input.image && { image: input.image }),
+    amount: {
+      '@type': 'MonetaryAmount',
+      value: input.targetAmount * 10000,
+      currency: 'KRW',
+    },
+    interestRate: input.expectedRoi,
+    validThrough: input.closeDate,
+  }
+}
+
 interface BreadcrumbsInput {
   items: Array<{ name: string; url: string }>
 }

@@ -9,7 +9,12 @@ import {
   ThumbsUp,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import {
+  buildBreadcrumbsJsonLd,
+  buildDiscussionJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { formatNumber, formatRelativeTime } from '@amakers/utils'
 import {
   CATEGORY_LABEL,
@@ -57,8 +62,25 @@ export default function PostPage({ params }: PostPageProps) {
     .filter((p) => p.id !== post.id)
     .slice(0, 3)
 
+  const postUrl = `https://jangsanote.kr/posts/${post.id}`
+  const postJsonLd = buildDiscussionJsonLd({
+    headline: post.title,
+    url: postUrl,
+    upvoteCount: post.likes,
+    commentCount: post.commentCount,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '장사노트', url: 'https://jangsanote.kr' },
+      { name: channelName, url: `https://jangsanote.kr${channelHref}` },
+      { name: post.title, url: postUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={postJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">
