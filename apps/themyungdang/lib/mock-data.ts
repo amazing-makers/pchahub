@@ -41,6 +41,9 @@ export interface MockListing {
   images: string[]
   /** Owner / agent's pitch shown on detail page. */
   transferorMessage?: string
+  /** WGS84 좌표 — 지도 핀 표시용. 없으면 지도에서 제외. */
+  lat?: number
+  lng?: number
 }
 
 export interface MockArea {
@@ -287,6 +290,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '강남상권중개',
     imageColors: ['#10B981', '#34D399', '#6EE7B7'],
+    lat: 37.4979,
+    lng: 127.0276,
   },
   {
     id: 'l002',
@@ -313,6 +318,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-05-01',
     ownerType: 'direct',
     imageColors: ['#10B981', '#059669'],
+    lat: 37.4981,
+    lng: 127.0286,
   },
   {
     id: 'l003',
@@ -343,6 +350,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-15',
     ownerType: 'direct',
     imageColors: ['#F59E0B', '#FBBF24'],
+    lat: 37.5558,
+    lng: 126.9232,
   },
   {
     id: 'l004',
@@ -370,6 +379,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '홍대상권부동산',
     imageColors: ['#3B82F6', '#60A5FA'],
+    lat: 37.5571,
+    lng: 126.9249,
   },
   {
     id: 'l005',
@@ -400,6 +411,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-05-02',
     ownerType: 'direct',
     imageColors: ['#EC4899', '#F472B6'],
+    lat: 37.5586,
+    lng: 126.9238,
   },
   {
     id: 'l006',
@@ -429,6 +442,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-28',
     ownerType: 'direct',
     imageColors: ['#64748B', '#94A3B8'],
+    lat: 37.5219,
+    lng: 126.9245,
   },
   {
     id: 'l007',
@@ -455,6 +470,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-10',
     ownerType: 'direct',
     imageColors: ['#7C3AED', '#A78BFA'],
+    lat: 37.6538,
+    lng: 127.0596,
   },
 
   // ========= 경기/인천 =========
@@ -484,6 +501,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '판교상권컨설팅',
     imageColors: ['#10B981', '#34D399'],
+    lat: 37.3953,
+    lng: 127.1117,
   },
   {
     id: 'l009',
@@ -514,6 +533,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-18',
     ownerType: 'direct',
     imageColors: ['#10B981', '#059669'],
+    lat: 37.3943,
+    lng: 126.6528,
   },
   {
     id: 'l010',
@@ -540,6 +561,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '수원상권공인',
     imageColors: ['#3B82F6', '#60A5FA'],
+    lat: 37.2584,
+    lng: 127.0560,
   },
   {
     id: 'l011',
@@ -569,6 +592,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-21',
     ownerType: 'direct',
     imageColors: ['#F59E0B', '#FBBF24'],
+    lat: 37.3916,
+    lng: 126.9566,
   },
 
   // ========= 부산 =========
@@ -598,6 +623,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '해운대공인',
     imageColors: ['#06B6D4', '#22D3EE'],
+    lat: 35.1629,
+    lng: 129.1603,
   },
   {
     id: 'l013',
@@ -628,6 +655,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-20',
     ownerType: 'direct',
     imageColors: ['#7C3AED', '#A78BFA'],
+    lat: 35.1572,
+    lng: 129.0593,
   },
   {
     id: 'l014',
@@ -654,6 +683,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '광안리부동산',
     imageColors: ['#0EA5E9', '#38BDF8'],
+    lat: 35.1530,
+    lng: 129.1187,
   },
 
   // ========= 기타 광역 =========
@@ -687,6 +718,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '동성로상권',
     imageColors: ['#A16207', '#CA8A04'],
+    lat: 35.8684,
+    lng: 128.5968,
   },
   {
     id: 'l016',
@@ -712,6 +745,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-05-04',
     ownerType: 'direct',
     imageColors: ['#16A34A', '#22C55E'],
+    lat: 35.8601,
+    lng: 128.6318,
   },
   {
     id: 'l017',
@@ -743,6 +778,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '둔산상권공인',
     imageColors: ['#DC2626', '#EF4444'],
+    lat: 36.3504,
+    lng: 127.3846,
   },
   {
     id: 'l018',
@@ -769,6 +806,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-05-05',
     ownerType: 'direct',
     imageColors: ['#0EA5E9', '#38BDF8'],
+    lat: 35.1523,
+    lng: 126.9162,
   },
   {
     id: 'l019',
@@ -799,6 +838,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '울산상권부동산',
     imageColors: ['#EA580C', '#F97316'],
+    lat: 35.5384,
+    lng: 129.3114,
   },
   {
     id: 'l020',
@@ -825,6 +866,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-08',
     ownerType: 'direct',
     imageColors: ['#0EA5E9', '#06B6D4'],
+    lat: 33.5444,
+    lng: 126.7013,
   },
   {
     id: 'l021',
@@ -851,6 +894,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '여의도공인',
     imageColors: ['#475569', '#64748B'],
+    lat: 37.5214,
+    lng: 126.9241,
   },
   {
     id: 'l022',
@@ -880,6 +925,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-27',
     ownerType: 'direct',
     imageColors: ['#16A34A', '#22C55E'],
+    lat: 37.5477,
+    lng: 127.1394,
   },
   {
     id: 'l023',
@@ -906,6 +953,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '부평상권공인',
     imageColors: ['#10B981', '#059669'],
+    lat: 37.4895,
+    lng: 126.7228,
   },
   {
     id: 'l024',
@@ -935,6 +984,8 @@ const RAW_LISTINGS: RawListing[] = [
     createdAt: '2026-04-23',
     ownerType: 'direct',
     imageColors: ['#A16207', '#CA8A04'],
+    lat: 37.5727,
+    lng: 126.9791,
   },
   {
     id: 'l025',
@@ -962,6 +1013,8 @@ const RAW_LISTINGS: RawListing[] = [
     ownerType: 'agent',
     agencyName: '일산상권부동산',
     imageColors: ['#7C3AED', '#A78BFA'],
+    lat: 37.6649,
+    lng: 126.7866,
   },
 ]
 

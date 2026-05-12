@@ -120,16 +120,16 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
         )}
 
         <div className="mt-12 rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center">
-          <div className="text-sm text-gray-500">전국 부동산 매물 + 상권 분석</div>
-          <h2 className="mt-1 text-h4 font-bold text-gray-900">더명당에서 상권 분석까지</h2>
+          <div className="text-sm text-gray-500">매물 등록 문의</div>
+          <h2 className="mt-1 text-h4 font-bold text-gray-900">양도 매물을 올려보세요</h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600">
-            가맹 입점 외 일반 상가 매물, 상권 분석, 안전 거래까지 부동산 전문 서비스는 더명당에서 제공합니다.
+            가맹점 양도·신규임대 매물을 등록하면 예비 창업자에게 직접 연결됩니다. 등록비 무료.
           </p>
           <a
-            href="https://themyungdang.kr"
+            href="/listings/new"
             className="mt-4 inline-flex items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
           >
-            더명당으로 이동 <ArrowRight className="h-3.5 w-3.5" />
+            매물 등록하기 <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>

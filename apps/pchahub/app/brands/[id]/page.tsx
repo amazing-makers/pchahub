@@ -42,7 +42,6 @@ import {
   type BrandReview,
   type BrandFAQ,
 } from '@/lib/mock-brand-detail'
-import { listingsForCategory, type MockListing } from '@/lib/mock-listings'
 import { BrandCard } from '@/components/brand-card'
 import { getBrandById, getBrands } from '@/lib/kftc/source'
 
@@ -73,7 +72,6 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
   if (!result) notFound()
   const { brand, detail } = result
   const totalCost = totalStartupCost(detail.costs)
-  const listings = listingsForCategory(brand.category)
   // 관련 브랜드: 같은 카테고리에서 최대 3개 (실API or mock)
   const allBrands = await getBrands()
   const relatedBrands = allBrands.filter(
@@ -121,7 +119,6 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
             <RevenueSection detail={detail} />
             <RecentOpeningsSection detail={detail} brand={brand} />
             <StoreHistorySection detail={detail} />
-            <ListingsSection listings={listings} category={brand.categoryLabel} />
             <ReviewsSection brand={brand} detail={detail} avgRating={avgRating} />
             <AmakersEcosystemSection brand={brand} />
             <FAQSection faqs={detail.faqs} />
@@ -573,84 +570,6 @@ function StoreHistorySection({ detail }: { detail: BrandDetail }) {
 }
 
 // ========================================================================
-// Listings Section (themyungdang integration)
-// ========================================================================
-
-function ListingsSection({
-  listings,
-  category,
-}: {
-  listings: MockListing[]
-  category: string
-}) {
-  if (listings.length === 0) return null
-  return (
-    <SectionCard
-      title="추천 입지·매물"
-      subtitle={`${category} 가맹점에 적합한 매물 (더명당 연계)`}
-      action={
-        <a
-          href="https://themyungdang.kr"
-          className="inline-flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900"
-        >
-          더명당에서 더 보기 <ArrowRight className="h-3.5 w-3.5" />
-        </a>
-      }
-    >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {listings.map((l) => (
-          <ListingMiniCard key={l.id} listing={l} />
-        ))}
-      </div>
-    </SectionCard>
-  )
-}
-
-function ListingMiniCard({ listing }: { listing: MockListing }) {
-  return (
-    <a
-      href={`https://themyungdang.kr/listings/${listing.id}`}
-      className="block rounded-xl border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-gray-900">{listing.title}</div>
-          <div className="mt-1 text-xs text-gray-500">
-            {listing.region} {listing.district} · {listing.area}평
-          </div>
-        </div>
-        {listing.verified && (
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" aria-label="검증 매물" />
-        )}
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 border-t border-gray-100 pt-3 text-xs">
-        <div>
-          <div className="text-gray-500">권리금</div>
-          <div className="mt-0.5 font-semibold text-gray-900">
-            {listing.rightFee === 0 ? '없음' : `${formatNumber(listing.rightFee)}만`}
-          </div>
-        </div>
-        <div>
-          <div className="text-gray-500">보증금</div>
-          <div className="mt-0.5 font-semibold text-gray-900">{formatNumber(listing.deposit)}만</div>
-        </div>
-        <div>
-          <div className="text-gray-500">월세</div>
-          <div className="mt-0.5 font-semibold text-gray-900">{formatNumber(listing.monthlyRent)}만</div>
-        </div>
-      </div>
-      <div className="mt-3 flex flex-wrap gap-1">
-        {listing.tags.slice(0, 3).map((tag) => (
-          <span key={tag} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-            {tag}
-          </span>
-        ))}
-      </div>
-    </a>
-  )
-}
-
-// ========================================================================
 // Reviews Section
 // ========================================================================
 
@@ -668,14 +587,6 @@ function ReviewsSection({
     <SectionCard
       title="가맹점주 후기"
       subtitle={`${detail.reviews.length}개의 점주 후기 · 평균 ${avgRating.toFixed(1)}점`}
-      action={
-        <a
-          href="https://jangsanote.kr"
-          className="inline-flex items-center gap-1 text-sm text-gray-700 hover:text-gray-900"
-        >
-          장사노트에서 더 보기 <ArrowRight className="h-3.5 w-3.5" />
-        </a>
-      }
     >
       <div className="grid gap-6 lg:grid-cols-[200px_1fr]">
         <div>

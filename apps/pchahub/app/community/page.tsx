@@ -23,11 +23,7 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">프랜차이즈 커뮤니티</h1>
           <p className="mt-1 text-sm text-gray-500">
-            가맹점주·예비창업자·전문가가 모인 커뮤니티. 더 깊은 토론은{' '}
-            <a href="https://jangsanote.kr" className="text-gray-900 underline">
-              장사노트
-            </a>
-            에서.
+            가맹점주·예비창업자·전문가가 모인 프랜차이즈 창업 커뮤니티입니다.
           </p>
         </div>
       </section>
@@ -76,7 +72,7 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
             {DISCUSSIONS.map((d) => (
               <a
                 key={d.id}
-                href={`https://jangsanote.kr/posts/${d.id}`}
+                href={`/community/${d.id}`}
                 className="block"
               >
                 <Card className="border-gray-200 transition-shadow hover:shadow-sm">
@@ -110,17 +106,16 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
         )}
 
         <div className="mt-10 rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center">
-          <div className="text-sm text-gray-500">전국 가맹점주가 모이는 커뮤니티</div>
-          <h2 className="mt-1 text-h4 font-bold text-gray-900">장사노트로 가서 글쓰기</h2>
+          <div className="text-sm text-gray-500">직접 경험을 나눠보세요</div>
+          <h2 className="mt-1 text-h4 font-bold text-gray-900">창업 후기 & 질문 남기기</h2>
           <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600">
-            업종방·지역방·전문가 Q&A·오프라인 모임까지. 장사노트는 amakers의 자영업·가맹점주
-            커뮤니티 플랫폼입니다.
+            직접 경험한 가맹 창업 스토리, 본사 계약 후기, 운영 팁을 커뮤니티에 공유해보세요.
           </p>
           <a
-            href="https://jangsanote.kr"
+            href="/community/write"
             className="mt-4 inline-flex items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
           >
-            장사노트로 이동 <ArrowRight className="h-3.5 w-3.5" />
+            글쓰기 <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>
