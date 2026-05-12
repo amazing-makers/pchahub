@@ -1,5 +1,5 @@
 import { Calendar, TrendingUp } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, BrandLogo, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import {
   brandById,
@@ -33,10 +33,9 @@ export function RoundCard({ round }: RoundCardProps) {
 
           <div className="mt-4 flex items-start gap-3">
             {brand && (
-              <span
-                className="h-12 w-12 shrink-0 rounded-xl"
-                style={{ background: brand.logoColor }}
-                aria-hidden
+              <BrandLogo
+                brand={{ name: brand.name, logoColor: brand.logoColor, category: brand.category }}
+                size="md"
               />
             )}
             <div className="min-w-0 flex-1">
