@@ -18,7 +18,8 @@ import { AREAS, listingsByArea } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
 import { AreaChip } from '@/components/area-chip'
 
-const AreaCharts = dynamic(() => import('@/components/area-charts'), { ssr: false })
+const AreaCharts  = dynamic(() => import('@/components/area-charts'),   { ssr: false })
+const AreaMiniMap = dynamic(() => import('@/components/area-mini-map'), { ssr: false })
 
 export function generateStaticParams() {
   return AREAS.map((a) => ({ name: a.key }))
@@ -100,6 +101,24 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
       </section>
 
       <div className="container mx-auto py-10 space-y-8">
+        {/* ── 상권 위치 지도 ─────────────────────────────────────── */}
+        {area.lat && (
+          <SectionCard
+            title="상권 위치 및 매물"
+            subtitle={`${area.name} 반경 내 현재 등록된 매물을 지도에서 확인하세요`}
+          >
+            <AreaMiniMap area={area} listings={listings} />
+            <div className="mt-3 flex items-center justify-end">
+              <a
+                href={`/listings/map`}
+                className="inline-flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-900"
+              >
+                전체 매물 지도로 보기 →
+              </a>
+            </div>
+          </SectionCard>
+        )}
+
         {/* Charts — monthly trend + category donut */}
         <AreaCharts area={area} />
 

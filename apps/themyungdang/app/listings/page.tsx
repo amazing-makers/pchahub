@@ -1,7 +1,6 @@
-﻿import { LayoutGrid, Map } from 'lucide-react'
+﻿import { Map } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
-import { ListingsMap } from '@/components/listings-map'
 import {
   LISTINGS,
   TYPE_LABEL,
@@ -25,12 +24,11 @@ const REGIONS = [
 ]
 
 interface ListingsPageProps {
-  searchParams: { type?: string; region?: string; q?: string; sort?: string; view?: string }
+  searchParams: { type?: string; region?: string; q?: string; sort?: string }
 }
 
 export default function ListingsPage({ searchParams }: ListingsPageProps) {
-  const { type, region, q, sort = 'recommended', view } = searchParams
-  const isMapView = view === 'map'
+  const { type, region, q, sort = 'recommended' } = searchParams
 
   let results = LISTINGS.slice()
   if (type) results = results.filter((l) => l.type === type)
@@ -186,50 +184,16 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           <div>
             <div className="mb-3 flex items-center justify-between gap-4">
               <h2 className="text-sm font-semibold text-gray-700">{results.length}건</h2>
-              {/* List / Map toggle */}
-              <div className="flex items-center gap-2">
-                <div className="flex overflow-hidden rounded-lg border border-gray-200 text-sm">
-                  <a
-                    href={makeHref(searchParams, { view: undefined })}
-                    className={
-                      'flex items-center gap-1.5 px-3 py-2 transition-colors ' +
-                      (!isMapView
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-50')
-                    }
-                    aria-label="목록 보기"
-                  >
-                    <LayoutGrid className="h-3.5 w-3.5" />
-                    목록
-                  </a>
-                  <a
-                    href={makeHref(searchParams, { view: 'map' })}
-                    className={
-                      'flex items-center gap-1.5 border-l border-gray-200 px-3 py-2 transition-colors ' +
-                      (isMapView
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-50')
-                    }
-                    aria-label="지도 보기"
-                  >
-                    <Map className="h-3.5 w-3.5" />
-                    지도
-                  </a>
-                </div>
-                {/* 지도로 검색 — full interactive map search */}
-                <a
-                  href="/listings/map"
-                  className="flex items-center gap-1.5 rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
-                >
-                  <Map className="h-3.5 w-3.5" />
-                  지도로 검색
-                </a>
-              </div>
+              <a
+                href="/listings/map"
+                className="flex items-center gap-1.5 rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+              >
+                <Map className="h-3.5 w-3.5" />
+                지도로 검색
+              </a>
             </div>
 
-            {isMapView ? (
-              <ListingsMap listings={results} />
-            ) : results.length === 0 ? (
+            {results.length === 0 ? (
               <Card>
                 <CardContent className="p-10 text-center text-sm text-gray-500">
                   검색 결과가 없습니다. 필터를 줄여 다시 시도해보세요.
@@ -268,7 +232,6 @@ function makeHref(
   if (next.region) params.set('region', next.region)
   if (next.q) params.set('q', next.q)
   if (next.sort && next.sort !== 'recommended') params.set('sort', next.sort)
-  if (next.view) params.set('view', next.view)
   const qs = params.toString()
   return qs ? `/listings?${qs}` : '/listings'
 }

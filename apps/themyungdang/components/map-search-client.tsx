@@ -63,33 +63,134 @@ const AREA_PRESETS = [
   { label: '30평+',   min: 30, max: Infinity },
 ]
 
+const DEPOSIT_PRESETS = [
+  { label: '전체',      min: 0,    max: Infinity },
+  { label: '~500만',   min: 0,    max: 500 },
+  { label: '~1,000만', min: 0,    max: 1000 },
+  { label: '~3,000만', min: 0,    max: 3000 },
+  { label: '3,000만+', min: 3000, max: Infinity },
+]
+
+// index 1 = "없음" means rightFee === 0; min/max applied to actual fee
+const RIGHT_FEE_PRESETS = [
+  { label: '전체',      min: -1,   max: Infinity }, // -1 = no lower bound applied
+  { label: '없음',      min: -1,   max: 0 },
+  { label: '~1,000만', min: 1,    max: 1000 },
+  { label: '~3,000만', min: 1,    max: 3000 },
+  { label: '3,000만+', min: 3000, max: Infinity },
+]
+
+// match values: null=all, '1'=1층, '2+'=2층 이상, 'B'=지하
+const FLOOR_PRESETS = [
+  { label: '전체', match: null  },
+  { label: '1층',  match: '1'   },
+  { label: '2층+', match: '2+'  },
+  { label: '지하', match: 'B'   },
+]
+
+const FOOT_TRAFFIC_PRESETS = [
+  { label: '전체',    min: 0 },
+  { label: '1만명+',  min: 10000 },
+  { label: '3만명+',  min: 30000 },
+  { label: '5만명+',  min: 50000 },
+  { label: '10만명+', min: 100000 },
+]
+
+const LOCATION_TAGS = ['역세권', '코너', '대로변', '신축', '주차 가능', '주거지 인근', '오피스 상권']
+
+const REGIONS = ['서울', '경기', '인천', '부산', '대구', '광주', '대전']
+
+const REGION_CENTERS: Record<string, [number, number]> = {
+  '서울': [37.5665, 126.9780],
+  '경기': [37.4138, 127.5183],
+  '인천': [37.4563, 126.7052],
+  '부산': [35.1796, 129.0756],
+  '대구': [35.8714, 128.6014],
+  '광주': [35.1595, 126.8526],
+  '대전': [36.3504, 127.3845],
+}
+const REGION_ZOOM = 11
+
 interface Filters {
-  type:          string | null
-  rentPreset:    number
-  areaPreset:    number
-  fitCategory:   string | null
-  verifiedOnly:  boolean
-  noRightFee:    boolean
-  favoritesOnly: boolean
+  type:              string | null
+  rentPreset:        number
+  depositPreset:     number
+  rightFeePreset:    number   // index into RIGHT_FEE_PRESETS
+  areaPreset:        number
+  floorPreset:       number   // index into FLOOR_PRESETS
+  fitCategory:       string | null
+  footTrafficPreset: number
+  region:            string | null
+  commercialArea:    string | null  // AREAS[n].key
+  tag:               string | null
+  verifiedOnly:      boolean
+  noRightFee:        boolean  // kept for URL compat (rightFeePreset=1 supersedes)
+  favoritesOnly:     boolean
 }
 
 const DEFAULT_FILTERS: Filters = {
-  type: null, rentPreset: 0, areaPreset: 0,
-  fitCategory: null, verifiedOnly: false, noRightFee: false, favoritesOnly: false,
+  type: null, rentPreset: 0, depositPreset: 0, rightFeePreset: 0,
+  areaPreset: 0, floorPreset: 0, fitCategory: null, footTrafficPreset: 0,
+  region: null, commercialArea: null, tag: null,
+  verifiedOnly: false, noRightFee: false, favoritesOnly: false,
+}
+
+function floorMatchesPreset(floor: string, match: string | null): boolean {
+  if (!match) return true
+  if (match === '1')  return /^1층/.test(floor) || floor === '1층'
+  if (match === 'B')  return floor.includes('지하')
+  if (match === '2+') {
+    if (floor.includes('지하')) return false
+    const n = parseInt(floor)
+    // handles '2층', '3층', '2개층', '1-3층' (range starting point ≥2), etc.
+    if (!isNaN(n) && n >= 2) return true
+    // '1-3층' → split on '-', take last number
+    const parts = floor.match(/\d+/g)
+    if (parts && parts.length > 1 && Number(parts[parts.length - 1]) >= 2) return true
+    return false
+  }
+  return true
 }
 
 function matchesFilters(l: MockListing, f: Filters, favs?: Set<string>): boolean {
   if (f.favoritesOnly && favs && !favs.has(l.id)) return false
   if (f.type && l.type !== f.type) return false
+  if (f.region && l.region !== f.region) return false
+  if (f.commercialArea && l.areaKey !== f.commercialArea) return false
+  // Monthly rent (only for non-sale)
   if (l.type !== 'sale') {
     const rp = RENT_PRESETS[f.rentPreset]
     if (rp && l.monthlyRent > rp.max) return false
     if (rp && l.monthlyRent < rp.min) return false
   }
+  // Deposit
+  const dp = DEPOSIT_PRESETS[f.depositPreset]
+  if (dp) {
+    if (l.deposit > dp.max) return false
+    if (l.deposit < dp.min) return false
+  }
+  // Right fee
+  const rfp = RIGHT_FEE_PRESETS[f.rightFeePreset]
+  if (rfp) {
+    const rf = l.rightFee ?? 0
+    if (rfp.max !== Infinity && rf > rfp.max) return false
+    if (rfp.min > 0 && rf < rfp.min) return false
+    if (rfp.max === 0 && rf > 0) return false  // "없음" means strictly 0
+  }
+  // Area (평)
   const ap = AREA_PRESETS[f.areaPreset]
   if (ap && l.area > ap.max) return false
   if (ap && l.area < ap.min) return false
+  // Floor
+  if (f.floorPreset > 0) {
+    if (!floorMatchesPreset(l.floor, FLOOR_PRESETS[f.floorPreset]?.match ?? null)) return false
+  }
+  // Foot traffic (listing-level)
+  const ftp = FOOT_TRAFFIC_PRESETS[f.footTrafficPreset]
+  if (ftp && l.footTraffic < ftp.min) return false
+  // Category & location tag
   if (f.fitCategory && !l.fitCategories.includes(f.fitCategory)) return false
+  if (f.tag && !l.tags.includes(f.tag)) return false
   if (f.verifiedOnly && !l.verified) return false
   if (f.noRightFee && (l.rightFee ?? 0) > 0) return false
   return true
@@ -97,13 +198,20 @@ function matchesFilters(l: MockListing, f: Filters, favs?: Set<string>): boolean
 
 function activeFilterCount(f: Filters): number {
   return (
-    (f.type         ? 1 : 0) +
-    (f.rentPreset   ? 1 : 0) +
-    (f.areaPreset   ? 1 : 0) +
-    (f.fitCategory  ? 1 : 0) +
-    (f.verifiedOnly ? 1 : 0) +
-    (f.noRightFee   ? 1 : 0) +
-    (f.favoritesOnly ? 1 : 0)
+    (f.type              ? 1 : 0) +
+    (f.rentPreset        ? 1 : 0) +
+    (f.depositPreset     ? 1 : 0) +
+    (f.rightFeePreset    ? 1 : 0) +
+    (f.areaPreset        ? 1 : 0) +
+    (f.floorPreset       ? 1 : 0) +
+    (f.fitCategory       ? 1 : 0) +
+    (f.footTrafficPreset ? 1 : 0) +
+    (f.region            ? 1 : 0) +
+    (f.commercialArea    ? 1 : 0) +
+    (f.tag               ? 1 : 0) +
+    (f.verifiedOnly      ? 1 : 0) +
+    (f.noRightFee        ? 1 : 0) +
+    (f.favoritesOnly     ? 1 : 0)
   )
 }
 
@@ -112,13 +220,20 @@ function activeFilterCount(f: Filters): number {
 // ─────────────────────────────────────────────────────────────────────────────
 function filtersToQS(f: Filters): string {
   const p = new URLSearchParams()
-  if (f.type)          p.set('type', f.type)
-  if (f.rentPreset)    p.set('rent', String(f.rentPreset))
-  if (f.areaPreset)    p.set('area', String(f.areaPreset))
-  if (f.fitCategory)   p.set('cat',  f.fitCategory)
-  if (f.verifiedOnly)  p.set('v',    '1')
-  if (f.noRightFee)    p.set('nr',   '1')
-  if (f.favoritesOnly) p.set('fav',  '1')
+  if (f.type)              p.set('type', f.type)
+  if (f.rentPreset)        p.set('rent', String(f.rentPreset))
+  if (f.depositPreset)     p.set('dep',  String(f.depositPreset))
+  if (f.rightFeePreset)    p.set('rf',   String(f.rightFeePreset))
+  if (f.areaPreset)        p.set('area', String(f.areaPreset))
+  if (f.floorPreset)       p.set('fl',   String(f.floorPreset))
+  if (f.fitCategory)       p.set('cat',  f.fitCategory)
+  if (f.footTrafficPreset) p.set('ft',   String(f.footTrafficPreset))
+  if (f.region)            p.set('rgn',  f.region)
+  if (f.commercialArea)    p.set('ca',   f.commercialArea)
+  if (f.tag)               p.set('tag',  f.tag)
+  if (f.verifiedOnly)      p.set('v',    '1')
+  if (f.noRightFee)        p.set('nr',   '1')
+  if (f.favoritesOnly)     p.set('fav',  '1')
   return p.toString()
 }
 
@@ -126,13 +241,20 @@ function qsToFilters(): Filters {
   if (typeof window === 'undefined') return DEFAULT_FILTERS
   const p = new URLSearchParams(window.location.search)
   return {
-    type:          p.get('type'),
-    rentPreset:    Math.min(5, Math.max(0, Number(p.get('rent') || 0))),
-    areaPreset:    Math.min(4, Math.max(0, Number(p.get('area') || 0))),
-    fitCategory:   p.get('cat'),
-    verifiedOnly:  p.get('v')   === '1',
-    noRightFee:    p.get('nr')  === '1',
-    favoritesOnly: p.get('fav') === '1',
+    type:              p.get('type'),
+    rentPreset:        Math.min(5, Math.max(0, Number(p.get('rent') || 0))),
+    depositPreset:     Math.min(4, Math.max(0, Number(p.get('dep')  || 0))),
+    rightFeePreset:    Math.min(4, Math.max(0, Number(p.get('rf')   || 0))),
+    areaPreset:        Math.min(4, Math.max(0, Number(p.get('area') || 0))),
+    floorPreset:       Math.min(3, Math.max(0, Number(p.get('fl')   || 0))),
+    fitCategory:       p.get('cat'),
+    footTrafficPreset: Math.min(4, Math.max(0, Number(p.get('ft')   || 0))),
+    region:            p.get('rgn'),
+    commercialArea:    p.get('ca'),
+    tag:               p.get('tag'),
+    verifiedOnly:      p.get('v')   === '1',
+    noRightFee:        p.get('nr')  === '1',
+    favoritesOnly:     p.get('fav') === '1',
   }
 }
 
@@ -322,6 +444,15 @@ export default function MapSearchClient({ allListings }: Props) {
     if (!mapDivRef.current || mapRef.current) return
     let cancelled = false
 
+    // Ensure container is clean (React Strict Mode double-mount guard)
+    const container = mapDivRef.current
+    if ((container as any)._leaflet_id) {
+      // A previous (cancelled) init already ran — fully reset the container
+      ;(container as any)._leaflet_id = undefined
+      ;(container as any)._leaflet    = undefined
+      container.innerHTML = ''
+    }
+
     const link = document.createElement('link')
     link.rel  = 'stylesheet'
     link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
@@ -330,10 +461,15 @@ export default function MapSearchClient({ allListings }: Props) {
     import('leaflet').then(async L => {
       if (cancelled || mapRef.current) return
 
-      // Extend L with markerClusterGroup (side-effect import, patches L)
+      // ── Extend L with markerClusterGroup ─────────────────────────────────
+      // leaflet.markercluster is a UMD plugin that patches window.L.
+      // We must expose our L as window.L BEFORE importing the plugin so the
+      // UMD wrapper finds and patches the correct Leaflet instance.
+      ;(window as any).L = L
       await import('leaflet.markercluster')
+      // After the import, markerClusterGroup lives on window.L (= L).
 
-      const map = L.map(mapDivRef.current!, {
+      const map = L.map(container, {
         center: KOREA_CENTER, zoom: DEFAULT_ZOOM, zoomControl: false,
       })
       mapRef.current = map
@@ -341,7 +477,8 @@ export default function MapSearchClient({ allListings }: Props) {
       L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(map)
 
       // ── Marker cluster group ──────────────────────────────────────────────
-      const cluster = (L as any).markerClusterGroup({
+      const mcGroup = (window as any).L?.markerClusterGroup ?? (L as any).markerClusterGroup
+      const cluster = mcGroup({
         maxClusterRadius:        80,
         disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom:       true,
@@ -422,8 +559,16 @@ export default function MapSearchClient({ allListings }: Props) {
 
     return () => {
       cancelled = true
-      mapRef.current?.remove()          // also removes cluster group from map
-      mapRef.current          = null
+      if (mapRef.current) {
+        mapRef.current.remove()         // removes all layers + cleans container
+        mapRef.current = null
+      }
+      // Belt-and-suspenders: also wipe the Leaflet DOM metadata so a
+      // re-mount (React Strict Mode) can re-initialise the same container.
+      if (container) {
+        ;(container as any)._leaflet_id = undefined
+        ;(container as any)._leaflet    = undefined
+      }
       clusterGroupRef.current = null
       markersRef.current.clear()
       areaLayersRef.current.clear()
@@ -481,6 +626,24 @@ export default function MapSearchClient({ allListings }: Props) {
       if (!showAreas &&  map.hasLayer(layer)) map.removeLayer(layer)
     })
   }, [showAreas])
+
+  // ── Region selected → fly to region center ─────────────────────────────────
+  useEffect(() => {
+    if (!mapRef.current || !filters.region) return
+    const center = REGION_CENTERS[filters.region]
+    if (center) mapRef.current.flyTo(center, REGION_ZOOM, { animate: true, duration: 0.8 })
+  }, [filters.region])
+
+  // ── Commercial area selected → fly to area + auto-show overlay ─────────────
+  useEffect(() => {
+    if (!mapRef.current || !filters.commercialArea) return
+    const area = AREAS.find(a => a.key === filters.commercialArea)
+    if (area?.lat && area?.lng) {
+      mapRef.current.flyTo([area.lat, area.lng], 15, { animate: true, duration: 0.8 })
+      if (!showAreas) setShowAreas(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.commercialArea])
 
   // ── Pan map to listing ─────────────────────────────────────────────────────
   const panTo = (listing: MockListing) => {
@@ -552,14 +715,37 @@ export default function MapSearchClient({ allListings }: Props) {
             {/* Active filter chips */}
             {filterCount > 0 && (
               <div className="flex flex-wrap gap-1.5 px-4 pb-2.5">
+                {filters.region && (
+                  <ActiveChip onRemove={() => setFilter('region', null)}>{filters.region}</ActiveChip>
+                )}
+                {filters.commercialArea && (
+                  <ActiveChip onRemove={() => setFilter('commercialArea', null)}>
+                    {AREAS.find(a => a.key === filters.commercialArea)?.name ?? filters.commercialArea}
+                  </ActiveChip>
+                )}
                 {filters.type && (
                   <ActiveChip onRemove={() => setFilter('type', null)}>
                     {TYPE_LABEL[filters.type as ListingType]}
                   </ActiveChip>
                 )}
+                {filters.footTrafficPreset > 0 && (
+                  <ActiveChip onRemove={() => setFilter('footTrafficPreset', 0)}>
+                    유동 {FOOT_TRAFFIC_PRESETS[filters.footTrafficPreset]?.label}
+                  </ActiveChip>
+                )}
                 {filters.rentPreset > 0 && (
                   <ActiveChip onRemove={() => setFilter('rentPreset', 0)}>
-                    {RENT_PRESETS[filters.rentPreset]?.label}
+                    월세 {RENT_PRESETS[filters.rentPreset]?.label}
+                  </ActiveChip>
+                )}
+                {filters.depositPreset > 0 && (
+                  <ActiveChip onRemove={() => setFilter('depositPreset', 0)}>
+                    보증 {DEPOSIT_PRESETS[filters.depositPreset]?.label}
+                  </ActiveChip>
+                )}
+                {filters.rightFeePreset > 0 && (
+                  <ActiveChip onRemove={() => setFilter('rightFeePreset', 0)}>
+                    권리금 {RIGHT_FEE_PRESETS[filters.rightFeePreset]?.label}
                   </ActiveChip>
                 )}
                 {filters.areaPreset > 0 && (
@@ -567,10 +753,18 @@ export default function MapSearchClient({ allListings }: Props) {
                     {AREA_PRESETS[filters.areaPreset]?.label}
                   </ActiveChip>
                 )}
+                {filters.floorPreset > 0 && (
+                  <ActiveChip onRemove={() => setFilter('floorPreset', 0)}>
+                    {FLOOR_PRESETS[filters.floorPreset]?.label}
+                  </ActiveChip>
+                )}
                 {filters.fitCategory && (
                   <ActiveChip onRemove={() => setFilter('fitCategory', null)}>
                     {LISTING_CATEGORIES.find(c => c.key === filters.fitCategory)?.label ?? filters.fitCategory}
                   </ActiveChip>
+                )}
+                {filters.tag && (
+                  <ActiveChip onRemove={() => setFilter('tag', null)}>{filters.tag}</ActiveChip>
                 )}
                 {filters.verifiedOnly  && <ActiveChip onRemove={() => setFilter('verifiedOnly', false)}>인증만</ActiveChip>}
                 {filters.noRightFee    && <ActiveChip onRemove={() => setFilter('noRightFee', false)}>권리금 없음</ActiveChip>}
@@ -785,7 +979,41 @@ export default function MapSearchClient({ allListings }: Props) {
                 <div className="flex-1 overflow-y-auto">
                   <div className="space-y-5 p-4">
 
-                    {/* 거래 유형 */}
+                    {/* ── 지역 ──────────────────────────────────────────── */}
+                    <FilterRow label="지역">
+                      <ChipBtn active={!filters.region} onClick={() => setFilter('region', null)}>전체</ChipBtn>
+                      {REGIONS.map(r => (
+                        <ChipBtn
+                          key={r}
+                          active={filters.region === r}
+                          onClick={() => setFilter('region', filters.region === r ? null : r)}
+                        >
+                          {r}
+                        </ChipBtn>
+                      ))}
+                    </FilterRow>
+
+                    {/* ── 상권 ──────────────────────────────────────────── */}
+                    <div>
+                      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">상권</p>
+                      <select
+                        value={filters.commercialArea ?? ''}
+                        onChange={e => setFilter('commercialArea', e.target.value || null)}
+                        className="w-full appearance-none rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                      >
+                        <option value="">전체 상권</option>
+                        {AREAS.filter(a => a.lat != null).map(a => (
+                          <option key={a.key} value={a.key}>{a.name} ({a.region})</option>
+                        ))}
+                      </select>
+                      {filters.commercialArea && (
+                        <p className="mt-1 text-[11px] text-indigo-500">
+                          선택 시 지도가 해당 상권으로 이동합니다
+                        </p>
+                      )}
+                    </div>
+
+                    {/* ── 거래 유형 ───────────────────────────────────────── */}
                     <FilterRow label="거래 유형">
                       {(['transfer', 'new', 'sale'] as ListingType[]).map(t => (
                         <ChipBtn
@@ -799,7 +1027,20 @@ export default function MapSearchClient({ allListings }: Props) {
                       ))}
                     </FilterRow>
 
-                    {/* 월세 범위 */}
+                    {/* ── 유동인구 ────────────────────────────────────────── */}
+                    <FilterRow label="일 평균 유동인구">
+                      {FOOT_TRAFFIC_PRESETS.map((p, i) => (
+                        <ChipBtn
+                          key={i}
+                          active={filters.footTrafficPreset === i}
+                          onClick={() => setFilter('footTrafficPreset', i)}
+                        >
+                          {p.label}
+                        </ChipBtn>
+                      ))}
+                    </FilterRow>
+
+                    {/* ── 월세 범위 ───────────────────────────────────────── */}
                     <FilterRow label="월세 범위">
                       {RENT_PRESETS.map((p, i) => (
                         <ChipBtn
@@ -812,7 +1053,33 @@ export default function MapSearchClient({ allListings }: Props) {
                       ))}
                     </FilterRow>
 
-                    {/* 면적 */}
+                    {/* ── 보증금 ──────────────────────────────────────────── */}
+                    <FilterRow label="보증금">
+                      {DEPOSIT_PRESETS.map((p, i) => (
+                        <ChipBtn
+                          key={i}
+                          active={filters.depositPreset === i}
+                          onClick={() => setFilter('depositPreset', i)}
+                        >
+                          {p.label}
+                        </ChipBtn>
+                      ))}
+                    </FilterRow>
+
+                    {/* ── 권리금 ──────────────────────────────────────────── */}
+                    <FilterRow label="권리금">
+                      {RIGHT_FEE_PRESETS.map((p, i) => (
+                        <ChipBtn
+                          key={i}
+                          active={filters.rightFeePreset === i}
+                          onClick={() => setFilter('rightFeePreset', i)}
+                        >
+                          {p.label}
+                        </ChipBtn>
+                      ))}
+                    </FilterRow>
+
+                    {/* ── 면적 ────────────────────────────────────────────── */}
                     <FilterRow label="면적">
                       {AREA_PRESETS.map((p, i) => (
                         <ChipBtn
@@ -825,14 +1092,22 @@ export default function MapSearchClient({ allListings }: Props) {
                       ))}
                     </FilterRow>
 
-                    {/* 업종 적합 */}
+                    {/* ── 층수 ────────────────────────────────────────────── */}
+                    <FilterRow label="층수">
+                      {FLOOR_PRESETS.map((p, i) => (
+                        <ChipBtn
+                          key={i}
+                          active={filters.floorPreset === i}
+                          onClick={() => setFilter('floorPreset', i)}
+                        >
+                          {p.label}
+                        </ChipBtn>
+                      ))}
+                    </FilterRow>
+
+                    {/* ── 업종 적합 ───────────────────────────────────────── */}
                     <FilterRow label="업종 적합">
-                      <ChipBtn
-                        active={!filters.fitCategory}
-                        onClick={() => setFilter('fitCategory', null)}
-                      >
-                        전체
-                      </ChipBtn>
+                      <ChipBtn active={!filters.fitCategory} onClick={() => setFilter('fitCategory', null)}>전체</ChipBtn>
                       {availableCategories.map(([key, label]) => (
                         <ChipBtn
                           key={key}
@@ -844,7 +1119,21 @@ export default function MapSearchClient({ allListings }: Props) {
                       ))}
                     </FilterRow>
 
-                    {/* 토글 옵션 */}
+                    {/* ── 입지 특성 ───────────────────────────────────────── */}
+                    <FilterRow label="입지 특성">
+                      <ChipBtn active={!filters.tag} onClick={() => setFilter('tag', null)}>전체</ChipBtn>
+                      {LOCATION_TAGS.map(tag => (
+                        <ChipBtn
+                          key={tag}
+                          active={filters.tag === tag}
+                          onClick={() => setFilter('tag', filters.tag === tag ? null : tag)}
+                        >
+                          {tag}
+                        </ChipBtn>
+                      ))}
+                    </FilterRow>
+
+                    {/* ── 기타 옵션 ───────────────────────────────────────── */}
                     <div className="space-y-0 divide-y divide-gray-50 overflow-hidden rounded-xl border border-gray-100 bg-white">
                       <label className="flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-gray-50">
                         <span className="text-sm text-gray-700">인증 매물만</span>
@@ -855,18 +1144,9 @@ export default function MapSearchClient({ allListings }: Props) {
                           className="h-4 w-4 rounded border-gray-300 accent-gray-900"
                         />
                       </label>
-                      <label className="flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-gray-50">
-                        <span className="text-sm text-gray-700">권리금 없음</span>
-                        <input
-                          type="checkbox"
-                          checked={filters.noRightFee}
-                          onChange={e => setFilter('noRightFee', e.target.checked)}
-                          className="h-4 w-4 rounded border-gray-300 accent-gray-900"
-                        />
-                      </label>
                     </div>
 
-                    {/* 상권 분석 레이어 */}
+                    {/* ── 상권 분석 레이어 ─────────────────────────────────── */}
                     <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-3 py-3">
                       <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                         <BarChart2 className="h-4 w-4 text-gray-400" />
@@ -956,15 +1236,19 @@ function SidebarCard({
   const typeLabel = TYPE_LABEL[listing.type]
 
   return (
-    <button
+    <div
       data-id={listing.id}
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className={`relative w-full px-4 py-4 text-left transition-colors ${
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onClick() }}
+      className={`relative w-full cursor-pointer px-4 py-4 text-left transition-colors ${
         selected ? 'bg-gray-50 ring-inset ring-1 ring-gray-200' : 'hover:bg-gray-50/60'
       }`}
     >
-      {/* Heart / favorite button */}
+      {/* Heart / favorite button — must be a real button for a11y */}
       <button
+        type="button"
         onClick={e => { e.stopPropagation(); onToggleFavorite() }}
         className={`absolute right-3 top-4 rounded-full p-1.5 transition-colors ${
           isFavorite
@@ -1034,6 +1318,6 @@ function SidebarCard({
           </Link>
         </div>
       )}
-    </button>
+    </div>
   )
 }

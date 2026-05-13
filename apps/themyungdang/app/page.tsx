@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, Eye, Shield, Sparkles } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Eye, Map, Shield, Sparkles } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
@@ -45,8 +45,24 @@ export default function HomePage() {
               검증된 매물만 모았습니다. 권리금·보증금·월세부터 상권 분석까지
               <br className="hidden sm:inline" />한 페이지에서.
             </p>
-            <div className="mt-10">
+            <div className="mt-10 space-y-3">
               <SearchBar />
+              <div className="flex items-center justify-center gap-3">
+                <a
+                  href="/listings/map"
+                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-900 hover:shadow-md"
+                >
+                  <Map className="h-4 w-4 text-gray-500" />
+                  지도로 매물 찾기
+                </a>
+                <a
+                  href="/areas"
+                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-900 hover:shadow-md"
+                >
+                  <Sparkles className="h-4 w-4 text-amber-500" />
+                  상권 분석 보기
+                </a>
+              </div>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">
               {trustSignals.map((s) => (

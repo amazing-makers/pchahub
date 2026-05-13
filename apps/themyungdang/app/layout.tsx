@@ -7,11 +7,10 @@ import './globals.css'
 export const metadata = buildSiteMetadata('themyungdang')
 
 const navItems = [
-  { href: '/listings', label: '매물 검색' },
-  { href: '/listings?type=transfer', label: '양도' },
-  { href: '/listings?type=new', label: '신규 임대' },
-  { href: '/listings?type=sale', label: '매각' },
+  { href: '/listings/map', label: '지도로 검색' },
+  { href: '/listings', label: '매물 목록' },
   { href: '/areas', label: '상권 분석' },
+  { href: '/safe-deal', label: '안전 거래' },
 ]
 
 const actions: HeaderAction[] = [
