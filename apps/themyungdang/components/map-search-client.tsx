@@ -16,6 +16,7 @@ import {
 import type { MockListing, MockArea, ListingType } from '@/lib/mock-data'
 import { TYPE_LABEL, AREAS, LISTING_CATEGORIES } from '@/lib/mock-data'
 import { formatNumber } from '@amakers/utils'
+import { useFavorites } from '@/hooks/use-favorites'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Price formatting
@@ -158,32 +159,6 @@ function sortListings(listings: MockListing[], sort: SortKey): MockListing[] {
       default:          return b.viewCount - a.viewCount
     }
   })
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Favorites (localStorage)
-// ─────────────────────────────────────────────────────────────────────────────
-const FAV_KEY = 'tmyd-fav'
-
-function useFavorites() {
-  const [favorites, setFavorites] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
-    try {
-      const raw = localStorage.getItem(FAV_KEY)
-      return raw ? new Set(JSON.parse(raw) as string[]) : new Set()
-    } catch { return new Set() }
-  })
-
-  const toggle = useCallback((id: string) => {
-    setFavorites(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id); else next.add(id)
-      try { localStorage.setItem(FAV_KEY, JSON.stringify([...next])) } catch {}
-      return next
-    })
-  }, [])
-
-  return { favorites, toggle }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

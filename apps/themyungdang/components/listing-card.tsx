@@ -1,14 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle2, Eye, Heart, MapPin } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import type { MockListing } from '@/lib/mock-data'
 import { TYPE_LABEL } from '@/lib/mock-data'
-
-// ── Shared localStorage key (same as map-search-client) ───────────────────────
-const FAV_KEY = 'tmyd-fav'
+import { useFavorites } from '@/hooks/use-favorites'
 
 function formatManwon(manwon: number): string {
   if (manwon >= 10000) {
@@ -16,30 +13,6 @@ function formatManwon(manwon: number): string {
     return eok % 1 === 0 ? `${eok}억` : `${Math.round(eok * 10) / 10}억`
   }
   return `${formatNumber(manwon)}만`
-}
-
-// ── Favorites hook — useEffect pattern avoids SSR hydration mismatch ──────────
-function useFavorites() {
-  const [favorites, setFavorites] = useState<Set<string>>(new Set())
-
-  // Load from localStorage after mount (client-only)
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(FAV_KEY)
-      if (raw) setFavorites(new Set(JSON.parse(raw) as string[]))
-    } catch { /* ignore */ }
-  }, [])
-
-  const toggle = useCallback((id: string) => {
-    setFavorites(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id); else next.add(id)
-      try { localStorage.setItem(FAV_KEY, JSON.stringify([...next])) } catch { /* ignore */ }
-      return next
-    })
-  }, [])
-
-  return { favorites, toggle }
 }
 
 interface ListingCardProps {

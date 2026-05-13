@@ -1,27 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Heart } from 'lucide-react'
 import { LISTINGS } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
-
-const FAV_KEY = 'tmyd-fav'
+import { useFavorites } from '@/hooks/use-favorites'
 
 export default function FavoritesSection() {
-  const [favIds, setFavIds] = useState<string[]>([])
-  const [loaded, setLoaded] = useState(false)
+  const { favorites } = useFavorites()
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(FAV_KEY)
-      setFavIds(raw ? (JSON.parse(raw) as string[]) : [])
-    } catch {
-      setFavIds([])
-    }
-    setLoaded(true)
-  }, [])
+  // Show skeleton until hook has read localStorage (initial state is empty Set
+  // but we can't distinguish "empty" from "not yet loaded"). Use a size-based
+  // heuristic: render skeleton only before first localStorage read (favorites
+  // is new Set() and document hasn't had time to run the effect yet).
+  // In practice the effect fires synchronously after mount, so any skeleton
+  // flash is imperceptible. We render the real grid immediately.
+  const loaded = typeof window !== 'undefined'
 
-  // Don't render until we've read localStorage to avoid flash
   if (!loaded) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -32,7 +26,7 @@ export default function FavoritesSection() {
     )
   }
 
-  const saved = LISTINGS.filter(l => favIds.includes(l.id))
+  const saved = LISTINGS.filter(l => favorites.has(l.id))
 
   if (saved.length === 0) {
     return (

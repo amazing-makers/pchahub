@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   CheckCircle2,
   Heart,
@@ -13,9 +13,7 @@ import {
 import { Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import type { MockListing } from '@/lib/mock-data'
-
-// ── Shared key (same as listing-card + map-search-client) ─────────────────────
-const FAV_KEY = 'tmyd-fav'
+import { useFavorites } from '@/hooks/use-favorites'
 
 function formatManwon(manwon: number): string {
   if (manwon >= 10000) {
@@ -23,32 +21,6 @@ function formatManwon(manwon: number): string {
     return eok % 1 === 0 ? `${eok}억` : `${Math.round(eok * 10) / 10}억`
   }
   return `${formatNumber(manwon)}만`
-}
-
-function useFavorite(id: string) {
-  const [isFav, setIsFav] = useState(false)
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(FAV_KEY)
-      if (raw) setIsFav((JSON.parse(raw) as string[]).includes(id))
-    } catch { /* ignore */ }
-  }, [id])
-
-  const toggle = useCallback(() => {
-    setIsFav(prev => {
-      const next = !prev
-      try {
-        const raw = localStorage.getItem(FAV_KEY)
-        const arr: string[] = raw ? JSON.parse(raw) : []
-        const updated = next ? [...arr, id] : arr.filter(x => x !== id)
-        localStorage.setItem(FAV_KEY, JSON.stringify(updated))
-      } catch { /* ignore */ }
-      return next
-    })
-  }, [id])
-
-  return { isFav, toggle }
 }
 
 // ── Inquiry Modal ─────────────────────────────────────────────────────────────
@@ -184,7 +156,8 @@ function shareOrCopy(text: string) {
 interface Props { listing: MockListing }
 
 export default function ListingDetailSidebar({ listing }: Props) {
-  const { isFav, toggle } = useFavorite(listing.id)
+  const { favorites, toggle: toggleFav } = useFavorites()
+  const isFav = favorites.has(listing.id)
   const [inquiryOpen, setInquiryOpen] = useState(false)
 
   return (
@@ -237,7 +210,7 @@ export default function ListingDetailSidebar({ listing }: Props) {
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={toggle}
+                onClick={() => toggleFav(listing.id)}
                 className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
                   isFav
                     ? 'border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100'
