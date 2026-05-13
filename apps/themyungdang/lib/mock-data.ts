@@ -64,6 +64,11 @@ export interface MockArea {
   topCategories: Array<{ key: string; label: string; share: number }>
   highlights: string[]
   cautions: string[]
+  /** 상권 중심 좌표 — 지도 오버레이 원 표시용 */
+  lat?: number
+  lng?: number
+  /** 오버레이 반경 (미터) */
+  radiusM?: number
 }
 
 export interface ListingCategory {
@@ -117,6 +122,7 @@ export const AREAS: MockArea[] = [
       '평당 월세가 다른 상권의 2-3배. 매출이 평균 이상이어도 손익이 빠듯할 수 있음',
       '공시 매물보다 부동산 직접 협상으로 거래되는 비율이 높아 정보 비대칭이 큼',
     ],
+    lat: 37.4981, lng: 127.0276, radiusM: 600,
   },
   {
     key: 'hongdae',
@@ -137,6 +143,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['SNS 노출 효과가 큰 입지', '관광객 비중 25% 이상으로 평일·주말 매출 차이가 작음'],
     cautions: ['매물 교체 주기가 빠릅니다 — 평균 보증금 회수 기간 2.8년', '소음·민원 발생 빈도가 높음'],
+    lat: 37.5571, lng: 126.9240, radiusM: 500,
   },
   {
     key: 'pangyo',
@@ -157,6 +164,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['평일 점심 객수가 매우 안정적', '신축 상가 비율이 높아 시설 컨디션 좋음'],
     cautions: ['주말 매출이 평일의 50% 수준 — 평일 매출로 손익 맞춰야 함', '대기업 구내식당 경쟁'],
+    lat: 37.3952, lng: 127.1116, radiusM: 700,
   },
   {
     key: 'songdo',
@@ -177,6 +185,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['신축 상가라 시설 추가 비용이 적음', '주거 + 직장 + 외국인 객수 균형'],
     cautions: ['평일 점심 의존도가 낮은 만큼 회전 시간이 길어짐', '신도시 특성상 상권 안정화에 1-2년'],
+    lat: 37.3944, lng: 126.6528, radiusM: 800,
   },
   {
     key: 'seomyeon',
@@ -196,6 +205,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['관광 + 현지 객수가 균형', '저녁 + 심야 객수 강세로 주점·다이닝에 유리'],
     cautions: ['주말 매출 의존도 + 시즌 변동성 큼', '인접 상권과 경쟁이 치열'],
+    lat: 35.1572, lng: 129.0593, radiusM: 500,
   },
   {
     key: 'dongseongro',
@@ -215,6 +225,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['학생 + 직장인 객수의 균형', '대구 외 지역에서도 방문하는 광역 상권'],
     cautions: ['10-20대 객수가 많아 객단가 한계가 있음', '폐점율은 평균보다 다소 높음'],
+    lat: 35.8684, lng: 128.5968, radiusM: 400,
   },
   {
     key: 'chungjangro',
@@ -234,6 +245,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['광주광역시 객수의 30% 이상이 집중', '주말·평일 객수 균형이 좋음'],
     cautions: ['신축 상가가 적어 시설 보강 비용 필요', '권리금 평균이 빠르게 상승 중'],
+    lat: 35.1523, lng: 126.9162, radiusM: 350,
   },
   {
     key: 'dunsan',
@@ -253,6 +265,7 @@ export const AREAS: MockArea[] = [
     ],
     highlights: ['학원가 + 청사 객수가 시간대별로 분산되어 회전율 좋음', '권리금이 광역 상권 중 가장 낮음'],
     cautions: ['겨울철 객수 감소', '방학 기간 매출 변동 큼'],
+    lat: 36.3504, lng: 127.3846, radiusM: 500,
   },
 ]
 
