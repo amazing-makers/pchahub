@@ -1,8 +1,4 @@
-import dynamic from 'next/dynamic'
-import { AreaChip } from '@/components/area-chip'
-import { AREAS, listingsByArea } from '@/lib/mock-data'
-
-const AreasMap = dynamic(() => import('@/components/areas-map'), { ssr: false })
+import AreasPageClient from '@/components/areas-page-client'
 
 export default function AreasPage() {
   return (
@@ -18,23 +14,8 @@ export default function AreasPage() {
         </div>
       </section>
 
-      {/* ── 전국 상권 지도 ───────────────────────────────────────── */}
-      <section className="container mx-auto py-6">
-        <AreasMap areas={AREAS} height={520} />
-        <p className="mt-2 text-center text-xs text-gray-400">
-          원을 클릭하면 해당 상권의 주요 지표와 상세 분석 링크를 볼 수 있습니다.
-        </p>
-      </section>
-
-      {/* ── 상권 카드 그리드 ─────────────────────────────────────── */}
-      <section className="container mx-auto pb-12">
-        <h2 className="mb-4 text-h4 font-semibold text-gray-900">전체 상권 목록</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {AREAS.map((a) => (
-            <AreaChip key={a.key} area={a} listingCount={listingsByArea(a.key).length} />
-          ))}
-        </div>
-      </section>
+      {/* ── 필터 + 지도 + 카드 그리드 (client) ─────────────────── */}
+      <AreasPageClient />
     </main>
   )
 }
