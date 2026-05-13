@@ -1,17 +1,18 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'
-import { Bookmark, Eye, MessageSquare, PencilLine } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { Eye, MessageSquare, PencilLine } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
-import { LISTINGS } from '@/lib/mock-data'
-import { ListingCard } from '@/components/listing-card'
+
+const FavoritesSection = dynamic(() => import('@/components/favorites-section'), { ssr: false })
+const FavoritesStat    = dynamic(() => import('@/components/favorites-stat'),    { ssr: false })
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/auth/signin?callbackUrl=/mypage')
 
   const name = session.user?.name ?? session.user?.email?.split('@')[0] ?? '회원'
-  const saved = LISTINGS.slice(0, 3)
   const inquiries = [
     {
       id: 'q1',
@@ -60,7 +61,8 @@ export default async function MyPage() {
       <div className="container mx-auto py-8 space-y-8">
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat icon={Bookmark} label="찜한 매물" value={`${saved.length}건`} />
+          {/* FavoritesStat reads localStorage on the client */}
+          <FavoritesStat />
           <Stat icon={MessageSquare} label="매물 문의" value={`${inquiries.length}건`} />
           <Stat icon={Eye} label="조회한 매물" value="14건" />
           <Stat icon={PencilLine} label="등록한 매물" value="0건" />
@@ -96,19 +98,15 @@ export default async function MyPage() {
           </div>
         </section>
 
-        {/* Saved listings */}
+        {/* Saved listings — reads from localStorage via client island */}
         <section>
           <div className="mb-4 flex items-end justify-between">
             <h2 className="text-h4 font-semibold text-gray-900">찜한 매물</h2>
-            <a href="/mypage/saved" className="text-sm text-gray-600 hover:text-gray-900">
-              전체 보기 →
+            <a href="/listings" className="text-sm text-gray-600 hover:text-gray-900">
+              매물 더 찾기 →
             </a>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {saved.map((l) => (
-              <ListingCard key={l.id} listing={l} />
-            ))}
-          </div>
+          <FavoritesSection />
         </section>
 
         <Card className="border-amber-200 bg-amber-50">
@@ -129,7 +127,7 @@ function Stat({
   label,
   value,
 }: {
-  icon: typeof Bookmark
+  icon: typeof Eye
   label: string
   value: string
 }) {

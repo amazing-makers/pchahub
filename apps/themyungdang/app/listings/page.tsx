@@ -1,4 +1,4 @@
-import { LayoutGrid, Map } from 'lucide-react'
+﻿import { LayoutGrid, Map } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
 import { ListingsMap } from '@/components/listings-map'
@@ -75,12 +75,47 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
               <span className="ml-2 text-base font-normal text-gray-500">· {region}</span>
             )}
             {q && (
-              <span className="ml-2 text-base font-normal text-gray-500">‘{q}’ 검색 결과</span>
+              <span className="ml-2 text-base font-normal text-gray-500">'{q}' 검색 결과</span>
             )}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
             본인 확인 매물 위주 · 총 {LISTINGS.length}건 등록
           </p>
+          {/* Keyword search */}
+          <form
+            method="get"
+            action="/listings"
+            className="mt-4 flex max-w-lg items-center gap-2"
+          >
+            {/* Preserve existing filters when searching */}
+            {type   && <input type="hidden" name="type"   value={type} />}
+            {region && <input type="hidden" name="region" value={region} />}
+            {sort !== 'recommended' && <input type="hidden" name="sort" value={sort} />}
+            <div className="relative flex-1">
+              <input
+                type="text"
+                name="q"
+                defaultValue={q ?? ''}
+                placeholder="상호명, 주소, 업종 검색…"
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-4 pr-10 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+              />
+              {q && (
+                <a
+                  href={makeHref(searchParams, { q: undefined })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                  aria-label="검색어 지우기"
+                >
+                  ✕
+                </a>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-700"
+            >
+              검색
+            </button>
+          </form>
         </div>
       </section>
 
