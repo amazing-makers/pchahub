@@ -17,6 +17,15 @@ import type { MockListing, MockArea, ListingType } from '@/lib/mock-data'
 import { TYPE_LABEL, AREAS, LISTING_CATEGORIES } from '@/lib/mock-data'
 import { formatNumber } from '@amakers/utils'
 
+// Format large 만원 values: 280000만 → "28억", 15000만 → "1.5억", 500만 → "500만"
+function formatManwon(manwon: number): string {
+  if (manwon >= 10000) {
+    const eok = manwon / 10000
+    return eok % 1 === 0 ? `${eok}억` : `${Math.round(eok * 10) / 10}억`
+  }
+  return `${formatNumber(manwon)}만`
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Map tile — OpenStreetMap Standard
 // OSM은 한국 데이터가 풍부하여 한글 지명이 기본으로 표시됩니다.
@@ -174,8 +183,10 @@ function areaPopupHtml(area: MockArea): string {
 function badgeHtml(listing: MockListing, selected: boolean): string {
   const label =
     listing.type === 'sale'
-      ? `${formatNumber(listing.salePrice ?? 0)}만`
-      : `월 ${formatNumber(listing.monthlyRent)}만`
+      ? `${formatManwon(listing.salePrice ?? 0)} 매각`
+      : listing.monthlyRent > 0
+        ? `월 ${formatNumber(listing.monthlyRent)}만`
+        : `보증 ${formatManwon(listing.deposit)}`
   const color = TYPE_COLOR[listing.type]
 
   const style = selected
@@ -234,12 +245,15 @@ export default function MapSearchClient({ allListings }: Props) {
   useEffect(() => {
     if (!mapDivRef.current || mapRef.current) return
 
+    let cancelled = false
+
     const link = document.createElement('link')
     link.rel = 'stylesheet'
     link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
     document.head.appendChild(link)
 
     import('leaflet').then(L => {
+      if (cancelled || mapRef.current) return
       const map = L.map(mapDivRef.current!, {
         center: KOREA_CENTER,
         zoom:   DEFAULT_ZOOM,
@@ -336,6 +350,7 @@ export default function MapSearchClient({ allListings }: Props) {
     })
 
     return () => {
+      cancelled = true
       mapRef.current?.remove()
       mapRef.current = null
       markersRef.current.clear()
@@ -719,7 +734,7 @@ function SidebarCard({
         <div>
           {listing.type === 'sale' ? (
             <p className="text-sm font-bold text-gray-900">
-              {formatNumber(listing.salePrice ?? 0)}만
+              {formatManwon(listing.salePrice ?? 0)}
               <span className="ml-1 text-[11px] font-normal text-gray-400">매각가</span>
             </p>
           ) : (

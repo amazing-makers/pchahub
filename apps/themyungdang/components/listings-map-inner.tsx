@@ -5,6 +5,14 @@ import type { MockListing, ListingType } from '@/lib/mock-data'
 import { TYPE_LABEL } from '@/lib/mock-data'
 import { formatNumber } from '@amakers/utils'
 
+function formatManwon(manwon: number): string {
+  if (manwon >= 10000) {
+    const eok = manwon / 10000
+    return eok % 1 === 0 ? `${eok}억` : `${Math.round(eok * 10) / 10}억`
+  }
+  return `${formatNumber(manwon)}만`
+}
+
 interface Props {
   listings: MockListing[]
 }
@@ -25,7 +33,7 @@ function badgeHtml(listing: MockListing): string {
   const color = TYPE_COLOR[listing.type]
   const label =
     listing.type === 'sale'
-      ? `${formatNumber(listing.salePrice ?? 0)}만`
+      ? `${formatManwon(listing.salePrice ?? 0)}`
       : `월 ${formatNumber(listing.monthlyRent)}만`
 
   return `<div style="
@@ -89,7 +97,7 @@ export default function ListingsMapInner({ listings }: Props) {
 
         const rentLine =
           listing.type === 'sale'
-            ? `매각가 ${formatNumber(listing.salePrice ?? 0)}만원`
+            ? `매각가 ${formatManwon(listing.salePrice ?? 0)}`
             : `보증 ${formatNumber(listing.deposit)}만 / 월세 ${formatNumber(listing.monthlyRent)}만`
 
         const popup = L.popup({ maxWidth: 260 }).setContent(`
@@ -134,7 +142,7 @@ export default function ListingsMapInner({ listings }: Props) {
         })
         const rentLine =
           listing.type === 'sale'
-            ? `매각가 ${formatNumber(listing.salePrice ?? 0)}만원`
+            ? `매각가 ${formatManwon(listing.salePrice ?? 0)}`
             : `보증 ${formatNumber(listing.deposit)}만 / 월세 ${formatNumber(listing.monthlyRent)}만`
         const popup = L.popup({ maxWidth: 260 }).setContent(`
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;font-size:13px;line-height:1.6;padding:12px 14px">
