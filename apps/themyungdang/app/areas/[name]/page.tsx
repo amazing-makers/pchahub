@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import {
   AlertCircle,
   ArrowLeft,
@@ -16,6 +17,8 @@ import { formatNumber } from '@amakers/utils'
 import { AREAS, listingsByArea } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
 import { AreaChip } from '@/components/area-chip'
+
+const AreaCharts = dynamic(() => import('@/components/area-charts'), { ssr: false })
 
 export function generateStaticParams() {
   return AREAS.map((a) => ({ name: a.key }))
@@ -97,6 +100,9 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
       </section>
 
       <div className="container mx-auto py-10 space-y-8">
+        {/* Charts — monthly trend + category donut */}
+        <AreaCharts area={area} />
+
         {/* Category share */}
         <SectionCard
           title="주요 업종 비중"

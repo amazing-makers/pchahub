@@ -248,6 +248,24 @@ function areaPopupHtml(area: MockArea): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Cluster icon HTML
+// ─────────────────────────────────────────────────────────────────────────────
+function clusterIconHtml(count: number): string {
+  const size = count > 99 ? 46 : count > 9 ? 42 : 38
+  const fs   = count > 99 ? 11 : 13
+  return `<div style="
+    width:${size}px;height:${size}px;
+    background:#111827;color:#fff;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:${fs}px;font-weight:700;letter-spacing:-0.5px;
+    box-shadow:0 2px 14px rgba(0,0,0,0.28);
+    transform:translate(-50%,-50%);
+    border:2.5px solid #fff;cursor:pointer;
+    font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;
+  ">${count}</div>`
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Marker badge HTML
 // ─────────────────────────────────────────────────────────────────────────────
 function badgeHtml(listing: MockListing, selected: boolean): string {
@@ -270,10 +288,11 @@ function badgeHtml(listing: MockListing, selected: boolean): string {
 interface Props { allListings: MockListing[] }
 
 export default function MapSearchClient({ allListings }: Props) {
-  const mapDivRef     = useRef<HTMLDivElement>(null)
-  const mapRef        = useRef<any>(null)
-  const markersRef    = useRef<Map<string, any>>(new Map())
-  const areaLayersRef = useRef<Map<string, any>>(new Map())
+  const mapDivRef       = useRef<HTMLDivElement>(null)
+  const mapRef          = useRef<any>(null)
+  const clusterGroupRef = useRef<any>(null)
+  const markersRef      = useRef<Map<string, any>>(new Map())
+  const areaLayersRef   = useRef<Map<string, any>>(new Map())
   const sidebarRef    = useRef<HTMLDivElement>(null)
   // Stable refs for Leaflet event handlers (avoids stale closures)
   const filtersRef    = useRef<Filters>(DEFAULT_FILTERS)
@@ -333,8 +352,11 @@ export default function MapSearchClient({ allListings }: Props) {
     link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
     document.head.appendChild(link)
 
-    import('leaflet').then(L => {
+    import('leaflet').then(async L => {
       if (cancelled || mapRef.current) return
+
+      // Extend L with markerClusterGroup (side-effect import, patches L)
+      await import('leaflet.markercluster')
 
       const map = L.map(mapDivRef.current!, {
         center: KOREA_CENTER, zoom: DEFAULT_ZOOM, zoomControl: false,
@@ -342,6 +364,21 @@ export default function MapSearchClient({ allListings }: Props) {
       mapRef.current = map
       L.control.zoom({ position: 'bottomright' }).addTo(map)
       L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(map)
+
+      // ── Marker cluster group ──────────────────────────────────────────────
+      const cluster = (L as any).markerClusterGroup({
+        maxClusterRadius:        80,
+        disableClusteringAtZoom: 15,
+        spiderfyOnMaxZoom:       true,
+        zoomToBoundsOnClick:     true,
+        iconCreateFunction: (c: any) => L.divIcon({
+          html:       clusterIconHtml(c.getChildCount()),
+          className:  '',
+          iconSize:   [0, 0] as any,
+          iconAnchor: [0, 0] as any,
+        }),
+      })
+      clusterGroupRef.current = cluster
 
       // ── Listing markers ───────────────────────────────────────────────────
       withCoords.forEach(listing => {
@@ -361,9 +398,14 @@ export default function MapSearchClient({ allListings }: Props) {
             }, 60)
           }
         })
-        marker.addTo(map)
         markersRef.current.set(listing.id, marker)
+        // Only add to cluster if it passes current filters (e.g. URL-loaded)
+        if (matchesFilters(listing, filtersRef.current, favoritesRef.current)) {
+          cluster.addLayer(marker)
+        }
       })
+
+      cluster.addTo(map)
 
       // ── Area circles (hidden initially) ───────────────────────────────────
       AREAS.filter(a => a.lat != null).forEach(area => {
@@ -405,8 +447,9 @@ export default function MapSearchClient({ allListings }: Props) {
 
     return () => {
       cancelled = true
-      mapRef.current?.remove()
-      mapRef.current = null
+      mapRef.current?.remove()          // also removes cluster group from map
+      mapRef.current          = null
+      clusterGroupRef.current = null
       markersRef.current.clear()
       areaLayersRef.current.clear()
       if (document.head.contains(link)) document.head.removeChild(link)
@@ -431,22 +474,24 @@ export default function MapSearchClient({ allListings }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId])
 
-  // ── Filters / favorites → update marker visibility + visible list ──────────
+  // ── Filters / favorites → update cluster layers + visible list ──────────────
   useEffect(() => {
-    if (!mapRef.current) return
+    if (!mapRef.current || !clusterGroupRef.current) return
     import('leaflet').then(L => {
-      const map    = mapRef.current!
-      const bounds = map.getBounds()
-      markersRef.current.forEach((marker, id) => {
-        const listing = withCoords.find(l => l.id === id)
-        if (!listing) return
-        const show = matchesFilters(listing, filters, favorites)
-        if (show  && !map.hasLayer(marker)) marker.addTo(map)
-        if (!show &&  map.hasLayer(marker)) map.removeLayer(marker)
+      const bounds  = mapRef.current!.getBounds()
+      const cluster = clusterGroupRef.current!
+      const visible: MockListing[] = []
+
+      // Swap all cluster layers in one shot (clearLayers + add) to avoid flash
+      cluster.clearLayers()
+      withCoords.forEach(listing => {
+        if (matchesFilters(listing, filters, favorites)) {
+          cluster.addLayer(markersRef.current.get(listing.id)!)
+          if (bounds.contains(L.latLng(listing.lat!, listing.lng!))) {
+            visible.push(listing)
+          }
+        }
       })
-      const visible = withCoords.filter(l =>
-        bounds.contains(L.latLng(l.lat!, l.lng!)) && matchesFilters(l, filters, favorites)
-      )
       setVisibleListings(visible)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

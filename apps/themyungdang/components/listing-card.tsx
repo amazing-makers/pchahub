@@ -1,8 +1,46 @@
-import { CheckCircle2, Eye, MapPin } from 'lucide-react'
+'use client'
+
+import { useCallback, useEffect, useState } from 'react'
+import { CheckCircle2, Eye, Heart, MapPin } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import type { MockListing } from '@/lib/mock-data'
 import { TYPE_LABEL } from '@/lib/mock-data'
+
+// ── Shared localStorage key (same as map-search-client) ───────────────────────
+const FAV_KEY = 'tmyd-fav'
+
+function formatManwon(manwon: number): string {
+  if (manwon >= 10000) {
+    const eok = manwon / 10000
+    return eok % 1 === 0 ? `${eok}억` : `${Math.round(eok * 10) / 10}억`
+  }
+  return `${formatNumber(manwon)}만`
+}
+
+// ── Favorites hook — useEffect pattern avoids SSR hydration mismatch ──────────
+function useFavorites() {
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+
+  // Load from localStorage after mount (client-only)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(FAV_KEY)
+      if (raw) setFavorites(new Set(JSON.parse(raw) as string[]))
+    } catch { /* ignore */ }
+  }, [])
+
+  const toggle = useCallback((id: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id); else next.add(id)
+      try { localStorage.setItem(FAV_KEY, JSON.stringify([...next])) } catch { /* ignore */ }
+      return next
+    })
+  }, [])
+
+  return { favorites, toggle }
+}
 
 interface ListingCardProps {
   listing: MockListing
@@ -10,6 +48,9 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing, featured = false }: ListingCardProps) {
+  const { favorites, toggle } = useFavorites()
+  const isFav = favorites.has(listing.id)
+
   return (
     <a href={`/listings/${listing.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
@@ -24,18 +65,36 @@ export function ListingCard({ listing, featured = false }: ListingCardProps) {
               loading="lazy"
             />
             <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/30 to-transparent" />
+
+            {/* Type badge + featured badge */}
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
               <Badge variant={listing.type === 'transfer' ? 'primary' : listing.type === 'sale' ? 'warning' : 'default'}>
                 {TYPE_LABEL[listing.type]}
               </Badge>
               {featured && <Badge variant="warning">광고</Badge>}
             </div>
+
+            {/* Verified badge */}
             {listing.verified && (
               <span className="absolute right-3 top-3 inline-flex items-center gap-0.5 rounded-full bg-blue-500/95 px-2 py-0.5 text-xs font-medium text-white">
                 <CheckCircle2 className="h-3 w-3" />
                 실사 완료
               </span>
             )}
+
+            {/* Favorite button */}
+            <button
+              type="button"
+              onClick={e => { e.preventDefault(); e.stopPropagation(); toggle(listing.id) }}
+              className={`absolute bottom-3 right-3 rounded-full p-1.5 backdrop-blur-sm transition-all ${
+                isFav
+                  ? 'bg-rose-500 text-white shadow-lg'
+                  : 'bg-black/30 text-white hover:bg-rose-500'
+              }`}
+              aria-label={isFav ? '찜 해제' : '찜하기'}
+            >
+              <Heart className={`h-3.5 w-3.5 ${isFav ? 'fill-white' : ''}`} />
+            </button>
           </div>
 
           {/* Body */}
@@ -53,7 +112,7 @@ export function ListingCard({ listing, featured = false }: ListingCardProps) {
                 <div className="col-span-3 text-center">
                   <div className="text-gray-500">매각가</div>
                   <div className="mt-0.5 text-sm font-bold text-gray-900">
-                    {formatNumber(listing.salePrice ?? 0)}만
+                    {formatManwon(listing.salePrice ?? 0)}
                   </div>
                 </div>
               ) : (
