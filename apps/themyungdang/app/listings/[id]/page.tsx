@@ -1,19 +1,17 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import {
   ArrowLeft,
-  Bookmark,
   Building2,
   CheckCircle2,
   Clock,
   Eye,
   MapPin,
   MessageSquare,
-  Phone,
-  Share2,
   TrendingUp,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildPageMetadata,
@@ -29,6 +27,9 @@ import {
   type MockListing,
 } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
+
+const ListingDetailSidebar = dynamic(() => import('@/components/listing-detail-sidebar'), { ssr: false })
+const ListingMiniMap       = dynamic(() => import('@/components/listing-mini-map'),       { ssr: false })
 
 export function generateStaticParams() {
   return LISTINGS.map((l) => ({ id: l.id }))
@@ -119,20 +120,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 {listing.fullAddress}
               </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-              >
-                <Bookmark className="h-3.5 w-3.5" /> 찜
-              </button>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-              >
-                <Share2 className="h-3.5 w-3.5" /> 공유
-              </button>
-            </div>
+            {/* Actions moved to sticky sidebar */}
           </div>
         </div>
       </section>
@@ -208,6 +196,13 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 />
               </div>
             </SectionCard>
+
+            {/* Mini map — only when coordinates are available */}
+            {listing.lat && (
+              <SectionCard title="위치">
+                <ListingMiniMap listing={listing} />
+              </SectionCard>
+            )}
 
             {/* Tags */}
             <SectionCard title="입지 특성">
@@ -307,9 +302,9 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
             )}
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar — client component (favorites, inquiry modal, share) */}
           <aside className="lg:sticky lg:top-20 lg:self-start">
-            <CTASidebar listing={listing} />
+            <ListingDetailSidebar listing={listing} />
           </aside>
         </div>
       </div>
@@ -317,80 +312,6 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
   )
 }
 
-function CTASidebar({ listing }: { listing: MockListing }) {
-  return (
-    <div className="space-y-4">
-      <Card className="border-gray-200 shadow-sm">
-        <CardContent className="space-y-4 p-5">
-          {/* Price */}
-          {listing.type === 'sale' ? (
-            <div>
-              <div className="text-xs text-gray-500">매각가</div>
-              <div className="mt-0.5 text-h3 font-bold text-gray-900">
-                {formatNumber(listing.salePrice ?? 0)}
-                <span className="text-base font-medium text-gray-600"> 만원</span>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div>
-                <div className="text-xs text-gray-500">월세 / 보증금</div>
-                <div className="mt-0.5 text-h4 font-bold text-gray-900">
-                  {formatNumber(listing.monthlyRent)}만
-                  <span className="text-sm font-medium text-gray-500">
-                    {' '}/ 보증금 {formatNumber(listing.deposit)}만
-                  </span>
-                </div>
-              </div>
-              {listing.rightFee !== undefined && (
-                <div>
-                  <div className="text-xs text-gray-500">권리금</div>
-                  <div className="mt-0.5 text-base font-semibold text-gray-900">
-                    {listing.rightFee === 0
-                      ? '없음'
-                      : `${formatNumber(listing.rightFee)}만`}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          <Button size="lg" className="w-full gap-1">
-            <MessageSquare className="h-4 w-4" />
-            매물 문의하기
-          </Button>
-          <Button size="lg" variant="outline" className="w-full">
-            <Bookmark className="h-4 w-4" />
-            찜하기
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card className="border-gray-200">
-        <CardContent className="p-5">
-          <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-            등록자
-          </div>
-          <div className="mt-2 space-y-1">
-            <div className="text-sm font-medium text-gray-900">
-              {listing.ownerType === 'agent' ? listing.agencyName : '직거래'}
-            </div>
-            <div className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-              <Phone className="h-3.5 w-3.5" /> 1544-0000
-            </div>
-          </div>
-          <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800">
-            <div className="flex items-center gap-1 font-semibold">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              안전 거래 지원 매물
-            </div>
-            <p className="mt-1">에스크로 결제와 표준 계약서 검토를 무료로 제공합니다.</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
 
 function SectionCard({
   title,
