@@ -1,7 +1,6 @@
-import { ArrowRight, Building2, Calculator, CheckCircle2, Flame, MapPin, Sparkles, Users } from 'lucide-react'
-import { Button, Card, CardContent } from '@amakers/ui'
+import { ArrowRight, Building2, Calculator, CheckCircle2, Flame, Handshake, MapPin, Sparkles, Users } from 'lucide-react'
+import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
@@ -10,9 +9,28 @@ import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended, hasRealPhoto } f
 import { LISTINGS } from '@/lib/mock-listings'
 import { getBrands } from '@/lib/kftc/source'
 
-const otherPlatforms = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'pchahub')
+// 협찬 기업 — 프차허브 메인 화면 하단 노출
+const SPONSORS = [
+  {
+    name: '브랜드메이킹 어메이커스',
+    role: '프랜차이즈 브랜드 메이킹·컨설팅',
+    initial: '어',
+    color: '#7C3AED',
+  },
+  {
+    name: '더베스트',
+    role: '고기집 전문 창업 인큐베이팅',
+    initial: '더',
+    color: '#DC2626',
+  },
+] as const
+
+// 협력 협회·기관 — 산업 단체와의 협력 표시 (작은 칩)
+const ASSOCIATIONS = [
+  { name: '한국프랜차이즈산업협회', color: '#0891B2' },
+  { name: '한국외식업중앙회', color: '#16A34A' },
+  { name: '한국식육협회', color: '#B91C1C' },
+] as const
 
 export const revalidate = 3600 // 1시간 캐시
 
@@ -275,36 +293,65 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Other amakers platforms — small auxiliary section */}
+      {/* Sponsors + associations — 메인 하단, 9-site 그리드(푸터)는 별도로 사이트 소개와 중복돼 제거 */}
       <section className="container mx-auto py-section">
-        <div className="mb-4 flex items-end justify-between">
-          <div>
-            <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              매물 · 강의 · 인테리어 · 투자 — 가맹점 운영의 모든 단계를 전문 사이트가 담당합니다
-            </p>
-          </div>
+        <div className="mb-6">
+          <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+            <Handshake className="h-6 w-6 text-gray-600" />
+            협찬 · 협력 파트너
+          </h2>
+          <p className="mt-1 text-sm text-gray-500">
+            프차허브와 함께 한국 프랜차이즈 생태계를 만드는 기업과 협회
+          </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {otherPlatforms.map(([key, p]) => (
-            <a key={key} href={`https://${p.domain}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="h-7 w-7 shrink-0 rounded-md"
-                      style={{ background: p.primary }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-gray-900">{p.name}</div>
-                      <div className="truncate text-xs text-gray-500">{p.role}</div>
+
+        {/* 협찬 기업 */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {SPONSORS.map((s) => (
+            <Card key={s.name} className="transition-shadow hover:shadow-md">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-4">
+                  <span
+                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-bold text-white shadow-sm"
+                    style={{ background: s.color }}
+                    aria-hidden
+                  >
+                    {s.initial}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="truncate text-base font-bold text-gray-900">{s.name}</span>
+                      <Badge variant="primary">협찬</Badge>
                     </div>
+                    <p className="mt-1 line-clamp-1 text-sm text-gray-600">{s.role}</p>
                   </div>
-                </CardContent>
-              </Card>
-            </a>
+                </div>
+              </CardContent>
+            </Card>
           ))}
+        </div>
+
+        {/* 협력 협회·기관 */}
+        <div className="mt-4 rounded-2xl border border-gray-100 bg-white p-5">
+          <div className="text-sm font-semibold text-gray-700">협력 협회 · 기관</div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {ASSOCIATIONS.map((a) => (
+              <span
+                key={a.name}
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5"
+              >
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ background: a.color }}
+                  aria-hidden
+                />
+                <span className="text-sm font-medium text-gray-800">{a.name}</span>
+              </span>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-gray-500">
+            협회·기관과의 데이터 협력 및 산업 동향 공유 협의 중 — 협회 회원사 우대 혜택 준비
+          </p>
         </div>
       </section>
     </main>

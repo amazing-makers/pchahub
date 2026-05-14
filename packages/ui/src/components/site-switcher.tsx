@@ -45,7 +45,7 @@ export function SiteSwitcher({ current }: SiteSwitcherProps) {
         aria-haspopup="menu"
       >
         <LayoutGrid className="h-4 w-4" />
-        <span className="hidden sm:inline">amakers 사이트</span>
+        <span className="hidden sm:inline">9개 사이트</span>
         <ChevronDown className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
@@ -54,7 +54,7 @@ export function SiteSwitcher({ current }: SiteSwitcherProps) {
           className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-gray-200 bg-white p-2 shadow-lg"
         >
           <div className="px-2 pb-2 pt-1 text-xs font-semibold text-gray-500">
-            amakers 9개 플랫폼
+            한국 프랜차이즈 9개 플랫폼
           </div>
           <div className="grid grid-cols-1 gap-0.5">
             {platforms.map(([key, b]) => {
