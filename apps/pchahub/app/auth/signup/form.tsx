@@ -42,7 +42,7 @@ export function SignupForm({ enabled }: SignupFormProps) {
           <div className="text-center">
             <h1 className="text-h3 font-bold text-gray-900">회원가입</h1>
             <p className="mt-1 text-sm text-gray-500">
-              어떤 역할로 amakers를 이용하시나요? 나중에 변경하실 수 있습니다.
+              어떤 역할로 서비스를 이용하시나요? 나중에 변경하실 수 있습니다.
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export function SignupForm({ enabled }: SignupFormProps) {
         <div className="text-center">
           <h1 className="text-h3 font-bold text-gray-900">계정 만들기</h1>
           <p className="mt-1 text-sm text-gray-500">
-            아래 방식 중 하나로 가입하시면 amakers 9개 사이트 모두 이용 가능합니다.
+            아래 방식 중 하나로 가입하시면 9개 사이트 모두 이용 가능합니다.
           </p>
           <div className="mt-3 inline-block rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">
             선택한 역할: {ROLES.find((r) => r.key === role)?.label}

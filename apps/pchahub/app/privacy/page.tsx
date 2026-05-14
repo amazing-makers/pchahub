@@ -4,7 +4,7 @@ import { buildPageMetadata } from '@amakers/design-system'
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '개인정보처리방침',
   description:
-    'amakers 통합 플랫폼(프차허브·오픈런·공간의한수·더명당·더메뉴얼·장사노트·베스트플레이스·창업다큐·프차브릿지) 개인정보처리방침',
+    '9개 사이트 통합 플랫폼(프차허브·오픈런·공간의한수·더명당·더메뉴얼·장사노트·베스트플레이스·창업다큐·프차브릿지) 개인정보처리방침',
   path: '/privacy',
 })
 
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <div className="container mx-auto py-12">
           <h1 className="text-h2 font-bold text-gray-900">개인정보처리방침</h1>
           <p className="mt-2 text-sm text-gray-500">
-            최종 개정일: 2026-05-01 · amakers 통합 플랫폼 9개 사이트 공통 방침
+            최종 개정일: 2026-05-01 · 9개 사이트 통합 플랫폼 9개 사이트 공통 방침
           </p>
         </div>
       </section>
@@ -23,7 +23,7 @@ export default function PrivacyPage() {
       <article className="container mx-auto max-w-3xl py-12">
         <div className="space-y-10 text-sm leading-relaxed text-gray-700">
           <Section title="1. 수집하는 개인정보 항목">
-            <p>amakers는 다음 항목을 수집합니다.</p>
+            <p>회사는 다음 항목을 수집합니다.</p>
             <ul className="mt-2 ml-4 list-disc space-y-1">
               <li><b>필수</b>: 이메일, 이름(또는 닉네임), 비밀번호(해시), 역할(본사·점주·일반)</li>
               <li><b>선택</b>: 연락처, 회사명/브랜드명, 관심 카테고리, 지역</li>
@@ -51,7 +51,7 @@ export default function PrivacyPage() {
           </Section>
 
           <Section title="4. 제3자 제공">
-            amakers는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만 다음의 경우는 예외입니다.
+            회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만 다음의 경우는 예외입니다.
             <ul className="mt-2 ml-4 list-disc space-y-1">
               <li>이용자가 사전에 동의한 경우(예: 본사 상담 신청 시 해당 본사에 연락처 전달)</li>
               <li>법령에 의해 제출 의무가 있는 경우</li>
@@ -88,13 +88,13 @@ export default function PrivacyPage() {
 
           <Section title="9. 개인정보 보호책임자">
             <ul className="ml-4 list-disc space-y-1">
-              <li>책임자: amakers 개인정보 보호 담당자</li>
-              <li>문의: privacy@amakers.kr</li>
+              <li>책임자: 개인정보 보호 담당자</li>
+              <li>문의: privacy@pchahub.kr</li>
             </ul>
           </Section>
 
           <p className="border-t border-gray-100 pt-6 text-xs text-gray-500">
-            본 페이지는 amakers 9개 사이트 공통 개인정보처리방침입니다. 변경 시 공지를 통해 안내합니다.
+            본 페이지는 9개 사이트 공통 개인정보처리방침입니다. 변경 시 공지를 통해 안내합니다.
           </p>
         </div>
       </article>

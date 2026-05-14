@@ -4,7 +4,7 @@ import { buildPageMetadata } from '@amakers/design-system'
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '이용약관',
   description:
-    'amakers 통합 플랫폼(프차허브·오픈런·공간의한수·더명당·더메뉴얼·장사노트·베스트플레이스·창업다큐·프차브릿지) 이용약관',
+    '9개 사이트 통합 플랫폼(프차허브·오픈런·공간의한수·더명당·더메뉴얼·장사노트·베스트플레이스·창업다큐·프차브릿지) 이용약관',
   path: '/terms',
 })
 
@@ -15,7 +15,7 @@ export default function TermsPage() {
         <div className="container mx-auto py-12">
           <h1 className="text-h2 font-bold text-gray-900">이용약관</h1>
           <p className="mt-2 text-sm text-gray-500">
-            최종 개정일: 2026-05-01 · amakers 통합 플랫폼 9개 사이트 공통 약관
+            최종 개정일: 2026-05-01 · 9개 사이트 통합 플랫폼 9개 사이트 공통 약관
           </p>
         </div>
       </section>
@@ -23,13 +23,13 @@ export default function TermsPage() {
       <article className="container mx-auto max-w-3xl py-12">
         <div className="space-y-10 text-sm leading-relaxed text-gray-700">
           <Section title="제1조 (목적)">
-            본 약관은 amakers(이하 &ldquo;회사&rdquo;)가 운영하는 프차허브·오픈런·공간의한수·더명당·더메뉴얼·장사노트·베스트플레이스·창업다큐·프차브릿지(이하 &ldquo;서비스&rdquo;)의 이용과 관련하여
+            본 약관은 회사(이하 &ldquo;회사&rdquo;)가 운영하는 프차허브·오픈런·공간의한수·더명당·더메뉴얼·장사노트·베스트플레이스·창업다큐·프차브릿지(이하 &ldquo;서비스&rdquo;)의 이용과 관련하여
             회사와 이용자의 권리·의무 및 책임 사항을 규정함을 목적으로 합니다.
           </Section>
 
           <Section title="제2조 (정의)">
             <ul className="ml-4 list-disc space-y-1">
-              <li><b>&ldquo;서비스&rdquo;</b>란 amakers가 제공하는 9개 사이트와 부가 서비스를 의미합니다.</li>
+              <li><b>&ldquo;서비스&rdquo;</b>란 회사가 제공하는 9개 사이트와 부가 서비스를 의미합니다.</li>
               <li><b>&ldquo;이용자&rdquo;</b>란 본 약관에 동의하고 서비스를 이용하는 회원 및 비회원을 의미합니다.</li>
               <li><b>&ldquo;본사&rdquo;</b>란 프랜차이즈 가맹사업을 운영하는 사업자를 의미합니다.</li>
               <li><b>&ldquo;가맹점주&rdquo;</b>란 본사와 가맹계약을 체결하여 매장을 운영하는 자를 의미합니다.</li>
@@ -66,7 +66,7 @@ export default function TermsPage() {
           </Section>
 
           <Section title="제7조 (회사의 면책)">
-            회사는 본사·점주·투자자 등 이용자 간 직접 거래에서 발생한 분쟁에 대해 원칙적으로 책임을 지지 않습니다. 다만 amakers
+            회사는 본사·점주·투자자 등 이용자 간 직접 거래에서 발생한 분쟁에 대해 원칙적으로 책임을 지지 않습니다. 다만
             안전 거래(에스크로·표준 계약서)를 통한 거래의 경우 회사가 정한 절차에 따라 분쟁 조정에 협력합니다.
           </Section>
 
@@ -75,7 +75,7 @@ export default function TermsPage() {
           </Section>
 
           <p className="border-t border-gray-100 pt-6 text-xs text-gray-500">
-            본 페이지는 amakers 9개 사이트 공통 약관입니다. 사이트별 부가 정책이 있는 경우 해당 사이트 안내를 함께 참고해 주세요.
+            본 페이지는 9개 사이트 공통 약관입니다. 사이트별 부가 정책이 있는 경우 해당 사이트 안내를 함께 참고해 주세요.
           </p>
         </div>
       </article>

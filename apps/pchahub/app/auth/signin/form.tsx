@@ -35,7 +35,7 @@ export function SigninForm({ enabled, callbackUrl, error }: SigninFormProps) {
         <div className="text-center">
           <h1 className="text-h3 font-bold text-gray-900">로그인</h1>
           <p className="mt-1 text-sm text-gray-500">
-            프차허브와 amakers 9개 사이트를 한 계정으로 이용하세요.
+            프차허브 외 8개 사이트를 한 계정으로 이용하세요.
           </p>
         </div>
 

@@ -272,7 +272,7 @@ export function InquiryForm({ initialBrand }: InquiryFormProps) {
 
             <p className="flex items-center gap-1.5 text-xs text-gray-500">
               <Shield className="h-3 w-3" />
-              제출된 정보는 본사 외 amakers는 보관하지 않습니다.
+              제출된 정보는 본사 외에는 보관하지 않습니다.
             </p>
           </CardContent>
         </Card>

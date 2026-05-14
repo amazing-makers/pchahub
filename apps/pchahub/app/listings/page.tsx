@@ -34,7 +34,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             <div>
               <h1 className="text-h3 font-bold text-gray-900">가맹 입점 매물</h1>
               <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                전국 양도·신규임대 매물을 검색하세요. 모든 매물은 amakers 운영팀의 실사를 거쳐 등록됩니다.
+                전국 양도·신규임대 매물을 검색하세요. 모든 매물은 프차허브 운영팀의 실사를 거쳐 등록됩니다.
               </p>
             </div>
             <a

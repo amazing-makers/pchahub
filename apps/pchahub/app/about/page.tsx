@@ -40,7 +40,7 @@ export default function AboutPage() {
               className="text-sm font-semibold uppercase tracking-wider"
               style={{ color: 'var(--brand-primary)' }}
             >
-              About · amakers
+              About · 프차허브
             </p>
             <h1 className="mt-4 text-hero font-bold text-gray-900">
               한국 프랜차이즈의
@@ -48,9 +48,9 @@ export default function AboutPage() {
               모든 것을 OPEN한다
             </h1>
             <p className="mt-6 text-lg text-gray-600">
-              amakers는 가맹 사업과 자영업 운영을 둘러싼 정보 비대칭을 해소하기 위한
+              프차허브는 가맹 사업과 자영업 운영을 둘러싼 정보 비대칭을 해소하기 위한
               <br className="hidden sm:inline" />
-              9개 전문 플랫폼의 운영사입니다.
+              9개 전문 플랫폼의 가맹 정보·매칭 허브입니다.
             </p>
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function AboutPage() {
             본사 시스템의 안정성은 가맹 계약을 맺기 전엔 알기 어려운 게 현실입니다.
           </p>
           <p className="mt-4 text-gray-700">
-            amakers는 협회 공시 자료를 1차 데이터로 삼고, 그 위에 매장 운영 분석·점주 후기·매칭
+            프차허브는 협회 공시 자료를 1차 데이터로 삼고, 그 위에 매장 운영 분석·점주 후기·매칭
             도구를 얹어 가맹 사업 의사결정을 더 투명하고 합리적으로 만듭니다.
           </p>
         </div>
@@ -76,9 +76,9 @@ export default function AboutPage() {
       <section className="border-y border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-h3 font-semibold text-gray-900">amakers의 4가지 원칙</h2>
+            <h2 className="text-h3 font-semibold text-gray-900">프차허브의 4가지 운영 원칙</h2>
             <p className="mt-3 text-gray-600">
-              모든 amakers 플랫폼은 이 원칙 위에서 설계됩니다.
+              9개 사이트가 공유하는 이 원칙 위에서 설계됩니다.
             </p>
           </div>
           <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -105,7 +105,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-3xl">
           <h2 className="text-h3 font-semibold text-gray-900">pchahub의 역할</h2>
           <p className="mt-4 text-gray-700">
-            프차허브(pchahub)는 amakers 9개 플랫폼 중에서 가맹 정보 검색과 매칭을 담당합니다.
+            프차허브(pchahub)는 9개 전문 플랫폼 중에서 가맹 정보 검색과 매칭을 담당합니다.
             예비 가맹점주가 본인 조건에 맞는 브랜드를 발견하고, 본사가 검증된 후보와 효율적으로
             연결되도록 돕는 양면 마켓플레이스입니다.
           </p>
@@ -131,7 +131,7 @@ export default function AboutPage() {
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-h3 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
+            <h2 className="text-h3 font-semibold text-gray-900">함께하는 8개 플랫폼</h2>
             <p className="mt-3 text-gray-600">
               가맹점 운영의 단계별로 전문 플랫폼이 담당합니다. 모두 한 계정으로 이용 가능합니다.
             </p>
@@ -174,22 +174,18 @@ export default function AboutPage() {
           </p>
           <div className="mt-5 inline-flex flex-col gap-1 rounded-xl bg-gray-50 px-6 py-4 text-left text-sm">
             <div>
-              <span className="text-gray-500">회사명</span>
-              <span className="ml-3 font-medium text-gray-900">amakers</span>
-            </div>
-            <div>
-              <span className="text-gray-500">기존 사이트</span>
+              <span className="text-gray-500">사이트</span>
               <a
-                href="https://amakers.co.kr"
+                href="https://pchahub.kr"
                 className="ml-3 font-medium text-gray-900 hover:underline"
               >
-                amakers.co.kr
+                pchahub.kr
               </a>
             </div>
             <div>
               <span className="text-gray-500">이메일</span>
-              <a href="mailto:help@amakers.co.kr" className="ml-3 font-medium text-gray-900 hover:underline">
-                help@amakers.co.kr
+              <a href="mailto:help@pchahub.kr" className="ml-3 font-medium text-gray-900 hover:underline">
+                help@pchahub.kr
               </a>
             </div>
           </div>
