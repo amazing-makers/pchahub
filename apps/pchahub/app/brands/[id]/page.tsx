@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  ExternalLink,
   FileText,
   Globe,
   GraduationCap,
@@ -111,6 +110,7 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0 space-y-8">
             <PhotoGallerySection detail={detail} brand={brand} />
+            <BrandVideoSection brand={brand} />
             <MenuSection detail={detail} />
             <HQSection detail={detail} />
             <CostsSection detail={detail} totalCost={totalCost} />
@@ -721,7 +721,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
       href: `https://themanual.kr/courses?category=${brand.category}`,
       icon: GraduationCap,
       title: `${brand.categoryLabel} 운영 강의`,
-      sub: '점주 양성 코스 · 본사 운영 매뉴얼 (더매뉴얼)',
+      sub: '점주 양성 코스 · 본사 운영 매뉴얼 (더메뉴얼)',
       accent: '#3B82F6',
     },
     {
@@ -750,10 +750,10 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'changupdocu',
-      href: `https://changupdocu.kr/categories/${brand.category}`,
+      href: `https://changupdocu.kr/episodes?brand=${encodeURIComponent(brand.name)}`,
       icon: Newspaper,
       title: '미디어 · 매거진',
-      sub: '브랜드 다큐멘터리 + 시장 분석 기사 (창업도큐)',
+      sub: '브랜드 다큐멘터리 + 시장 분석 기사 (창업다큐)',
       accent: '#F43F5E',
     },
     {
@@ -795,7 +795,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1 text-sm font-semibold text-gray-900">
                 {l.title}
-                <ExternalLink className="h-3 w-3 text-gray-400 group-hover:text-gray-700" />
+                <ArrowRight className="h-3 w-3 text-gray-400 group-hover:text-gray-700" />
               </div>
               <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">{l.sub}</p>
             </div>
@@ -1008,6 +1008,58 @@ function PhotoGallerySection({ detail, brand }: { detail: BrandDetail; brand: Mo
             />
           </div>
         ))}
+      </div>
+    </SectionCard>
+  )
+}
+
+// ========================================================================
+// Brand Video Section — 본사 등록 홍보 영상
+// ========================================================================
+
+function embeddableUrl(raw: string): string | null {
+  try {
+    const u = new URL(raw)
+    const host = u.hostname.replace(/^www\./, '')
+    if (host === 'youtu.be') {
+      const id = u.pathname.replace(/^\//, '').split('/')[0]
+      return id ? `https://www.youtube.com/embed/${id}` : null
+    }
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      const v = u.searchParams.get('v')
+      if (v) return `https://www.youtube.com/embed/${v}`
+      if (u.pathname.startsWith('/embed/')) return raw
+      return null
+    }
+    if (host === 'vimeo.com') {
+      const id = u.pathname.replace(/^\//, '').split('/')[0]
+      return id ? `https://player.vimeo.com/video/${id}` : null
+    }
+    if (host === 'player.vimeo.com') return raw
+    return null
+  } catch {
+    return null
+  }
+}
+
+function BrandVideoSection({ brand }: { brand: MockBrand }) {
+  if (!brand.videoUrl) return null
+  const src = embeddableUrl(brand.videoUrl)
+  if (!src) return null
+  return (
+    <SectionCard
+      title="브랜드 영상"
+      subtitle={`${brand.name} 본사가 등록한 홍보·매장 영상`}
+    >
+      <div className="relative aspect-video overflow-hidden rounded-xl bg-black">
+        <iframe
+          src={src}
+          title={`${brand.name} 홍보 영상`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 h-full w-full"
+          loading="lazy"
+        />
       </div>
     </SectionCard>
   )

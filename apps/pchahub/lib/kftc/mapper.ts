@@ -227,12 +227,19 @@ export function mapListItemToBrand(
 ): MockBrand {
   const cat = normalizeCategory(item.indutyClsfNm)
   const id = `kftc-${item.jngIfrmpSn}`
+  const color = hashColor(id)
+  const imgs = brandImageSet({
+    brandId: id,
+    category: cat.key,
+    brandName: item.brandNm,
+    logoColor: color,
+  })
   const base: MockBrand = {
     id,
     name: item.brandNm,
     category: cat.key,
     categoryLabel: cat.label,
-    logoColor: hashColor(id),
+    logoColor: color,
     description: `${item.crpoNm}이(가) 운영하는 ${cat.label} 가맹 브랜드.`,
     storeCount: 0,
     startupCost: 0,
@@ -242,7 +249,11 @@ export function mapListItemToBrand(
     featured: false,
     growthRate: 0,
     hqRegion: '서울', // content API에서 갱신
-    heroImage: brandImageSet(id, cat.key).hero,
+    heroImage: imgs.hero,
+    logo: imgs.logo,
+    storeImages: imgs.storeImages,
+    menuImages: imgs.menuImages,
+    videoUrl: undefined,
     ...partial,
   }
   return base
@@ -421,12 +432,19 @@ export function mergeIntoBrands(input: {
       ? Math.round(((storeCount - prevCount) / prevCount) * 100)
       : 0
 
+    const color = hashColor(id)
+    const imgs = brandImageSet({
+      brandId: id,
+      category: cat.key,
+      brandName: b.brandNm,
+      logoColor: color,
+    })
     return {
       id,
       name: b.brandNm,
       category: cat.key,
       categoryLabel: cat.label,
-      logoColor: hashColor(id),
+      logoColor: color,
       description: hq?.crpoNm
         ? `${hq.crpoNm}이(가) 운영하는 ${cat.label} 가맹 브랜드.`
         : `${cat.label} 가맹 브랜드.`,
@@ -438,7 +456,11 @@ export function mergeIntoBrands(input: {
       featured: false,
       growthRate: growth,
       hqRegion: hq?.addr ? extractRegion(hq.addr) : '서울',
-      heroImage: brandImageSet(id, cat.key).hero,
+      heroImage: imgs.hero,
+      logo: imgs.logo,
+      storeImages: imgs.storeImages,
+      menuImages: imgs.menuImages,
+      videoUrl: undefined,
     } satisfies MockBrand
   })
 }
@@ -780,12 +802,19 @@ export function mergeRealApiBrands(
       ? Math.round(((newCnt - endCnt) / frcsCnt) * 100)
       : age <= 3 ? 15 : age <= 7 ? 8 : 3
 
+    const color = hashColor(id)
+    const imgs = brandImageSet({
+      brandId: id,
+      category: cat.key,
+      brandName,
+      logoColor: color,
+    })
     mapped.push({
       id,
       name: brandName,
       category: cat.key,
       categoryLabel: cat.label,
-      logoColor: hashColor(id),
+      logoColor: color,
       description: `${s.corpNm ?? ''}이(가) 운영하는 ${cat.label} 가맹 브랜드.`,
       storeCount: frcsCnt,
       startupCost,
@@ -795,7 +824,11 @@ export function mergeRealApiBrands(
       featured: false,
       growthRate,
       hqRegion: '서울',
-      heroImage: brandImageSet(id, cat.key).hero,
+      heroImage: imgs.hero,
+      logo: imgs.logo,
+      storeImages: imgs.storeImages,
+      menuImages: imgs.menuImages,
+      videoUrl: undefined,
       // KFTC 전용 필드
       corpNm: s.corpNm ?? undefined,
       avgAnnualSales: s.avrgSlsAmt ? Number(s.avrgSlsAmt) : undefined,

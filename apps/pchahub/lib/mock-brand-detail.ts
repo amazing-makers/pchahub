@@ -3,7 +3,6 @@
 // All figures are illustrative until real KFA data is wired in.
 
 import type { MockBrand } from './mock-data'
-import { brandImageSet } from './brand-images'
 
 export interface BrandHQ {
   companyName: string
@@ -335,7 +334,7 @@ const SAMPLE_REVIEWS: Record<string, BrandReview[]> = {
       id: 'r5-1',
       rating: 4,
       summary: '오래된 브랜드라 운영 시스템이 안정적',
-      detail: '20년 된 브랜드라 본사 메뉴얼이 정말 잘 정비되어 있습니다. 다만 트렌드 변화가 빠른 분식 시장에서 신메뉴 출시 속도가 느린 게 단점이에요.',
+      detail: '20년 된 브랜드라 본사 매뉴얼이 정말 잘 정비되어 있습니다. 다만 트렌드 변화가 빠른 분식 시장에서 신메뉴 출시 속도가 느린 게 단점이에요.',
       operatorRole: '5년차 가맹점주',
       region: '서울 강북',
       helpful: 31,
@@ -645,10 +644,13 @@ const MENU_BY_CATEGORY: Record<string, Array<{ name: string; priceWon: number; s
 
 function menuFor(brand: MockBrand): BrandMenuItem[] {
   const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean
-  const images = brandImageSet(brand.id, brand.category).menu
+  // Use the brand's curated menu photos. When HQ uploads its own, brand.menuImages
+  // already contains the uploaded set, so this stays correct.
+  const photoUrls = brand.menuImages.map((m) => m.url)
+  if (photoUrls.length === 0) return base
   return base.map((m, i) => ({
     ...m,
-    image: images[i % images.length],
+    image: photoUrls[i % photoUrls.length] ?? photoUrls[0]!,
   }))
 }
 
@@ -669,7 +671,6 @@ const RECENT_OPENING_LOCATIONS = [
 ]
 
 function recentOpeningsFor(brand: MockBrand): BrandRecentOpening[] {
-  const images = brandImageSet(brand.id, brand.category).store
   const seed = brand.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
   const startIdx = seed % RECENT_OPENING_LOCATIONS.length
   // 신규 매장이 많을수록 더 많은 오픈 표시
@@ -686,7 +687,8 @@ function recentOpeningsFor(brand: MockBrand): BrandRecentOpening[] {
       district: loc.district,
       openedAt: date.toISOString().slice(0, 10),
       area: 10 + ((seed + i * 3) % 22),
-      image: images[i % images.length] ?? images[0],
+      // Unique seed per opening so each card shows a different photo
+      image: `https://picsum.photos/seed/${brand.id}-opening${i}/600/400`,
     }
   })
 }
@@ -836,11 +838,12 @@ export function getBrandDetail(brand: MockBrand): BrandDetail {
   const reviews = SAMPLE_REVIEWS[brand.id] ?? fallbackReviewsFor(brand)
   const ratingDistribution = computeRatingDistribution(reviews)
 
-  const imgs = brandImageSet(brand.id, brand.category)
+  // Pull pre-computed brand assets directly from the brand record. These were
+  // populated when BRANDS was built (or overridden with HQ-uploaded files).
   const photos: BrandPhotos = {
-    hero: imgs.hero,
-    store: imgs.store,
-    gallery: imgs.menu,
+    hero: brand.heroImage,
+    store: brand.storeImages,
+    gallery: brand.menuImages.map((m) => m.url),
   }
 
   return {

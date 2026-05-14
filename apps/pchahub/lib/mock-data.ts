@@ -2,7 +2,7 @@
 // once Supabase is connected. Brand names are fictional to avoid trademark
 // issues; figures are illustrative and not based on actual KFA disclosures.
 
-import { brandImageSet } from './brand-images'
+import { brandImageSet, type BrandMenuImage } from './brand-images'
 
 export interface MockCategory {
   key: string
@@ -35,6 +35,16 @@ export interface MockBrand {
   hqRegion: string
   /** Hero image URL — real photo for brand card / detail page. */
   heroImage: string
+  // ── 본사가 직접 등록하는 미디어 자산 ───────────────────────
+  /** Brand logo. Inline SVG data URI by default; replaced with HQ-uploaded
+   *  logo (Supabase Storage `brands/{id}/logo.svg|png`) once HQ registers. */
+  logo: string
+  /** Storefront + interior photos (2 images). HQ-uploaded after registration. */
+  storeImages: string[]
+  /** Menu/product photos (4 images, first is signature). */
+  menuImages: BrandMenuImage[]
+  /** Promo video (YouTube/Vimeo embed URL). Empty until HQ uploads. */
+  videoUrl?: string
   // ── 실 API(KFTC) 전용 필드 ──────────────────────────────
   /** KFTC 법인명 (실API 브랜드). 없으면 name 기반 표시. */
   corpNm?: string
@@ -272,11 +282,28 @@ const BRAND_HQ_REGION: Record<string, string> = {
   b12: '서울',
 }
 
-export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => ({
-  ...b,
-  hqRegion: b.hqRegion ?? BRAND_HQ_REGION[b.id] ?? '서울',
-  heroImage: brandImageSet(b.id, b.category).hero,
-}))
+/** Per-brand promo video. Empty for now — HQ uploads via /for-brands/register. */
+const BRAND_VIDEO_URL: Record<string, string | undefined> = {
+  // b1: 'https://www.youtube.com/embed/...',  // HQ-supplied once available
+}
+
+export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => {
+  const imgs = brandImageSet({
+    brandId: b.id,
+    category: b.category,
+    brandName: b.name,
+    logoColor: b.logoColor,
+  })
+  return {
+    ...b,
+    hqRegion: b.hqRegion ?? BRAND_HQ_REGION[b.id] ?? '서울',
+    heroImage: imgs.hero,
+    logo: imgs.logo,
+    storeImages: imgs.storeImages,
+    menuImages: imgs.menuImages,
+    videoUrl: BRAND_VIDEO_URL[b.id],
+  }
+})
 
 export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)

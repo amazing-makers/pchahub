@@ -242,7 +242,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
 
                 <Button size="lg" className="w-full gap-1">
                   <Phone className="h-4 w-4" />
-                  중개사 연락 받기
+                  부동산 상담 신청
                 </Button>
                 <Button size="lg" variant="outline" className="w-full gap-1">
                   <MessageSquare className="h-4 w-4" />
@@ -260,7 +260,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 <div className="font-semibold">안전한 거래 안내</div>
                 <p className="mt-1 text-xs leading-relaxed">
                   amakers는 모든 매물에 대해 실사를 진행하고, 양도 거래 시 표준 계약서와 에스크로 결제를 지원합니다.
-                  중개수수료는 양측 합의 후 별도 공시됩니다.
+                  거래 수수료는 양측 합의 후 별도 안내됩니다.
                 </p>
               </CardContent>
             </Card>

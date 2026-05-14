@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle2, FileUp, ImagePlus, Plus, Send, Shield, Trash2, X } from 'lucide-react'
+import { CheckCircle2, FileUp, ImagePlus, Plus, Send, Shield, Trash2, Video, X } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { CATEGORIES } from '@/lib/mock-data'
 
@@ -9,6 +9,9 @@ interface MenuItemDraft {
   name: string
   priceWon: string
   signature: boolean
+  /** Indicates HQ has attached a photo for this menu item. In production this
+   *  would carry a File or Supabase Storage path. */
+  photoUploaded: boolean
 }
 
 interface FormState {
@@ -31,6 +34,8 @@ interface FormState {
   // 사진
   heroPhotoUploaded: boolean
   storePhotoCount: number
+  // 영상 (YouTube/Vimeo URL)
+  promoVideoUrl: string
   // 메뉴
   menuItems: MenuItemDraft[]
   // KFA 확장
@@ -73,7 +78,8 @@ export function RegisterForm() {
     hasLogo: false,
     heroPhotoUploaded: false,
     storePhotoCount: 0,
-    menuItems: [{ name: '', priceWon: '', signature: true }],
+    promoVideoUrl: '',
+    menuItems: [{ name: '', priceWon: '', signature: true, photoUploaded: false }],
     contractYears: '3',
     hqAdvertisingShare: '70',
     territoryProtection: '',
@@ -342,6 +348,35 @@ export function RegisterForm() {
           </CardContent>
         </Card>
 
+        {/* 브랜드 영상 */}
+        <Card className="border-gray-200 shadow-sm">
+          <CardContent className="space-y-3 p-6">
+            <SectionHeader
+              title="브랜드 영상 (선택)"
+              helper="홍보 영상이나 매장 둘러보기 영상을 등록하면 가맹 문의 전환율이 평균 35% 증가합니다."
+            />
+            <Field label="YouTube 또는 Vimeo 영상 URL">
+              <div className="relative">
+                <Video className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="url"
+                  value={state.promoVideoUrl}
+                  onChange={(e) => update('promoVideoUrl', e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=... 또는 https://vimeo.com/..."
+                  className="form-input pl-9"
+                />
+              </div>
+            </Field>
+            {state.promoVideoUrl && (
+              <p className="text-xs text-gray-500">
+                {isEmbeddable(state.promoVideoUrl)
+                  ? '✓ 인식된 영상입니다. 브랜드 페이지에 임베드되어 표시됩니다.'
+                  : '⚠ YouTube(youtu.be / youtube.com) 또는 Vimeo 링크만 임베드 가능합니다.'}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
         {/* 대표 메뉴 */}
         <Card className="border-gray-200 shadow-sm">
           <CardContent className="space-y-4 p-6">
@@ -351,7 +386,31 @@ export function RegisterForm() {
             />
             <div className="space-y-2">
               {state.menuItems.map((m, idx) => (
-                <div key={idx} className="grid gap-2 sm:grid-cols-[1fr_140px_120px_auto]">
+                <div key={idx} className="grid gap-2 sm:grid-cols-[64px_1fr_140px_120px_auto]">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setState((p) => ({
+                        ...p,
+                        menuItems: p.menuItems.map((it, i) =>
+                          i === idx ? { ...it, photoUploaded: !it.photoUploaded } : it,
+                        ),
+                      }))
+                    }
+                    aria-label={m.photoUploaded ? '메뉴 사진 제거' : '메뉴 사진 업로드'}
+                    className={
+                      'flex aspect-square h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed text-xs transition-colors ' +
+                      (m.photoUploaded
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                        : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300')
+                    }
+                  >
+                    {m.photoUploaded ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : (
+                      <ImagePlus className="h-5 w-5" />
+                    )}
+                  </button>
                   <input
                     type="text"
                     value={m.name}
@@ -417,7 +476,10 @@ export function RegisterForm() {
                 onClick={() =>
                   setState((p) => ({
                     ...p,
-                    menuItems: [...p.menuItems, { name: '', priceWon: '', signature: false }],
+                    menuItems: [
+                      ...p.menuItems,
+                      { name: '', priceWon: '', signature: false, photoUploaded: false },
+                    ],
                   }))
                 }
                 className="inline-flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-gray-900"
@@ -615,8 +677,18 @@ export function RegisterForm() {
                   value={`대표 ${state.heroPhotoUploaded ? '✓' : '×'} · 매장 ${state.storePhotoCount}장`}
                 />
                 <Row
+                  label="영상"
+                  value={
+                    state.promoVideoUrl
+                      ? isEmbeddable(state.promoVideoUrl)
+                        ? '등록됨'
+                        : '형식 확인 필요'
+                      : '미등록'
+                  }
+                />
+                <Row
                   label="메뉴"
-                  value={`${state.menuItems.filter((m) => m.name.trim()).length}개 등록`}
+                  value={`${state.menuItems.filter((m) => m.name.trim()).length}개 (사진 ${state.menuItems.filter((m) => m.photoUploaded).length}장)`}
                 />
                 <Row
                   label="시작 등급"
@@ -773,4 +845,23 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="max-w-[60%] text-right text-xs font-medium text-gray-900">{value}</span>
     </div>
   )
+}
+
+/** Lightweight YouTube/Vimeo URL detection — mirrors embeddableUrl on the
+ *  brand detail page so HQ sees realtime feedback while typing. */
+function isEmbeddable(raw: string): boolean {
+  try {
+    const u = new URL(raw)
+    const host = u.hostname.replace(/^www\./, '')
+    if (host === 'youtu.be') return Boolean(u.pathname.replace(/^\//, '').split('/')[0])
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      return Boolean(u.searchParams.get('v')) || u.pathname.startsWith('/embed/')
+    }
+    if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+      return Boolean(u.pathname.replace(/^\//, '').split('/')[0])
+    }
+    return false
+  } catch {
+    return false
+  }
 }
