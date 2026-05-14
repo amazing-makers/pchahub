@@ -6,11 +6,13 @@ import {
   Bell,
   CheckCircle2,
   Eye,
+  ImageIcon,
   MessageSquare,
   MousePointerClick,
   PencilLine,
   TrendingUp,
   Users,
+  Video,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
@@ -133,6 +135,9 @@ export default async function HQDashboard() {
             delta="+0.4%"
           />
         </div>
+
+        {/* Brand Media Completeness */}
+        <BrandMediaCard brand={myBrand} />
 
         {/* Inquiries */}
         <section>
@@ -291,5 +296,168 @@ function MetricCard({
         <div className="mt-1 text-xs font-medium text-emerald-600">{delta}</div>
       </CardContent>
     </Card>
+  )
+}
+
+/**
+ * Brand media completeness — a glance at how filled-out the brand's public
+ * page is. Encourages HQ to add missing photos/video by linking directly to
+ * /hq/brand/edit.
+ */
+function BrandMediaCard({
+  brand,
+}: {
+  brand: {
+    name: string
+    logo: string
+    storeImages: string[]
+    menuImages: { url: string; signature?: boolean }[]
+    videoUrl?: string
+  }
+}) {
+  // Logo is always populated (auto-generated SVG fallback). Treat as "uploaded"
+  // only when HQ replaced the SVG with a raster/SVG file — i.e. not a data URI.
+  const hasCustomLogo = !brand.logo.startsWith('data:image/svg')
+  const storeCount = brand.storeImages.filter(Boolean).length
+  const menuCount = brand.menuImages.filter((m) => m.url).length
+  const hasVideo = Boolean(brand.videoUrl)
+  const hasSignature = brand.menuImages.some((m) => m.signature)
+
+  // Completion score (out of 4 buckets)
+  const buckets = [hasCustomLogo, storeCount >= 2, menuCount >= 3, hasVideo]
+  const completed = buckets.filter(Boolean).length
+  const pct = Math.round((completed / buckets.length) * 100)
+
+  return (
+    <section>
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <h2 className="inline-flex items-center gap-2 text-h4 font-semibold text-gray-900">
+            <ImageIcon className="h-5 w-5 text-gray-600" />
+            브랜드 미디어 등록 상태
+          </h2>
+          <p className="mt-0.5 text-sm text-gray-500">
+            사진과 영상이 풍부한 브랜드 페이지는 가맹 문의 전환율이 평균 2배 높습니다.
+          </p>
+        </div>
+        <a href="/hq/brand/edit">
+          <Button size="md" className="gap-1">
+            <PencilLine className="h-4 w-4" />
+            미디어 편집
+          </Button>
+        </a>
+      </div>
+
+      <Card className="border-gray-200 shadow-sm">
+        <CardContent className="space-y-5 p-6">
+          {/* Progress bar */}
+          <div>
+            <div className="mb-1.5 flex items-center justify-between text-xs">
+              <span className="font-medium text-gray-700">
+                완성도 {completed} / {buckets.length}
+              </span>
+              <span
+                className={
+                  pct === 100
+                    ? 'font-semibold text-emerald-600'
+                    : pct >= 50
+                      ? 'font-medium text-amber-600'
+                      : 'font-medium text-rose-600'
+                }
+              >
+                {pct}%
+              </span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+              <div
+                className={
+                  'h-full transition-all ' +
+                  (pct === 100
+                    ? 'bg-emerald-500'
+                    : pct >= 50
+                      ? 'bg-amber-500'
+                      : 'bg-rose-500')
+                }
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Item rows */}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <MediaRow
+              icon={ImageIcon}
+              label="브랜드 로고"
+              ok={hasCustomLogo}
+              detail={hasCustomLogo ? '본사 업로드 완료' : '자동 생성 (이니셜)'}
+              actionLabel={hasCustomLogo ? undefined : '로고 업로드'}
+            />
+            <MediaRow
+              icon={ImageIcon}
+              label="매장 사진"
+              ok={storeCount >= 2}
+              detail={`${storeCount}/2 등록`}
+              actionLabel={storeCount < 2 ? '사진 추가' : undefined}
+            />
+            <MediaRow
+              icon={ImageIcon}
+              label="메뉴 사진"
+              ok={menuCount >= 3 && hasSignature}
+              detail={`${menuCount}/3+ · 시그니처 ${hasSignature ? '지정' : '미지정'}`}
+              actionLabel={!hasSignature || menuCount < 3 ? '메뉴 등록' : undefined}
+            />
+            <MediaRow
+              icon={Video}
+              label="홍보 영상"
+              ok={hasVideo}
+              detail={hasVideo ? 'YouTube/Vimeo 등록' : 'URL 미등록'}
+              actionLabel={hasVideo ? undefined : '영상 URL 등록'}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </section>
+  )
+}
+
+function MediaRow({
+  icon: Icon,
+  label,
+  ok,
+  detail,
+  actionLabel,
+}: {
+  icon: typeof ImageIcon
+  label: string
+  ok: boolean
+  detail: string
+  actionLabel?: string
+}) {
+  return (
+    <div
+      className={
+        'rounded-xl border p-3 ' +
+        (ok ? 'border-emerald-200 bg-emerald-50/40' : 'border-amber-200 bg-amber-50/40')
+      }
+    >
+      <div className="flex items-start gap-2">
+        <Icon className={'h-4 w-4 shrink-0 ' + (ok ? 'text-emerald-600' : 'text-amber-600')} />
+        <div className="min-w-0 flex-1">
+          <div className="text-xs font-semibold text-gray-900">{label}</div>
+          <div className="mt-0.5 text-xs text-gray-600">{detail}</div>
+        </div>
+        {ok ? (
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+        ) : null}
+      </div>
+      {actionLabel && (
+        <a
+          href="/hq/brand/edit"
+          className="mt-2 inline-flex items-center gap-0.5 text-xs font-medium text-amber-700 hover:text-amber-900"
+        >
+          {actionLabel} <ArrowUpRight className="h-3 w-3" />
+        </a>
+      )}
+    </div>
   )
 }
