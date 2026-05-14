@@ -5,7 +5,7 @@ import {
   Calendar,
   CheckCircle2,
   ChevronRight,
-  ExternalLink,
+  ArrowRight,
   MapPin,
   Star,
   Users,
@@ -130,7 +130,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                     className="inline-flex items-center gap-1 text-sm text-gray-700 hover:underline"
                   >
                     {brand.name} (프차허브에서 브랜드 정보)
-                    <ExternalLink className="h-3 w-3" />
+                    <ArrowRight className="h-3 w-3" />
                   </a>
                 </div>
               )}
@@ -299,35 +299,35 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
             <Card className="border-gray-200 shadow-sm">
               <CardContent className="space-y-4 p-5">
                 <div>
-                  <div className="text-xs text-gray-500">amakers 연계</div>
+                  <div className="text-xs text-gray-500">amakers 통합 정보</div>
                   <div className="mt-1 text-sm text-gray-700">
-                    이 매장과 연결된 다른 사이트 정보를 확인하세요.
+                    이 매장의 브랜드 · 매물 · 운영 · 커뮤니티 정보가 amakers 안에서 함께 제공됩니다.
                   </div>
                 </div>
                 {brand && (
                   <a href={`https://pchahub.kr/brands/${brand.id}`} className="block">
                     <Button size="md" variant="outline" className="w-full justify-between gap-1">
                       <span>{brand.name} 브랜드 정보</span>
-                      <ExternalLink className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   </a>
                 )}
                 <a href="https://themyungdang.kr/listings" className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>{store.region} 매물 보기</span>
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </a>
                 <a href="https://jangsanote.kr" className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>점주 커뮤니티 (장사노트)</span>
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </a>
                 <a href={`https://themanual.kr/courses?category=${brand?.category}`} className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>{brand?.categoryLabel} 운영 강의</span>
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </a>
               </CardContent>

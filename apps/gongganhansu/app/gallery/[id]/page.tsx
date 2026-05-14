@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Calendar, ChevronRight, ExternalLink, MapPin, Store } from 'lucide-react'
+import { Calendar, ChevronRight, ArrowRight, MapPin, Store } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
@@ -154,7 +154,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                           <Store className="h-3.5 w-3.5 text-indigo-500" />
                           이 브랜드 가맹 정보
                         </span>
-                        <ExternalLink className="h-3 w-3 text-gray-400" />
+                        <ArrowRight className="h-3 w-3 text-gray-400" />
                       </a>
                       <a
                         href={`https://bestplace.kr/stores?q=${encodeURIComponent(item.title)}`}
@@ -164,7 +164,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                           <Store className="h-3.5 w-3.5 text-amber-500" />
                           이 매장 베스트플레이스
                         </span>
-                        <ExternalLink className="h-3 w-3 text-gray-400" />
+                        <ArrowRight className="h-3 w-3 text-gray-400" />
                       </a>
                       <a
                         href={`https://themyungdang.kr/listings?region=${encodeURIComponent(item.region)}`}
@@ -174,7 +174,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                           <MapPin className="h-3.5 w-3.5 text-emerald-500" />
                           {item.region} 매물 보기
                         </span>
-                        <ExternalLink className="h-3 w-3 text-gray-400" />
+                        <ArrowRight className="h-3 w-3 text-gray-400" />
                       </a>
                     </div>
                   </CardContent>
