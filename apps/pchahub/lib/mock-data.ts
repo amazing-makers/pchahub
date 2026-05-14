@@ -466,6 +466,17 @@ export const BRANDS: MockBrand[] = [..._CURATED, ..._V2]
 export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)
 
+// 추천순 comparator — 사진 있는 큐레이션·V2 카탈로그(b/v prefix ID)를 KFTC
+// 텍스트 브랜드보다 먼저, 같은 그룹 내에서는 성장률 내림차순. 모든 브랜드
+// 리스트 페이지의 기본 정렬에 사용. growth-desc 같은 명시적 sort는 이
+// comparator를 무시.
+export function compareBrandsRecommended(a: MockBrand, b: MockBrand): number {
+  const ar = a.id.startsWith('b') || a.id.startsWith('v') ? 0 : 1
+  const br = b.id.startsWith('b') || b.id.startsWith('v') ? 0 : 1
+  if (ar !== br) return ar - br
+  return b.growthRate - a.growthRate
+}
+
 /** Brands currently trending — combined signal of recent growth + store base. */
 export const TRENDING_BRANDS = [...BRANDS]
   .sort((a, b) => b.growthRate * Math.log(b.storeCount + 1) - a.growthRate * Math.log(a.storeCount + 1))

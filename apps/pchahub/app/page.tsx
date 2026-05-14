@@ -6,7 +6,7 @@ import { SearchBar } from '@/components/search-bar'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
 import { ListingCard } from '@/components/listing-card'
-import { CATEGORIES, FEATURED_BRANDS } from '@/lib/mock-data'
+import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { getBrands } from '@/lib/kftc/source'
 
@@ -18,10 +18,8 @@ export const revalidate = 3600 // 1시간 캐시
 
 export default async function HomePage() {
   const allBrands = await getBrands()
-  // 성장률 높은 순 상위 6개 (실데이터 없으면 mock fallback은 이미 source에서 처리)
-  const trendingBrands = [...allBrands]
-    .sort((a, b) => b.growthRate - a.growthRate)
-    .slice(0, 6)
+  // 추천순(사진 있는 V2/큐레이션 우선 + 성장률) 상위 6개
+  const trendingBrands = [...allBrands].sort(compareBrandsRecommended).slice(0, 6)
   // 매장 수 많은 순 상위 6개 (가맹 모집 중 섹션)
   const recruitingBrands = [...allBrands]
     .sort((a, b) => b.storeCount - a.storeCount)

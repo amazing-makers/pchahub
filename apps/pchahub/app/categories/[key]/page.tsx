@@ -5,7 +5,7 @@ import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildPageMetadata } from '@amakers/design-system'
 import { BrandCard } from '@/components/brand-card'
-import { CATEGORIES } from '@/lib/mock-data'
+import { CATEGORIES, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands } from '@/lib/kftc/source'
 
 export function generateStaticParams() {
@@ -37,7 +37,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   const allBrands = await getBrands()
   const brands = allBrands.filter((b) => b.category === category.key)
-  const sort = searchParams.sort ?? 'growth-desc'
+  const sort = searchParams.sort ?? 'recommended'
 
   const sorted = [...brands].sort((a, b) => {
     switch (sort) {
@@ -47,8 +47,10 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         return b.startupCost - a.startupCost
       case 'stores-desc':
         return b.storeCount - a.storeCount
-      default:
+      case 'growth-desc':
         return b.growthRate - a.growthRate
+      default:
+        return compareBrandsRecommended(a, b)
     }
   })
 

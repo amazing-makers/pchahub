@@ -148,11 +148,15 @@ async function main() {
 
   await writeFile(OUT_JSON, JSON.stringify(localPaths, null, 2), 'utf8')
 
-  console.log(`\n✅ Complete!`)
+  console.log(`\n✅ Download complete!`)
   console.log(`   Downloaded: ${totalDownloaded} files`)
   console.log(`   Skipped (existing): ${totalSkipped} files`)
   console.log(`   Failed: ${totalFailed} files`)
   console.log(`   Local paths written to: ${OUT_JSON}`)
+  console.log(`\n⚠️  REQUIRED next step: 원본은 압축 안 됨(최대 ~100MB/장).`)
+  console.log(`   git에 넣기 전 또는 페이지 로딩 전 반드시 리사이즈:`)
+  console.log(`   PowerShell:  $s = Get-Content -Raw scripts/resize-v2-photos.ps1; $s | iex`)
+  console.log(`   결과: 1200px·JPEG q80, 합 ~100MB로 줄어듦.`)
 }
 
 main().catch(e => { console.error('Fatal:', e); process.exit(1) })
