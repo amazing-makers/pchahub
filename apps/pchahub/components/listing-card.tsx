@@ -11,7 +11,7 @@ export function ListingCard({ listing }: ListingCardProps) {
   return (
     <a href={`/listings/${listing.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
-        <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={listing.images[0]}

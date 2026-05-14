@@ -275,13 +275,13 @@ function PhotoGallery({ images, title }: { images: string[]; title: string }) {
   return (
     <Card className="overflow-hidden border-gray-200">
       <div className="grid grid-cols-1 gap-1 sm:grid-cols-3">
-        <div className="relative h-72 overflow-hidden sm:col-span-2">
+        <div className="relative aspect-[16/10] overflow-hidden sm:col-span-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={images[0]} alt={title} className="h-full w-full object-cover" />
         </div>
         <div className="grid grid-cols-1 gap-1">
           {images.slice(1, 3).map((src, i) => (
-            <div key={i} className="relative h-[142px] overflow-hidden">
+            <div key={i} className="relative aspect-[16/10] overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`${title} ${i + 2}`} className="h-full w-full object-cover" />
             </div>

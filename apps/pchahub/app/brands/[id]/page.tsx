@@ -221,7 +221,7 @@ function BrandHero({
 
   return (
     <section className="border-b border-gray-200 bg-white">
-      <div className="relative h-56 w-full overflow-hidden bg-gray-100 sm:h-72">
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100 sm:aspect-[21/9] sm:max-h-[480px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={detail.photos.hero}

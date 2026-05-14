@@ -13,7 +13,7 @@ export function BrandCard({ brand, featured = false }: BrandCardProps) {
   return (
     <a href={`/brands/${brand.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
-        <div className="relative h-36 w-full overflow-hidden bg-gray-100">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={brand.heroImage}
