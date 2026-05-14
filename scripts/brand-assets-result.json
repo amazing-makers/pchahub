@@ -1,0 +1,211 @@
+[
+  {
+    "id": "b1",
+    "ourName": "치킨다이스",
+    "realName": "호치킨",
+    "regNum": "20120100525",
+    "paths": {
+      "storeImages": [
+        "/brands/b1/store-0.jpg"
+      ],
+      "logo": "/brands/b1/logo.png",
+      "heroImage": "/brands/b1/store-0.jpg",
+      "menuImages": [],
+      "videoUrl": "https://youtu.be/xREdAvKl7vs?si=CmuvIaXhxYdV0VB-"
+    }
+  },
+  {
+    "id": "b2",
+    "ourName": "데일리브루",
+    "realName": "텐퍼센트스페셜티커피",
+    "regNum": "20180244",
+    "paths": {
+      "storeImages": [
+        "/brands/b2/store-0.png",
+        "/brands/b2/store-1.jpg",
+        "/brands/b2/store-2.jpg"
+      ],
+      "logo": "/brands/b2/logo.png",
+      "heroImage": "/brands/b2/store-0.png",
+      "menuImages": [],
+      "videoUrl": "https://youtu.be/raHzxE5YVJk?si=NImB7gMD-zePOtSC"
+    }
+  },
+  {
+    "id": "b3",
+    "ourName": "한솥미식",
+    "realName": "육칠이",
+    "regNum": "20213078",
+    "paths": {
+      "storeImages": [
+        "/brands/b3/store-0.jpg"
+      ],
+      "logo": "/brands/b3/logo.jpg",
+      "heroImage": "/brands/b3/store-0.jpg",
+      "menuImages": [],
+      "videoUrl": "https://youtu.be/gIMV4welBTo"
+    }
+  },
+  {
+    "id": "b4",
+    "ourName": "스시키친",
+    "realName": "백소정",
+    "regNum": "20211853",
+    "paths": {
+      "storeImages": [
+        "/brands/b4/store-0.jpg",
+        "/brands/b4/store-1.jpg",
+        "/brands/b4/store-2.jpg"
+      ],
+      "logo": "/brands/b4/logo.jpg",
+      "heroImage": "/brands/b4/store-0.jpg",
+      "menuImages": [
+        "/brands/b4/menu-0.jpg"
+      ],
+      "videoUrl": "https://youtu.be/206IwNJrt7o"
+    }
+  },
+  {
+    "id": "b5",
+    "ourName": "분식나라",
+    "realName": "헬키푸키",
+    "regNum": "20220073",
+    "paths": {
+      "storeImages": [
+        "/brands/b5/store-0.png",
+        "/brands/b5/store-1.png",
+        "/brands/b5/store-2.png"
+      ],
+      "logo": "/brands/b5/logo.jpg",
+      "heroImage": "/brands/b5/store-0.png",
+      "menuImages": [
+        "/brands/b5/menu-0.png"
+      ],
+      "videoUrl": "https://youtu.be/gzXumPG0oCc?si=AntH9WiSqoE6lGXW"
+    }
+  },
+  {
+    "id": "b6",
+    "ourName": "스윗스튜디오",
+    "realName": "과일에반하다.프루타",
+    "regNum": "20211504",
+    "paths": {
+      "storeImages": [
+        "/brands/b6/store-0.png"
+      ],
+      "logo": "/brands/b6/logo.jpg",
+      "heroImage": "/brands/b6/store-0.png",
+      "menuImages": [],
+      "videoUrl": "https://youtu.be/wxIFJcdjiow?si=gp5a3EUhpdzB_6iY"
+    }
+  },
+  {
+    "id": "b7",
+    "ourName": "주스레인",
+    "realName": "슬로우캘리",
+    "regNum": "20212429",
+    "paths": {
+      "storeImages": [
+        "/brands/b7/store-0.png",
+        "/brands/b7/store-1.png",
+        "/brands/b7/store-2.png"
+      ],
+      "logo": "/brands/b7/logo.jpg",
+      "heroImage": "/brands/b7/store-0.png",
+      "menuImages": [
+        "/brands/b7/menu-0.png"
+      ],
+      "videoUrl": "https://youtu.be/LZVoPg0O4Js?si=zHOnvUyN07RhBC-r"
+    }
+  },
+  {
+    "id": "b8",
+    "ourName": "포차모임",
+    "realName": "숯토리",
+    "regNum": "20240481",
+    "paths": {
+      "storeImages": [
+        "/brands/b8/store-0.png",
+        "/brands/b8/store-1.png",
+        "/brands/b8/store-2.png"
+      ],
+      "logo": "/brands/b8/logo.jpg",
+      "heroImage": "/brands/b8/store-0.png",
+      "menuImages": [
+        "/brands/b8/menu-0.png"
+      ],
+      "videoUrl": "https://youtu.be/KP4fCb6ZGr0"
+    }
+  },
+  {
+    "id": "b9",
+    "ourName": "크리스피네스트",
+    "realName": "기영이숯불두마리치킨",
+    "regNum": "20213267",
+    "paths": {
+      "storeImages": [
+        "/brands/b9/store-0.jpg",
+        "/brands/b9/store-1.jpg"
+      ],
+      "logo": "/brands/b9/logo.jpg",
+      "heroImage": "/brands/b9/store-0.jpg",
+      "menuImages": [],
+      "videoUrl": "https://youtube.com/shorts/hTTglsPt4NY?si=ycuNvCggVUg8_O3v"
+    }
+  },
+  {
+    "id": "b10",
+    "ourName": "카페모먼트",
+    "realName": "동경에서먹었던규동",
+    "regNum": "20181157",
+    "paths": {
+      "storeImages": [
+        "/brands/b10/store-0.png",
+        "/brands/b10/store-1.jpg",
+        "/brands/b10/store-2.jpg"
+      ],
+      "logo": "/brands/b10/logo.jpg",
+      "heroImage": "/brands/b10/store-0.png",
+      "menuImages": [],
+      "videoUrl": "https://www.youtube.com/watch?v=1DBsPRKRCdE"
+    }
+  },
+  {
+    "id": "b11",
+    "ourName": "한그릇진심",
+    "realName": "9504 양평칼국수",
+    "regNum": "20250859",
+    "paths": {
+      "storeImages": [
+        "/brands/b11/store-0.jpg",
+        "/brands/b11/store-1.jpg",
+        "/brands/b11/store-2.jpg"
+      ],
+      "logo": "/brands/b11/logo.png",
+      "heroImage": "/brands/b11/store-0.jpg",
+      "menuImages": [
+        "/brands/b11/menu-0.jpg"
+      ],
+      "videoUrl": "https://youtube.com/shorts/VftGCEL41gQ?si=2WTDpow1H2q6ugtQ"
+    }
+  },
+  {
+    "id": "b12",
+    "ourName": "라멘이치고",
+    "realName": "국민매운찜갈비",
+    "regNum": "20220296",
+    "paths": {
+      "storeImages": [
+        "/brands/b12/store-0.jpg",
+        "/brands/b12/store-1.jpg",
+        "/brands/b12/store-2.jpg"
+      ],
+      "logo": "/brands/b12/logo.jpg",
+      "heroImage": "/brands/b12/store-0.jpg",
+      "menuImages": [
+        "/brands/b12/menu-0.jpg"
+      ],
+      "videoUrl": "https://youtu.be/ciMResgiMSY?si=DSY5vnYKJaMcOB6k"
+    }
+  }
+]

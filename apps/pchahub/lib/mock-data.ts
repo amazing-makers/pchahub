@@ -282,12 +282,94 @@ const BRAND_HQ_REGION: Record<string, string> = {
   b12: '서울',
 }
 
-/** Per-brand promo video. Empty for now — HQ uploads via /for-brands/register.
- *  b1 / b2 use Blender Foundation's open movies (Creative Commons) as demo
- *  placeholders. Real HQs override these with their own promo footage. */
-const BRAND_VIDEO_URL: Record<string, string | undefined> = {
-  b1: 'https://www.youtube.com/watch?v=YE7VzlLtp-4',  // Demo: Big Buck Bunny (CC BY 3.0)
-  b2: 'https://vimeo.com/22439234',                    // Demo: Big Buck Bunny on Vimeo (CC BY 3.0)
+// Real franchise assets downloaded from myfranchise.kr (logos, store photos,
+// YouTube video URLs). These override the generated Unsplash placeholders for
+// each brand. The fictional brand names remain; only the visual assets are real.
+const REAL_ASSETS: Record<string, {
+  logo?: string
+  heroImage?: string
+  storeImages?: string[]
+  menuImage0?: string
+  videoUrl?: string
+}> = {
+  b1: {
+    logo: '/brands/b1/logo.png',
+    heroImage: '/brands/b1/store-0.jpg',
+    storeImages: ['/brands/b1/store-0.jpg'],
+    videoUrl: 'https://youtu.be/xREdAvKl7vs',
+  },
+  b2: {
+    logo: '/brands/b2/logo.png',
+    heroImage: '/brands/b2/store-0.png',
+    storeImages: ['/brands/b2/store-0.png', '/brands/b2/store-1.jpg', '/brands/b2/store-2.jpg'],
+    videoUrl: 'https://youtu.be/raHzxE5YVJk',
+  },
+  b3: {
+    logo: '/brands/b3/logo.jpg',
+    heroImage: '/brands/b3/store-0.jpg',
+    storeImages: ['/brands/b3/store-0.jpg'],
+    videoUrl: 'https://youtu.be/gIMV4welBTo',
+  },
+  b4: {
+    logo: '/brands/b4/logo.jpg',
+    heroImage: '/brands/b4/store-0.jpg',
+    storeImages: ['/brands/b4/store-0.jpg', '/brands/b4/store-1.jpg', '/brands/b4/store-2.jpg'],
+    menuImage0: '/brands/b4/menu-0.jpg',
+    videoUrl: 'https://youtu.be/206IwNJrt7o',
+  },
+  b5: {
+    logo: '/brands/b5/logo.jpg',
+    heroImage: '/brands/b5/store-0.png',
+    storeImages: ['/brands/b5/store-0.png', '/brands/b5/store-1.png', '/brands/b5/store-2.png'],
+    menuImage0: '/brands/b5/menu-0.png',
+    videoUrl: 'https://youtu.be/gzXumPG0oCc',
+  },
+  b6: {
+    logo: '/brands/b6/logo.jpg',
+    heroImage: '/brands/b6/store-0.png',
+    storeImages: ['/brands/b6/store-0.png'],
+    videoUrl: 'https://youtu.be/wxIFJcdjiow',
+  },
+  b7: {
+    logo: '/brands/b7/logo.jpg',
+    heroImage: '/brands/b7/store-0.png',
+    storeImages: ['/brands/b7/store-0.png', '/brands/b7/store-1.png', '/brands/b7/store-2.png'],
+    menuImage0: '/brands/b7/menu-0.png',
+    videoUrl: 'https://youtu.be/LZVoPg0O4Js',
+  },
+  b8: {
+    logo: '/brands/b8/logo.jpg',
+    heroImage: '/brands/b8/store-0.png',
+    storeImages: ['/brands/b8/store-0.png', '/brands/b8/store-1.png', '/brands/b8/store-2.png'],
+    menuImage0: '/brands/b8/menu-0.png',
+    videoUrl: 'https://youtu.be/KP4fCb6ZGr0',
+  },
+  b9: {
+    logo: '/brands/b9/logo.jpg',
+    heroImage: '/brands/b9/store-0.jpg',
+    storeImages: ['/brands/b9/store-0.jpg', '/brands/b9/store-1.jpg'],
+    videoUrl: 'https://youtube.com/shorts/hTTglsPt4NY',
+  },
+  b10: {
+    logo: '/brands/b10/logo.jpg',
+    heroImage: '/brands/b10/store-0.png',
+    storeImages: ['/brands/b10/store-0.png', '/brands/b10/store-1.jpg', '/brands/b10/store-2.jpg'],
+    videoUrl: 'https://www.youtube.com/watch?v=1DBsPRKRCdE',
+  },
+  b11: {
+    logo: '/brands/b11/logo.png',
+    heroImage: '/brands/b11/store-0.jpg',
+    storeImages: ['/brands/b11/store-0.jpg', '/brands/b11/store-1.jpg', '/brands/b11/store-2.jpg'],
+    menuImage0: '/brands/b11/menu-0.jpg',
+    videoUrl: 'https://youtube.com/shorts/VftGCEL41gQ',
+  },
+  b12: {
+    logo: '/brands/b12/logo.jpg',
+    heroImage: '/brands/b12/store-0.jpg',
+    storeImages: ['/brands/b12/store-0.jpg', '/brands/b12/store-1.jpg', '/brands/b12/store-2.jpg'],
+    menuImage0: '/brands/b12/menu-0.jpg',
+    videoUrl: 'https://youtu.be/ciMResgiMSY',
+  },
 }
 
 export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => {
@@ -297,14 +379,20 @@ export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => {
     brandName: b.name,
     logoColor: b.logoColor,
   })
+  const real = REAL_ASSETS[b.id]
   return {
     ...b,
     hqRegion: b.hqRegion ?? BRAND_HQ_REGION[b.id] ?? '서울',
-    heroImage: imgs.hero,
-    logo: imgs.logo,
-    storeImages: imgs.storeImages,
-    menuImages: imgs.menuImages,
-    videoUrl: BRAND_VIDEO_URL[b.id],
+    heroImage: real?.heroImage ?? imgs.hero,
+    logo: real?.logo ?? imgs.logo,
+    storeImages: real?.storeImages ?? imgs.storeImages,
+    menuImages: real?.menuImage0
+      ? [
+          { url: real.menuImage0, name: imgs.menuImages[0]?.name ?? '시그니처 메뉴', signature: true },
+          ...imgs.menuImages.slice(1),
+        ]
+      : imgs.menuImages,
+    videoUrl: real?.videoUrl,
   }
 })
 
