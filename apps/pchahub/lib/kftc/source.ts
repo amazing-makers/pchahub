@@ -135,8 +135,8 @@ export async function getBrands(): Promise<MockBrand[]> {
  * - kftc ID (kftc-숫자) → 실 API 호출
  */
 export async function getBrandById(id: string): Promise<{ brand: MockBrand; detail: ReturnType<typeof getMockDetail> } | null> {
-  // mock 모드
-  if (!hasKey() || id.startsWith('b')) {
+  // mock 모드 (b1…b12 curated + v1000… V2 catalog)
+  if (!hasKey() || id.startsWith('b') || id.startsWith('v')) {
     const brand = BRANDS.find((b) => b.id === id)
     if (!brand) return null
     return { brand, detail: getMockDetail(brand) }

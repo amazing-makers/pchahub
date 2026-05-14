@@ -3,6 +3,7 @@
 // issues; figures are illustrative and not based on actual KFA disclosures.
 
 import { brandImageSet, type BrandMenuImage } from './brand-images'
+import v2Raw from './v2-brands.json'
 
 export interface MockCategory {
   key: string
@@ -67,16 +68,17 @@ export interface MockBrand {
 }
 
 export const CATEGORIES: MockCategory[] = [
-  { key: 'chicken', label: '치킨', brandCount: 142 },
-  { key: 'cafe', label: '카페', brandCount: 318 },
-  { key: 'korean', label: '한식', brandCount: 87 },
-  { key: 'japanese', label: '일식', brandCount: 54 },
-  { key: 'snack', label: '분식', brandCount: 76 },
-  { key: 'dessert', label: '디저트', brandCount: 49 },
-  { key: 'beverage', label: '음료', brandCount: 62 },
-  { key: 'bar', label: '주점', brandCount: 38 },
-  { key: 'convenience', label: '편의점', brandCount: 24 },
-  { key: 'education', label: '교육', brandCount: 41 },
+  { key: 'chicken', label: '치킨', brandCount: 27 },
+  { key: 'cafe', label: '카페', brandCount: 26 },
+  { key: 'korean', label: '한식', brandCount: 29 },
+  { key: 'japanese', label: '일식', brandCount: 26 },
+  { key: 'snack', label: '분식', brandCount: 27 },
+  { key: 'dessert', label: '디저트', brandCount: 26 },
+  { key: 'bar', label: '주점', brandCount: 26 },
+  { key: 'western', label: '서양식', brandCount: 25 },
+  { key: 'pizza', label: '피자', brandCount: 25 },
+  { key: 'chinese', label: '중식', brandCount: 25 },
+  { key: 'convenience', label: '편의점', brandCount: 3 },
 ]
 
 type RawBrand = Omit<MockBrand, 'heroImage' | 'hqRegion'> & { hqRegion?: string }
@@ -84,11 +86,11 @@ type RawBrand = Omit<MockBrand, 'heroImage' | 'hqRegion'> & { hqRegion?: string 
 const RAW_BRANDS: RawBrand[] = [
   {
     id: 'b1',
-    name: '치킨다이스',
+    name: '호치킨',
     category: 'chicken',
     categoryLabel: '치킨',
     logoColor: '#F97316',
-    description: '바삭한 트렌드 치킨 · 30평형 매장 특화',
+    description: '숯불 훈제 오리지널 치킨 · 가성비 두마리 전문',
     storeCount: 84,
     startupCost: 5500,
     monthlyRoyalty: 50,
@@ -99,11 +101,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b2',
-    name: '데일리브루',
+    name: '텐퍼센트스페셜티커피',
     category: 'cafe',
     categoryLabel: '카페',
     logoColor: '#92400E',
-    description: '저가형 스페셜티 커피 · 10평 소형 매장',
+    description: '스페셜티 원두 저가 커피 · 소형 매장 특화',
     storeCount: 312,
     startupCost: 4200,
     monthlyRoyalty: 30,
@@ -114,11 +116,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b3',
-    name: '한솥미식',
+    name: '육칠이',
     category: 'korean',
     categoryLabel: '한식',
     logoColor: '#16A34A',
-    description: '정통 한식 도시락 · 배달 위주 운영',
+    description: '가성비 삼겹살 · 목살 구이 한식 전문점',
     storeCount: 56,
     startupCost: 6800,
     monthlyRoyalty: 80,
@@ -129,11 +131,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b4',
-    name: '스시키친',
-    category: 'japanese',
-    categoryLabel: '일식',
+    name: '백소정',
+    category: 'korean',
+    categoryLabel: '한식',
     logoColor: '#0EA5E9',
-    description: '컨베이어 스시 + 라멘 듀얼 콘셉트',
+    description: '한식 정식 전문점 · 깔끔한 한상차림',
     storeCount: 22,
     startupCost: 9500,
     monthlyRoyalty: 120,
@@ -144,11 +146,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b5',
-    name: '분식나라',
+    name: '헬키푸키',
     category: 'snack',
     categoryLabel: '분식',
     logoColor: '#DC2626',
-    description: '떡볶이 · 김밥 · 라면 종합 분식',
+    description: '건강 분식 · 찰떡볶이 전문 브랜드',
     storeCount: 138,
     startupCost: 3800,
     monthlyRoyalty: 35,
@@ -159,11 +161,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b6',
-    name: '스윗스튜디오',
+    name: '과일에반하다.프루타',
     category: 'dessert',
     categoryLabel: '디저트',
     logoColor: '#EC4899',
-    description: '프리미엄 케이크 + 마카롱 디저트 카페',
+    description: '프리미엄 과일 빙수 · 아이스크림 전문점',
     storeCount: 41,
     startupCost: 7200,
     monthlyRoyalty: 70,
@@ -174,11 +176,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b7',
-    name: '주스레인',
-    category: 'beverage',
-    categoryLabel: '음료',
+    name: '슬로우캘리',
+    category: 'snack',
+    categoryLabel: '분식',
     logoColor: '#10B981',
-    description: '생과일 주스 · 스무디 전문',
+    description: '건강 샐러드 · 그레인볼 전문 패스트푸드',
     storeCount: 67,
     startupCost: 3500,
     monthlyRoyalty: 25,
@@ -189,11 +191,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b8',
-    name: '포차모임',
+    name: '숯토리',
     category: 'bar',
     categoryLabel: '주점',
     logoColor: '#7C3AED',
-    description: '한식 포차 안주 · 야간 상권 특화',
+    description: '숯불 삼겹살 · 참숯 직화 구이 전문 주점',
     storeCount: 29,
     startupCost: 8500,
     monthlyRoyalty: 100,
@@ -204,11 +206,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b9',
-    name: '크리스피네스트',
+    name: '기영이숯불두마리치킨',
     category: 'chicken',
     categoryLabel: '치킨',
     logoColor: '#EAB308',
-    description: '저칼로리 에어프라이 치킨',
+    description: '숯불 두마리 치킨 · 가성비 치킨 브랜드',
     storeCount: 18,
     startupCost: 6200,
     monthlyRoyalty: 60,
@@ -219,11 +221,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b10',
-    name: '카페모먼트',
-    category: 'cafe',
-    categoryLabel: '카페',
+    name: '동경에서먹었던규동',
+    category: 'japanese',
+    categoryLabel: '일식',
     logoColor: '#A16207',
-    description: '디저트 강화형 동네 카페',
+    description: '도쿄 스타일 규동 · 일식 덮밥 전문점',
     storeCount: 94,
     startupCost: 5800,
     monthlyRoyalty: 45,
@@ -234,11 +236,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b11',
-    name: '한그릇진심',
+    name: '9504 양평칼국수',
     category: 'korean',
     categoryLabel: '한식',
     logoColor: '#B45309',
-    description: '국밥 · 곰탕 전문 한식 식당',
+    description: '양평식 칼국수 · 바지락 육수 전통 방식',
     storeCount: 33,
     startupCost: 7500,
     monthlyRoyalty: 90,
@@ -249,11 +251,11 @@ const RAW_BRANDS: RawBrand[] = [
   },
   {
     id: 'b12',
-    name: '라멘이치고',
-    category: 'japanese',
-    categoryLabel: '일식',
+    name: '국민매운찜갈비',
+    category: 'korean',
+    categoryLabel: '한식',
     logoColor: '#991B1B',
-    description: '돈코츠 라멘 + 사이드 메뉴 특화',
+    description: '매운 찜갈비 · 국민 한식 갈비찜 전문점',
     storeCount: 47,
     startupCost: 6500,
     monthlyRoyalty: 55,
@@ -372,7 +374,41 @@ const REAL_ASSETS: Record<string, {
   },
 }
 
-export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => {
+// ── V2 카탈로그 헬퍼 ─────────────────────────────────────────────────────────
+
+function proxyUrl(url: string): string {
+  return `/api/img-proxy?url=${encodeURIComponent(url)}`
+}
+
+type V2Entry = {
+  regNum: string; name: string; bizStr: string; category: string
+  logo: string; thumbnail: string; photos: string[]; videos: string[]; score: number
+}
+
+const V2_CAT_LABELS: Record<string, string> = {
+  korean: '한식', cafe: '카페', chicken: '치킨', japanese: '일식',
+  snack: '분식', dessert: '디저트', bar: '주점', western: '서양식',
+  pizza: '피자', chinese: '중식', convenience: '편의점',
+}
+
+const V2_CAT_COLORS: Record<string, string> = {
+  korean: '#16A34A', cafe: '#92400E', chicken: '#F97316', japanese: '#0EA5E9',
+  snack: '#DC2626', dessert: '#EC4899', bar: '#7C3AED', western: '#6366F1',
+  pizza: '#F59E0B', chinese: '#EF4444', convenience: '#0EA5E9',
+}
+
+const V2_BIZ_DESC: Record<string, string> = {
+  '한식': '정통 한식 프랜차이즈', '커피': '카페 · 커피 전문점', '주점': '주점 프랜차이즈',
+  '일식': '일식 전문 프랜차이즈', '치킨': '치킨 전문 프랜차이즈', '패스트푸드': '패스트푸드 · 간편식',
+  '분식': '분식 전문 프랜차이즈', '아이스크림/빙수': '아이스크림 · 빙수 디저트',
+  '기타 외식': '외식 프랜차이즈', '서양식': '서양식 레스토랑', '피자': '피자 전문점',
+  '중식': '중식 전문 프랜차이즈', '제과제빵': '제과 · 베이커리', '스터디카페': '스터디카페',
+  '편의점': '편의점 프랜차이즈',
+}
+
+const V2_REGIONS = ['서울', '서울', '서울', '경기', '경기', '경기', '부산', '인천', '대구', '대전']
+
+const _CURATED: MockBrand[] = RAW_BRANDS.map((b) => {
   const imgs = brandImageSet({
     brandId: b.id,
     category: b.category,
@@ -395,6 +431,34 @@ export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => {
     videoUrl: real?.videoUrl,
   }
 })
+
+const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
+  const logoUrl = b.logo || b.thumbnail
+  const hero = b.photos[0] ?? b.thumbnail
+  return {
+    id: `v${1000 + i}`,
+    name: b.name,
+    category: b.category,
+    categoryLabel: V2_CAT_LABELS[b.category] ?? b.bizStr,
+    logoColor: V2_CAT_COLORS[b.category] ?? '#6366F1',
+    description: V2_BIZ_DESC[b.bizStr] ?? `${b.bizStr} 프랜차이즈`,
+    storeCount: Math.max(5, Math.round(b.score / 100)),
+    startupCost: 0,
+    monthlyRoyalty: 0,
+    hqVerified: false,
+    recruiting: false,
+    featured: false,
+    growthRate: Math.max(1, Math.round(b.score / 200)),
+    hqRegion: V2_REGIONS[i % V2_REGIONS.length] ?? '서울',
+    heroImage: hero ? proxyUrl(hero) : '',
+    logo: logoUrl ? proxyUrl(logoUrl) : '',
+    storeImages: b.photos.map(proxyUrl),
+    menuImages: [],
+    videoUrl: b.videos[0] ?? undefined,
+  }
+})
+
+export const BRANDS: MockBrand[] = [..._CURATED, ..._V2]
 
 export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)
