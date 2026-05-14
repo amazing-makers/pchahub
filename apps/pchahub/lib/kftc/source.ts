@@ -39,10 +39,26 @@ function hasKey(): boolean {
 }
 
 /**
+ * V2 카탈로그(v1000~) + 큐레이션(b1~b12) 브랜드를 KFTC 결과와 합친다.
+ * 같은 브랜드명이 KFTC에 이미 있으면 사진 있는 V2/큐레이션 쪽을 우선해 교체.
+ */
+function mergeMockOver(kftc: MockBrand[]): MockBrand[] {
+  const seen = new Set<string>(BRANDS.map((b) => b.name.trim()))
+  const result: MockBrand[] = [...BRANDS]
+  for (const k of kftc) {
+    const name = k.name.trim()
+    if (seen.has(name)) continue
+    seen.add(name)
+    result.push(k)
+  }
+  return result
+}
+
+/**
  * 모든 브랜드 목록.
  *
  * 데이터 소스 우선순위:
- *   1. 확인된 3개 실 API 통합
+ *   1. 확인된 3개 실 API 통합 + V2 카탈로그/큐레이션 머지
  *      - getBrandFrcsStats (가맹점수 + 평균매출)
  *      - getBrandFntnStats (창업비용)
  *      - getBrandBrandStats (브랜드 개요·가맹연수)
@@ -82,7 +98,7 @@ export async function getBrands(): Promise<MockBrand[]> {
     const fntnItems = [...fntnR1.body.items, ...fntnR2.body.items, ...fntnR3.body.items]
     const brandItems = [...brandR1.body.items, ...brandR2.body.items, ...brandR3.body.items]
     const merged = mergeRealApiBrands(frcsItems, fntnItems, brandItems)
-    if (merged.length > 0) return merged
+    if (merged.length > 0) return mergeMockOver(merged)
   } catch (err) {
     console.error('[kftc] 실API 3종 머지 실패 — 정보공개서 list로 fallback:', err)
   }
@@ -108,7 +124,7 @@ export async function getBrands(): Promise<MockBrand[]> {
         storeStatsPrev: storeStatsPrev.body.items,
         hqReg: hqReg.body.items,
       })
-      if (merged.length > 0) return merged
+      if (merged.length > 0) return mergeMockOver(merged)
     } catch (err) {
       console.error('[kftc] JSON API 머지 실패 — 정보공개서 list로 fallback:', err)
     }
@@ -119,7 +135,7 @@ export async function getBrands(): Promise<MockBrand[]> {
     try {
       const currentYear = new Date().getFullYear()
       const res = await listDisclosures(currentYear, { numOfRows: 1000 })
-      return res.items.map((item) => mapListItemToBrand(item))
+      return mergeMockOver(res.items.map((item) => mapListItemToBrand(item)))
     } catch (err) {
       console.error('[kftc] listDisclosures 실패 — mock으로 fallback:', err)
     }

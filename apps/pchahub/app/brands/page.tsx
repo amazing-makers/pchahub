@@ -44,8 +44,13 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
         return b.growthRate - a.growthRate
       case 'stores-desc':
         return b.storeCount - a.storeCount
-      default:
+      default: {
+        // 추천순: 사진 있는 큐레이션·V2 카탈로그(b*/v* ID)를 상단 → 그 다음 성장률
+        const ar = a.id.startsWith('b') || a.id.startsWith('v') ? 0 : 1
+        const br = b.id.startsWith('b') || b.id.startsWith('v') ? 0 : 1
+        if (ar !== br) return ar - br
         return b.growthRate - a.growthRate
+      }
     }
   })
 
