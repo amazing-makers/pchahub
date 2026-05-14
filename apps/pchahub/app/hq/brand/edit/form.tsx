@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
+  AlertCircle,
   ArrowLeft,
   CheckCircle2,
   ImagePlus,
@@ -36,32 +37,63 @@ interface Props {
 }
 
 export function BrandEditForm({ brand }: Props) {
-  const [state, setState] = useState<FormState>({
-    description: brand.description,
-    logo: brand.logo,
-    storeImages: brand.storeImages.slice(0, 2),
-    menuImages: brand.menuImages.slice(0, 6).map((m) => ({
-      url: m.url,
-      name: m.name,
-      signature: Boolean(m.signature),
-    })),
-    promoVideoUrl: brand.videoUrl ?? '',
-  })
+  const initialState = useMemo<FormState>(
+    () => ({
+      description: brand.description,
+      logo: brand.logo,
+      storeImages: brand.storeImages.slice(0, 2),
+      menuImages: brand.menuImages.slice(0, 6).map((m) => ({
+        url: m.url,
+        name: m.name,
+        signature: Boolean(m.signature),
+      })),
+      promoVideoUrl: brand.videoUrl ?? '',
+    }),
+    [brand],
+  )
+  const [state, setState] = useState<FormState>(initialState)
+  const [cleanState, setCleanState] = useState<FormState>(initialState)
   const [saved, setSaved] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setState((p) => ({ ...p, [key]: value }))
 
+  const videoValid = state.promoVideoUrl ? isEmbeddable(state.promoVideoUrl) : null
+  const videoBlocking = state.promoVideoUrl !== '' && videoValid === false
+  const signatureMissingName = state.menuImages.some(
+    (m) => m.signature && !m.name.trim(),
+  )
+  const isDirty = useMemo(
+    () => JSON.stringify(state) !== JSON.stringify(cleanState),
+    [state, cleanState],
+  )
+  const canSave = isDirty && !videoBlocking && !signatureMissingName
+
+  useEffect(() => {
+    if (!isDirty) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [isDirty])
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault()
+    if (videoBlocking || signatureMissingName) {
+      setShowErrors(true)
+      return
+    }
     // Mock save — real implementation would POST to /api/hq/brand/update which
     // writes to Supabase. The toast simulates the round-trip.
     setSaved(true)
+    setShowErrors(false)
+    setCleanState(state)
     setTimeout(() => setSaved(false), 4000)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-
-  const videoValid = state.promoVideoUrl ? isEmbeddable(state.promoVideoUrl) : null
 
   return (
     <main className="bg-gray-50">
@@ -82,9 +114,14 @@ export function BrandEditForm({ brand }: Props) {
                 aria-hidden
               />
               <div>
-                <h1 className="text-h3 font-bold text-gray-900">
-                  브랜드 정보 수정
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-h3 font-bold text-gray-900">
+                    브랜드 정보 수정
+                  </h1>
+                  {isDirty && (
+                    <Badge variant="warning">저장 안 됨</Badge>
+                  )}
+                </div>
                 <div className="mt-0.5 text-sm text-gray-500">
                   {brand.name} · {brand.categoryLabel}
                 </div>
@@ -237,7 +274,12 @@ export function BrandEditForm({ brand }: Props) {
                           }))
                         }
                         placeholder="메뉴명"
-                        className="form-input"
+                        className={
+                          'form-input ' +
+                          (showErrors && m.signature && !m.name.trim()
+                            ? 'border-rose-400 focus:!shadow-[0_0_0_2px_rgba(244,63,94,0.5)]'
+                            : '')
+                        }
                       />
                       <label className="inline-flex items-center gap-1.5 text-xs">
                         <input
@@ -258,6 +300,12 @@ export function BrandEditForm({ brand }: Props) {
                         />
                         시그니처 메뉴 (1개)
                       </label>
+                      {showErrors && m.signature && !m.name.trim() && (
+                        <p className="inline-flex items-center gap-1 text-xs text-rose-600">
+                          <AlertCircle className="h-3 w-3" />
+                          시그니처 메뉴는 메뉴명을 입력해 주세요.
+                        </p>
+                      )}
                     </div>
                     <button
                       type="button"
@@ -393,10 +441,29 @@ export function BrandEditForm({ brand }: Props) {
                 </div>
               </div>
 
-              <Button type="submit" size="lg" className="w-full gap-1">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full gap-1"
+                disabled={!canSave}
+              >
                 <Save className="h-4 w-4" />
-                변경사항 저장
+                {isDirty ? '변경사항 저장' : '변경사항 없음'}
               </Button>
+
+              {showErrors && (videoBlocking || signatureMissingName) && (
+                <div className="space-y-1 rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
+                  <div className="font-medium">저장하려면 아래 항목을 확인해 주세요.</div>
+                  <ul className="list-disc space-y-0.5 pl-4">
+                    {videoBlocking && (
+                      <li>홍보 영상 URL이 YouTube/Vimeo 형식이 아닙니다.</li>
+                    )}
+                    {signatureMissingName && (
+                      <li>시그니처로 표시된 메뉴에 메뉴명이 비어 있습니다.</li>
+                    )}
+                  </ul>
+                </div>
+              )}
 
               <p className="text-xs text-gray-500">
                 저장 후 공개 페이지에 반영되기까지 최대 5분이 소요될 수 있습니다.
