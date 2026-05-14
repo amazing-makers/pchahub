@@ -243,17 +243,20 @@ export function BrandEditForm({ brand }: Props) {
                         <input
                           type="checkbox"
                           checked={m.signature}
-                          onChange={(e) =>
+                          onChange={(e) => {
+                            const checked = e.target.checked
+                            // 시그니처는 하나만. 체크 시 다른 메뉴의 signature를 모두 해제.
                             setState((p) => ({
                               ...p,
-                              menuImages: p.menuImages.map((it, i) =>
-                                i === idx ? { ...it, signature: e.target.checked } : it,
-                              ),
+                              menuImages: p.menuImages.map((it, i) => ({
+                                ...it,
+                                signature: i === idx ? checked : checked ? false : it.signature,
+                              })),
                             }))
-                          }
+                          }}
                           className="h-4 w-4 rounded border-gray-300"
                         />
-                        시그니처 메뉴 (1개만 권장)
+                        시그니처 메뉴 (1개)
                       </label>
                     </div>
                     <button

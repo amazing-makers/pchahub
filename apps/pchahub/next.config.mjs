@@ -34,10 +34,16 @@ const nextConfig = {
   experimental: {
     typedRoutes: false,
   },
+  // Skip Windows junction / AppData directories that block the file watcher
+  watchOptions: {
+    ignored: ['**/node_modules/**', '**/.git/**', '**/Application Data/**', '**/AppData/**'],
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'plus.unsplash.com' },
+      { protocol: 'https', hostname: 'picsum.photos' },
+      { protocol: 'https', hostname: 'fastly.picsum.photos' },
     ],
   },
 }
