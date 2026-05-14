@@ -4,6 +4,7 @@
 
 import { brandImageSet, type BrandMenuImage } from './brand-images'
 import v2Raw from './v2-brands.json'
+import v2LocalPaths from './v2-local-paths.json'
 
 export interface MockCategory {
   key: string
@@ -433,10 +434,12 @@ const _CURATED: MockBrand[] = RAW_BRANDS.map((b) => {
 })
 
 const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
+  const id = `v${1000 + i}`
+  const local = (v2LocalPaths as Record<string, { logo?: string; heroImage?: string; storeImages?: string[] }>)[id]
   const logoUrl = b.logo || b.thumbnail
   const hero = b.photos[0] ?? b.thumbnail
   return {
-    id: `v${1000 + i}`,
+    id,
     name: b.name,
     category: b.category,
     categoryLabel: V2_CAT_LABELS[b.category] ?? b.bizStr,
@@ -450,9 +453,9 @@ const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
     featured: false,
     growthRate: Math.max(1, Math.round(b.score / 200)),
     hqRegion: V2_REGIONS[i % V2_REGIONS.length] ?? '서울',
-    heroImage: hero ? proxyUrl(hero) : '',
-    logo: logoUrl ? proxyUrl(logoUrl) : '',
-    storeImages: b.photos.map(proxyUrl),
+    heroImage: local?.heroImage ?? (hero ? proxyUrl(hero) : ''),
+    logo: local?.logo ?? (logoUrl ? proxyUrl(logoUrl) : ''),
+    storeImages: local?.storeImages ?? b.photos.map(proxyUrl),
     menuImages: [],
     videoUrl: b.videos[0] ?? undefined,
   }
