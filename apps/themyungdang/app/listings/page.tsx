@@ -1,7 +1,8 @@
-﻿import { Map } from 'lucide-react'
+﻿import { ChevronLeft, ChevronRight, Map, X } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
 import {
+  LISTING_CATEGORIES,
   LISTINGS,
   TYPE_LABEL,
   type ListingType,
@@ -23,16 +24,30 @@ const REGIONS = [
   '제주',
 ]
 
+const ITEMS_PER_PAGE = 12
+
 interface ListingsPageProps {
-  searchParams: { type?: string; region?: string; q?: string; sort?: string }
+  searchParams: { type?: string; region?: string; q?: string; sort?: string; fitCategory?: string; source?: string; page?: string }
 }
 
+// 출처 필터: 'own' = 자체 매물, 'changupmall' 등 = 외부 출처 slug
+const SOURCE_OPTIONS = [
+  { key: 'own', label: '자체 등록' },
+  { key: 'changupmall', label: '창업몰' },
+]
+
 export default function ListingsPage({ searchParams }: ListingsPageProps) {
-  const { type, region, q, sort = 'recommended' } = searchParams
+  const { type, region, q, sort = 'recommended', fitCategory, source, page: pageStr } = searchParams
+  const currentPage = Math.max(1, parseInt(pageStr ?? '1', 10))
 
   let results = LISTINGS.slice()
   if (type) results = results.filter((l) => l.type === type)
   if (region) results = results.filter((l) => l.region === region)
+  if (fitCategory) results = results.filter((l) => l.fitCategories.includes(fitCategory))
+  if (source) {
+    if (source === 'own') results = results.filter((l) => !l.externalSource)
+    else results = results.filter((l) => l.externalSource?.name === source)
+  }
   if (q) {
     const needle = q.toLowerCase()
     results = results.filter(
@@ -60,7 +75,15 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
     }
   })
 
-  const typeLabel = type ? TYPE_LABEL[type as ListingType] : null
+  const totalCount       = results.length
+  const totalPages       = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE))
+  const safePage         = Math.min(currentPage, totalPages)
+  const paginatedResults = results.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+
+  const typeLabel        = type        ? TYPE_LABEL[type as ListingType] : null
+  const fitCategoryLabel = fitCategory ? (LISTING_CATEGORIES.find((c) => c.key === fitCategory)?.label ?? null) : null
+  const sourceLabel      = source      ? (SOURCE_OPTIONS.find((s) => s.key === source)?.label ?? null) : null
+  const hasActiveFilters = !!(type || region || fitCategory || q || source)
 
   return (
     <main className="bg-gray-50">
@@ -72,13 +95,69 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             {region && (
               <span className="ml-2 text-base font-normal text-gray-500">· {region}</span>
             )}
-            {q && (
-              <span className="ml-2 text-base font-normal text-gray-500">'{q}' 검색 결과</span>
-            )}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            본인 확인 매물 위주 · 총 {LISTINGS.length}건 등록
+            총 {totalCount}건
+            {!hasActiveFilters && ` · 본인 확인 매물 위주`}
           </p>
+
+          {/* Active filter badges */}
+          {hasActiveFilters && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-gray-400">필터:</span>
+              {type && (
+                <a
+                  href={makeHref(searchParams, { type: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-gray-700"
+                >
+                  {TYPE_LABEL[type as ListingType]}
+                  <X className="h-3 w-3" />
+                </a>
+              )}
+              {region && (
+                <a
+                  href={makeHref(searchParams, { region: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-gray-700"
+                >
+                  {region}
+                  <X className="h-3 w-3" />
+                </a>
+              )}
+              {fitCategoryLabel && (
+                <a
+                  href={makeHref(searchParams, { fitCategory: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-gray-700"
+                >
+                  {fitCategoryLabel}
+                  <X className="h-3 w-3" />
+                </a>
+              )}
+              {sourceLabel && (
+                <a
+                  href={makeHref(searchParams, { source: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-gray-700"
+                >
+                  출처: {sourceLabel}
+                  <X className="h-3 w-3" />
+                </a>
+              )}
+              {q && (
+                <a
+                  href={makeHref(searchParams, { q: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-800 px-2.5 py-1 text-xs font-medium text-white hover:bg-gray-700"
+                >
+                  &apos;{q}&apos;
+                  <X className="h-3 w-3" />
+                </a>
+              )}
+              <a
+                href="/listings"
+                className="text-xs text-gray-400 underline hover:text-gray-700"
+              >
+                전체 초기화
+              </a>
+            </div>
+          )}
           {/* Keyword search */}
           <form
             method="get"
@@ -86,8 +165,10 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             className="mt-4 flex max-w-lg items-center gap-2"
           >
             {/* Preserve existing filters when searching */}
-            {type   && <input type="hidden" name="type"   value={type} />}
-            {region && <input type="hidden" name="region" value={region} />}
+            {type        && <input type="hidden" name="type"        value={type} />}
+            {region      && <input type="hidden" name="region"      value={region} />}
+            {fitCategory && <input type="hidden" name="fitCategory" value={fitCategory} />}
+            {source      && <input type="hidden" name="source"      value={source} />}
             {sort !== 'recommended' && <input type="hidden" name="sort" value={sort} />}
             <div className="relative flex-1">
               <input
@@ -121,6 +202,15 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
           {/* Sidebar */}
           <aside className="space-y-5">
+            {hasActiveFilters && (
+              <a
+                href="/listings"
+                className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-gray-900"
+              >
+                <X className="h-3.5 w-3.5" />
+                필터 전체 초기화
+              </a>
+            )}
             <FilterGroup title="거래 유형">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { type: undefined })} active={!type}>
@@ -165,6 +255,50 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
               </div>
             </FilterGroup>
 
+            <FilterGroup title="업종">
+              <div className="space-y-1">
+                <FilterLink href={makeHref(searchParams, { fitCategory: undefined })} active={!fitCategory}>
+                  전체
+                </FilterLink>
+                {LISTING_CATEGORIES.map((c) => {
+                  const count = LISTINGS.filter((l) => l.fitCategories.includes(c.key)).length
+                  if (count === 0) return null
+                  return (
+                    <FilterLink
+                      key={c.key}
+                      href={makeHref(searchParams, { fitCategory: c.key })}
+                      active={fitCategory === c.key}
+                    >
+                      {c.label} ({count})
+                    </FilterLink>
+                  )
+                })}
+              </div>
+            </FilterGroup>
+
+            <FilterGroup title="출처">
+              <div className="space-y-1">
+                <FilterLink href={makeHref(searchParams, { source: undefined })} active={!source}>
+                  전체 ({LISTINGS.length})
+                </FilterLink>
+                {SOURCE_OPTIONS.map((s) => {
+                  const count = s.key === 'own'
+                    ? LISTINGS.filter((l) => !l.externalSource).length
+                    : LISTINGS.filter((l) => l.externalSource?.name === s.key).length
+                  if (count === 0) return null
+                  return (
+                    <FilterLink
+                      key={s.key}
+                      href={makeHref(searchParams, { source: s.key })}
+                      active={source === s.key}
+                    >
+                      {s.label} ({count})
+                    </FilterLink>
+                  )
+                })}
+              </div>
+            </FilterGroup>
+
             <FilterGroup title="정렬">
               <div className="space-y-1">
                 {SORT_OPTIONS.map((s) => (
@@ -183,7 +317,14 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           {/* Results */}
           <div>
             <div className="mb-3 flex items-center justify-between gap-4">
-              <h2 className="text-sm font-semibold text-gray-700">{results.length}건</h2>
+              <h2 className="text-sm font-semibold text-gray-700">
+                {totalCount}건
+                {totalPages > 1 && (
+                  <span className="ml-1.5 font-normal text-gray-400">
+                    ({safePage} / {totalPages} 페이지)
+                  </span>
+                )}
+              </h2>
               <a
                 href="/listings/map"
                 className="flex items-center gap-1.5 rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
@@ -193,18 +334,27 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
               </a>
             </div>
 
-            {results.length === 0 ? (
+            {paginatedResults.length === 0 ? (
               <Card>
                 <CardContent className="p-10 text-center text-sm text-gray-500">
-                  검색 결과가 없습니다. 필터를 줄여 다시 시도해보세요.
+                  검색 결과가 없습니다.{hasActiveFilters && ' 필터를 줄여 다시 시도해보세요.'}
                 </CardContent>
               </Card>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {results.map((l) => (
+                {paginatedResults.map((l) => (
                   <ListingCard key={l.id} listing={l} />
                 ))}
               </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <Pagination
+                searchParams={searchParams}
+                currentPage={safePage}
+                totalPages={totalPages}
+              />
             )}
           </div>
         </div>
@@ -230,10 +380,86 @@ function makeHref(
   const params = new URLSearchParams()
   if (next.type) params.set('type', next.type)
   if (next.region) params.set('region', next.region)
+  if (next.fitCategory) params.set('fitCategory', next.fitCategory)
+  if (next.source) params.set('source', next.source)
   if (next.q) params.set('q', next.q)
   if (next.sort && next.sort !== 'recommended') params.set('sort', next.sort)
+  // Only carry `page` when explicitly provided in changes (filter changes reset to page 1)
+  const pageNum = 'page' in changes ? changes.page : undefined
+  if (pageNum && pageNum !== '1') params.set('page', pageNum)
   const qs = params.toString()
   return qs ? `/listings?${qs}` : '/listings'
+}
+
+function Pagination({
+  searchParams,
+  currentPage,
+  totalPages,
+}: {
+  searchParams: ListingsPageProps['searchParams']
+  currentPage: number
+  totalPages: number
+}) {
+  const pageNums: (number | '…')[] = []
+  for (let p = 1; p <= totalPages; p++) {
+    if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) {
+      pageNums.push(p)
+    } else if (pageNums[pageNums.length - 1] !== '…') {
+      pageNums.push('…')
+    }
+  }
+
+  return (
+    <nav
+      className="mt-8 flex items-center justify-center gap-1"
+      aria-label="페이지 이동"
+    >
+      <a
+        href={currentPage > 1 ? makeHref(searchParams, { page: String(currentPage - 1) }) : undefined}
+        aria-disabled={currentPage === 1}
+        className={`flex h-9 w-9 items-center justify-center rounded-lg border text-sm transition-colors ${
+          currentPage === 1
+            ? 'pointer-events-none border-gray-100 text-gray-300'
+            : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </a>
+
+      {pageNums.map((p, i) =>
+        p === '…' ? (
+          <span key={`ellipsis-${i}`} className="flex h-9 w-9 items-center justify-center text-sm text-gray-400">
+            …
+          </span>
+        ) : (
+          <a
+            key={p}
+            href={makeHref(searchParams, { page: String(p) })}
+            aria-current={p === currentPage ? 'page' : undefined}
+            className={`flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
+              p === currentPage
+                ? 'border-gray-900 bg-gray-900 text-white'
+                : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            {p}
+          </a>
+        ),
+      )}
+
+      <a
+        href={currentPage < totalPages ? makeHref(searchParams, { page: String(currentPage + 1) }) : undefined}
+        aria-disabled={currentPage === totalPages}
+        className={`flex h-9 w-9 items-center justify-center rounded-lg border text-sm transition-colors ${
+          currentPage === totalPages
+            ? 'pointer-events-none border-gray-100 text-gray-300'
+            : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </a>
+    </nav>
+  )
 }
 
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {

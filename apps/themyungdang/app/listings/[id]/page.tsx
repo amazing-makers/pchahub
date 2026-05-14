@@ -27,9 +27,19 @@ import {
   type MockListing,
 } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
+import { TrackView, RecentlyViewedSection } from '@/components/recently-viewed'
+import { ListingImageGallery } from '@/components/listing-image-gallery'
 
-const ListingDetailSidebar = dynamic(() => import('@/components/listing-detail-sidebar'), { ssr: false })
-const ListingMiniMap       = dynamic(() => import('@/components/listing-mini-map'),       { ssr: false })
+import { ListingDetailSidebarSkeleton, MiniMapSkeleton } from '@/components/skeletons'
+
+const ListingDetailSidebar = dynamic(() => import('@/components/listing-detail-sidebar'), {
+  ssr: false,
+  loading: () => <ListingDetailSidebarSkeleton />,
+})
+const ListingMiniMap = dynamic(() => import('@/components/listing-mini-map'), {
+  ssr: false,
+  loading: () => <MiniMapSkeleton />,
+})
 
 export function generateStaticParams() {
   return LISTINGS.map((l) => ({ id: l.id }))
@@ -115,9 +125,16 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 {listing.featured && <Badge variant="warning">광고</Badge>}
               </div>
               <h1 className="mt-3 text-h2 font-bold text-gray-900">{listing.title}</h1>
-              <div className="mt-2 inline-flex items-center gap-1 text-sm text-gray-500">
-                <MapPin className="h-4 w-4" />
-                {listing.fullAddress}
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500">
+                <span className="inline-flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  {listing.fullAddress}
+                </span>
+                {listing.externalSource && (
+                  <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+                    {listing.externalSource.label} 제휴 매물
+                  </span>
+                )}
               </div>
             </div>
             {/* Actions moved to sticky sidebar */}
@@ -130,34 +147,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
           <div className="space-y-6 min-w-0">
             {/* Images */}
             <Card className="overflow-hidden border-gray-200 shadow-sm">
-              <div className="grid h-80 grid-cols-3 gap-1">
-                <div className="col-span-3 sm:col-span-2 sm:row-span-2">
-                  <div className="relative h-full w-full overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={listing.images[0]} alt={listing.title} className="h-full w-full object-cover" />
-                  </div>
-                </div>
-                {listing.images.slice(1, 3).map((src, i) => (
-                  <div key={i} className="relative overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={src}
-                      alt={`${listing.title} ${i + 2}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-              {listing.images.length > 3 && (
-                <div className="grid grid-cols-4 gap-1 border-t border-gray-100 p-1">
-                  {listing.images.slice(0, 4).map((src, i) => (
-                    <div key={i} className="aspect-[16/10] overflow-hidden rounded-md">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={src} alt={`thumb ${i + 1}`} className="h-full w-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
+              <ListingImageGallery images={listing.images} title={listing.title} />
             </Card>
 
             {/* Transferor message */}
@@ -173,27 +163,42 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
               </Card>
             )}
 
-            {/* Specs */}
+            {/* Specs — 데이터 없는 필드는 자동 숨김 (외부 출처 매물 대응) */}
             <SectionCard title="매물 정보">
               <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-                <SpecRow icon={Building2} label="용도" value={listing.buildingType} />
-                <SpecRow icon={MapPin} label="층" value={listing.floor} />
-                <SpecRow icon={MapPin} label="면적" value={`${listing.area}평`} />
-                <SpecRow
-                  icon={Clock}
-                  label="입주 가능"
-                  value={listing.availableFrom}
-                />
-                <SpecRow
-                  icon={TrendingUp}
-                  label="일 평균 유동인구"
-                  value={`${formatNumber(listing.footTraffic)}명`}
-                />
-                <SpecRow
-                  icon={Eye}
-                  label="조회"
-                  value={`${formatNumber(listing.viewCount)}회 · 문의 ${listing.inquiryCount}건`}
-                />
+                {listing.buildingType && (
+                  <SpecRow icon={Building2} label="용도" value={listing.buildingType} />
+                )}
+                {listing.floor && (
+                  <SpecRow icon={MapPin} label="층" value={listing.floor} />
+                )}
+                {listing.area > 0 && (
+                  <SpecRow icon={MapPin} label="면적" value={`${listing.area}평`} />
+                )}
+                {listing.availableFrom && (
+                  <SpecRow icon={Clock} label="입주 가능" value={listing.availableFrom} />
+                )}
+                {listing.footTraffic > 0 && (
+                  <SpecRow
+                    icon={TrendingUp}
+                    label="일 평균 유동인구"
+                    value={`${formatNumber(listing.footTraffic)}명`}
+                  />
+                )}
+                {listing.viewCount > 0 && (
+                  <SpecRow
+                    icon={Eye}
+                    label="조회"
+                    value={`${formatNumber(listing.viewCount)}회 · 문의 ${listing.inquiryCount}건`}
+                  />
+                )}
+                {listing.externalSource && (
+                  <SpecRow
+                    icon={Building2}
+                    label="출처"
+                    value={`${listing.externalSource.label} (수집 ${listing.externalSource.fetchedAt.slice(0, 10)})`}
+                  />
+                )}
               </div>
             </SectionCard>
 
@@ -204,44 +209,48 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
               </SectionCard>
             )}
 
-            {/* Tags */}
-            <SectionCard title="입지 특성">
-              <div className="flex flex-wrap gap-2">
-                {listing.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </SectionCard>
+            {/* Tags — 비어있으면 섹션 자체 숨김 */}
+            {listing.tags.length > 0 && (
+              <SectionCard title="입지 특성">
+                <div className="flex flex-wrap gap-2">
+                  {listing.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </SectionCard>
+            )}
 
-            {/* Fit categories */}
-            <SectionCard
-              title="적합 업종"
-              subtitle="이 매물에 어울리는 가맹 브랜드 카테고리"
-            >
-              <div className="flex flex-wrap gap-2">
-                {fitCategoryLabels.map((label) => (
-                  <span
-                    key={label}
-                    className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700"
+            {/* Fit categories — 카테고리가 매칭된 경우만 노출 */}
+            {fitCategoryLabels.length > 0 && (
+              <SectionCard
+                title="적합 업종"
+                subtitle="이 매물에 어울리는 가맹 브랜드 카테고리"
+              >
+                <div className="flex flex-wrap gap-2">
+                  {fitCategoryLabels.map((label) => (
+                    <span
+                      key={label}
+                      className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700"
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 inline-flex items-center gap-1 text-xs text-gray-500">
+                  <a
+                    href={`https://pchahub.kr/categories/${listing.fitCategories[0] ?? ''}`}
+                    className="text-gray-700 hover:text-gray-900"
                   >
-                    {label}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-4 inline-flex items-center gap-1 text-xs text-gray-500">
-                <a
-                  href={`https://pchahub.kr/categories/${listing.fitCategories[0] ?? ''}`}
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  적합 가맹 브랜드 보러가기 (프차허브) →
-                </a>
-              </div>
-            </SectionCard>
+                    적합 가맹 브랜드 보러가기 (프차허브) →
+                  </a>
+                </div>
+              </SectionCard>
+            )}
 
             {/* Current business (transfer only) */}
             {listing.type === 'transfer' && listing.currentBusiness && (
@@ -308,6 +317,10 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
           </aside>
         </div>
       </div>
+
+      {/* Track this view + show recently-viewed grid */}
+      <TrackView listingId={listing.id} />
+      <RecentlyViewedSection currentId={listing.id} />
     </main>
   )
 }
