@@ -172,7 +172,7 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
                 href={`https://changupdocu.kr/episodes?brand=${encodeURIComponent(c.client)}`}
                 className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
               >
-                → 브랜드 다큐 (창업도큐)
+                → 브랜드 다큐 (창업다큐)
               </a>
             </div>
           </CardContent>

@@ -37,7 +37,7 @@ export function generateMetadata({ params }: EpisodeDetailProps): Metadata {
   const ep = EPISODES.find((e) => e.id === params.id)
   if (!ep) return {}
   return buildPageMetadata('changupdocu', {
-    title: `${ep.title} — ${CATEGORY_LABEL[ep.category]} 다큐`,
+    title: `${ep.title} — ${CATEGORY_LABEL[ep.category]}`,
     description: `${ep.subtitle} · ${ep.duration} · 조회 ${formatNumber(ep.views)}회${ep.brand ? ` · ${ep.brand}` : ''}.`,
     path: `/episodes/${ep.id}`,
   })

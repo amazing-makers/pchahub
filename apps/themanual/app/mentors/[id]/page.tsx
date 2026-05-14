@@ -35,11 +35,13 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
           </nav>
 
           <div className="mt-6 flex flex-wrap items-start gap-5">
-            <div
-              className="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl text-3xl font-bold text-white"
-              style={{ background: mentor.avatarColor }}
-            >
-              {mentor.name.charAt(0)}
+            <div className="h-24 w-24 shrink-0 overflow-hidden rounded-3xl bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={mentor.avatarUrl}
+                alt={mentor.name}
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
@@ -109,11 +111,13 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
                       href={`/mentors/${m.id}`}
                       className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 transition-colors hover:border-gray-400"
                     >
-                      <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold text-white"
-                        style={{ background: m.avatarColor }}
-                      >
-                        {m.name.charAt(0)}
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={m.avatarUrl}
+                          alt={m.name}
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                       <div className="min-w-0">
                         <div className="truncate text-sm font-semibold text-gray-900">{m.name}</div>

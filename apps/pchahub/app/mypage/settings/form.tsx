@@ -173,7 +173,7 @@ export function SettingsForm({ defaultName, email, role }: SettingsFormProps) {
             onChange={(v) => update('notifyTrending', v)}
           />
           <Toggle
-            label="창업도큐 매거진 추천"
+            label="창업다큐 매거진 추천"
             sub="이번 주 추천 매거진 글과 다큐멘터리"
             checked={state.notifyMagazine}
             onChange={(v) => update('notifyMagazine', v)}

@@ -284,7 +284,7 @@ export default function PostPage({ params }: PostPageProps) {
                       href={`https://themanual.kr/courses?category=${post.channelKey}`}
                       className="block text-gray-700 hover:text-gray-900"
                     >
-                      → 운영 강의 (더매뉴얼)
+                      → 운영 강의 (더메뉴얼)
                     </a>
                     <a
                       href={`https://bestplace.kr/stores?category=${post.channelKey}`}

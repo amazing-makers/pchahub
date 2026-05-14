@@ -58,7 +58,11 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
               <span className="ml-2 text-base font-normal text-gray-500">‘{q}’ 검색 결과</span>
             )}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">총 {COURSES.length}개 강의 운영 중</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {(free || category || level || q)
+              ? `${results.length}개 강의`
+              : `총 ${COURSES.length}개 강의 운영 중`}
+          </p>
         </div>
       </section>
 
