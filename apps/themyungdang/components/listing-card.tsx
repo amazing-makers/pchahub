@@ -76,17 +76,13 @@ export function ListingCard({ listing, featured = false }: ListingCardProps) {
               </span>
             )}
 
-            {/* Direct owner / external source — bottom-left on image */}
-            {listing.ownerType === 'direct' ? (
+            {/* Direct owner tag — bottom-left on image (외부 출처는 별도 뱃지 없음) */}
+            {listing.ownerType === 'direct' && (
               <span className="absolute bottom-3 left-3 inline-flex items-center gap-0.5 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-700 shadow-sm backdrop-blur-sm">
                 <User className="h-2.5 w-2.5 text-emerald-500" />
                 직거래
               </span>
-            ) : listing.externalSource ? (
-              <span className="absolute bottom-3 left-3 inline-flex items-center rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-700 shadow-sm backdrop-blur-sm">
-                {listing.externalSource.label} 제휴
-              </span>
-            ) : null}
+            )}
 
             {/* Favorite */}
             <button

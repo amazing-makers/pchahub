@@ -125,16 +125,9 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 {listing.featured && <Badge variant="warning">광고</Badge>}
               </div>
               <h1 className="mt-3 text-h2 font-bold text-gray-900">{listing.title}</h1>
-              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {listing.fullAddress}
-                </span>
-                {listing.externalSource && (
-                  <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-medium text-gray-700">
-                    {listing.externalSource.label} 제휴 매물
-                  </span>
-                )}
+              <div className="mt-2 inline-flex items-center gap-1 text-sm text-gray-500">
+                <MapPin className="h-4 w-4" />
+                {listing.fullAddress}
               </div>
             </div>
             {/* Actions moved to sticky sidebar */}
