@@ -33,7 +33,7 @@ import {
 } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { BrandActions } from '@/components/brand-actions'
-import { BRANDS, type MockBrand } from '@/lib/mock-data'
+import { BRANDS, hasRealPhoto, type MockBrand } from '@/lib/mock-data'
 import {
   getBrandDetail,
   totalStartupCost,
@@ -111,7 +111,7 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
           <div className="min-w-0 space-y-8">
             <PhotoGallerySection detail={detail} brand={brand} />
             <BrandVideoSection brand={brand} />
-            <MenuSection detail={detail} />
+            <MenuSection detail={detail} brand={brand} />
             <HQSection detail={detail} />
             <CostsSection detail={detail} totalCost={totalCost} />
             <DisclosureExtrasSection detail={detail} />
@@ -219,16 +219,27 @@ function BrandHero({
         },
   ]
 
+  const showHeroPhoto = hasRealPhoto(brand)
   return (
     <section className="border-b border-gray-200 bg-white">
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100 sm:aspect-[21/9] sm:max-h-[480px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={detail.photos.hero}
-          alt={`${brand.name} 매장 대표 이미지`}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/60" />
+      <div
+        className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100 sm:aspect-[21/9] sm:max-h-[480px]"
+        style={showHeroPhoto ? undefined : { background: brand.logoColor }}
+      >
+        {showHeroPhoto ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={detail.photos.hero}
+              alt={`${brand.name} 매장 대표 이미지`}
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/60" />
+          </>
+        ) : (
+          // 진짜 매장 사진 없음 — 브랜드 컬러 + 가독성용 어두운 오버레이만
+          <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/45" />
+        )}
 
         {/* Brand identity overlay — inside hero, no conflict with breadcrumb */}
         <div className="container mx-auto absolute inset-x-0 bottom-5 px-4">
@@ -983,31 +994,68 @@ function StatBlock({
 // ========================================================================
 
 function PhotoGallerySection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
+  // 진짜 매장 사진 없으면 섹션 통째로 숨김 (stock 사진 노출 금지)
+  if (!hasRealPhoto(brand)) return null
   const photos = [...detail.photos.store, ...detail.photos.gallery]
   if (photos.length === 0) return null
+
+  // 사진 1장: 단독 배너 (16:9, max-h 캡으로 데스크탑에서 과하게 안 커지게)
+  if (photos.length === 1) {
+    return (
+      <SectionCard
+        title="매장 · 메뉴 사진"
+        subtitle={`${brand.name} 본사가 등록한 실제 매장 사진과 메뉴`}
+      >
+        <div className="relative aspect-[16/9] max-h-[480px] overflow-hidden rounded-xl bg-gray-100">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photos[0]}
+            alt={`${brand.name} 사진 1`}
+            className="h-full w-full object-cover transition-transform hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+      </SectionCard>
+    )
+  }
+
+  // 사진 2장+: 첫 사진은 큰 배너, 나머지는 4:3 균등 그리드
+  // (V2 사진 49%가 4:3 / 34%가 16:9 — square 크롭은 위아래를 많이 잘라 어울리지 않음)
+  const [first, ...rest] = photos
+  const remaining = rest.slice(0, 7)
   return (
     <SectionCard
       title="매장 · 메뉴 사진"
       subtitle={`${brand.name} 본사가 등록한 실제 매장 사진과 메뉴`}
     >
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {photos.slice(0, 8).map((src, i) => (
-          <div
-            key={i}
-            className={
-              'relative overflow-hidden rounded-xl bg-gray-100 ' +
-              (i === 0 ? 'col-span-2 row-span-2 aspect-square sm:aspect-auto sm:h-full' : 'aspect-square')
-            }
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={`${brand.name} 사진 ${i + 1}`}
-              className="h-full w-full object-cover transition-transform hover:scale-105"
-              loading="lazy"
-            />
+      <div className="space-y-3">
+        <div className="relative aspect-[16/9] max-h-[480px] overflow-hidden rounded-xl bg-gray-100">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={first}
+            alt={`${brand.name} 사진 1`}
+            className="h-full w-full object-cover transition-transform hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+        {remaining.length > 0 && (
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+            {remaining.map((src, i) => (
+              <div
+                key={i}
+                className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={`${brand.name} 사진 ${i + 2}`}
+                  className="h-full w-full object-cover transition-transform hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </SectionCard>
   )
@@ -1069,7 +1117,9 @@ function BrandVideoSection({ brand }: { brand: MockBrand }) {
 // Menu Section — 메뉴 라인업
 // ========================================================================
 
-function MenuSection({ detail }: { detail: BrandDetail }) {
+function MenuSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
+  // 진짜 매장 사진이 없는 브랜드는 메뉴 사진도 stock — 섹션 숨김
+  if (!hasRealPhoto(brand)) return null
   if (detail.menu.length === 0) return null
   return (
     <SectionCard
@@ -1111,6 +1161,7 @@ function MenuSection({ detail }: { detail: BrandDetail }) {
 
 function RecentOpeningsSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
   if (detail.recentOpenings.length === 0) return null
+  const showPhoto = hasRealPhoto(brand)
   return (
     <SectionCard
       title="최근 신규 오픈 매장"
@@ -1119,9 +1170,20 @@ function RecentOpeningsSection({ detail, brand }: { detail: BrandDetail; brand: 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {detail.recentOpenings.map((o, i) => (
           <div key={i} className="overflow-hidden rounded-xl border border-gray-100 bg-white">
-            <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={o.image} alt={o.storeName} className="h-full w-full object-cover" loading="lazy" />
+            <div
+              className="relative aspect-[16/10] overflow-hidden bg-gray-100"
+              style={showPhoto ? undefined : { background: brand.logoColor }}
+            >
+              {showPhoto ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={o.image} alt={o.storeName} className="h-full w-full object-cover" loading="lazy" />
+                </>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-white/10 to-black/20">
+                  <span className="text-2xl font-bold text-white/95 drop-shadow">{brand.name.charAt(0)}</span>
+                </div>
+              )}
               <span className="absolute left-2 top-2 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white">
                 NEW OPEN
               </span>

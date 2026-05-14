@@ -676,6 +676,13 @@ function recentOpeningsFor(brand: MockBrand): BrandRecentOpening[] {
   // 신규 매장이 많을수록 더 많은 오픈 표시
   const count = brand.growthRate >= 30 ? 5 : brand.growthRate >= 15 ? 4 : 3
   const today = new Date('2026-05-11')
+  // 매장별 실제 사진이 없으므로 brand.storeImages를 순환해 사용.
+  // 비어 있으면 heroImage를 fallback (kftc 모드처럼 stock 사진인 경우 컴포넌트에서 처리).
+  const photoPool = brand.storeImages.length > 0
+    ? brand.storeImages
+    : brand.heroImage
+      ? [brand.heroImage]
+      : []
   return Array.from({ length: count }).map((_, i) => {
     const loc = RECENT_OPENING_LOCATIONS[(startIdx + i * 2) % RECENT_OPENING_LOCATIONS.length]
     const daysAgo = 14 + i * 21 + ((seed + i) % 11)
@@ -687,8 +694,9 @@ function recentOpeningsFor(brand: MockBrand): BrandRecentOpening[] {
       district: loc.district,
       openedAt: date.toISOString().slice(0, 10),
       area: 10 + ((seed + i * 3) % 22),
-      // Unique seed per opening so each card shows a different photo
-      image: `https://picsum.photos/seed/${brand.id}-opening${i}/600/400`,
+      image: photoPool.length > 0
+        ? photoPool[i % photoPool.length]!
+        : `https://picsum.photos/seed/${brand.id}-opening${i}/600/400`,
     }
   })
 }
