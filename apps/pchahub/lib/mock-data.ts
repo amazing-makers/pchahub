@@ -282,9 +282,12 @@ const BRAND_HQ_REGION: Record<string, string> = {
   b12: '서울',
 }
 
-/** Per-brand promo video. Empty for now — HQ uploads via /for-brands/register. */
+/** Per-brand promo video. Empty for now — HQ uploads via /for-brands/register.
+ *  b1 / b2 use Blender Foundation's open movies (Creative Commons) as demo
+ *  placeholders. Real HQs override these with their own promo footage. */
 const BRAND_VIDEO_URL: Record<string, string | undefined> = {
-  // b1: 'https://www.youtube.com/embed/...',  // HQ-supplied once available
+  b1: 'https://www.youtube.com/watch?v=YE7VzlLtp-4',  // Demo: Big Buck Bunny (CC BY 3.0)
+  b2: 'https://vimeo.com/22439234',                    // Demo: Big Buck Bunny on Vimeo (CC BY 3.0)
 }
 
 export const BRANDS: MockBrand[] = RAW_BRANDS.map((b) => {
