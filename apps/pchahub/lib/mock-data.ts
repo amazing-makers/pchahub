@@ -466,13 +466,21 @@ export const BRANDS: MockBrand[] = [..._CURATED, ..._V2]
 export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)
 
-// 추천순 comparator — 사진 있는 큐레이션·V2 카탈로그(b/v prefix ID)를 KFTC
-// 텍스트 브랜드보다 먼저, 같은 그룹 내에서는 성장률 내림차순. 모든 브랜드
-// 리스트 페이지의 기본 정렬에 사용. growth-desc 같은 명시적 sort는 이
-// comparator를 무시.
+// 진짜 매장 사진을 가진 브랜드만 true.
+// - /brands/...   = public/brands/v*|b* 로컬 파일 (큐레이션·V2 카탈로그)
+// - /api/img-proxy = myfranchise.kr CDN 프록시 (V2 로컬 다운로드 실패 fallback)
+// 그 외 (Unsplash placeholder URL 등)는 매장과 무관한 stock 사진 → 표시 금지.
+export function hasRealPhoto(brand: MockBrand): boolean {
+  const h = brand.heroImage
+  return h.startsWith('/brands/') || h.startsWith('/api/img-proxy')
+}
+
+// 추천순 comparator — 진짜 사진 있는 브랜드 우선, 같은 그룹 내에서는 성장률
+// 내림차순. 모든 브랜드 리스트 페이지의 기본 정렬에 사용. growth-desc 같은
+// 명시적 sort는 이 comparator를 무시.
 export function compareBrandsRecommended(a: MockBrand, b: MockBrand): number {
-  const ar = a.id.startsWith('b') || a.id.startsWith('v') ? 0 : 1
-  const br = b.id.startsWith('b') || b.id.startsWith('v') ? 0 : 1
+  const ar = hasRealPhoto(a) ? 0 : 1
+  const br = hasRealPhoto(b) ? 0 : 1
   if (ar !== br) return ar - br
   return b.growthRate - a.growthRate
 }

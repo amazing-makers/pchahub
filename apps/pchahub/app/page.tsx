@@ -6,7 +6,7 @@ import { SearchBar } from '@/components/search-bar'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
 import { ListingCard } from '@/components/listing-card'
-import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
+import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended, hasRealPhoto } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { getBrands } from '@/lib/kftc/source'
 
@@ -18,10 +18,11 @@ export const revalidate = 3600 // 1시간 캐시
 
 export default async function HomePage() {
   const allBrands = await getBrands()
-  // 추천순(사진 있는 V2/큐레이션 우선 + 성장률) 상위 6개
-  const trendingBrands = [...allBrands].sort(compareBrandsRecommended).slice(0, 6)
-  // 매장 수 많은 순 상위 6개 (가맹 모집 중 섹션)
-  const recruitingBrands = [...allBrands]
+  // 메인 화면은 진짜 매장 사진 있는 브랜드만 노출 — 잘못된 stock 사진을
+  // 카드 hero에 깔지 않도록.
+  const photoBrands = allBrands.filter(hasRealPhoto)
+  const trendingBrands = [...photoBrands].sort(compareBrandsRecommended).slice(0, 6)
+  const recruitingBrands = [...photoBrands]
     .sort((a, b) => b.storeCount - a.storeCount)
     .slice(0, 6)
   return (
