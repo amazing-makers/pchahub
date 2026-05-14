@@ -1,87 +1,110 @@
-// Real photos used for user avatars + meeting covers + post hero images
-// until user uploads/community photos are stored in Supabase.
+// Curated avatars + meeting covers + post hero images for the community.
+// Uses Unsplash hotlinks under the Unsplash License.
 
 const U = 'https://images.unsplash.com/photo-'
 const QL = '?w=1200&q=80&auto=format&fit=crop'
 const QS = '?w=200&q=80&auto=format&fit=crop'
 
-/** Diverse avatar headshots for user identities. */
-const AVATARS = [
-  U + '1507003211169-0a1dd7228f2d' + QS,
-  U + '1500648767791-00dcc994a43e' + QS,
-  U + '1438761681033-6461ffad8d80' + QS,
-  U + '1494790108377-be9c29b29330' + QS,
-  U + '1472099645785-5658abf4ff4e' + QS,
-  U + '1534528741775-53994a69daeb' + QS,
-  U + '1573497019418-b400bb3ab074' + QS,
-  U + '1531427186611-ecfd6d936c79' + QS,
-  U + '1521119989659-a83eee488004' + QS,
-  U + '1573496359142-b8d87734a5a2' + QS,
-  U + '1463453091185-61582044d556' + QS,
-  U + '1610057099431-d73a1c9d2f2f' + QS,
-  U + '1564564321837-a57b7070ac4f' + QS,
+// ── Deterministic picking ───────────────────────────────────────────────────
+
+function hash(s: string): number {
+  let h = 2166136261
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return h >>> 0
+}
+
+function pick<T>(pool: T[], seed: string): T | undefined {
+  if (pool.length === 0) return undefined
+  return pool[hash(seed) % pool.length]
+}
+
+// ── User avatar pool ────────────────────────────────────────────────────────
+
+const AVATAR_IDS: string[] = [
+  '1507003211169-0a1dd7228f2d',
+  '1500648767791-00dcc994a43e',
+  '1438761681033-6461ffad8d80',
+  '1494790108377-be9c29b29330',
+  '1472099645785-5658abf4ff4e',
+  '1534528741775-53994a69daeb',
+  '1573497019418-b400bb3ab074',
+  '1531427186611-ecfd6d936c79',
+  '1521119989659-a83eee488004',
+  '1573496359142-b8d87734a5a2',
+  '1463453091185-61582044d556',
+  '1564564321837-a57b7070ac4f',
 ]
 
 export function userAvatarFor(userId: string): string {
-  const seed = userId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
-  return AVATARS[seed % AVATARS.length]
+  return U + (pick(AVATAR_IDS, userId) ?? AVATAR_IDS[0]!) + QS
 }
 
-/** Meeting cover photos by type — offline meetups, online webinars, hybrid. */
+// ── Meeting cover pools ─────────────────────────────────────────────────────
+
 const MEETING_POOL: Record<string, string[]> = {
   offline: [
-    U + '1517248135467-4c7edcad34c4' + QL, // group meeting / restaurant
-    U + '1559925393-8be0ec4767c8' + QL, // people gathered
-    U + '1582719188393-bb71ca45dbb9' + QL, // casual gathering
-    U + '1543269865-cbf427effbad' + QL, // workshop group
-    U + '1556761175-5973dc0f32e7' + QL, // event venue
-    U + '1591115765373-5207764f72e7' + QL, // people talking
+    '1517248135467-4c7edcad34c4',     // restaurant table group
+    '1559339352-11d035aa65de',        // workshop interior
+    '1565650834520-0b48a5c83f43',     // event venue
+    '1543269865-cbf427effbad',        // workshop group
+    '1494346480775-936a9f0d0877',     // casual gathering
+    '1538333581680-29dd4752ddf2',     // restaurant gathering
   ],
   online: [
-    U + '1611926653458-09294b3142bf' + QL, // online meeting screen
-    U + '1591115765373-5207764f72e7' + QL, // zoom-like
-    U + '1576267423048-15c0040fec78' + QL, // laptop meeting
-    U + '1587825140708-dfaf72ae4b04' + QL, // remote work
+    '1611926653458-09294b3142bf',     // online meeting screens
+    '1611162617213-7d7a39e9b1d7',     // remote work setup
+    '1519389950473-47ba0277781c',     // laptop meeting
+    '1519389950473-47ba0277781c',
   ],
   hybrid: [
-    U + '1517248135467-4c7edcad34c4' + QL,
-    U + '1591115765373-5207764f72e7' + QL,
-    U + '1559925393-8be0ec4767c8' + QL,
+    '1683721003111-070bcc053d8b',     // hybrid screens
+    '1517248135467-4c7edcad34c4',     // restaurant group
+    '1611926653458-09294b3142bf',     // online element
   ],
 }
+
+const MEETING_FALLBACK = '1517248135467-4c7edcad34c4'
 
 export function meetingCoverFor(meetingId: string, type: string): string {
-  const pool = MEETING_POOL[type] ?? MEETING_POOL.offline
-  const seed = meetingId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
-  return pool[seed % pool.length]
+  const pool = MEETING_POOL[type] ?? MEETING_POOL.offline ?? []
+  return U + (pick(pool, meetingId) ?? MEETING_FALLBACK) + QL
 }
 
-/** Optional post hero photo by category — mostly used for 운영 후기 (experience) posts. */
+// ── Post hero pools ─────────────────────────────────────────────────────────
+
 const POST_POOL: Record<string, string[]> = {
   experience: [
-    U + '1559925393-8be0ec4767c8' + QL,
-    U + '1517248135467-4c7edcad34c4' + QL,
-    U + '1554118811-1e0d58224f24' + QL,
-    U + '1582578598774-a377d4b32223' + QL,
-    U + '1559329007-40df8a9345d8' + QL,
+    '1517248135467-4c7edcad34c4',
+    '1538333581680-29dd4752ddf2',
+    '1565650834520-0b48a5c83f43',
+    '1559339352-11d035aa65de',
+    '1494346480775-936a9f0d0877',
+    '1453614512568-c4024d13c247',
   ],
   tip: [
-    U + '1554118811-1e0d58224f24' + QL,
-    U + '1568992687947-868a62a9f521' + QL,
+    '1453614512568-c4024d13c247',
+    '1525610553991-2bede1a236e2',
+    '1683721003111-070bcc053d8b',
+    '1611162617213-7d7a39e9b1d7',
   ],
   news: [
-    U + '1495020689067-958852a7765e' + QL,
-    U + '1504711434969-e33886168f5c' + QL,
+    '1495020689067-958852a7765e',
+    '1504711434969-e33886168f5c',
+    '1576267423048-15c0040fec78',
   ],
 }
 
-/** Posts only get a hero image ~50% of the time, based on id parity + category. */
+/** Posts only get a hero image about ~60% of the time, based on id hash.
+ *  Question/discussion posts have no hero (text-only). */
 export function postHeroFor(postId: string, category: string): string | undefined {
-  // 質문/토론은 사진 없는 편 (질문성 글)
   if (category === 'question' || category === 'discussion') return undefined
-  const pool = POST_POOL[category] ?? POST_POOL.experience
-  const seed = postId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  const pool = POST_POOL[category] ?? POST_POOL.experience ?? []
+  if (pool.length === 0) return undefined
   // 약 60% 확률로 hero 부여
-  if (seed % 5 < 2) return undefined
-  return pool[seed % pool.length]
+  if (hash(postId) % 5 < 2) return undefined
+  const id = pick(pool, postId) ?? pool[0]!
+  return U + id + QL
 }
