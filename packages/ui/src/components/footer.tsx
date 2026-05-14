@@ -9,6 +9,16 @@ const platforms = Object.entries(platformColors) as Array<
   [PlatformKey, (typeof platformColors)[PlatformKey]]
 >
 
+/**
+ * 정책 페이지는 모든 amakers 사이트에서 pchahub(마스터 도메인)에 호스팅된 단일
+ * 정식 문서를 가리킵니다. pchahub 내부에서는 상대 경로, 다른 앱에서는 절대 URL을 사용합니다.
+ */
+const PCHAHUB_DOMAIN = platformColors.pchahub.domain
+
+function legalHref(path: string, platform?: PlatformKey) {
+  return platform === 'pchahub' ? path : `https://${PCHAHUB_DOMAIN}${path}`
+}
+
 export function Footer({ platform }: FooterProps) {
   return (
     <footer className="mt-section border-t border-gray-200 bg-gray-50">
@@ -46,13 +56,13 @@ export function Footer({ platform }: FooterProps) {
         <div className="mt-10 flex flex-col gap-2 border-t border-gray-200 pt-6 text-xs text-gray-500 md:flex-row md:items-center md:justify-between">
           <div>© {new Date().getFullYear()} amakers. All rights reserved.</div>
           <div className="flex gap-4">
-            <a href="/about" className="hover:text-gray-700">
+            <a href={legalHref('/about', platform)} className="hover:text-gray-700">
               회사소개
             </a>
-            <a href="/terms" className="hover:text-gray-700">
+            <a href={legalHref('/terms', platform)} className="hover:text-gray-700">
               이용약관
             </a>
-            <a href="/privacy" className="hover:text-gray-700">
+            <a href={legalHref('/privacy', platform)} className="hover:text-gray-700">
               개인정보처리방침
             </a>
           </div>
