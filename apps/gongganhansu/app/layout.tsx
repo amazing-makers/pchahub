@@ -27,7 +27,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             navItems={navItems}
             actions={actions}
             showRole={false}
-            showSiteSwitcher={false}
             rightSlot={<HeaderUserMenu actions={actions} />}
           />
           <div className="flex-1">{children}</div>

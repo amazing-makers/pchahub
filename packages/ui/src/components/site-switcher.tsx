@@ -45,7 +45,7 @@ export function SiteSwitcher({ current }: SiteSwitcherProps) {
         aria-haspopup="menu"
       >
         <LayoutGrid className="h-4 w-4" />
-        <span className="hidden sm:inline">9개 사이트</span>
+        <span className="hidden sm:inline">amakers 사이트</span>
         <ChevronDown className={cn('h-3 w-3 transition-transform', open && 'rotate-180')} />
       </button>
       {open && (
