@@ -1,0 +1,50 @@
+import type { Metadata } from 'next'
+import { Card, CardContent } from '@amakers/ui'
+import { buildPageMetadata } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
+import { CHANNELS } from '@/lib/mock-data'
+
+export const metadata: Metadata = buildPageMetadata('jangsanote', {
+  title: '카테고리',
+  description: '장사노트 커뮤니티 카테고리 — 업종·주제별 게시판.',
+  path: '/categories',
+})
+
+export default function CategoriesPage() {
+  const categories = CHANNELS.filter((c) => c.type === 'category')
+  return (
+    <main className="bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto py-8">
+          <h1 className="text-h3 font-bold text-gray-900">카테고리</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            업종·주제별 게시판 {categories.length}개. 관심 분야 글만 모아 보세요.
+          </p>
+        </div>
+      </section>
+
+      <div className="container mx-auto py-8">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((c) => (
+            <a key={c.key} href={`/categories/${c.key}`} className="group block">
+              <Card className="h-full border-gray-200 transition-shadow hover:shadow-md">
+                <CardContent className="p-5">
+                  <h2 className="text-base font-bold text-gray-900 group-hover:text-gray-700">
+                    {c.label}
+                  </h2>
+                  {c.description && (
+                    <p className="mt-1 line-clamp-2 text-sm text-gray-500">{c.description}</p>
+                  )}
+                  <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
+                    <span>회원 {formatNumber(c.memberCount)}명</span>
+                    <span>글 {formatNumber(c.postCount)}개</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          ))}
+        </div>
+      </div>
+    </main>
+  )
+}
