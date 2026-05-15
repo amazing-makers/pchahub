@@ -6,6 +6,7 @@ import { brandImageSet, type BrandMenuImage } from './brand-images'
 import v2Raw from './v2-brands.json'
 import v2LocalPaths from './v2-local-paths.json'
 import v2KftcEnrich from '../../../packages/listings/data/v2-kftc-enrichments.json'
+import v2ExtrasRaw from '../../../packages/listings/data/myfranchise-extras.json'
 
 export interface MockCategory {
   key: string
@@ -450,12 +451,47 @@ type V2Enrichment = {
 }
 const _KFTC_ENRICH = (v2KftcEnrich as { enrichments?: Record<string, V2Enrichment> }).enrichments ?? {}
 
+// V2 브랜드 인테리어·메뉴 사진 (마이프차 출처, 카테고리별 분류) — regNum 키
+type V2ExtraBrand = {
+  regNum: string
+  name: string
+  found?: boolean
+  photos?: { menu?: string[]; interior?: string[]; store?: string[]; other?: string[] }
+  menuItems?: Array<{ name?: string; price?: number; image?: string }>
+}
+const _EXTRAS_BY_REGNUM: Record<string, V2ExtraBrand> = (() => {
+  const m: Record<string, V2ExtraBrand> = {}
+  const list = (v2ExtrasRaw as { brands?: V2ExtraBrand[] }).brands ?? []
+  for (const b of list) {
+    if (b.regNum && b.found) m[b.regNum] = b
+  }
+  return m
+})()
+
 const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
   const id = `v${1000 + i}`
   const local = (v2LocalPaths as Record<string, { logo?: string; heroImage?: string; storeImages?: string[] }>)[id]
   const logoUrl = b.logo || b.thumbnail
   const hero = b.photos[0] ?? b.thumbnail
   const kftc = _KFTC_ENRICH[b.regNum]
+  const extras = _EXTRAS_BY_REGNUM[b.regNum]
+
+  // 인테리어 사진 우선, 없으면 기존 store fallback
+  const interiorImages = extras?.photos?.interior?.length
+    ? extras.photos.interior
+    : (local?.storeImages ?? b.photos.map(proxyUrl))
+
+  // 메뉴 사진 + 이름·가격
+  const menuImages: BrandMenuImage[] = (extras?.menuItems ?? [])
+    .filter((m): m is { name: string; price: number; image: string } =>
+      typeof m.image === 'string' && m.image.length > 0,
+    )
+    .map((m, idx) => ({
+      url: m.image,
+      name: m.name ?? '',
+      signature: idx === 0,
+    }))
+
   return {
     id,
     name: b.name,
@@ -463,21 +499,19 @@ const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
     categoryLabel: V2_CAT_LABELS[b.category] ?? b.bizStr,
     logoColor: V2_CAT_COLORS[b.category] ?? '#6366F1',
     description: V2_BIZ_DESC[b.bizStr] ?? `${b.bizStr} 프랜차이즈`,
-    // KFTC 정부 공시 데이터가 있으면 우선, 없으면 score 기반 추정값 fallback
     storeCount: kftc?.storeCount ?? Math.max(5, Math.round(b.score / 100)),
     startupCost: kftc?.startupCost ?? 0,
     monthlyRoyalty: 0,
-    hqVerified: kftc != null, // KFTC 매칭된 브랜드는 정보공개서 검증됨
+    hqVerified: kftc != null,
     recruiting: false,
     featured: false,
     growthRate: Math.max(1, Math.round(b.score / 200)),
     hqRegion: V2_REGIONS[i % V2_REGIONS.length] ?? '서울',
-    heroImage: local?.heroImage ?? (hero ? proxyUrl(hero) : ''),
+    heroImage: extras?.photos?.interior?.[0] ?? local?.heroImage ?? (hero ? proxyUrl(hero) : ''),
     logo: local?.logo ?? (logoUrl ? proxyUrl(logoUrl) : ''),
-    storeImages: local?.storeImages ?? b.photos.map(proxyUrl),
-    menuImages: [],
+    storeImages: interiorImages,
+    menuImages,
     videoUrl: b.videos[0] ?? undefined,
-    // KFTC 실 API 필드 (mock-brand-detail.ts·디테일 페이지가 자동 사용)
     corpNm: kftc?.corpNm,
     avgAnnualSales: kftc?.avgAnnualSales,
     jngBizStartYear: kftc?.jngBizStartYear,
@@ -496,12 +530,13 @@ export const FEATURED_BRANDS = BRANDS.filter((b) => b.featured)
 export const RECRUITING_BRANDS = BRANDS.filter((b) => b.recruiting && !b.featured)
 
 // 진짜 매장 사진을 가진 브랜드만 true.
-// - /brands/...   = public/brands/v*|b* 로컬 파일 (큐레이션·V2 카탈로그)
-// - /api/img-proxy = myfranchise.kr CDN 프록시 (V2 로컬 다운로드 실패 fallback)
+// - /brands/...        = public/brands/v*|b* (큐레이션·V2 카탈로그 원본)
+// - /brand-assets/...  = public/brand-assets/v{regNum}/{menu|interior} (V2 인테리어·메뉴 분류)
+// - /api/img-proxy     = myfranchise.kr CDN 프록시 (로컬 다운로드 실패 fallback)
 // 그 외 (Unsplash placeholder URL 등)는 매장과 무관한 stock 사진 → 표시 금지.
 export function hasRealPhoto(brand: MockBrand): boolean {
   const h = brand.heroImage
-  return h.startsWith('/brands/') || h.startsWith('/api/img-proxy')
+  return h.startsWith('/brands/') || h.startsWith('/brand-assets/') || h.startsWith('/api/img-proxy')
 }
 
 // 추천순 comparator — 진짜 사진 있는 브랜드 우선, 같은 그룹 내에서는 성장률
