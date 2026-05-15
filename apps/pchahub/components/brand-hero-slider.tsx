@@ -46,25 +46,16 @@ export function BrandHeroSlider({ images, alt }: BrandHeroSliderProps) {
   if (total === 0) return null
 
   return (
-    <div className="relative aspect-[16/9] w-full overflow-hidden bg-gray-900 sm:aspect-[21/9] sm:max-h-[520px]">
-      {/* Blurred backdrop — 같은 이미지를 cover + blur로 깔아 letterbox 공간을 메움 */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        key={`bg-${idx}`}
-        src={current}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-xl"
-      />
-      <div className="absolute inset-0 bg-black/30" />
-
-      {/* Foreground — object-contain으로 사진 전체가 보이도록 */}
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100 sm:aspect-[3/2] sm:max-h-[520px]">
+      {/* 사진은 컨테이너를 가득 채움 — 빈 letterbox 공간 없도록 object-cover.
+          V2 사진 49%가 4:3 / 34%가 16:9이라 4:3(모바일)~3:2(데스크탑) 컨테이너에
+          맞춰 채우면 대부분 사진이 자연스럽게 표시되고 약간만 잘린다. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         key={`fg-${idx}`}
         src={current}
         alt={alt}
-        className="relative z-10 mx-auto h-full max-h-full max-w-full object-contain"
+        className="h-full w-full object-cover"
       />
 
       {total > 1 && (

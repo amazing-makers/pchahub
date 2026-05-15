@@ -235,9 +235,9 @@ function BrandHero({
           {showHeroPhoto ? (
             <BrandHeroSlider images={heroImages} alt={`${brand.name} 매장 사진`} />
           ) : (
-            // 진짜 사진 없음 — 브랜드 컬러 블록 + 큰 모노그램만 가운데
+            // 진짜 사진 없음 — 브랜드 컬러 블록 + 큰 모노그램만 가운데 (BrandHeroSlider와 같은 비율)
             <div
-              className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden sm:aspect-[21/9] sm:max-h-[520px]"
+              className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden sm:aspect-[3/2] sm:max-h-[520px]"
               style={{ background: brand.logoColor }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-black/20" />
