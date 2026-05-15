@@ -33,6 +33,7 @@ import {
 } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { BrandActions } from '@/components/brand-actions'
+import { BrandHeroSlider } from '@/components/brand-hero-slider'
 import { BRANDS, hasRealPhoto, type MockBrand } from '@/lib/mock-data'
 import {
   getBrandDetail,
@@ -220,49 +221,48 @@ function BrandHero({
   ]
 
   const showHeroPhoto = hasRealPhoto(brand)
+  // 슬라이더에 보여줄 사진들 — hero(대표) + store(매장) 중복 제거
+  const heroImages = showHeroPhoto
+    ? Array.from(new Set([detail.photos.hero, ...detail.photos.store].filter(Boolean)))
+    : []
+
   return (
     <section className="border-b border-gray-200 bg-white">
-      <div
-        className="relative aspect-[16/9] w-full overflow-hidden bg-gray-100 sm:aspect-[21/9] sm:max-h-[480px]"
-        style={showHeroPhoto ? undefined : { background: brand.logoColor }}
-      >
-        {showHeroPhoto ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={detail.photos.hero}
-              alt={`${brand.name} 매장 대표 이미지`}
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/60" />
-          </>
-        ) : (
-          // 진짜 매장 사진 없음 — 브랜드 컬러 + 가독성용 어두운 오버레이만
-          <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/45" />
-        )}
+      {/* Hero photo area — 사진은 절대 안 잘림(object-contain) + 블러 backdrop */}
+      {showHeroPhoto ? (
+        <BrandHeroSlider images={heroImages} alt={`${brand.name} 매장 사진`} />
+      ) : (
+        // 진짜 사진 없음 — 브랜드 컬러 블록 + 큰 모노그램만 가운데
+        <div
+          className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden sm:aspect-[21/9] sm:max-h-[520px]"
+          style={{ background: brand.logoColor }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-black/20" />
+          <BrandLogo brand={brand} size="xl" bordered className="relative z-10" />
+        </div>
+      )}
 
-        {/* Brand identity overlay — inside hero, no conflict with breadcrumb */}
-        <div className="container mx-auto absolute inset-x-0 bottom-5 px-4">
-          <div className="flex items-end gap-4">
-            <BrandLogo brand={brand} size="xl" bordered />
-            <div className="min-w-0 flex-1 pb-1 text-white">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-h2 font-bold drop-shadow">{brand.name}</h1>
-                {brand.hqVerified && (
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-500/95 px-2 py-0.5 text-xs font-medium">
-                    <CheckCircle2 className="h-3 w-3" />
-                    협회 등록
-                  </span>
-                )}
-                {brand.recruiting && (
-                  <span className="inline-flex items-center rounded-full bg-emerald-500/95 px-2 py-0.5 text-xs font-medium">
-                    가맹 모집중
-                  </span>
-                )}
-              </div>
-              <div className="mt-1 text-sm text-white/90 drop-shadow">
-                {brand.categoryLabel} · {detail.hq.companyName} · 본사 {brand.hqRegion}
-              </div>
+      {/* Brand identity card — 사진 아래 별도 행 (overlay 안 함) */}
+      <div className="container mx-auto px-4 pt-6">
+        <div className="flex items-start gap-4">
+          <BrandLogo brand={brand} size="xl" bordered />
+          <div className="min-w-0 flex-1 pt-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-h2 font-bold text-gray-900">{brand.name}</h1>
+              {brand.hqVerified && (
+                <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                  <CheckCircle2 className="h-3 w-3" />
+                  협회 등록
+                </span>
+              )}
+              {brand.recruiting && (
+                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                  가맹 모집중
+                </span>
+              )}
+            </div>
+            <div className="mt-1 text-sm text-gray-500">
+              {brand.categoryLabel} · {detail.hq.companyName} · 본사 {brand.hqRegion}
             </div>
           </div>
         </div>
