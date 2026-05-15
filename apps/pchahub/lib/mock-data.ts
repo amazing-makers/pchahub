@@ -5,6 +5,7 @@
 import { brandImageSet, type BrandMenuImage } from './brand-images'
 import v2Raw from './v2-brands.json'
 import v2LocalPaths from './v2-local-paths.json'
+import v2KftcEnrich from '../../../packages/listings/data/v2-kftc-enrichments.json'
 
 export interface MockCategory {
   key: string
@@ -433,11 +434,28 @@ const _CURATED: MockBrand[] = RAW_BRANDS.map((b) => {
   }
 })
 
+// V2 브랜드 KFTC 보강 데이터 (정부 공정거래위원회 공시) — regNum 키
+type V2Enrichment = {
+  storeCount?: number
+  newOpenCount?: number
+  closedCount?: number
+  avgAnnualSales?: number
+  fntnFranchiseFee?: number
+  fntnDeposit?: number
+  fntnEducationFee?: number
+  fntnOtherFees?: number
+  startupCost?: number
+  jngBizStartYear?: number
+  corpNm?: string
+}
+const _KFTC_ENRICH = (v2KftcEnrich as { enrichments?: Record<string, V2Enrichment> }).enrichments ?? {}
+
 const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
   const id = `v${1000 + i}`
   const local = (v2LocalPaths as Record<string, { logo?: string; heroImage?: string; storeImages?: string[] }>)[id]
   const logoUrl = b.logo || b.thumbnail
   const hero = b.photos[0] ?? b.thumbnail
+  const kftc = _KFTC_ENRICH[b.regNum]
   return {
     id,
     name: b.name,
@@ -445,10 +463,11 @@ const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
     categoryLabel: V2_CAT_LABELS[b.category] ?? b.bizStr,
     logoColor: V2_CAT_COLORS[b.category] ?? '#6366F1',
     description: V2_BIZ_DESC[b.bizStr] ?? `${b.bizStr} 프랜차이즈`,
-    storeCount: Math.max(5, Math.round(b.score / 100)),
-    startupCost: 0,
+    // KFTC 정부 공시 데이터가 있으면 우선, 없으면 score 기반 추정값 fallback
+    storeCount: kftc?.storeCount ?? Math.max(5, Math.round(b.score / 100)),
+    startupCost: kftc?.startupCost ?? 0,
     monthlyRoyalty: 0,
-    hqVerified: false,
+    hqVerified: kftc != null, // KFTC 매칭된 브랜드는 정보공개서 검증됨
     recruiting: false,
     featured: false,
     growthRate: Math.max(1, Math.round(b.score / 200)),
@@ -458,6 +477,16 @@ const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
     storeImages: local?.storeImages ?? b.photos.map(proxyUrl),
     menuImages: [],
     videoUrl: b.videos[0] ?? undefined,
+    // KFTC 실 API 필드 (mock-brand-detail.ts·디테일 페이지가 자동 사용)
+    corpNm: kftc?.corpNm,
+    avgAnnualSales: kftc?.avgAnnualSales,
+    jngBizStartYear: kftc?.jngBizStartYear,
+    closedCount: kftc?.closedCount,
+    newOpenCount: kftc?.newOpenCount,
+    fntnFranchiseFee: kftc?.fntnFranchiseFee,
+    fntnEducationFee: kftc?.fntnEducationFee,
+    fntnDeposit: kftc?.fntnDeposit,
+    fntnOtherFees: kftc?.fntnOtherFees,
   }
 })
 
