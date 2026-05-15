@@ -643,11 +643,11 @@ const MENU_BY_CATEGORY: Record<string, Array<{ name: string; priceWon: number; s
 }
 
 function menuFor(brand: MockBrand): BrandMenuItem[] {
-  const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean
-  // Use the brand's curated menu photos. When HQ uploads its own, brand.menuImages
-  // already contains the uploaded set, so this stays correct.
+  // 메뉴 사진이 없는 브랜드(V2 카탈로그 등)는 메뉴 자체를 반환하지 않아 섹션 통째로 숨김.
+  // image 필드 없는 메뉴를 노출하면 <img src=undefined> 로 깨진 이미지가 보임.
   const photoUrls = brand.menuImages.map((m) => m.url)
-  if (photoUrls.length === 0) return base
+  if (photoUrls.length === 0) return []
+  const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean
   return base.map((m, i) => ({
     ...m,
     image: photoUrls[i % photoUrls.length] ?? photoUrls[0]!,

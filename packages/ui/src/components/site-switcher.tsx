@@ -52,9 +52,6 @@ export function SiteSwitcher({ current }: SiteSwitcherProps) {
           role="menu"
           className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-gray-200 bg-white p-2 shadow-lg"
         >
-          <div className="px-2 pb-2 pt-1 text-xs font-semibold text-gray-500">
-            한국 프랜차이즈 9개 플랫폼
-          </div>
           <div className="grid grid-cols-1 gap-0.5">
             {platforms.map(([key, b]) => {
               const isCurrent = key === current
