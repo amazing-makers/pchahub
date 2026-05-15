@@ -13,7 +13,10 @@
 export function listingImageUrl(path: string | undefined): string {
   if (!path) return ''
   if (path.startsWith('http://') || path.startsWith('https://')) return path
-  const host = process.env.NEXT_PUBLIC_LISTINGS_HOST?.replace(/\/$/, '') ?? ''
+  // dev에서 환경변수 미설정 시 더명당 dev 서버(localhost:3003)로 fallback —
+  // 같은 머신에서 turbo로 모든 앱이 한 번에 떠 있고 사진 원본이 더명당에만 있어서.
+  const envHost = process.env.NEXT_PUBLIC_LISTINGS_HOST?.replace(/\/$/, '')
+  const host = envHost ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:3003' : '')
   return `${host}${path}`
 }
 

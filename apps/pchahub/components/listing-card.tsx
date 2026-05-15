@@ -12,13 +12,22 @@ export function ListingCard({ listing }: ListingCardProps) {
     <a href={`/listings/${listing.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={listing.images[0]}
-            alt={listing.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
+          {listing.images[0] ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={listing.images[0]}
+                alt={listing.title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+            </>
+          ) : (
+            // 사진 없는 외부 출처 매물 — 회색 블록 + 안내
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 text-xs text-gray-400">
+              사진 준비 중
+            </div>
+          )}
           <Badge
             variant={listing.listingType === '양도' ? 'warning' : 'primary'}
             className="absolute left-2 top-2 shrink-0"
@@ -39,20 +48,24 @@ export function ListingCard({ listing }: ListingCardProps) {
             {listing.region} · {listing.district}
           </div>
 
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-sm text-gray-500">보증금</span>
-            <span className="text-base font-bold text-gray-900">
-              {formatNumber(listing.deposit)}<span className="text-xs font-medium text-gray-500">만</span>
-            </span>
-            <span className="ml-auto text-xs text-gray-500">월세</span>
-            <span className="text-sm font-semibold text-gray-900">
-              {formatNumber(listing.monthlyRent)}<span className="text-xs font-medium text-gray-500">만</span>
-            </span>
-          </div>
+          {/* 가격 — 보증금/월세 정보 있는 매물만 노출 (창업몰처럼 권리금만 있는 매물은 권리금 위주로) */}
+          {(listing.deposit > 0 || listing.monthlyRent > 0) && (
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-sm text-gray-500">보증금</span>
+              <span className="text-base font-bold text-gray-900">
+                {listing.deposit > 0 ? `${formatNumber(listing.deposit)}만` : '-'}
+              </span>
+              <span className="ml-auto text-xs text-gray-500">월세</span>
+              <span className="text-sm font-semibold text-gray-900">
+                {listing.monthlyRent > 0 ? `${formatNumber(listing.monthlyRent)}만` : '-'}
+              </span>
+            </div>
+          )}
 
           {listing.rightFee > 0 && (
-            <div className="mt-1 text-xs text-gray-500">
-              권리금 <span className="font-semibold text-gray-700">{formatNumber(listing.rightFee)}만</span>
+            <div className="mt-2 inline-flex items-baseline gap-1 rounded-md bg-amber-50 px-2 py-1 text-xs text-amber-900">
+              <span>권리금</span>
+              <span className="font-bold">{formatNumber(listing.rightFee)}만</span>
             </div>
           )}
 
