@@ -76,54 +76,73 @@ async function downloadPhoto(url, destPath) {
 }
 
 /**
- * 응답 트리에서 URL 후보를 카테고리별로 수집.
- * 응답 schema가 정확히 어떻게 생겼는지 probe 단계에서 확인 후 정교화.
+ * 응답 트리에서 URL을 카테고리별로 수집.
+ *
+ * 마이프차 응답 구조 (확인됨, 2026-05-15):
+ *   brandInformationSectionList[i].menus = [{ name, price, originalUrl, thumbUrl }]
+ *   brandInformationSectionList[i].interiors = [{ name, originalUrl, thumbUrl }]
+ *   brandInformationSectionList[i].videos = [{ url }]
+ *   brandInformationSectionV2List도 동일 구조 가능성
+ *
+ * 핵심 분류 기준 = 부모 array key name (menus / interiors / signatures …).
+ * originalUrl 우선, 없으면 thumbUrl.
  */
 function extractCategorizedPhotos(data) {
   const out = { menu: [], interior: [], store: [], other: [] }
+  // 메뉴는 이름·가격도 같이 저장 (디테일 페이지의 MenuSection에서 사용)
+  const menuItems = [] // [{ name, price, url }]
   const seen = new Set()
 
   const isImg = (s) => typeof s === 'string'
     && /cdn\.myfranchise|prod-myfranchise|s3\.[a-z0-9-]+\.amazonaws/.test(s)
     && !/icon_|favicon|placeholder|svg$/.test(s)
 
-  function classify(label) {
-    const s = String(label ?? '').toLowerCase()
-    if (/menu|메뉴|signature|시그니|음식/i.test(s)) return 'menu'
-    if (/interior|인테리어|매장 ?내부|inside|store interior/i.test(s)) return 'interior'
-    if (/store|매장|exterior|외관|입점/i.test(s)) return 'store'
+  function bucketForKey(key) {
+    const k = String(key ?? '').toLowerCase()
+    if (/^menus?$|^signature/.test(k) || /menu(items|list)?$/i.test(k)) return 'menu'
+    if (/^interiors?$|^exteriors?$/.test(k) || /interior(items|list)?$/i.test(k)) return 'interior'
+    if (/^stores?$|^shops?$/.test(k)) return 'store'
     return null
   }
 
-  function walk(node, contextBucket) {
+  function pickUrl(item) {
+    if (!item || typeof item !== 'object') return ''
+    const v = item.originalUrl ?? item.imageUrl ?? item.url ?? item.src ?? item.thumbUrl ?? ''
+    return typeof v === 'string' && isImg(v) ? v.split('?')[0] : ''
+  }
+
+  function walk(node) {
     if (!node) return
     if (Array.isArray(node)) {
-      for (const v of node) walk(v, contextBucket)
+      for (const v of node) walk(v)
       return
     }
-    if (typeof node === 'object') {
-      // 섹션 라벨 발견 시 contextBucket 갱신
-      const ownLabel = node.sectionType ?? node.type ?? node.title ?? node.name ?? node.category
-      const own = classify(ownLabel) ?? contextBucket
-      for (const [k, v] of Object.entries(node)) {
-        if (typeof v === 'string' && /url|image|photo|src|thumb/i.test(k) && isImg(v)) {
-          const url = v.split('?')[0]
-          if (seen.has(url)) continue
+    if (typeof node !== 'object') return
+
+    for (const [k, v] of Object.entries(node)) {
+      const bucket = bucketForKey(k)
+      if (bucket && Array.isArray(v)) {
+        for (const item of v) {
+          const url = pickUrl(item)
+          if (!url || seen.has(url)) continue
           seen.add(url)
-          // key 자체 카테고리 힌트 (menuImage 등)
-          let bucket = own
-          if (!bucket) bucket = classify(k)
-          if (!bucket) bucket = 'other'
           out[bucket].push(url)
-        } else {
-          walk(v, own)
+          if (bucket === 'menu' && item && typeof item === 'object') {
+            menuItems.push({
+              name: item.name ?? '',
+              price: typeof item.price === 'number' ? item.price : undefined,
+              url,
+            })
+          }
         }
+        continue
       }
+      walk(v)
     }
   }
 
-  walk(data, null)
-  return out
+  walk(data)
+  return { ...out, menuItems }
 }
 
 async function main() {
@@ -147,18 +166,19 @@ async function main() {
         console.log(`  [${i + 1}/${targets.length}] ${regNum} ${name} — no data`)
         results.push({ regNum, name, found: false })
       } else {
-        const categorized = extractCategorizedPhotos(data)
+        const { menuItems, ...categorized } = extractCategorizedPhotos(data)
         const counts = Object.fromEntries(Object.entries(categorized).map(([k, v]) => [k, v.length]))
-        console.log(`  [${i + 1}/${targets.length}] ${regNum} ${name} —`, counts)
+        console.log(`  [${i + 1}/${targets.length}] ${regNum} ${name} —`, counts, `+ menuItems:${menuItems.length}`)
 
         if (PROBE_MODE) {
           await writeFile(join(TMP_DIR, `probe-${regNum}.json`), JSON.stringify(data, null, 2), 'utf8')
-          results.push({ regNum, name, categorized, raw: data })
+          results.push({ regNum, name, categorized, menuItems, raw: '(omitted in probe summary)' })
           break
         }
 
-        // download photos
+        // download photos by category
         const localPaths = { menu: [], interior: [], store: [], other: [] }
+        const localMenuItems = []
         for (const cat of Object.keys(categorized)) {
           const urls = categorized[cat].slice(0, 8)
           if (urls.length === 0) continue
@@ -170,11 +190,16 @@ async function main() {
             const dst = join(catDir, `${j + 1}.${ext}`)
             const r = await downloadPhoto(url, dst)
             if (r.ok || r.skipped) {
-              localPaths[cat].push(`/brand-assets/v${regNum}/${cat}/${j + 1}.${ext}`)
+              const localPath = `/brand-assets/v${regNum}/${cat}/${j + 1}.${ext}`
+              localPaths[cat].push(localPath)
+              if (cat === 'menu') {
+                const mi = menuItems.find((m) => m.url === url)
+                if (mi) localMenuItems.push({ name: mi.name, price: mi.price, image: localPath })
+              }
             }
           }
         }
-        results.push({ regNum, name, found: true, photos: localPaths })
+        results.push({ regNum, name, found: true, photos: localPaths, menuItems: localMenuItems })
       }
     } catch (e) {
       console.warn(`  [${i + 1}/${targets.length}] ${regNum} ${name} FAIL: ${e.message}`)
