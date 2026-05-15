@@ -481,15 +481,16 @@ const _V2: MockBrand[] = (v2Raw as V2Entry[]).map((b, i) => {
     ? extras.photos.interior
     : (local?.storeImages ?? b.photos.map(proxyUrl))
 
-  // 메뉴 사진 + 이름·가격
+  // 메뉴 사진 + 이름 + 가격 — 마이프차에서 받은 실제 데이터 보존
   const menuImages: BrandMenuImage[] = (extras?.menuItems ?? [])
-    .filter((m): m is { name: string; price: number; image: string } =>
+    .filter((m): m is { name?: string; price?: number; image: string } =>
       typeof m.image === 'string' && m.image.length > 0,
     )
     .map((m, idx) => ({
       url: m.image,
       name: m.name ?? '',
       signature: idx === 0,
+      priceWon: typeof m.price === 'number' && m.price > 0 ? m.price : undefined,
     }))
 
   return {

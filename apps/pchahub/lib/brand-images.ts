@@ -182,6 +182,9 @@ export interface BrandMenuImage {
   url: string
   name: string
   signature?: boolean
+  /** 메뉴 가격 (원). V2 카탈로그처럼 본사가 직접 등록한 가격이 있으면 채워짐.
+   *  비어있으면 menuFor()가 카테고리 base의 fallback 가격 사용. */
+  priceWon?: number
 }
 
 export interface BrandImageSet {

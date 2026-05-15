@@ -643,14 +643,29 @@ const MENU_BY_CATEGORY: Record<string, Array<{ name: string; priceWon: number; s
 }
 
 function menuFor(brand: MockBrand): BrandMenuItem[] {
-  // 메뉴 사진이 없는 브랜드(V2 카탈로그 등)는 메뉴 자체를 반환하지 않아 섹션 통째로 숨김.
-  // image 필드 없는 메뉴를 노출하면 <img src=undefined> 로 깨진 이미지가 보임.
-  const photoUrls = brand.menuImages.map((m) => m.url)
-  if (photoUrls.length === 0) return []
+  // 메뉴 사진이 없는 브랜드는 섹션 통째로 숨김 — <img src=undefined> 방지.
+  if (brand.menuImages.length === 0) return []
+
+  // V2 카탈로그: menuImages 자체에 name + priceWon (마이프차 실제 가격) 들어있음.
+  //   → 그 데이터를 그대로 사용 (한식 base 가격 같은 generic fallback 안 씀).
+  // 큐레이션 b* 브랜드: menuImages에 이름만 있음 (가격은 카테고리 base에서 가져옴).
+  const hasRealPrices = brand.menuImages.some((m) => typeof m.priceWon === 'number' && m.priceWon > 0)
+  if (hasRealPrices) {
+    return brand.menuImages
+      .filter((m) => typeof m.priceWon === 'number' && m.priceWon > 0)
+      .map((m) => ({
+        name: m.name || '대표 메뉴',
+        priceWon: m.priceWon!,
+        image: m.url,
+        signature: m.signature,
+      }))
+  }
+
+  // fallback: 카테고리 base의 이름·가격 + 사진만 매핑
   const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean
   return base.map((m, i) => ({
     ...m,
-    image: photoUrls[i % photoUrls.length] ?? photoUrls[0]!,
+    image: brand.menuImages[i % brand.menuImages.length]?.url ?? brand.menuImages[0]!.url,
   }))
 }
 
