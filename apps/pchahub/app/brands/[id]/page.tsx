@@ -110,9 +110,10 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
       <div className="container mx-auto py-12">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0 space-y-8">
+            {/* 사용자 노출 순서: 대표메뉴 → 인테리어 → 홍보영상 (myfranchise.kr 패턴) */}
+            <MenuSection detail={detail} brand={brand} />
             <PhotoGallerySection detail={detail} brand={brand} />
             <BrandVideoSection brand={brand} />
-            <MenuSection detail={detail} brand={brand} />
             <HQSection detail={detail} />
             <CostsSection detail={detail} totalCost={totalCost} />
             <DisclosureExtrasSection detail={detail} />
@@ -228,19 +229,23 @@ function BrandHero({
 
   return (
     <section className="border-b border-gray-200 bg-white">
-      {/* Hero photo area — 사진은 절대 안 잘림(object-contain) + 블러 backdrop */}
-      {showHeroPhoto ? (
-        <BrandHeroSlider images={heroImages} alt={`${brand.name} 매장 사진`} />
-      ) : (
-        // 진짜 사진 없음 — 브랜드 컬러 블록 + 큰 모노그램만 가운데
-        <div
-          className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden sm:aspect-[21/9] sm:max-h-[520px]"
-          style={{ background: brand.logoColor }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-black/20" />
-          <BrandLogo brand={brand} size="xl" bordered className="relative z-10" />
+      {/* Hero photo area — 컨테이너 내부에 두고 모서리 둥글림. 사진 안 잘림 + 슬라이더. */}
+      <div className="container mx-auto px-4 pt-6">
+        <div className="overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-100">
+          {showHeroPhoto ? (
+            <BrandHeroSlider images={heroImages} alt={`${brand.name} 매장 사진`} />
+          ) : (
+            // 진짜 사진 없음 — 브랜드 컬러 블록 + 큰 모노그램만 가운데
+            <div
+              className="relative flex aspect-[16/9] w-full items-center justify-center overflow-hidden sm:aspect-[21/9] sm:max-h-[520px]"
+              style={{ background: brand.logoColor }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-black/20" />
+              <BrandLogo brand={brand} size="xl" bordered className="relative z-10" />
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Brand identity card — 사진 아래 별도 행 (overlay 안 함) */}
       <div className="container mx-auto px-4 pt-6">
@@ -996,66 +1001,16 @@ function StatBlock({
 function PhotoGallerySection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
   // 진짜 매장 사진 없으면 섹션 통째로 숨김 (stock 사진 노출 금지)
   if (!hasRealPhoto(brand)) return null
-  const photos = [...detail.photos.store, ...detail.photos.gallery]
+  // 인테리어 섹션 — 매장 사진만 사용 (메뉴 사진은 MenuSection에서 따로). 그리드 대신 슬라이드형.
+  const photos = detail.photos.store
   if (photos.length === 0) return null
-
-  // 사진 1장: 단독 배너 (16:9, max-h 캡으로 데스크탑에서 과하게 안 커지게)
-  if (photos.length === 1) {
-    return (
-      <SectionCard
-        title="매장 · 메뉴 사진"
-        subtitle={`${brand.name} 본사가 등록한 실제 매장 사진과 메뉴`}
-      >
-        <div className="relative aspect-[16/9] max-h-[480px] overflow-hidden rounded-xl bg-gray-100">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={photos[0]}
-            alt={`${brand.name} 사진 1`}
-            className="h-full w-full object-cover transition-transform hover:scale-105"
-            loading="lazy"
-          />
-        </div>
-      </SectionCard>
-    )
-  }
-
-  // 사진 2장+: 첫 사진은 큰 배너, 나머지는 4:3 균등 그리드
-  // (V2 사진 49%가 4:3 / 34%가 16:9 — square 크롭은 위아래를 많이 잘라 어울리지 않음)
-  const [first, ...rest] = photos
-  const remaining = rest.slice(0, 7)
   return (
     <SectionCard
-      title="매장 · 메뉴 사진"
-      subtitle={`${brand.name} 본사가 등록한 실제 매장 사진과 메뉴`}
+      title="인테리어"
+      subtitle={`${brand.name} 매장 인테리어 · 외관 사진`}
     >
-      <div className="space-y-3">
-        <div className="relative aspect-[16/9] max-h-[480px] overflow-hidden rounded-xl bg-gray-100">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={first}
-            alt={`${brand.name} 사진 1`}
-            className="h-full w-full object-cover transition-transform hover:scale-105"
-            loading="lazy"
-          />
-        </div>
-        {remaining.length > 0 && (
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-            {remaining.map((src, i) => (
-              <div
-                key={i}
-                className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={src}
-                  alt={`${brand.name} 사진 ${i + 2}`}
-                  className="h-full w-full object-cover transition-transform hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="overflow-hidden rounded-2xl shadow-sm ring-1 ring-gray-100">
+        <BrandHeroSlider images={photos} alt={`${brand.name} 인테리어 사진`} />
       </div>
     </SectionCard>
   )
@@ -1126,26 +1081,24 @@ function MenuSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand 
       title="대표 메뉴"
       subtitle="시그니처 메뉴와 인기 메뉴 라인업"
     >
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {/* 사진은 크지 않게 — 더 작은 카드 + 한 줄에 더 많이 (3/4/6 컬럼) */}
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {detail.menu.map((m, i) => (
-          <div key={i} className="overflow-hidden rounded-xl border border-gray-100 bg-white">
-            <div className="relative aspect-square overflow-hidden bg-gray-100">
+          <div key={i} className="overflow-hidden rounded-lg border border-gray-100 bg-white">
+            <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={m.image} alt={m.name} className="h-full w-full object-cover" loading="lazy" />
               {m.signature && (
-                <span className="absolute left-2 top-2 inline-flex items-center gap-0.5 rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-amber-900">
-                  <Sparkles className="h-2.5 w-2.5" />
+                <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-0.5 rounded-full bg-amber-400 px-1.5 py-0.5 text-[9px] font-bold text-amber-900">
+                  <Sparkles className="h-2 w-2" />
                   시그니처
                 </span>
               )}
             </div>
-            <div className="p-3">
-              <div className="line-clamp-1 text-sm font-semibold text-gray-900">{m.name}</div>
-              {m.description && (
-                <div className="mt-0.5 line-clamp-2 text-xs text-gray-500">{m.description}</div>
-              )}
-              <div className="mt-2 text-sm font-bold text-gray-900">
-                {formatNumber(m.priceWon)}<span className="text-xs font-medium text-gray-500">원</span>
+            <div className="p-2">
+              <div className="line-clamp-1 text-xs font-semibold text-gray-900">{m.name}</div>
+              <div className="mt-1 text-xs font-bold text-gray-900">
+                {formatNumber(m.priceWon)}<span className="text-[10px] font-medium text-gray-500">원</span>
               </div>
             </div>
           </div>
