@@ -14,6 +14,7 @@
     "@amakers/auth": "workspace:*",
     "@amakers/db": "workspace:*",
     "@amakers/design-system": "workspace:*",
+    "@amakers/listings": "workspace:*",
     "@amakers/ui": "workspace:*",
     "@amakers/utils": "workspace:*",
     "leaflet": "^1.9.4",

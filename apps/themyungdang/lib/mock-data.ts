@@ -1,62 +1,20 @@
-// Mock data for themyungdang (real-estate for franchise spaces).
-// Mirrors the shape we'd get from the Listings table once Supabase is live.
+// 더명당 도메인 데이터 — 상권 정보(AREAS) + 카테고리 라벨 등.
+//
+// 매물 데이터(MockListing, LISTINGS)는 @amakers/listings 패키지가 단일
+// 소스로 보유. 더명당이 본가지만 패키지 형태로 추출해 pchahub 등 다른
+// 앱이 동일 데이터를 직접 import할 수 있게 함. 더명당에서 매물이 추가되면
+// 패키지에 반영 → 다른 앱이 빌드만 다시 하면 자동 동기화.
 
 import { listingPhotoSet } from './listing-images'
-import cmRaw from './cm-listings.json'
+import {
+  LISTINGS as PKG_LISTINGS,
+  type MockListing as PkgMockListing,
+  type ListingType as PkgListingType,
+} from '@amakers/listings'
 
-export type ListingType = 'transfer' | 'new' | 'sale'
+export type ListingType = PkgListingType
 
-export interface MockListing {
-  id: string
-  type: ListingType
-  title: string
-  status: 'active' | 'pending' | 'completed'
-  region: string
-  district: string
-  fullAddress: string
-  areaKey?: string
-  area: number // 평
-  floor: string
-  buildingType: string
-  rightFee?: number
-  deposit: number
-  monthlyRent: number
-  salePrice?: number
-  fitCategories: string[]
-  currentBusiness?: string
-  monthlyRevenue?: number
-  revenueVerified?: boolean
-  tags: string[]
-  footTraffic: number
-  availableFrom: string
-  verified: boolean
-  featured: boolean
-  viewCount: number
-  inquiryCount: number
-  createdAt: string
-  ownerType: 'direct' | 'agent'
-  agencyName?: string
-  /** Fallback gradient colors (kept for backwards compat). */
-  imageColors: string[]
-  /** Real photos (hero + interior shots). Filled automatically below. */
-  images: string[]
-  /** Owner / agent's pitch shown on detail page. */
-  transferorMessage?: string
-  /** WGS84 좌표 — 지도 핀 표시용. 없으면 지도에서 제외. */
-  lat?: number
-  lng?: number
-  /** 등록자/중개사 연락처 (표시용). 없으면 대표 번호로 폴백. */
-  contactPhone?: string
-  /** 외부 사이트에서 수집한 매물의 출처 정보. 자체 등록(직거래·중개)이면 비움.
-   *  추후 changupmall·점포라인·점포거래소 등 여러 출처를 동일 LISTINGS 배열에 합칠 수 있도록 마련. */
-  externalSource?: {
-    name: string       // 'changupmall' 등 슬러그
-    label: string      // '창업몰' 등 사용자 노출용 이름
-    sourceId: string   // 원본 사이트의 매물 ID
-    url: string        // 원본 상세 URL (참조용, 직접 노출은 정책에 따라)
-    fetchedAt: string  // ISO 날짜
-  }
-}
+export type MockListing = PkgMockListing
 
 export interface MockArea {
   key: string
@@ -535,89 +493,10 @@ const _OWN_LISTINGS: MockListing[] = RAW_LISTINGS.map((l) => ({
   transferorMessage: TRANSFEROR_MESSAGES[l.id],
 }))
 
-// ─────────────────────────────────────────────────────────────────
-// 외부 출처 매물 통합
-//
-// changupmall.com 등 외부 사이트에서 수집한 매물을 MockListing 형태로 변환해
-// 자체 매물과 동일 리스트에 합친다. 외부 출처는 externalSource 필드로 구분.
-// 추가 사이트는 동일 패턴으로 외부 JSON을 import 후 변환 함수 한 번만 호출.
-// ─────────────────────────────────────────────────────────────────
-
-type CmListingRaw = {
-  sourceId: string
-  url: string
-  title: string
-  type: ListingType
-  region: string
-  district: string
-  fullAddress: string
-  area: number
-  rawSize: string
-  rawIndustry: string
-  rightFee?: number
-  monthlyRevenue?: number
-  monthlyExpense?: number
-  monthlyProfit?: number
-  fitCategories: string[]
-  currentBusiness: string
-  photos: string[]
-}
-
-type CmJson = {
-  source: string
-  label: string
-  fetchedAt: string
-  listings: CmListingRaw[]
-}
-
-function fromChangupmall(json: CmJson): MockListing[] {
-  return json.listings
-    // 최소 정보(제목·위치) 없는 매물 스킵
-    .filter((r) => r.title && r.region)
-    .map((r): MockListing => ({
-      id: `cm${r.sourceId}`,
-      type: r.type,
-      title: r.title,
-      status: 'active',
-      region: r.region,
-      district: r.district,
-      fullAddress: r.fullAddress || `${r.region} ${r.district}`.trim(),
-      area: r.area || 0,
-      floor: '',
-      buildingType: '',
-      rightFee: r.rightFee,
-      // 창업몰은 보증금/월세를 따로 안 줌. 권리금/수익만 노출. 0으로 둠.
-      deposit: 0,
-      monthlyRent: 0,
-      fitCategories: r.fitCategories,
-      currentBusiness: r.currentBusiness,
-      monthlyRevenue: r.monthlyRevenue,
-      revenueVerified: false,
-      tags: [],
-      footTraffic: 0,
-      availableFrom: '협의',
-      verified: false,
-      featured: false,
-      viewCount: 0,
-      inquiryCount: 0,
-      createdAt: json.fetchedAt.slice(0, 10),
-      ownerType: 'agent',
-      agencyName: json.label,
-      imageColors: ['#e5e7eb', '#f3f4f6'],
-      images: r.photos,
-      externalSource: {
-        name: json.source,
-        label: json.label,
-        sourceId: r.sourceId,
-        url: r.url,
-        fetchedAt: json.fetchedAt,
-      },
-    }))
-}
-
-const _CHANGUPMALL = fromChangupmall(cmRaw as CmJson)
-
-export const LISTINGS: MockListing[] = [..._OWN_LISTINGS, ..._CHANGUPMALL]
+// 외부 출처 매물(창업몰 등)은 @amakers/listings 패키지가 단일 소스로 보유.
+// 더명당은 자체 매물(_OWN_LISTINGS)과 합쳐 노출한다. 새 외부 출처가 추가되면
+// 패키지에만 반영하면 더명당·pchahub 등 모든 앱에 자동 동기화.
+export const LISTINGS: MockListing[] = [..._OWN_LISTINGS, ...PKG_LISTINGS]
 
 export const FEATURED_LISTINGS = LISTINGS.filter((l) => l.featured)
 export const TRANSFER_LISTINGS = LISTINGS.filter((l) => l.type === 'transfer')
