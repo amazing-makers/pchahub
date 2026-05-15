@@ -81,7 +81,7 @@ export function InquiryForm({ initialBrand }: InquiryFormProps) {
   }
 
   if (submitted) {
-    return <SuccessState brand={selectedBrand} />
+    return <SuccessState brand={selectedBrand ?? null} />
   }
 
   return (

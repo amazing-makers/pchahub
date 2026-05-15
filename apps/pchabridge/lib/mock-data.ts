@@ -334,7 +334,7 @@ export const ROUNDS: MockInvestmentRound[] = [
   },
   {
     id: 'r7',
-    type: 'completed',
+    type: 'series-b',
     brandId: 'b8',
     status: 'completed',
     targetAmount: 400000,

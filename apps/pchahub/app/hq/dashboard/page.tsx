@@ -76,6 +76,7 @@ export default async function HQDashboard() {
 
   // Mock — first brand as the HQ's brand
   const myBrand = BRANDS[0]
+  if (!myBrand) redirect('/auth/signin')
 
   return (
     <main className="bg-gray-50">

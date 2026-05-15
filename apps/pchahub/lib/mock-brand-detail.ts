@@ -662,7 +662,7 @@ function menuFor(brand: MockBrand): BrandMenuItem[] {
   }
 
   // fallback: 카테고리 base의 이름·가격 + 사진만 매핑
-  const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean
+  const base = MENU_BY_CATEGORY[brand.category] ?? MENU_BY_CATEGORY.korean ?? []
   return base.map((m, i) => ({
     ...m,
     image: brand.menuImages[i % brand.menuImages.length]?.url ?? brand.menuImages[0]!.url,
@@ -699,7 +699,7 @@ function recentOpeningsFor(brand: MockBrand): BrandRecentOpening[] {
       ? [brand.heroImage]
       : []
   return Array.from({ length: count }).map((_, i) => {
-    const loc = RECENT_OPENING_LOCATIONS[(startIdx + i * 2) % RECENT_OPENING_LOCATIONS.length]
+    const loc = RECENT_OPENING_LOCATIONS[(startIdx + i * 2) % RECENT_OPENING_LOCATIONS.length]!
     const daysAgo = 14 + i * 21 + ((seed + i) % 11)
     const date = new Date(today)
     date.setDate(date.getDate() - daysAgo)
@@ -775,8 +775,11 @@ function fallbackReviewsFor(brand: MockBrand): BrandReview[] {
 
 function computeRatingDistribution(reviews: BrandReview[]) {
   const counts = [0, 0, 0, 0, 0]
-  for (const r of reviews) counts[Math.min(Math.max(r.rating, 1), 5) - 1]++
-  return [5, 4, 3, 2, 1].map((stars) => ({ stars, count: counts[stars - 1] }))
+  for (const r of reviews) {
+    const idx = Math.min(Math.max(r.rating, 1), 5) - 1
+    counts[idx] = (counts[idx] ?? 0) + 1
+  }
+  return [5, 4, 3, 2, 1].map((stars) => ({ stars, count: counts[stars - 1] ?? 0 }))
 }
 
 /**
@@ -850,8 +853,8 @@ export function getBrandDetail(brand: MockBrand): BrandDetail {
       running = running / (1 + growth)
     }
     return years.map((year, i) => {
-      const prev = i === 0 ? Math.round(totals[0] * 0.8) : totals[i - 1]
-      const total = totals[i]
+      const prev = i === 0 ? Math.round((totals[0] ?? 1) * 0.8) : (totals[i - 1] ?? 1)
+      const total = totals[i] ?? 1
       const closed = Math.max(0, Math.round(total * 0.04))
       const newStores = total - prev + closed
       return { year, totalStores: total, newStores: Math.max(0, newStores), closedStores: closed }

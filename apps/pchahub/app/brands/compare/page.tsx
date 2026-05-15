@@ -274,10 +274,13 @@ function CompareTable({
     const higher = row.higherIsBetter !== false
     let best = 0
     for (let i = 1; i < values.length; i++) {
-      if (higher ? values[i] > values[best] : values[i] < values[best]) best = i
+      const vi = values[i]!
+      const vb = values[best]!
+      if (higher ? vi > vb : vi < vb) best = i
     }
     // If all equal, no winner
-    if (values.every((v) => v === values[0])) return null
+    const first = values[0]!
+    if (values.every((v) => v === first)) return null
     return best
   })
 

@@ -52,7 +52,7 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
   // duration "12:34" → "PT12M34S"
   const durationISO = (() => {
     const m = ep.duration.match(/^(\d+):(\d+)$/)
-    if (!m) return undefined
+    if (!m || !m[1] || !m[2]) return undefined
     return `PT${parseInt(m[1], 10)}M${parseInt(m[2], 10)}S`
   })()
   const videoJsonLd = buildVideoJsonLd({

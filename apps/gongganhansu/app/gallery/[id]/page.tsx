@@ -147,7 +147,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                         amakers에서 더 보기
                       </div>
                       <a
-                        href={`https://pchahub.kr/brands?q=${encodeURIComponent(item.title.split(' ')[0])}`}
+                        href={`https://pchahub.kr/brands?q=${encodeURIComponent(item.title.split(' ')[0] ?? item.title)}`}
                         className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
                       >
                         <span className="inline-flex items-center gap-1.5">

@@ -58,7 +58,7 @@ interface ErrorPageProps {
 
 export default function AuthErrorPage({ searchParams }: ErrorPageProps) {
   const code = searchParams.error ?? 'Default'
-  const message = MESSAGES[code] ?? MESSAGES.Default
+  const message = MESSAGES[code] ?? MESSAGES.Default!
 
   return (
     <main className="bg-gray-50">

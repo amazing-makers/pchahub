@@ -60,7 +60,7 @@ export function BrandActions({ brandId, brandName }: BrandActionsProps) {
       if (set.size >= 3) {
         // Replace oldest
         const first = Array.from(set)[0]
-        set.delete(first)
+        if (first) set.delete(first)
       }
       set.add(brandId)
     }

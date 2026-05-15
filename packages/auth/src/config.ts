@@ -1,4 +1,5 @@
-import type { AuthOptions, Provider } from 'next-auth'
+import type { AuthOptions } from 'next-auth'
+import type { Provider } from 'next-auth/providers/index'
 import KakaoProvider from 'next-auth/providers/kakao'
 import NaverProvider from 'next-auth/providers/naver'
 import GoogleProvider from 'next-auth/providers/google'

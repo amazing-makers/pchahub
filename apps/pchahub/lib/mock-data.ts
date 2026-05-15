@@ -84,7 +84,25 @@ export const CATEGORIES: MockCategory[] = [
   { key: 'convenience', label: '편의점', brandCount: 3 },
 ]
 
-type RawBrand = Omit<MockBrand, 'heroImage' | 'hqRegion'> & { hqRegion?: string }
+// RAW_BRANDS 객체에는 brand identity·핵심 metric만. 사진/Media·KFTC 보강 자료·hqRegion은
+// _CURATED 변환 단계에서 채워지므로 RawBrand에서 Omit.
+type RawBrand = Omit<MockBrand,
+  | 'heroImage'
+  | 'logo'
+  | 'storeImages'
+  | 'menuImages'
+  | 'videoUrl'
+  | 'hqRegion'
+  | 'corpNm'
+  | 'avgAnnualSales'
+  | 'jngBizStartYear'
+  | 'closedCount'
+  | 'newOpenCount'
+  | 'fntnFranchiseFee'
+  | 'fntnEducationFee'
+  | 'fntnDeposit'
+  | 'fntnOtherFees'
+> & { hqRegion?: string }
 
 const RAW_BRANDS: RawBrand[] = [
   {

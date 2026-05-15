@@ -15,11 +15,11 @@ export default async function Image({ params }: { params: { id: string } }) {
     )
   }
   const brand = brandById(store.brandId)
-  const chips = [
+  const chips: string[] = [
     `★ ${store.rating} (${store.reviewCount.toLocaleString()})`,
     `월 방문 ${store.monthlyVisitors.toLocaleString()}명`,
     `${store.region} ${store.district}`,
-    ...(store.awards.length > 0 ? [store.awards[0]] : []),
+    ...(store.awards[0] ? [store.awards[0]] : []),
   ]
 
   return new ImageResponse(

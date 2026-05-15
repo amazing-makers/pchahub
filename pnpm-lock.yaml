@@ -716,9 +716,15 @@ importers:
       '@amakers/config':
         specifier: workspace:*
         version: link:../config
+      '@types/react':
+        specifier: ^18.3.16
+        version: 18.3.28
       next:
         specifier: ^14.2.21
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
       tailwindcss:
         specifier: ^3.4.16
         version: 3.4.19
