@@ -1001,16 +1001,38 @@ function StatBlock({
 function PhotoGallerySection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
   // 진짜 매장 사진 없으면 섹션 통째로 숨김 (stock 사진 노출 금지)
   if (!hasRealPhoto(brand)) return null
-  // 인테리어 섹션 — 매장 사진만 사용 (메뉴 사진은 MenuSection에서 따로). 그리드 대신 슬라이드형.
+  // 인테리어 섹션 — 매장 사진만 사용 (메뉴 사진은 MenuSection에서 따로).
   const photos = detail.photos.store
   if (photos.length === 0) return null
+  // 슬라이더 아래에 노출할 3장 — 사진 2~4번 (총 4장 이상일 때 보임)
+  const thumbnails = photos.slice(1, 4)
   return (
     <SectionCard
       title="인테리어"
       subtitle={`${brand.name} 매장 인테리어 · 외관 사진`}
     >
-      <div className="overflow-hidden rounded-2xl shadow-sm ring-1 ring-gray-100">
-        <BrandHeroSlider images={photos} alt={`${brand.name} 인테리어 사진`} />
+      <div className="space-y-3">
+        <div className="overflow-hidden rounded-2xl shadow-sm ring-1 ring-gray-100">
+          <BrandHeroSlider images={photos} alt={`${brand.name} 인테리어 사진`} />
+        </div>
+        {thumbnails.length > 0 && (
+          <div className="grid grid-cols-3 gap-3">
+            {thumbnails.map((src, i) => (
+              <div
+                key={i}
+                className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-gray-100 sm:aspect-[3/2]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt={`${brand.name} 인테리어 ${i + 2}`}
+                  className="h-full w-full object-cover transition-transform hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </SectionCard>
   )
