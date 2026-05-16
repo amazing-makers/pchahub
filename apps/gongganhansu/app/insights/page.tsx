@@ -1,3 +1,12 @@
+﻿import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('gongganhansu', {
+  title: '인사이트',
+  description: 'F&B 매장 인테리어·시공 관련 인사이트와 트렌드.',
+  path: '/insights',
+})
+
 import { InsightCard } from '@/components/insight-card'
 import { INSIGHTS } from '@/lib/mock-data'
 

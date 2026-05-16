@@ -8,7 +8,7 @@ export const metadata = buildSiteMetadata('jangsanote')
 
 const navItems = [
   { href: '/', label: '피드' },
-  { href: '/categories/cafe', label: '업종방' },
+  { href: '/categories', label: '업종방' },
   { href: '/regions/seoul', label: '지역방' },
   { href: '/meetings', label: '모임' },
   { href: '/general', label: '자유' },
@@ -30,7 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             showRole={false}
             rightSlot={<HeaderUserMenu actions={actions} />}
           />
-          <div className="flex-1">{children}</div>
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-gray-900 focus:shadow-md">본문으로 이동</a>
+          <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="jangsanote" />
         </Providers>
       </body>

@@ -1,7 +1,15 @@
-import { Plus } from 'lucide-react'
+import type { Metadata } from 'next'
+import { MapPin, Plus, Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('bestplace', {
+  title: '매장 디렉토리',
+  description: '전국 프랜차이즈 인증 매장. 평점·방문객·신규 오픈 기준으로 비교하세요.',
+  path: '/stores',
+})
 
 const REGIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산']
 
@@ -61,6 +69,21 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
               매장 등록
             </a>
           </div>
+          {/* 검색 폼 */}
+          <form method="get" action="/stores" className="mt-5">
+            {category && <input type="hidden" name="category" value={category} />}
+            {region && <input type="hidden" name="region" value={region} />}
+            {sort !== 'rating' && <input type="hidden" name="sort" value={sort} />}
+            <div className="relative max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                defaultValue={q ?? ''}
+                placeholder="매장명·주소 검색"
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-[var(--brand-primary)] focus:outline-none"
+              />
+            </div>
+          </form>
         </div>
       </section>
 

@@ -1,3 +1,12 @@
+﻿import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchabridge', {
+  title: '투자 라운드',
+  description: '프랜차이즈 투자 라운드 목록. 투자 유형·모집 상태별로 찾아보세요.',
+  path: '/investments',
+})
+
 import { RoundCard } from '@/components/round-card'
 import { ROUND_TYPE_LABEL, ROUNDS, type RoundType } from '@/lib/mock-data'
 

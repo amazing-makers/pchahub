@@ -1,6 +1,14 @@
-import { Plus } from 'lucide-react'
+import type { Metadata } from 'next'
+import { Building2, Plus } from 'lucide-react'
 import { ContractorCard } from '@/components/contractor-card'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('gongganhansu', {
+  title: '시공사 디렉토리',
+  description: 'F&B 매장 시공 전문 시공사 목록. 평당 단가·예산 범위·시공 카테고리로 비교하세요.',
+  path: '/contractors',
+})
 
 const REGIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주']
 
@@ -83,11 +91,24 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
 
           <div>
             <div className="mb-3 text-sm font-semibold text-gray-700">{results.length}곳</div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {results.map((c) => (
-                <ContractorCard key={c.id} contractor={c} />
-              ))}
-            </div>
+            {results.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center">
+                <Building2 className="mx-auto h-10 w-10 text-gray-300" />
+                <p className="mt-3 text-sm font-medium text-gray-500">조건에 맞는 시공사가 없습니다</p>
+                <a
+                  href="/contractors"
+                  className="mt-4 inline-flex rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  전체 보기
+                </a>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {results.map((c) => (
+                  <ContractorCard key={c.id} contractor={c} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

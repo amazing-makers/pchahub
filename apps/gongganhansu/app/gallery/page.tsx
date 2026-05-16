@@ -1,3 +1,12 @@
+﻿import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('gongganhansu', {
+  title: '시공 갤러리',
+  description: 'F&B 매장 시공 포트폴리오. 업종·카테고리별로 둘러보세요.',
+  path: '/gallery',
+})
+
 import { PortfolioCard } from '@/components/portfolio-card'
 import { CATEGORIES, PORTFOLIO } from '@/lib/mock-data'
 

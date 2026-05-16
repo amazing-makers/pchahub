@@ -1,3 +1,12 @@
+﻿import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '가맹 입점 매물',
+  description: '프랜차이즈 가맹 입점용 매물 목록. 카테고리·지역별로 찾아보세요.',
+  path: '/listings',
+})
+
 import { ArrowRight, Plus } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { CATEGORIES } from '@/lib/mock-data'

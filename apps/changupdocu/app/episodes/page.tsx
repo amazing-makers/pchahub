@@ -1,5 +1,14 @@
+import type { Metadata } from 'next'
+import { PlayCircle } from 'lucide-react'
 import { EpisodeCard } from '@/components/episode-card'
 import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('changupdocu', {
+  title: '에피소드',
+  description: '성공·실패·브랜드·트렌드·인터뷰. 자영업·가맹의 실제 데이터와 이야기를 영상으로 만나보세요.',
+  path: '/episodes',
+})
 
 interface EpisodesPageProps {
   searchParams: { category?: string; sort?: string }
@@ -74,11 +83,24 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {results.map((e) => (
-            <EpisodeCard key={e.id} episode={e} />
-          ))}
-        </div>
+        {results.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center">
+            <PlayCircle className="mx-auto h-10 w-10 text-gray-300" />
+            <p className="mt-3 text-sm font-medium text-gray-500">검색 결과가 없습니다</p>
+            <a
+              href="/episodes"
+              className="mt-4 inline-flex rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              전체 보기
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {results.map((e) => (
+              <EpisodeCard key={e.id} episode={e} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   )

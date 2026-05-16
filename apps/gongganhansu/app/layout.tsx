@@ -29,7 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             showRole={false}
             rightSlot={<HeaderUserMenu actions={actions} />}
           />
-          <div className="flex-1">{children}</div>
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-gray-900 focus:shadow-md">본문으로 이동</a>
+          <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="gongganhansu" />
         </Providers>
       </body>

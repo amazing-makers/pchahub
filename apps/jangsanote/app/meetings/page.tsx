@@ -1,3 +1,12 @@
+﻿import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('jangsanote', {
+  title: '모임',
+  description: '장사노트 오프라인 모임 목록. 지역·유형별로 참여하세요.',
+  path: '/meetings',
+})
+
 import { Calendar } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { MEETINGS, MEETING_TYPE_LABEL, type MeetingType } from '@/lib/mock-data'

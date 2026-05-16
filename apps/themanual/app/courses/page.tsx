@@ -1,6 +1,15 @@
+import type { Metadata } from 'next'
+import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
 import { COURSE_CATEGORIES, COURSES, LEVEL_LABEL, type CourseLevel } from '@/lib/mock-data'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themanual', {
+  title: '강의 목록',
+  description: '자영업·프랜차이즈 창업과 운영에 필요한 전문가 강의. 카테고리·수준별로 찾아보세요.',
+  path: '/courses',
+})
 
 interface CoursesPageProps {
   searchParams: {
@@ -53,9 +62,9 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">
-            {free === '1' ? '무료 강의' : categoryLabel ? `${categoryLabel} 강의` : '전체 강의'}
+            {free === ‘1’ ? ‘무료 강의’ : categoryLabel ? `${categoryLabel} 강의` : ‘전체 강의’}
             {q && (
-              <span className="ml-2 text-base font-normal text-gray-500">‘{q}’ 검색 결과</span>
+              <span className="ml-2 text-base font-normal text-gray-500">’{q}’ 검색 결과</span>
             )}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -63,6 +72,22 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
               ? `${results.length}개 강의`
               : `총 ${COURSES.length}개 강의 운영 중`}
           </p>
+          {/* 검색 폼 */}
+          <form method="get" action="/courses" className="mt-5">
+            {category && <input type="hidden" name="category" value={category} />}
+            {level && <input type="hidden" name="level" value={level} />}
+            {free && <input type="hidden" name="free" value={free} />}
+            {sort !== ‘popular’ && <input type="hidden" name="sort" value={sort} />}
+            <div className="relative max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                defaultValue={q ?? ‘’}
+                placeholder="강의명·태그 검색"
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-[var(--brand-primary)] focus:outline-none"
+              />
+            </div>
+          </form>
         </div>
       </section>
 

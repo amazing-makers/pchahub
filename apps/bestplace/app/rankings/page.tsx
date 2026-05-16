@@ -1,3 +1,12 @@
+﻿import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('bestplace', {
+  title: '실시간 랭킹',
+  description: '방문객·평점·리뷰 수 기준 전국 프랜차이즈 매장 실시간 랭킹.',
+  path: '/rankings',
+})
+
 import { Card, CardContent } from '@amakers/ui'
 import { RankingList } from '@/components/ranking-list'
 import {

@@ -1,5 +1,14 @@
+import type { Metadata } from 'next'
+import { Megaphone } from 'lucide-react'
 import { CaseCard } from '@/components/case-card'
 import { PORTFOLIO, SERVICES, SERVICE_LABEL, type ServiceSlug } from '@/lib/mock-data'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('openrun', {
+  title: '캠페인 사례',
+  description: '실제 진행한 캠페인과 측정된 결과를 모두 공개합니다.',
+  path: '/portfolio',
+})
 
 interface PortfolioPageProps {
   searchParams: { service?: string }
@@ -56,11 +65,24 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cases.map((c) => (
-            <CaseCard key={c.id} case={c} />
-          ))}
-        </div>
+        {cases.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center">
+            <Megaphone className="mx-auto h-10 w-10 text-gray-300" />
+            <p className="mt-3 text-sm font-medium text-gray-500">해당 서비스의 사례가 없습니다</p>
+            <a
+              href="/portfolio"
+              className="mt-4 inline-flex rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              전체 사례 보기
+            </a>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {cases.map((c) => (
+              <CaseCard key={c.id} case={c} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   )

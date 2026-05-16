@@ -113,7 +113,7 @@ export default function HomePage() {
       {/* ── 핵심 지표 바 ──────────────────────────────────────────────────── */}
       <section className="border-b border-gray-100 bg-white">
         <div className="container mx-auto py-5">
-          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-5">
+          <div className="grid grid-cols-3 divide-x divide-gray-100 sm:grid-cols-5">
             {METRICS.map((m) => (
               <div key={m.label} className="flex flex-col items-center gap-0.5 px-4 py-2 text-center first:pl-0 last:pr-0">
                 <span className="text-xl font-black tracking-tight text-gray-900">{m.value}</span>
@@ -136,7 +136,7 @@ export default function HomePage() {
             {LISTING_CATEGORIES.map((cat) => (
               <a
                 key={cat.key}
-                href={`/listings/map?fitCategory=${cat.key}`}
+                href={`/listings?fitCategory=${cat.key}`}
                 className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-900 hover:bg-gray-900 hover:text-white"
               >
                 <span>{CATEGORY_ICONS[cat.key] ?? '🏪'}</span>
