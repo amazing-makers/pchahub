@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { ArrowLeft, MessageSquare } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
+import { LocalInquiriesSection } from './local-inquiries'
 
 interface InquiryRow {
   id: string
@@ -105,6 +106,10 @@ export default async function InquiriesPage({ searchParams }: InquiriesPageProps
       </section>
 
       <div className="container mx-auto py-8">
+        {/* 사용자가 실제 제출한 상담 신청 (localStorage) */}
+        <LocalInquiriesSection />
+
+        <div className="mb-3 text-sm font-semibold text-gray-500">상담 예시 내역</div>
         <div className="mb-4 flex flex-wrap gap-1.5 text-sm">
           <FilterChip href="/mypage/inquiries" active={!activeStatus}>
             전체 ({counts.all})

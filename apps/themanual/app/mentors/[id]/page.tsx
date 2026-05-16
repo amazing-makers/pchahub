@@ -5,10 +5,11 @@ import {
   MessageCircle,
   Star,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { CourseCard } from '@/components/course-card'
 import { coursesByInstructor, MENTORS } from '@/lib/mock-data'
+import { ConsultForm } from './consult-form'
 
 export function generateStaticParams() {
   return MENTORS.map((m) => ({ id: m.id }))
@@ -131,28 +132,11 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
           </div>
 
           <aside className="lg:sticky lg:top-20 lg:self-start">
-            <Card className="border-gray-200 shadow-sm">
-              <CardContent className="space-y-4 p-5">
-                <div>
-                  <div className="text-xs text-gray-500">시간당 상담료</div>
-                  <div className="mt-1 text-h3 font-bold text-gray-900">
-                    {formatNumber(mentor.hourlyRate)}
-                    <span className="text-base font-medium text-gray-500"> 원</span>
-                  </div>
-                </div>
-                <Button size="lg" className="w-full gap-1">
-                  <MessageCircle className="h-4 w-4" />
-                  1:1 상담 신청
-                </Button>
-                <Button size="lg" variant="outline" className="w-full">
-                  메시지 보내기
-                </Button>
-                <div className="rounded-lg bg-gray-50 p-3 text-xs text-gray-600">
-                  상담은 영업일 기준 3일 이내 매칭됩니다. 매칭 후 일정 조율은 멘토와 직접
-                  진행합니다.
-                </div>
-              </CardContent>
-            </Card>
+            <ConsultForm
+              mentorId={mentor.id}
+              mentorName={mentor.name}
+              hourlyRate={mentor.hourlyRate}
+            />
           </aside>
         </div>
       </div>

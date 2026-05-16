@@ -75,7 +75,30 @@ export function InquiryForm({ initialBrand }: InquiryFormProps) {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
-    // In production: POST to /api/inquiries (NextAuth-protected).
+
+    // localStorage 저장 (실 DB 연결 전 임시)
+    try {
+      const raw = window.localStorage.getItem('pchahub:inquiries')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `inq-${Date.now()}`,
+        brandId: state.brandId,
+        brandName: selectedBrand?.name ?? '일반 창업 상담',
+        name: state.name,
+        phone: state.phone,
+        email: state.email,
+        motives: state.motives,
+        capital: state.capital,
+        region: state.region,
+        message: state.message,
+        status: 'pending',
+        createdAt: new Date().toISOString().split('T')[0],
+      }
+      window.localStorage.setItem('pchahub:inquiries', JSON.stringify([entry, ...prev]))
+    } catch {
+      // ignore
+    }
+
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
