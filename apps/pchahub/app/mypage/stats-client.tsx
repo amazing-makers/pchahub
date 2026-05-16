@@ -7,21 +7,27 @@ import { Card, CardContent } from '@amakers/ui'
 export function StatsClient() {
   const [savedCount, setSavedCount] = useState(0)
   const [inquiryCount, setInquiryCount] = useState(0)
+  const [reviewCount, setReviewCount] = useState(0)
+  const [listingContactCount, setListingContactCount] = useState(0)
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem('pchahub:savedBrands')
       if (raw) setSavedCount((JSON.parse(raw) as string[]).length)
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
     try {
       const raw2 = window.localStorage.getItem('pchahub:inquiries')
       if (raw2) setInquiryCount((JSON.parse(raw2) as unknown[]).length)
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
+    try {
+      const raw3 = window.localStorage.getItem('pchahub:reviews')
+      if (raw3) setReviewCount((JSON.parse(raw3) as unknown[]).length)
+    } catch { /* ignore */ }
+    try {
+      const raw4 = window.localStorage.getItem('pchahub:listing-contacts')
+      if (raw4) setListingContactCount((JSON.parse(raw4) as unknown[]).length)
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
@@ -38,9 +44,9 @@ export function StatsClient() {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
       <StatLink href="/mypage/saved" icon={Heart} label="찜한 브랜드" value={`${savedCount}개`} />
-      <StatLink href="/mypage/inquiries" icon={MessageSquare} label="상담 신청" value={`${inquiryCount}건`} />
-      <StatLink href="/mypage/reviews" icon={Star} label="작성한 후기" value="0건" />
-      <StatLink href="/calculator" icon={Calculator} label="저장한 계산" value="0건" />
+      <StatLink href="/mypage/inquiries" icon={MessageSquare} label="가맹 상담" value={`${inquiryCount}건`} />
+      <StatLink href="/mypage/reviews" icon={Star} label="작성한 후기" value={`${reviewCount}건`} />
+      <StatLink href="/listings" icon={Calculator} label="매물 문의" value={`${listingContactCount}건`} />
       <StatLink href="/scanner" icon={Sparkles} label="스캐너 결과" value="0건" />
     </div>
   )
