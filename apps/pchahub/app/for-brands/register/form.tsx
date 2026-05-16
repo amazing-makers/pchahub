@@ -110,6 +110,22 @@ export function RegisterForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+    try {
+      const raw = window.localStorage.getItem('pchahub:brand-registrations')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `reg-${Date.now()}`,
+        brandName: state.brandName,
+        companyName: state.companyName,
+        category: state.category,
+        tier: state.tier,
+        managerName: state.managerName,
+        managerEmail: state.managerEmail,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem('pchahub:brand-registrations', JSON.stringify([entry, ...prev]))
+    } catch { /* ignore */ }
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

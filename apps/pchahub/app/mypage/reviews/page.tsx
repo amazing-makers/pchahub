@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { ArrowLeft, PencilLine, Plus, Star } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
+import { LocalReviews } from './local-reviews'
 
 interface MyReviewRow {
   id: string
@@ -128,6 +129,9 @@ export default async function MyReviewsPage({ searchParams }: ReviewsPageProps) 
       </section>
 
       <div className="container mx-auto py-8">
+        {/* Recently submitted reviews from localStorage */}
+        <LocalReviews />
+
         <div className="mb-4 flex flex-wrap gap-1.5 text-sm">
           <FilterChip href="/mypage/reviews" active={!activeStatus}>
             전체 ({counts.all})

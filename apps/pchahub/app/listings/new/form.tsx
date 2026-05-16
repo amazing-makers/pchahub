@@ -83,6 +83,24 @@ export function ListingForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+    try {
+      const raw = window.localStorage.getItem('pchahub:listings-submitted')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `lst-${Date.now()}`,
+        listingType: state.listingType,
+        title: state.title,
+        region: state.region,
+        district: state.district,
+        area: state.area,
+        deposit: state.deposit,
+        monthlyRent: state.monthlyRent,
+        ownerName: state.ownerName,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem('pchahub:listings-submitted', JSON.stringify([entry, ...prev]))
+    } catch { /* ignore */ }
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

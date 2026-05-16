@@ -61,6 +61,24 @@ export function ReviewForm({ presetBrandId, brands }: ReviewFormProps) {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+    try {
+      const raw = window.localStorage.getItem('pchahub:reviews')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const brand = brands.find((b) => b.id === state.brandId)
+      const entry = {
+        id: `rev-${Date.now()}`,
+        brandId: state.brandId,
+        brandName: brand?.name ?? state.brandId,
+        rating: state.rating,
+        region: state.region,
+        summary: state.summary,
+        recommend: state.recommend,
+        anonymous: state.anonymous,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem('pchahub:reviews', JSON.stringify([entry, ...prev]))
+    } catch { /* ignore */ }
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
