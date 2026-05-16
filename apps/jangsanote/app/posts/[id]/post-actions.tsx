@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Share2, ThumbsUp } from 'lucide-react'
+import { Flag, Share2, ThumbsUp } from 'lucide-react'
 import { Button } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 
 const LIKED_KEY = 'jangsanote:likedPosts'
 const SUBS_KEY = 'jangsanote:subscriptions'
+const REPORTED_KEY = 'jangsanote:reportedPosts'
 
 interface PostActionsProps {
   postId: string
@@ -168,5 +169,50 @@ export function ChannelSubscribeButton({
     >
       {hydrated && subscribed ? '구독 중 ✓' : '채널 구독'}
     </Button>
+  )
+}
+
+export function ReportButton({ postId }: { postId: string }) {
+  const [reported, setReported] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(REPORTED_KEY)
+      const ids: string[] = raw ? JSON.parse(raw) : []
+      setReported(ids.includes(postId))
+    } catch { /* ignore */ }
+    setHydrated(true)
+  }, [postId])
+
+  function report() {
+    if (reported) return
+    try {
+      const raw = window.localStorage.getItem(REPORTED_KEY)
+      const ids: string[] = raw ? JSON.parse(raw) : []
+      if (!ids.includes(postId)) {
+        window.localStorage.setItem(REPORTED_KEY, JSON.stringify([...ids, postId]))
+      }
+      setReported(true)
+    } catch { /* ignore */ }
+  }
+
+  if (!hydrated) return null
+
+  return (
+    <button
+      type="button"
+      onClick={report}
+      disabled={reported}
+      className={
+        'inline-flex items-center gap-1 text-xs ' +
+        (reported
+          ? 'cursor-default text-gray-300'
+          : 'text-gray-500 hover:text-rose-500')
+      }
+    >
+      <Flag className="h-3 w-3" />
+      {reported ? '신고됨' : '신고'}
+    </button>
   )
 }

@@ -3,9 +3,7 @@ import { notFound } from 'next/navigation'
 import {
   ChevronRight,
   Eye,
-  Flag,
   MessageSquare,
-  ThumbsUp,
 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import {
@@ -25,8 +23,9 @@ import {
 import { UserChip } from '@/components/user-chip'
 import { PostCard } from '@/components/post-card'
 import { CommentForm } from './comment-form'
-import { ChannelSubscribeButton, PostActions } from './post-actions'
+import { ChannelSubscribeButton, PostActions, ReportButton } from './post-actions'
 import { PostViewTracker } from './post-view-tracker'
+import { CommentLikeButton } from './comment-like-button'
 
 export function generateStaticParams() {
   return POSTS.map((p) => ({ id: p.id }))
@@ -151,13 +150,7 @@ export default function PostPage({ params }: PostPageProps) {
                     shareTitle={post.title}
                     shareUrl={postUrl}
                   />
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-rose-500"
-                  >
-                    <Flag className="h-3 w-3" />
-                    신고
-                  </button>
+                  <ReportButton postId={post.id} />
                 </div>
               </CardContent>
             </Card>
@@ -190,19 +183,8 @@ export default function PostPage({ params }: PostPageProps) {
                           </div>
                           <p className="mt-2 text-sm text-gray-700">{c.content}</p>
                           <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
-                            <button
-                              type="button"
-                              className="inline-flex items-center gap-1 hover:text-gray-900"
-                            >
-                              <ThumbsUp className="h-3 w-3" />
-                              {c.likes}
-                            </button>
-                            <button
-                              type="button"
-                              className="hover:text-gray-900"
-                            >
-                              답글
-                            </button>
+                            <CommentLikeButton commentId={c.id} baseLikes={c.likes} />
+                            <span className="text-gray-400">답글</span>
                           </div>
                         </div>
                       )
