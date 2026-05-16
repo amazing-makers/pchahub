@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Briefcase, FileText, TrendingUp } from 'lucide-react'
+import { Briefcase, FileText, PlusCircle, TrendingUp } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 
@@ -46,6 +46,16 @@ interface MaConsultEntry {
   status: string
 }
 
+interface InvestmentRegEntry {
+  id: string
+  brandName: string
+  category: string
+  roundType: string
+  targetAmount: string
+  createdAt: string
+  status: string
+}
+
 const INVESTOR_TYPE_LABEL: Record<string, string> = {
   individual: '개인 투자자',
   angel: '엔젤 투자자',
@@ -73,6 +83,7 @@ export function MyPageClient() {
   const [maRequests, setMaRequests] = useState<MaEntry[]>([])
   const [irRequests, setIrRequests] = useState<IrEntry[]>([])
   const [maConsults, setMaConsults] = useState<MaConsultEntry[]>([])
+  const [investmentRegs, setInvestmentRegs] = useState<InvestmentRegEntry[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -92,13 +103,17 @@ export function MyPageClient() {
       const raw = window.localStorage.getItem('pchabridge:ma-consults')
       if (raw) setMaConsults(JSON.parse(raw) as MaConsultEntry[])
     } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('pchabridge:investment-registrations')
+      if (raw) setInvestmentRegs(JSON.parse(raw) as InvestmentRegEntry[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
   if (!hydrated) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 animate-pulse">
-        {[...Array(4)].map((_, i) => (
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5 animate-pulse">
+        {[...Array(5)].map((_, i) => (
           <div key={i} className="h-24 rounded-xl bg-gray-100" />
         ))}
       </div>
@@ -110,10 +125,11 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         <StatCard icon={TrendingUp} label="투자 신청" value={`${interests.length}건`} />
         <StatCard icon={FileText} label="IR 자료 신청" value={`${irRequests.length}건`} />
         <StatCard icon={Briefcase} label="M&A 문의/자문" value={`${maRequests.length + maConsults.length}건`} />
+        <StatCard icon={PlusCircle} label="투자 유치 등록" value={`${investmentRegs.length}건`} />
         <StatCard
           icon={FileText}
           label="신청 금액 합계"
@@ -215,6 +231,28 @@ export function MyPageClient() {
                     </div>
                   </div>
                   <Badge variant="default">발송 대기</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 투자 유치 등록 내역 */}
+      {investmentRegs.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">투자 유치 등록 신청 내역</h2>
+          <div className="space-y-3">
+            {investmentRegs.map((item) => (
+              <Card key={item.id} className="border-gray-200">
+                <CardContent className="flex items-center justify-between p-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-gray-900">{item.brandName}</div>
+                    <div className="mt-0.5 text-xs text-gray-500">
+                      {item.category} · {item.roundType} · 목표 {item.targetAmount} · {item.createdAt}
+                    </div>
+                  </div>
+                  <Badge variant="warning">검토 중</Badge>
                 </CardContent>
               </Card>
             ))}
