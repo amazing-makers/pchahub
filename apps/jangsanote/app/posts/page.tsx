@@ -4,6 +4,7 @@ import { buildPageMetadata } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { POSTS } from '@/lib/mock-data'
 import { PostCard } from '@/components/post-card'
+import { LocalPostsFeed } from '@/app/local-posts-feed'
 
 const ITEMS_PER_PAGE = 20
 
@@ -36,6 +37,11 @@ export default function PostsPage({
       </section>
 
       <div className="container mx-auto py-8">
+        {/* 내가 쓴 글 (localStorage) */}
+        <div className="mb-4">
+          <LocalPostsFeed />
+        </div>
+
         {paged.length === 0 ? (
           <Card>
             <CardContent className="p-10 text-center text-sm text-gray-500">

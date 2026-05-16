@@ -130,6 +130,29 @@ export function ContractorForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+
+    try {
+      const raw = window.localStorage.getItem('gongganhansu:contractor-applications')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `ca-${Date.now()}`,
+        companyName: state.companyName,
+        region: state.region,
+        specialties: state.specialties,
+        managerName: state.managerName,
+        managerEmail: state.managerEmail,
+        managerPhone: state.managerPhone,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem(
+        'gongganhansu:contractor-applications',
+        JSON.stringify([entry, ...prev]),
+      )
+    } catch {
+      // ignore
+    }
+
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

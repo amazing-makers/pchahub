@@ -11,6 +11,7 @@ import {
   POSTS,
   UPCOMING_MEETINGS,
 } from '@/lib/mock-data'
+import { LocalPostsFeed } from './local-posts-feed'
 
 export default function HomePage() {
   const recent = [...POSTS]
@@ -74,6 +75,9 @@ export default function HomePage() {
 
             {/* Posts feed */}
             <div className="space-y-3">
+              {/* 내가 쓴 글 (localStorage) */}
+              <LocalPostsFeed />
+
               <h2 className="text-base font-semibold text-gray-900">최근 글</h2>
               {PINNED_POSTS.map((p) => (
                 <PostCard key={p.id} post={p} />

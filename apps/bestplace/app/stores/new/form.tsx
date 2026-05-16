@@ -94,6 +94,28 @@ export function StoreForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+
+    try {
+      const raw = window.localStorage.getItem('bestplace:store-applications')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `sa-${Date.now()}`,
+        storeName: state.storeName,
+        brandId: state.brandId,
+        region: state.region,
+        district: state.district,
+        fullAddress: state.fullAddress,
+        area: state.area,
+        ownerName: state.ownerName,
+        ownerPhone: state.ownerPhone,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem('bestplace:store-applications', JSON.stringify([entry, ...prev]))
+    } catch {
+      // ignore
+    }
+
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
