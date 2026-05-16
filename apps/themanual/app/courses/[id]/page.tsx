@@ -25,6 +25,7 @@ import {
   type MockCourse,
 } from '@/lib/mock-data'
 import { CourseCard } from '@/components/course-card'
+import { SaveCourseButton } from './save-button'
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ id: c.id }))
@@ -168,9 +169,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                     <PlayCircle className="h-4 w-4" />
                     {isFree ? '바로 수강 시작' : '결제하고 수강 시작'}
                   </Button>
-                  <Button size="lg" variant="outline" className="w-full">
-                    찜하기
-                  </Button>
+                  <SaveCourseButton courseId={course.id} />
                   <p className="text-center text-xs text-gray-500">
                     구매 후 무제한 시청 · 모바일 지원
                   </p>

@@ -19,6 +19,7 @@ import {
 } from '@/lib/mock-data'
 import { MeetingCard } from '@/components/meeting-card'
 import { UserChip } from '@/components/user-chip'
+import { RsvpButton } from './rsvp-button'
 
 export function generateStaticParams() {
   return MEETINGS.map((m) => ({ id: m.id }))
@@ -210,21 +211,20 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
                   </div>
                 </div>
 
-                <Button size="lg" className="w-full gap-1" disabled={closed || full}>
-                  {closed
-                    ? '모집 마감'
-                    : full
-                      ? '정원 마감'
-                      : meeting.isFree
-                        ? '참여 신청'
-                        : '참여 신청 + 입금 안내 받기'}
-                </Button>
+                <RsvpButton
+                  meetingId={meeting.id}
+                  meetingTitle={meeting.title}
+                  isFree={meeting.isFree}
+                  feeWon={meeting.feeWon}
+                  disabled={closed || full}
+                  disabledLabel={closed ? '모집 마감' : full ? '정원 마감' : undefined}
+                />
                 <Button size="lg" variant="outline" className="w-full gap-1">
                   <MessageCircle className="h-4 w-4" />
                   주최자에게 문의
                 </Button>
                 <p className="text-center text-xs text-gray-500">
-                  로그인 후 신청 가능합니다. 마이페이지에서 신청 내역 확인.
+                  신청 내역은 마이페이지에서 확인할 수 있습니다.
                 </p>
               </CardContent>
             </Card>

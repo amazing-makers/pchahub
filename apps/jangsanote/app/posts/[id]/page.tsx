@@ -25,6 +25,7 @@ import {
 } from '@/lib/mock-data'
 import { UserChip } from '@/components/user-chip'
 import { PostCard } from '@/components/post-card'
+import { CommentForm } from './comment-form'
 
 export function generateStaticParams() {
   return POSTS.map((p) => ({ id: p.id }))
@@ -208,14 +209,9 @@ export default function PostPage({ params }: PostPageProps) {
                   </div>
                 )}
 
-                {/* Comment form (placeholder) */}
-                <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm">
-                  <div className="text-gray-700">
-                    <a href="/auth/signin" className="font-semibold text-gray-900 hover:underline">
-                      로그인
-                    </a>{' '}
-                    후 댓글을 작성할 수 있습니다.
-                  </div>
+                {/* 댓글 입력 폼 (localStorage 기반) */}
+                <div className="mt-4">
+                  <CommentForm postId={post.id} />
                 </div>
               </CardContent>
             </Card>
