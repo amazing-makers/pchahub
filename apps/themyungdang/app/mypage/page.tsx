@@ -52,6 +52,14 @@ export default async function MyPage() {
             <div className="min-w-0 flex-1">
               <h1 className="text-h3 font-bold text-gray-900">{name}</h1>
               <div className="mt-1 text-sm text-gray-500">{session.user?.email}</div>
+              <div className="mt-2">
+                <a
+                  href="/mypage/settings"
+                  className="text-xs text-gray-500 hover:text-gray-900 hover:underline"
+                >
+                  계정 설정
+                </a>
+              </div>
             </div>
             <a href="/post">
               <Button size="md" className="gap-1">

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
@@ -120,6 +120,14 @@ export function SigninForm({ enabled, callbackUrl, error }: SigninFormProps) {
             </form>
           </>
         )}
+
+
+        <p className="mt-4 text-center text-xs text-gray-500">
+          처음이신가요?{' '}
+          <a href="/auth/signup" className="font-semibold text-gray-900 hover:underline">
+            회원가입
+          </a>
+        </p>
       </CardContent>
     </Card>
   )

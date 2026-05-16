@@ -24,6 +24,26 @@ export default async function MyPage() {
             <div>
               <h1 className="text-h3 font-bold text-gray-900">{name}</h1>
               <div className="mt-0.5 text-sm text-gray-500">{session.user?.email}</div>
+              <div className="mt-3 flex flex-wrap gap-2 text-sm">
+                <a
+                  href="/episodes"
+                  className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
+                >
+                  에피소드
+                </a>
+                <a
+                  href="/magazine"
+                  className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
+                >
+                  매거진
+                </a>
+                <a
+                  href="/mypage/settings"
+                  className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
+                >
+                  계정 설정
+                </a>
+              </div>
             </div>
           </div>
         </div>

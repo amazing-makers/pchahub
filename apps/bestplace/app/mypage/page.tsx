@@ -36,6 +36,12 @@ export default async function MyPage() {
                 >
                   랭킹 보기
                 </a>
+                <a
+                  href="/mypage/settings"
+                  className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
+                >
+                  계정 설정
+                </a>
               </div>
             </div>
           </div>
