@@ -4,6 +4,7 @@ import { formatNumber } from '@amakers/utils'
 import { ChannelList } from '@/components/channel-list'
 import { PostCard } from '@/components/post-card'
 import { CHANNELS, postsByChannel } from '@/lib/mock-data'
+import { LocalPostsFeed } from '@/app/local-posts-feed'
 
 export function generateStaticParams() {
   return CHANNELS.filter((c) => c.type === 'category').map((c) => ({ type: c.key }))
@@ -36,6 +37,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             <ChannelList activeChannel={{ type: 'category', key: channel.key }} />
           </aside>
           <div className="space-y-3">
+            <LocalPostsFeed channelType="category" channelKey={channel.key} />
             {posts.length === 0 ? (
               <Card>
                 <CardContent className="p-10 text-center text-sm text-gray-500">

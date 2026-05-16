@@ -26,7 +26,14 @@ function channelLabel(type: string, key: string): string {
   return ch?.label ?? key
 }
 
-export function LocalPostsFeed() {
+interface LocalPostsFeedProps {
+  /** 특정 채널 타입으로 필터링 (없으면 전체 표시) */
+  channelType?: string
+  /** 특정 채널 키로 필터링 (없으면 전체 표시) */
+  channelKey?: string
+}
+
+export function LocalPostsFeed({ channelType, channelKey }: LocalPostsFeedProps = {}) {
   const [posts, setPosts] = useState<LocalPost[]>([])
   const [hydrated, setHydrated] = useState(false)
 
@@ -40,15 +47,21 @@ export function LocalPostsFeed() {
     setHydrated(true)
   }, [])
 
-  if (!hydrated || posts.length === 0) return null
+  const filtered = posts.filter((p) => {
+    if (channelType && p.channelType !== channelType) return false
+    if (channelKey && p.channelKey !== channelKey) return false
+    return true
+  })
+
+  if (!hydrated || filtered.length === 0) return null
 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-xs font-semibold text-[var(--brand-primary)]">
         <PencilLine className="h-3.5 w-3.5" />
-        내가 쓴 글 ({posts.length}개)
+        내가 쓴 글 ({filtered.length}개)
       </div>
-      {posts.map((p) => (
+      {filtered.map((p) => (
         <a
           key={p.id}
           href={`/posts/${p.id}`}

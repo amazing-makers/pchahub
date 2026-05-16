@@ -1,6 +1,7 @@
 import { ChannelList } from '@/components/channel-list'
 import { PostCard } from '@/components/post-card'
 import { POSTS } from '@/lib/mock-data'
+import { LocalPostsFeed } from '@/app/local-posts-feed'
 
 export default function GeneralPage() {
   const posts = POSTS.filter((p) => p.channelType === 'general').sort((a, b) =>
@@ -22,6 +23,7 @@ export default function GeneralPage() {
             <ChannelList activeChannel={{ type: 'general', key: 'general' }} />
           </aside>
           <div className="space-y-3">
+            <LocalPostsFeed channelType="general" />
             {posts.map((p) => (
               <PostCard key={p.id} post={p} />
             ))}
