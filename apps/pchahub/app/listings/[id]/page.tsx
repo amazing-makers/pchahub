@@ -2,23 +2,19 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { buildPageMetadata } from '@amakers/design-system'
 import {
-  Calendar,
   CheckCircle2,
   ChevronRight,
-  Clock,
   MapPin,
   MessageSquare,
-  Phone,
-  Ruler,
   Tag,
-  Users,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { LISTINGS, listingById, type MockListing } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
 import { BrandCard } from '@/components/brand-card'
 import { BRANDS, CATEGORIES } from '@/lib/mock-data'
+import { ListingContactPanel } from './listing-contact-panel'
 
 interface ListingDetailProps {
   params: { id: string }
@@ -240,14 +236,10 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                   />
                 </div>
 
-                <Button size="lg" className="w-full gap-1">
-                  <Phone className="h-4 w-4" />
-                  부동산 상담 신청
-                </Button>
-                <Button size="lg" variant="outline" className="w-full gap-1">
-                  <MessageSquare className="h-4 w-4" />
-                  현장 방문 예약
-                </Button>
+                <ListingContactPanel
+                  listingId={listing.id}
+                  listingTitle={listing.title}
+                />
 
                 <div className="border-t border-gray-100 pt-3 text-center text-xs text-gray-500">
                   문의 {listing.inquiryCount}건 · {listing.listedAt} 등록

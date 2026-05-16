@@ -5,11 +5,10 @@ import {
   ChevronRight,
   Clock,
   MapPin,
-  MessageCircle,
   Users,
   Video,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import {
   channelLabel,
@@ -20,6 +19,7 @@ import {
 import { MeetingCard } from '@/components/meeting-card'
 import { UserChip } from '@/components/user-chip'
 import { RsvpButton } from './rsvp-button'
+import { MeetingContactButton } from './meeting-contact-button'
 
 export function generateStaticParams() {
   return MEETINGS.map((m) => ({ id: m.id }))
@@ -219,10 +219,11 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
                   disabled={closed || full}
                   disabledLabel={closed ? '모집 마감' : full ? '정원 마감' : undefined}
                 />
-                <Button size="lg" variant="outline" className="w-full gap-1">
-                  <MessageCircle className="h-4 w-4" />
-                  주최자에게 문의
-                </Button>
+                <MeetingContactButton
+                  meetingId={meeting.id}
+                  meetingTitle={meeting.title}
+                  hostHandle={host?.handle ?? '주최자'}
+                />
                 <p className="text-center text-xs text-gray-500">
                   신청 내역은 마이페이지에서 확인할 수 있습니다.
                 </p>

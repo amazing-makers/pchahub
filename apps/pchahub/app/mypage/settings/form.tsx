@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Bell, CheckCircle2, Lock, Save, Shield, Trash2, User } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
+
+const SETTINGS_KEY = 'pchahub:user-settings'
 
 interface SettingsFormProps {
   defaultName: string
@@ -42,11 +44,25 @@ export function SettingsForm({ defaultName, email, role }: SettingsFormProps) {
   })
   const [saved, setSaved] = useState(false)
 
+  // localStorage에서 저장된 설정 복원
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(SETTINGS_KEY)
+      if (raw) {
+        const persisted = JSON.parse(raw) as Partial<FormState>
+        setState((prev) => ({ ...prev, ...persisted }))
+      }
+    } catch { /* ignore */ }
+  }, [])
+
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setState((p) => ({ ...p, [key]: value }))
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
+    try {
+      window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(state))
+    } catch { /* ignore */ }
     setSaved(true)
     setTimeout(() => setSaved(false), 2400)
   }

@@ -7,7 +7,7 @@ import {
   ChevronRight,
   TrendingUp,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildInvestmentJsonLd,
@@ -27,6 +27,7 @@ import {
 } from '@/lib/mock-data'
 import { RoundCard } from '@/components/round-card'
 import { InvestForm } from './invest-form'
+import { IrRequestButton } from './ir-request-button'
 
 export function generateStaticParams() {
   return ROUNDS.map((r) => ({ id: r.id }))
@@ -164,9 +165,10 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
                     isOpen={round.status === 'open'}
                   />
                   {round.status === 'open' && (
-                    <Button size="lg" variant="outline" className="w-full">
-                      IR 자료 받기
-                    </Button>
+                    <IrRequestButton
+                      roundId={round.id}
+                      brandName={brand?.name ?? '브랜드'}
+                    />
                   )}
                 </CardContent>
               </Card>

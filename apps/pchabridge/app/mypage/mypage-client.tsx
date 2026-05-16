@@ -26,6 +26,26 @@ interface MaEntry {
   createdAt: string
 }
 
+interface IrEntry {
+  id: string
+  roundId: string
+  brandName: string
+  name: string
+  email: string
+  createdAt: string
+  status: string
+}
+
+interface MaConsultEntry {
+  id: string
+  listingId: string
+  brandName: string
+  name: string
+  role: string
+  createdAt: string
+  status: string
+}
+
 const INVESTOR_TYPE_LABEL: Record<string, string> = {
   individual: '개인 투자자',
   angel: '엔젤 투자자',
@@ -51,6 +71,8 @@ function StatCard({ icon: Icon, label, value }: { icon: typeof Briefcase; label:
 export function MyPageClient() {
   const [interests, setInterests] = useState<InterestEntry[]>([])
   const [maRequests, setMaRequests] = useState<MaEntry[]>([])
+  const [irRequests, setIrRequests] = useState<IrEntry[]>([])
+  const [maConsults, setMaConsults] = useState<MaConsultEntry[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -62,13 +84,21 @@ export function MyPageClient() {
       const raw = window.localStorage.getItem('pchabridge:ma-requests')
       if (raw) setMaRequests(JSON.parse(raw) as MaEntry[])
     } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('pchabridge:ir-requests')
+      if (raw) setIrRequests(JSON.parse(raw) as IrEntry[])
+    } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('pchabridge:ma-consults')
+      if (raw) setMaConsults(JSON.parse(raw) as MaConsultEntry[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
   if (!hydrated) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 animate-pulse">
-        {[...Array(3)].map((_, i) => (
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 animate-pulse">
+        {[...Array(4)].map((_, i) => (
           <div key={i} className="h-24 rounded-xl bg-gray-100" />
         ))}
       </div>
@@ -80,9 +110,10 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon={TrendingUp} label="투자 신청" value={`${interests.length}건`} />
-        <StatCard icon={Briefcase} label="M&A 문의" value={`${maRequests.length}건`} />
+        <StatCard icon={FileText} label="IR 자료 신청" value={`${irRequests.length}건`} />
+        <StatCard icon={Briefcase} label="M&A 문의/자문" value={`${maRequests.length + maConsults.length}건`} />
         <StatCard
           icon={FileText}
           label="신청 금액 합계"
@@ -163,6 +194,60 @@ export function MyPageClient() {
           </div>
         )}
       </section>
+
+      {/* IR 자료 신청 내역 */}
+      {irRequests.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">IR 자료 신청 내역</h2>
+          <div className="space-y-3">
+            {irRequests.map((item) => (
+              <Card key={item.id} className="border-gray-200">
+                <CardContent className="flex items-center justify-between p-4">
+                  <div className="min-w-0 flex-1">
+                    <a
+                      href={`/investments/${item.roundId}`}
+                      className="text-sm font-semibold text-gray-900 hover:underline"
+                    >
+                      {item.brandName} IR 자료
+                    </a>
+                    <div className="mt-0.5 text-xs text-gray-500">
+                      {item.email} · {item.createdAt}
+                    </div>
+                  </div>
+                  <Badge variant="default">발송 대기</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* M&A 자문 신청 내역 */}
+      {maConsults.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">M&A 자문 신청 내역</h2>
+          <div className="space-y-3">
+            {maConsults.map((item) => (
+              <Card key={item.id} className="border-gray-200">
+                <CardContent className="flex items-center justify-between p-4">
+                  <div className="min-w-0 flex-1">
+                    <a
+                      href={`/ma/${item.listingId}`}
+                      className="text-sm font-semibold text-gray-900 hover:underline"
+                    >
+                      {item.brandName} 자문
+                    </a>
+                    <div className="mt-0.5 text-xs text-gray-500">
+                      {item.role ? `${item.role} · ` : ''}{item.createdAt}
+                    </div>
+                  </div>
+                  <Badge variant="warning">검토 중</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

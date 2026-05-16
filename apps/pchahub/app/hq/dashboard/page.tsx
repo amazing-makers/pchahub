@@ -181,7 +181,7 @@ export default async function HQDashboard() {
                       </td>
                       <td className="px-5 py-3 text-right">
                         <a
-                          href={`/hq/inquiries/${i.id}`}
+                          href="/hq/inquiries"
                           className="text-xs font-medium text-gray-700 hover:text-gray-900"
                         >
                           상세 →
@@ -244,10 +244,10 @@ export default async function HQDashboard() {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-                <a href="/hq/ads/upgrade">
+                <a href="/for-brands/ads">
                   <Button size="md">프리미엄으로 업그레이드</Button>
                 </a>
-                <a href="/hq/ads/history">
+                <a href="/for-brands/ads">
                   <Button size="md" variant="outline">
                     결제 / 노출 이력
                   </Button>

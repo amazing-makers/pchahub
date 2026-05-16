@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation'
 import { CheckCircle2, ChevronRight, Lock } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { brandById, MA_LISTINGS, maListingById } from '@/lib/mock-data'
 import { MACard } from '@/components/ma-card'
 import { NdaForm } from './nda-form'
+import { MaConsultButton } from './ma-consult-button'
 
 export function generateStaticParams() {
   return MA_LISTINGS.map((m) => ({ id: m.id }))
@@ -70,9 +71,10 @@ export default function MADetailPage({ params }: MADetailProps) {
                     brandName={brand?.name ?? '매물'}
                     ndaRequired={listing.ndaRequired}
                   />
-                  <Button size="lg" variant="outline" className="w-full">
-                    amakers 자문 받기
-                  </Button>
+                  <MaConsultButton
+                    listingId={listing.id}
+                    brandName={brand?.name ?? '매물'}
+                  />
 
                   <div className="text-center text-xs text-gray-500">
                     문의 {listing.inquiryCount}건 · 등록 {listing.listedAt}

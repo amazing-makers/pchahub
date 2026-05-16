@@ -5,10 +5,9 @@ import {
   Eye,
   Flag,
   MessageSquare,
-  Share2,
   ThumbsUp,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildDiscussionJsonLd,
@@ -26,6 +25,7 @@ import {
 import { UserChip } from '@/components/user-chip'
 import { PostCard } from '@/components/post-card'
 import { CommentForm } from './comment-form'
+import { ChannelSubscribeButton, PostActions } from './post-actions'
 
 export function generateStaticParams() {
   return POSTS.map((p) => ({ id: p.id }))
@@ -140,16 +140,15 @@ export default function PostPage({ params }: PostPageProps) {
                 )}
 
                 <div className="mt-6 flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="gap-1">
-                      <ThumbsUp className="h-3.5 w-3.5" />
-                      좋아요 {formatNumber(post.likes)}
-                    </Button>
-                    <Button size="sm" variant="ghost" className="gap-1 text-gray-600">
-                      <Share2 className="h-3.5 w-3.5" />
-                      공유
-                    </Button>
-                  </div>
+                  <PostActions
+                    postId={post.id}
+                    likes={post.likes}
+                    channelType={post.channelType}
+                    channelKey={post.channelKey}
+                    channelName={channelName}
+                    shareTitle={post.title}
+                    shareUrl={postUrl}
+                  />
                   <button
                     type="button"
                     className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-rose-500"
@@ -246,9 +245,11 @@ export default function PostPage({ params }: PostPageProps) {
                 >
                   {channelName}
                 </a>
-                <Button size="sm" variant="outline" className="mt-3 w-full">
-                  채널 구독
-                </Button>
+                <ChannelSubscribeButton
+                  channelType={post.channelType}
+                  channelKey={post.channelKey}
+                  channelName={channelName}
+                />
                 <p className="mt-3 inline-flex items-center gap-1 text-xs text-gray-500">
                   <MessageSquare className="h-3 w-3" />
                   운영 규칙 보기
