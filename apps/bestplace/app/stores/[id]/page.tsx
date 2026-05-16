@@ -30,6 +30,7 @@ import {
 import { StoreCard } from '@/components/store-card'
 import { SaveStoreButton } from './save-store-button'
 import { StoreViewTracker } from './store-view-tracker'
+import { StoreReviewForm } from './store-review-form'
 
 export function generateStaticParams() {
   return STORES.map((s) => ({ id: s.id }))
@@ -276,6 +277,9 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                 </div>
               </SectionCard>
             )}
+
+            {/* Review form */}
+            <StoreReviewForm storeId={store.id} storeName={store.name} />
 
             {/* Same brand stores */}
             {sameBrand.length > 0 && brand && (

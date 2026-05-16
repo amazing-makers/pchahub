@@ -6,24 +6,39 @@ import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { STORES } from '@/lib/mock-data'
 
+interface ReviewEntry {
+  id: string
+  storeId: string
+  storeName: string
+  rating: number
+  content: string
+  createdAt: string
+}
+
 export function MyPageClient() {
   const [savedIds, setSavedIds] = useState<string[]>([])
   const [recentIds, setRecentIds] = useState<string[]>([])
+  const [reviews, setReviews] = useState<ReviewEntry[]>([])
+  const [voteIds, setVoteIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem('bestplace:savedStores')
       if (raw) setSavedIds(JSON.parse(raw) as string[])
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
     try {
       const raw2 = window.localStorage.getItem('bestplace:recentlyViewed')
       if (raw2) setRecentIds(JSON.parse(raw2) as string[])
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
+    try {
+      const raw3 = window.localStorage.getItem('bestplace:reviews')
+      if (raw3) setReviews(JSON.parse(raw3) as ReviewEntry[])
+    } catch { /* ignore */ }
+    try {
+      const raw4 = window.localStorage.getItem('bestplace:votes')
+      if (raw4) setVoteIds(JSON.parse(raw4) as string[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
@@ -49,8 +64,8 @@ export function MyPageClient() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat icon={Bookmark} label="찜한 매장" value={`${savedStores.length}곳`} />
         <Stat icon={MapPin} label="최근 본 매장" value={`${recentIds.length}곳`} />
-        <Stat icon={Star} label="작성한 리뷰" value="0개" />
-        <Stat icon={Award} label="투표한 어워드" value="0건" />
+        <Stat icon={Star} label="작성한 리뷰" value={`${reviews.length}개`} />
+        <Stat icon={Award} label="투표한 어워드" value={`${voteIds.length}건`} />
       </div>
 
       {/* 찜한 매장 */}
@@ -92,6 +107,45 @@ export function MyPageClient() {
               .map((s) => (
                 <StoreCard key={s!.id} store={s!} />
               ))}
+          </div>
+        </section>
+      )}
+
+      {/* 내가 쓴 리뷰 */}
+      {reviews.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Star className="h-4 w-4 text-amber-400" />
+            <h2 className="text-h4 font-semibold text-gray-900">내가 쓴 리뷰</h2>
+          </div>
+          <div className="space-y-3">
+            {reviews.slice(0, 5).map((r) => (
+              <div
+                key={r.id}
+                className="rounded-xl border border-gray-200 bg-white p-4"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <a
+                    href={`/stores/${r.storeId}`}
+                    className="text-sm font-semibold text-gray-900 hover:underline"
+                  >
+                    {r.storeName}
+                  </a>
+                  <div className="flex shrink-0">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star
+                        key={n}
+                        className={`h-3.5 w-3.5 ${n <= r.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-gray-700">{r.content}</p>
+                <div className="mt-1 text-xs text-gray-400">
+                  {new Date(r.createdAt).toLocaleDateString('ko-KR')}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       )}
