@@ -4,16 +4,13 @@ import { redirect } from 'next/navigation'
 import {
   Bell,
   Building2,
-  Calculator,
-  Heart,
-  MessageSquare,
   PencilLine,
   Settings,
-  Sparkles,
   Star,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
+import { StatsClient } from './stats-client'
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
@@ -82,14 +79,8 @@ export default async function MyPage() {
       </section>
 
       <div className="container mx-auto py-8">
-        {/* Quick stats */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-          <StatLink href="/mypage/saved" icon={Heart} label="찜한 브랜드" value={`${savedBrands.length}개`} />
-          <StatLink href="/mypage/inquiries" icon={MessageSquare} label="상담 신청" value={`${inquiries.length}건`} />
-          <StatLink href="/mypage/reviews" icon={Star} label="작성한 후기" value="3건" />
-          <StatLink href="/calculator" icon={Calculator} label="저장한 계산" value="0건" />
-          <StatLink href="/scanner" icon={Sparkles} label="스캐너 결과" value="1건" />
-        </div>
+        {/* Quick stats (localStorage 기반 실제 수치) */}
+        <StatsClient />
 
         {/* Recent inquiries */}
         <section className="mt-8">
@@ -229,30 +220,6 @@ export default async function MyPage() {
         </section>
       </div>
     </main>
-  )
-}
-
-function StatLink({
-  href,
-  icon: Icon,
-  label,
-  value,
-}: {
-  href: string
-  icon: typeof Heart
-  label: string
-  value: string
-}) {
-  return (
-    <a href={href} className="group block">
-      <Card className="h-full border-gray-200 transition-shadow group-hover:shadow-md">
-        <CardContent className="p-4">
-          <Icon className="h-4 w-4 text-gray-400 transition-colors group-hover:text-gray-700" />
-          <div className="mt-2 text-xs text-gray-500">{label}</div>
-          <div className="mt-0.5 text-base font-semibold text-gray-900">{value}</div>
-        </CardContent>
-      </Card>
-    </a>
   )
 }
 

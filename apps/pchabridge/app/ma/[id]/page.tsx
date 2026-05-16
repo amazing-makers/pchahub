@@ -4,6 +4,7 @@ import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { brandById, MA_LISTINGS, maListingById } from '@/lib/mock-data'
 import { MACard } from '@/components/ma-card'
+import { NdaForm } from './nda-form'
 
 export function generateStaticParams() {
   return MA_LISTINGS.map((m) => ({ id: m.id }))
@@ -64,9 +65,11 @@ export default function MADetailPage({ params }: MADetailProps) {
                     <div className="mt-1 text-xs text-gray-500">P/E 약 {pe}배</div>
                   </div>
 
-                  <Button size="lg" className="w-full">
-                    NDA 체결 + 상세 자료 요청
-                  </Button>
+                  <NdaForm
+                    listingId={listing.id}
+                    brandName={brand?.name ?? '매물'}
+                    ndaRequired={listing.ndaRequired}
+                  />
                   <Button size="lg" variant="outline" className="w-full">
                     amakers 자문 받기
                   </Button>
