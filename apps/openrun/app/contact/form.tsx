@@ -59,6 +59,22 @@ export function ContactForm() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+
+    // localStorage 저장
+    try {
+      const raw = window.localStorage.getItem('openrun:contacts')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `or-${Date.now()}`,
+        ...state,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem('openrun:contacts', JSON.stringify([entry, ...prev]))
+    } catch {
+      // ignore
+    }
+
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

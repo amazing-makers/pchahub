@@ -26,6 +26,7 @@ import {
   roundById,
 } from '@/lib/mock-data'
 import { RoundCard } from '@/components/round-card'
+import { InvestForm } from './invest-form'
 
 export function generateStaticParams() {
   return ROUNDS.map((r) => ({ id: r.id }))
@@ -154,12 +155,19 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
                     />
                   </div>
 
-                  <Button size="lg" className="w-full" disabled={round.status !== 'open'}>
-                    {round.status === 'open' ? '투자 신청' : '모집 마감'}
-                  </Button>
-                  <Button size="lg" variant="outline" className="w-full">
-                    IR 자료 받기
-                  </Button>
+                  <InvestForm
+                    roundId={round.id}
+                    brandName={brand?.name ?? '브랜드'}
+                    minInvestment={round.minInvestment}
+                    expectedROI={round.expectedAnnualROI}
+                    closeDate={round.closeDate}
+                    isOpen={round.status === 'open'}
+                  />
+                  {round.status === 'open' && (
+                    <Button size="lg" variant="outline" className="w-full">
+                      IR 자료 받기
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </aside>

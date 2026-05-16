@@ -70,6 +70,22 @@ export function QuoteForm({ preselectedContractor }: QuoteFormProps) {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
+
+    // localStorage 저장
+    try {
+      const raw = window.localStorage.getItem('gongganhansu:quotes')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `qt-${Date.now()}`,
+        ...state,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem('gongganhansu:quotes', JSON.stringify([entry, ...prev]))
+    } catch {
+      // ignore
+    }
+
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

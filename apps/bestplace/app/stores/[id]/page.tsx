@@ -28,6 +28,7 @@ import {
   storesByRegion,
 } from '@/lib/mock-data'
 import { StoreCard } from '@/components/store-card'
+import { SaveStoreButton } from './save-store-button'
 
 export function generateStaticParams() {
   return STORES.map((s) => ({ id: s.id }))
@@ -138,6 +139,9 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                 <MapPin className="h-4 w-4 text-gray-400" />
                 {store.address}
               </div>
+            </div>
+            <div className="shrink-0">
+              <SaveStoreButton storeId={store.id} />
             </div>
           </div>
 
