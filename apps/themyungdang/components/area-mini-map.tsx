@@ -117,6 +117,10 @@ export default function AreaMiniMap({ area, listings }: Props) {
 
     return () => {
       cancelled = true
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+      }
     }
   }, [area, listings])
 

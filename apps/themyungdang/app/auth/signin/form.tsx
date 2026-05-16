@@ -100,7 +100,7 @@ export function SigninForm({ enabled, callbackUrl, error }: SigninFormProps) {
                   value={devEmail}
                   onChange={(e) => setDevEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                  className="mt-1 form-input"
                   required
                 />
               </label>
@@ -111,7 +111,7 @@ export function SigninForm({ enabled, callbackUrl, error }: SigninFormProps) {
                   value={devName}
                   onChange={(e) => setDevName(e.target.value)}
                   placeholder="홍길동"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                  className="mt-1 form-input"
                 />
               </label>
               <Button type="submit" size="lg" className="w-full">

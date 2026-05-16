@@ -18,10 +18,14 @@ export default function ListingMiniMap({ listing }: Props) {
     if (!divRef.current || mapRef.current || !listing.lat) return
     let cancelled = false
 
-    const link = document.createElement('link')
-    link.rel  = 'stylesheet'
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-    document.head.appendChild(link)
+    // Inject Leaflet CSS only once per page (singleton by id)
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link')
+      link.id   = 'leaflet-css'
+      link.rel  = 'stylesheet'
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+      document.head.appendChild(link)
+    }
 
     import('leaflet').then(L => {
       if (cancelled || mapRef.current || !divRef.current) return
@@ -68,7 +72,6 @@ export default function ListingMiniMap({ listing }: Props) {
       cancelled = true
       mapRef.current?.remove()
       mapRef.current = null
-      if (document.head.contains(link)) document.head.removeChild(link)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

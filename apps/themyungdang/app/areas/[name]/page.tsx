@@ -17,9 +17,16 @@ import { formatNumber } from '@amakers/utils'
 import { AREAS, listingsByArea } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
 import { AreaChip } from '@/components/area-chip'
+import { MiniMapSkeleton } from '@/components/skeletons'
 
-const AreaCharts  = dynamic(() => import('@/components/area-charts'),   { ssr: false })
-const AreaMiniMap = dynamic(() => import('@/components/area-mini-map'), { ssr: false })
+const AreaCharts  = dynamic(() => import('@/components/area-charts'),   {
+  ssr: false,
+  loading: () => <div className="h-64 w-full animate-pulse rounded-xl bg-gray-200" />,
+})
+const AreaMiniMap = dynamic(() => import('@/components/area-mini-map'), {
+  ssr: false,
+  loading: () => <MiniMapSkeleton />,
+})
 
 export function generateStaticParams() {
   return AREAS.map((a) => ({ name: a.key }))
@@ -62,12 +69,29 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
                 {area.region} {area.district}
               </div>
             </div>
-            <a
-              href={`/listings?region=${encodeURIComponent(area.region)}`}
-              className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              이 지역 전체 매물 보기 <ArrowRight className="h-3.5 w-3.5" />
-            </a>
+            <div className="flex flex-wrap items-center gap-2">
+              {area.lat && area.lng && (
+                <a
+                  href={`/listings/map?lat=${area.lat}&lng=${area.lng}&zoom=15`}
+                  className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  <MapPin className="h-3.5 w-3.5 text-gray-400" />
+                  지도에서 보기
+                </a>
+              )}
+              <a
+                href={`/listings?region=${encodeURIComponent(area.region)}`}
+                className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                이 지역 매물 보기 <ArrowRight className="h-3.5 w-3.5" />
+              </a>
+              <a
+                href="/areas"
+                className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                상권 비교하기 <ArrowRight className="h-3.5 w-3.5" />
+              </a>
+            </div>
           </div>
 
           <p className="mt-6 max-w-3xl text-base leading-relaxed text-gray-700">
@@ -110,7 +134,7 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
             <AreaMiniMap area={area} listings={listings} />
             <div className="mt-3 flex items-center justify-end">
               <a
-                href={`/listings/map`}
+                href={area.lat && area.lng ? `/listings/map?lat=${area.lat}&lng=${area.lng}&zoom=15` : '/listings/map'}
                 className="inline-flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-900"
               >
                 전체 매물 지도로 보기 →

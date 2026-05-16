@@ -49,7 +49,13 @@ export function MobileMenu({ navItems, actions }: MobileMenuProps) {
                     key={item.href}
                     href={item.href}
                     onClick={close}
-                    className="rounded-md px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    aria-current={item.active ? 'page' : undefined}
+                    className={cn(
+                      'rounded-md px-3 py-2.5 text-sm font-medium',
+                      item.active
+                        ? 'bg-gray-50 font-semibold text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-50',
+                    )}
                   >
                     {item.label}
                   </a>

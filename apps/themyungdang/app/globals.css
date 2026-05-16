@@ -2,9 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS Variables ─────────────────────────────────────────────────────────── */
 :root {
   --brand-primary: #10B981;
+  --brand-primary-dark: #059669;
 }
 
-html { font-family: 'Pretendard', 'Inter', sans-serif; }
-body { color: #0F172A; background: #ffffff; }
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+html {
+  font-family: 'Pretendard', 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #0F172A;
+  background: #ffffff;
+}
+
+/* ── Text selection ─────────────────────────────────────────────────────────── */
+::selection {
+  background-color: #D1FAE5;
+  color: #064E3B;
+}
+
+/* ── Focus ring (keyboard-only via :focus-visible) ─────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* Remove focus ring for mouse/touch interactions on links and buttons */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Custom thin scrollbar (WebKit) ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* ── Form inputs — shared base class ────────────────────────────────────────── */
+@layer components {
+  .form-input {
+    @apply w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900
+           placeholder-gray-400 transition-colors
+           focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900;
+  }
+
+  /* Error state */
+  .form-input-error {
+    @apply border-rose-400 focus:border-rose-500 focus:ring-rose-500;
+  }
+
+  /* Helper text below a field */
+  .field-hint {
+    @apply mt-1 text-xs text-gray-400;
+  }
+  .field-error {
+    @apply mt-1 text-xs text-rose-500;
+  }
+}
+
+/* ── Skeleton pulse animation ────────────────────────────────────────────────── */
+@layer utilities {
+  /* Skeleton pulse — add rounded-* yourself for each use */
+  .skeleton {
+    @apply animate-pulse bg-gray-200;
+  }
+}

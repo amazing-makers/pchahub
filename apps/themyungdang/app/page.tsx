@@ -1,4 +1,5 @@
-import { ArrowRight, CheckCircle2, Eye, Map, Shield, Sparkles } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { ArrowRight, CheckCircle2, Eye, Map, Shield, Sparkles, TrendingUp } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
@@ -7,10 +8,18 @@ import { AreaChip } from '@/components/area-chip'
 import {
   AREAS,
   FEATURED_LISTINGS,
+  LISTING_CATEGORIES,
   LISTINGS,
   listingsByArea,
   popularListings,
 } from '@/lib/mock-data'
+
+import { ListingSectionSkeleton } from '@/components/skeletons'
+
+const RecentlyViewedSection = dynamic(
+  () => import('@/components/recently-viewed').then((m) => m.RecentlyViewedSection),
+  { ssr: false, loading: () => <ListingSectionSkeleton count={3} /> },
+)
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -23,6 +32,31 @@ export default function HomePage() {
     { icon: Shield, label: '안전 거래 지원', color: 'text-blue-500' },
     { icon: Sparkles, label: '실시간 상권 데이터', color: 'text-amber-500' },
   ]
+
+  // ── 핵심 지표 계산 ────────────────────────────────────────────────────────
+  const activeListings  = LISTINGS.filter(l => l.status === 'active')
+  const transferCount   = activeListings.filter(l => l.type === 'transfer').length
+  const newSpaceCount   = activeListings.filter(l => l.type === 'new').length
+  const avgRent         = Math.round(
+    activeListings.filter(l => l.monthlyRent > 0).reduce((s, l) => s + l.monthlyRent, 0) /
+    Math.max(activeListings.filter(l => l.monthlyRent > 0).length, 1),
+  )
+  const areasCount = AREAS.filter(a => a.lat != null).length
+
+  const METRICS = [
+    { label: '총 매물',    value: `${activeListings.length}건`,   sub: '현재 등록 중' },
+    { label: '양도 매물',  value: `${transferCount}건`,           sub: '권리금 포함' },
+    { label: '신규 임대',  value: `${newSpaceCount}건`,           sub: '바로 입점 가능' },
+    { label: '상권 분석',  value: `${areasCount}개 상권`,         sub: '전국 주요 상권' },
+    { label: '평균 월세',  value: `${avgRent}만원`,               sub: '전체 매물 평균' },
+  ]
+
+  // ── 업종별 검색 카테고리 ──────────────────────────────────────────────────
+  const CATEGORY_ICONS: Record<string, string> = {
+    chicken: '🍗', cafe: '☕', korean: '🍲', japanese: '🍣',
+    snack: '🥙', dessert: '🧁', beverage: '🧋', bar: '🍺',
+    convenience: '🏪', education: '📚',
+  }
 
   return (
     <main>
@@ -72,6 +106,46 @@ export default function HomePage() {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 핵심 지표 바 ──────────────────────────────────────────────────── */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-5">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-5">
+            {METRICS.map((m) => (
+              <div key={m.label} className="flex flex-col items-center gap-0.5 px-4 py-2 text-center first:pl-0 last:pr-0">
+                <span className="text-xl font-black tracking-tight text-gray-900">{m.value}</span>
+                <span className="text-[11px] font-semibold text-gray-700">{m.label}</span>
+                <span className="text-[10px] text-gray-400">{m.sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 업종별 빠른 검색 ───────────────────────────────────────────────── */}
+      <section className="border-b border-gray-100 bg-gray-50 py-5">
+        <div className="container mx-auto">
+          <div className="mb-3 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-gray-400" />
+            <span className="text-sm font-semibold text-gray-700">업종별 빠른 검색</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {LISTING_CATEGORIES.map((cat) => (
+              <a
+                key={cat.key}
+                href={`/listings/map?fitCategory=${cat.key}`}
+                className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-900 hover:bg-gray-900 hover:text-white"
+              >
+                <span>{CATEGORY_ICONS[cat.key] ?? '🏪'}</span>
+                {cat.label}
+                <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-bold text-gray-500 group-hover:bg-white/20">
+                  {cat.brandRefCount}
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </section>
@@ -143,6 +217,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Recently viewed — client island, no-ops on SSR */}
+      <RecentlyViewedSection />
 
       {/* Safe deal */}
       <section className="container mx-auto pt-section">

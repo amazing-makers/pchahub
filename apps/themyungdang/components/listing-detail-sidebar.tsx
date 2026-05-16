@@ -12,8 +12,24 @@ import {
 } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import type { MockListing } from '@/lib/mock-data'
+import { LISTINGS, type MockListing } from '@/lib/mock-data'
 import { useFavorites } from '@/hooks/use-favorites'
+import { useRecentlyViewed } from '@/hooks/use-recently-viewed'
+import { showToast } from '@/hooks/use-toast'
+
+// ── Phone number auto-formatter (Korean) ─────────────────────────────────────
+function formatPhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 11)
+  if (digits.startsWith('02')) {
+    if (digits.length <= 2) return digits
+    if (digits.length <= 5) return `${digits.slice(0, 2)}-${digits.slice(2)}`
+    if (digits.length <= 9) return `${digits.slice(0, 2)}-${digits.slice(2, 5)}-${digits.slice(5)}`
+    return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6, 10)}`
+  }
+  if (digits.length <= 3) return digits
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`
+}
 
 function formatManwon(manwon: number): string {
   if (manwon >= 10000) {
@@ -23,7 +39,9 @@ function formatManwon(manwon: number): string {
   return `${formatNumber(manwon)}만`
 }
 
-// ── Inquiry Modal ─────────────────────────────────────────────────────────────
+// ── Inquiry Modal — with localStorage draft save ──────────────────────────────
+const DRAFT_KEY = (id: string) => `inquiry-draft-${id}`
+
 function InquiryModal({
   listing,
   onClose,
@@ -35,7 +53,40 @@ function InquiryModal({
   const [phone,   setPhone]   = useState('')
   const [message, setMessage] = useState('')
   const [sent,    setSent]    = useState(false)
+  const [hasDraft, setHasDraft] = useState(false)
   const backdropRef = useRef<HTMLDivElement>(null)
+  const draftKey = DRAFT_KEY(listing.id)
+
+  // Load saved draft on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(draftKey)
+      if (raw) {
+        const d = JSON.parse(raw) as { name?: string; phone?: string; message?: string }
+        if (d.name)    setName(d.name)
+        if (d.phone)   setPhone(d.phone)
+        if (d.message) setMessage(d.message)
+        setHasDraft(true)
+      }
+    } catch { /* ignore */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Persist draft on every keystroke (debounced to 600ms)
+  useEffect(() => {
+    if (sent) return
+    const id = setTimeout(() => {
+      try {
+        if (name || phone || message) {
+          localStorage.setItem(draftKey, JSON.stringify({ name, phone, message }))
+        } else {
+          localStorage.removeItem(draftKey)
+        }
+      } catch { /* ignore */ }
+    }, 600)
+    return () => clearTimeout(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, phone, message, sent])
 
   // Close on Escape
   useEffect(() => {
@@ -44,11 +95,18 @@ function InquiryModal({
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
 
+  const clearDraft = () => {
+    try { localStorage.removeItem(draftKey) } catch { /* ignore */ }
+    setName(''); setPhone(''); setMessage(''); setHasDraft(false)
+  }
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !phone.trim()) return
+    try { localStorage.removeItem(draftKey) } catch { /* ignore */ }
     // Mock submit — no backend yet
     setSent(true)
+    showToast('문의가 접수되었습니다. 영업일 기준 1일 이내 연락드립니다.', 'success', 5000)
   }
 
   return (
@@ -71,6 +129,16 @@ function InquiryModal({
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* Draft notice */}
+        {hasDraft && !sent && (
+          <div className="mb-4 flex items-center justify-between rounded-xl bg-amber-50 px-3.5 py-2.5">
+            <span className="text-xs font-medium text-amber-700">이전에 작성한 내용이 있습니다.</span>
+            <button onClick={clearDraft} className="text-xs font-semibold text-amber-600 hover:text-amber-800">
+              지우기
+            </button>
+          </div>
+        )}
 
         {sent ? (
           /* Success state */
@@ -95,10 +163,11 @@ function InquiryModal({
               <input
                 type="text"
                 required
+                autoFocus
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="홍길동"
-                className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="form-input"
               />
             </div>
             <div>
@@ -109,21 +178,25 @@ function InquiryModal({
                 type="tel"
                 required
                 value={phone}
-                onChange={e => setPhone(e.target.value)}
+                onChange={e => setPhone(formatPhone(e.target.value))}
                 placeholder="010-0000-0000"
-                className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                inputMode="numeric"
+                className="form-input"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                문의 내용
+              <label className="mb-1.5 flex items-center justify-between text-sm font-medium text-gray-700">
+                <span>문의 내용</span>
+                {(name || phone || message) && (
+                  <span className="text-[11px] font-normal text-gray-400">자동 저장 중…</span>
+                )}
               </label>
               <textarea
                 rows={3}
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 placeholder="궁금한 점을 자유롭게 적어주세요."
-                className="w-full resize-none rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="form-input resize-none"
               />
             </div>
             <Button type="submit" size="lg" className="w-full gap-1.5">
@@ -146,10 +219,60 @@ function shareOrCopy(text: string) {
   if (navigator.share) {
     navigator.share({ title: text, url: window.location.href }).catch(() => {})
   } else {
-    navigator.clipboard.writeText(window.location.href).catch(() => {})
-    // A tiny toast would be ideal; keeping it simple for now
-    alert('링크가 복사되었습니다.')
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => showToast('링크가 복사되었습니다.', 'success'))
+      .catch(() => showToast('링크 복사에 실패했습니다.', 'error'))
   }
+}
+
+// ── Recently-viewed mini strip ────────────────────────────────────────────────
+function RecentlyViewedMini({ currentId }: { currentId: string }) {
+  const { recentIds } = useRecentlyViewed()
+  const items = recentIds
+    .filter((id) => id !== currentId)
+    .slice(0, 3)
+    .map((id) => LISTINGS.find((l) => l.id === id))
+    .filter((l): l is MockListing => l !== undefined)
+
+  if (items.length === 0) return null
+
+  return (
+    <Card className="border-gray-200">
+      <CardContent className="p-5">
+        <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+          최근 본 매물
+        </div>
+        <div className="space-y-3">
+          {items.map((l) => (
+            <a key={l.id} href={`/listings/${l.id}`} className="group flex gap-3">
+              <div className="h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={l.images[0]}
+                  alt={l.title}
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="line-clamp-1 text-sm font-medium text-gray-900 group-hover:text-gray-600">
+                  {l.title}
+                </div>
+                <div className="mt-0.5 text-xs text-gray-500">
+                  {l.region} · {l.area}평
+                </div>
+                <div className="mt-0.5 text-xs font-semibold text-gray-900">
+                  {l.type === 'sale'
+                    ? `매각 ${formatManwon(l.salePrice ?? 0)}`
+                    : `월세 ${formatNumber(l.monthlyRent)}만`}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -243,7 +366,8 @@ export default function ListingDetailSidebar({ listing }: Props) {
                 {listing.ownerType === 'agent' ? listing.agencyName : '직거래'}
               </div>
               <div className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-                <Phone className="h-3.5 w-3.5" /> 1544-0000
+                <Phone className="h-3.5 w-3.5" />
+                {listing.contactPhone ?? '1544-0000'}
               </div>
             </div>
             <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800">
@@ -255,6 +379,9 @@ export default function ListingDetailSidebar({ listing }: Props) {
             </div>
           </CardContent>
         </Card>
+
+        {/* Recently-viewed mini */}
+        <RecentlyViewedMini currentId={listing.id} />
       </div>
 
       {/* Inquiry modal — portal-like, fixed overlay */}

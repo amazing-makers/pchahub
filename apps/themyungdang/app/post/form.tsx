@@ -1,9 +1,24 @@
 'use client'
 
-import { useState } from 'react'
-import { CheckCircle2, FileText, ImagePlus, Plus, Send, Shield, Trash2 } from 'lucide-react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
+import { CheckCircle2, FileText, ImagePlus, Send, Shield, Trash2, Upload } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { LISTING_CATEGORIES, type ListingType } from '@/lib/mock-data'
+import { showToast } from '@/hooks/use-toast'
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+function formatPhone(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 11)
+  if (digits.startsWith('02')) {
+    if (digits.length <= 2) return digits
+    if (digits.length <= 5) return `${digits.slice(0, 2)}-${digits.slice(2)}`
+    if (digits.length <= 9) return `${digits.slice(0, 2)}-${digits.slice(2, 5)}-${digits.slice(5)}`
+    return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6, 10)}`
+  }
+  if (digits.length <= 3) return digits
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`
+}
 
 interface FormState {
   listingType: ListingType
@@ -59,6 +74,9 @@ const TYPE_LABEL_FORM: Record<ListingType, { label: string; sub: string }> = {
 }
 
 export function PostForm({ defaultName, defaultEmail }: { defaultName: string; defaultEmail: string }) {
+  // Photo upload state — files kept outside FormState to avoid JSON serialisation
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+
   const [state, setState] = useState<FormState>({
     listingType: 'new',
     title: '',
@@ -91,31 +109,41 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
     agreedTerms: false,
   })
   const [submitted, setSubmitted] = useState(false)
+  // Track whether the user has clicked submit (to show validation errors)
+  const [showErrors, setShowErrors] = useState(false)
 
   const isSale = state.listingType === 'sale'
   const isTransfer = state.listingType === 'transfer'
 
-  const required = [
-    state.title,
-    state.region,
-    state.district,
-    state.fullAddress,
-    state.area,
-    isSale ? state.salePrice : state.deposit,
-    isSale ? '_' : state.monthlyRent,
-    state.ownerName,
-    state.ownerPhone,
-    state.ownerEmail,
-  ]
-  const allRequired = required.every((v) => v.trim().length > 0)
-  const hasPhoto = state.photoCount >= 3
-  const hasCategory = state.fitCategories.length >= 1 || isSale
-  const hasLease = state.hasLease
-  const isValid = allRequired && hasPhoto && hasCategory && hasLease && state.agreedPrivacy && state.agreedTerms
+  // Individual validation checks
+  const errors = {
+    title:      !state.title.trim(),
+    region:     !state.region.trim(),
+    district:   !state.district.trim(),
+    address:    !state.fullAddress.trim(),
+    area:       !state.area.trim(),
+    price:      isSale ? !state.salePrice.trim() : (!state.deposit.trim() || !state.monthlyRent.trim()),
+    ownerName:  !state.ownerName.trim(),
+    ownerPhone: !state.ownerPhone.trim(),
+    ownerEmail: !state.ownerEmail.trim(),
+    photo:      photoFiles.length < 3,
+    category:   !isSale && state.fitCategories.length === 0,
+    lease:      !state.hasLease,
+    privacy:    !state.agreedPrivacy,
+    terms:      !state.agreedTerms,
+  }
+  const isValid = !Object.values(errors).some(Boolean)
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!isValid) return
+    if (!isValid) {
+      setShowErrors(true)
+      // Scroll to first error
+      const firstError = document.querySelector('[data-field-error]')
+      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      showToast('필수 항목을 모두 입력해 주세요.', 'error')
+      return
+    }
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -215,24 +243,31 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
         <Card className="border-gray-200 shadow-sm">
           <CardContent className="space-y-4 p-6">
             <SectionHeader title="기본 정보" />
-            <Field label="매물 제목" required>
+            <Field
+              label="매물 제목"
+              required
+              error={showErrors && errors.title ? '매물 제목을 입력하세요.' : undefined}
+              hint="상권명이나 특징을 함께 적으면 검색에 잘 노출됩니다."
+            >
               <input
                 type="text"
                 value={state.title}
                 onChange={(e) => update('title', e.target.value)}
                 placeholder="예: 강남역 도보 5분 1층 코너 매물"
-                className="form-input"
-                required
+                className={`form-input ${showErrors && errors.title ? 'form-input-error' : ''}`}
               />
             </Field>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="지역 (시·도)" required>
+              <Field
+                label="지역 (시·도)"
+                required
+                error={showErrors && errors.region ? '지역을 선택하세요.' : undefined}
+              >
                 <select
                   value={state.region}
                   onChange={(e) => update('region', e.target.value)}
-                  className="form-input"
-                  required
+                  className={`form-input ${showErrors && errors.region ? 'form-input-error' : ''}`}
                 >
                   <option value="">선택</option>
                   {REGIONS.map((r) => (
@@ -240,34 +275,45 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
                   ))}
                 </select>
               </Field>
-              <Field label="시·군·구" required>
+              <Field
+                label="시·군·구"
+                required
+                error={showErrors && errors.district ? '구/군을 입력하세요.' : undefined}
+              >
                 <input
                   type="text"
                   value={state.district}
                   onChange={(e) => update('district', e.target.value)}
                   placeholder="예: 강남구"
-                  className="form-input"
-                  required
+                  className={`form-input ${showErrors && errors.district ? 'form-input-error' : ''}`}
                 />
               </Field>
-              <Field label="도로명 주소" required className="sm:col-span-2">
+              <Field
+                label="도로명 주소"
+                required
+                className="sm:col-span-2"
+                error={showErrors && errors.address ? '도로명 주소를 입력하세요.' : undefined}
+              >
                 <input
                   type="text"
                   value={state.fullAddress}
                   onChange={(e) => update('fullAddress', e.target.value)}
                   placeholder="예: 서울특별시 강남구 강남대로 396"
-                  className="form-input"
-                  required
+                  className={`form-input ${showErrors && errors.address ? 'form-input-error' : ''}`}
                 />
               </Field>
-              <Field label="면적 (평)" required>
+              <Field
+                label="면적 (평)"
+                required
+                error={showErrors && errors.area ? '면적을 입력하세요.' : undefined}
+              >
                 <input
                   type="number"
                   value={state.area}
                   onChange={(e) => update('area', e.target.value)}
                   placeholder="28"
-                  className="form-input"
-                  required
+                  inputMode="numeric"
+                  className={`form-input ${showErrors && errors.area ? 'form-input-error' : ''}`}
                 />
               </Field>
               <Field label="층">
@@ -309,36 +355,48 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
           <CardContent className="space-y-4 p-6">
             <SectionHeader title="비용 정보" helper="단위: 만원" />
             {isSale ? (
-              <Field label="매각가 (만원)" required>
+              <Field
+                label="매각가 (만원)"
+                required
+                error={showErrors && errors.price ? '매각가를 입력하세요.' : undefined}
+              >
                 <input
                   type="number"
                   value={state.salePrice}
                   onChange={(e) => update('salePrice', e.target.value)}
                   placeholder="380000"
-                  className="form-input"
-                  required
+                  inputMode="numeric"
+                  className={`form-input ${showErrors && errors.price ? 'form-input-error' : ''}`}
                 />
               </Field>
             ) : (
               <div className="grid gap-3 sm:grid-cols-3">
-                <Field label="보증금 (만원)" required>
+                <Field
+                  label="보증금 (만원)"
+                  required
+                  error={showErrors && errors.price && !state.deposit.trim() ? '보증금을 입력하세요.' : undefined}
+                >
                   <input
                     type="number"
                     value={state.deposit}
                     onChange={(e) => update('deposit', e.target.value)}
                     placeholder="5000"
-                    className="form-input"
-                    required
+                    inputMode="numeric"
+                    className={`form-input ${showErrors && errors.price && !state.deposit.trim() ? 'form-input-error' : ''}`}
                   />
                 </Field>
-                <Field label="월세 (만원)" required>
+                <Field
+                  label="월세 (만원)"
+                  required
+                  error={showErrors && errors.price && !state.monthlyRent.trim() ? '월세를 입력하세요.' : undefined}
+                >
                   <input
                     type="number"
                     value={state.monthlyRent}
                     onChange={(e) => update('monthlyRent', e.target.value)}
                     placeholder="280"
-                    className="form-input"
-                    required
+                    inputMode="numeric"
+                    className={`form-input ${showErrors && errors.price && !state.monthlyRent.trim() ? 'form-input-error' : ''}`}
                   />
                 </Field>
                 {isTransfer && (
@@ -401,7 +459,7 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
                   value={state.transferorMessage}
                   onChange={(e) => update('transferorMessage', e.target.value)}
                   placeholder="매장 운영 노하우, 주요 단골 비중, 매장의 강점 등을 적어주세요."
-                  className="form-input min-h-[120px]"
+                  className="form-input min-h-[120px] resize-y"
                   rows={4}
                 />
               </Field>
@@ -475,8 +533,8 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
               title="매물 사진 (최소 3장, 권장 5장 이상)"
               helper="외관·내부·주방·화장실·주변 사진을 골고루 등록하면 문의 전환율이 평균 2배 증가합니다."
             />
-            <PhotoUploadGrid count={state.photoCount} onChange={(c) => update('photoCount', c)} />
-            {state.photoCount > 0 && state.photoCount < 3 && (
+            <PhotoUploadDnD files={photoFiles} onChange={setPhotoFiles} />
+            {photoFiles.length > 0 && photoFiles.length < 3 && (
               <p className="text-xs text-rose-500">최소 3장 이상 등록이 필요합니다.</p>
             )}
           </CardContent>
@@ -550,32 +608,43 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
                   />
                 </Field>
               )}
-              <Field label="이름" required>
+              <Field
+                label="이름"
+                required
+                error={showErrors && errors.ownerName ? '이름을 입력하세요.' : undefined}
+              >
                 <input
                   type="text"
                   value={state.ownerName}
                   onChange={(e) => update('ownerName', e.target.value)}
-                  className="form-input"
-                  required
+                  className={`form-input ${showErrors && errors.ownerName ? 'form-input-error' : ''}`}
                 />
               </Field>
-              <Field label="휴대전화" required>
+              <Field
+                label="휴대전화"
+                required
+                error={showErrors && errors.ownerPhone ? '연락처를 입력하세요.' : undefined}
+              >
                 <input
                   type="tel"
                   value={state.ownerPhone}
-                  onChange={(e) => update('ownerPhone', e.target.value)}
+                  onChange={(e) => update('ownerPhone', formatPhone(e.target.value))}
                   placeholder="010-0000-0000"
-                  className="form-input"
-                  required
+                  inputMode="numeric"
+                  className={`form-input ${showErrors && errors.ownerPhone ? 'form-input-error' : ''}`}
                 />
               </Field>
-              <Field label="이메일" required className="sm:col-span-2">
+              <Field
+                label="이메일"
+                required
+                className="sm:col-span-2"
+                error={showErrors && errors.ownerEmail ? '이메일을 입력하세요.' : undefined}
+              >
                 <input
                   type="email"
                   value={state.ownerEmail}
                   onChange={(e) => update('ownerEmail', e.target.value)}
-                  className="form-input"
-                  required
+                  className={`form-input ${showErrors && errors.ownerEmail ? 'form-input-error' : ''}`}
                 />
               </Field>
             </div>
@@ -635,12 +704,35 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
                   }
                 />
                 <Row label="업종" value={isSale ? '-' : `${state.fitCategories.length}개`} />
-                <Row label="사진" value={`${state.photoCount}장`} />
+                <Row label="사진" value={`${photoFiles.length}장`} />
                 <Row label="계약서" value={state.hasLease ? '보유 ✓' : '미보유'} />
               </div>
             </div>
 
-            <Button type="submit" size="lg" className="w-full gap-1" disabled={!isValid}>
+            {/* Validation summary — shown after first submit attempt */}
+            {showErrors && !isValid && (
+              <div className="rounded-xl border border-rose-100 bg-rose-50 p-3 text-xs text-rose-700">
+                <p className="font-semibold">아직 완료되지 않은 항목이 있습니다:</p>
+                <ul className="mt-1.5 space-y-0.5 pl-3 list-disc">
+                  {errors.title      && <li>매물 제목</li>}
+                  {errors.region     && <li>지역 (시·도)</li>}
+                  {errors.district   && <li>시·군·구</li>}
+                  {errors.address    && <li>도로명 주소</li>}
+                  {errors.area       && <li>면적</li>}
+                  {errors.price      && <li>비용 정보</li>}
+                  {errors.ownerName  && <li>등록자 이름</li>}
+                  {errors.ownerPhone && <li>연락처</li>}
+                  {errors.ownerEmail && <li>이메일</li>}
+                  {errors.photo      && <li>매물 사진 3장 이상</li>}
+                  {errors.category   && <li>적합 업종 1개 이상</li>}
+                  {errors.lease      && <li>임대차 계약서 (필수)</li>}
+                  {errors.privacy    && <li>개인정보 처리방침 동의</li>}
+                  {errors.terms      && <li>매물 등록 약관 동의</li>}
+                </ul>
+              </div>
+            )}
+
+            <Button type="submit" size="lg" className="w-full gap-1">
               <Send className="h-4 w-4" />
               매물 등록 제출
             </Button>
@@ -653,62 +745,107 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
         </Card>
       </div>
 
-      <style jsx>{`
-        :global(.form-input) {
-          width: 100%;
-          border-radius: 0.5rem;
-          border: 1px solid #e5e7eb;
-          background: white;
-          padding: 0.5rem 0.75rem;
-          font-size: 0.875rem;
-        }
-        :global(.form-input:focus) {
-          outline: none;
-          box-shadow: 0 0 0 2px var(--brand-primary);
-        }
-      `}</style>
     </form>
   )
 }
 
-function PhotoUploadGrid({ count, onChange }: { count: number; onChange: (c: number) => void }) {
-  const max = 10
+function PhotoUploadDnD({ files, onChange }: { files: File[]; onChange: (files: File[]) => void }) {
+  const inputRef   = useRef<HTMLInputElement>(null)
+  const [dragging, setDragging] = useState(false)
+  const MAX_FILES  = 10
+  const ACCEPTED   = ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
+
+  const addFiles = useCallback((incoming: FileList | null) => {
+    if (!incoming) return
+    const valid = Array.from(incoming).filter(f => ACCEPTED.includes(f.type))
+    onChange([...files, ...valid].slice(0, MAX_FILES))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files, onChange])
+
+  const remove = (idx: number) => onChange(files.filter((_, i) => i !== idx))
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault(); setDragging(false)
+    addFiles(e.dataTransfer.files)
+  }
+
   return (
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-      {Array.from({ length: max }).map((_, i) => {
-        const filled = i < count
-        return (
-          <button
-            key={i}
-            type="button"
-            onClick={() => {
-              if (filled) onChange(Math.max(0, count - 1))
-              else onChange(Math.min(max, count + 1))
-            }}
-            className={
-              'group relative flex aspect-square items-center justify-center rounded-xl border-2 border-dashed text-xs transition-colors ' +
-              (filled
-                ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                : 'border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300')
-            }
-          >
-            {filled ? (
-              <div className="text-center">
-                <CheckCircle2 className="mx-auto h-5 w-5" />
-                <div className="mt-1">{i + 1}</div>
-                <div className="mt-0.5 inline-flex items-center gap-0.5 text-[10px] text-rose-500 opacity-0 group-hover:opacity-100">
+    <div className="space-y-3">
+      {/* Drag zone */}
+      <div
+        onDragEnter={e => { e.preventDefault(); setDragging(true) }}
+        onDragLeave={() => setDragging(false)}
+        onDragOver={e => e.preventDefault()}
+        onDrop={onDrop}
+        onClick={() => inputRef.current?.click()}
+        className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 text-center transition-colors ${
+          dragging
+            ? 'border-indigo-400 bg-indigo-50'
+            : files.length >= MAX_FILES
+              ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
+              : 'border-gray-200 bg-gray-50 hover:border-gray-400'
+        }`}
+      >
+        <Upload className={`h-8 w-8 ${dragging ? 'text-indigo-500' : 'text-gray-400'}`} />
+        <div>
+          <p className="text-sm font-semibold text-gray-700">
+            {dragging ? '여기에 놓으세요' : '사진을 드래그하거나 클릭해서 업로드'}
+          </p>
+          <p className="mt-0.5 text-xs text-gray-400">
+            JPG · PNG · WEBP · HEIC · 최대 {MAX_FILES}장 · 파일당 10MB 이하
+          </p>
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/heic"
+          multiple
+          className="hidden"
+          onChange={e => addFiles(e.target.files)}
+          disabled={files.length >= MAX_FILES}
+        />
+      </div>
+
+      {/* Thumbnails */}
+      {files.length > 0 && (
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+          {files.map((file, idx) => {
+            const url = URL.createObjectURL(file)
+            return (
+              <div key={idx} className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" className="h-full w-full object-cover" onLoad={() => URL.revokeObjectURL(url)} />
+                {idx === 0 && (
+                  <span className="absolute left-1.5 top-1.5 rounded-full bg-gray-900/80 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    대표
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => remove(idx)}
+                  className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                  aria-label="삭제"
+                >
                   <Trash2 className="h-3 w-3" />
-                </div>
+                </button>
               </div>
-            ) : (
-              <div className="text-center">
-                {i === 0 ? <ImagePlus className="mx-auto h-5 w-5" /> : <Plus className="mx-auto h-4 w-4" />}
-                <div className="mt-1">{i === 0 ? '대표' : '+'}</div>
-              </div>
-            )}
-          </button>
-        )
-      })}
+            )
+          })}
+          {files.length < MAX_FILES && (
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 text-gray-400 hover:border-gray-400"
+            >
+              <ImagePlus className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+      )}
+
+      <p className="text-xs text-gray-400">
+        {files.length}/{MAX_FILES}장 등록됨 · 첫 번째 사진이 대표 이미지로 표시됩니다.
+      </p>
     </div>
   )
 }
@@ -761,21 +898,27 @@ function Field({
   label,
   required,
   className,
+  error,
+  hint,
   children,
 }: {
   label: string
   required?: boolean
   className?: string
-  children: React.ReactNode
+  error?: string
+  hint?: string
+  children: ReactNode
 }) {
   return (
-    <label className={'block text-sm ' + (className ?? '')}>
-      <span className="text-xs font-medium text-gray-700">
+    <div className={'block ' + (className ?? '')} {...(error ? { 'data-field-error': '' } : {})}>
+      <label className="text-xs font-medium text-gray-700">
         {label}
         {required && <span className="ml-1 text-rose-500">*</span>}
-      </span>
-      <div className="mt-1">{children}</div>
-    </label>
+        <div className="mt-1">{children}</div>
+      </label>
+      {error && <p className="field-error">{error}</p>}
+      {!error && hint && <p className="field-hint">{hint}</p>}
+    </div>
   )
 }
 

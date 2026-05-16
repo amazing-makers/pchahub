@@ -56,10 +56,13 @@ export default function ListingsMapInner({ listings }: Props) {
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
 
-    const link = document.createElement('link')
-    link.rel  = 'stylesheet'
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-    document.head.appendChild(link)
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link')
+      link.id   = 'leaflet-css'
+      link.rel  = 'stylesheet'
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+      document.head.appendChild(link)
+    }
 
     import('leaflet').then((L) => {
       const lats = listings.map((l) => l.lat!)
@@ -119,7 +122,6 @@ export default function ListingsMapInner({ listings }: Props) {
     return () => {
       mapInstanceRef.current?.remove()
       mapInstanceRef.current = null
-      if (document.head.contains(link)) document.head.removeChild(link)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

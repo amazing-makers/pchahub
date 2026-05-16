@@ -20,8 +20,15 @@ export function HeaderUserMenu({ actions }: HeaderUserMenuProps) {
     const onClickAway = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
     document.addEventListener('mousedown', onClickAway)
-    return () => document.removeEventListener('mousedown', onClickAway)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onClickAway)
+      document.removeEventListener('keydown', onKeyDown)
+    }
   }, [open])
 
   if (status === 'loading') return <StaticActions actions={actions} />

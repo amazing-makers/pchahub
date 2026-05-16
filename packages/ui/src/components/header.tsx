@@ -8,6 +8,8 @@ import { MobileMenu } from './mobile-menu'
 export interface HeaderNavItem {
   href: string
   label: string
+  /** When true the link is highlighted as the current page. */
+  active?: boolean
 }
 
 export interface HeaderAction {
@@ -65,7 +67,13 @@ export function Header({
                 <a
                   key={item.href}
                   href={item.href}
-                  className="text-sm text-gray-600 transition-colors hover:text-gray-900"
+                  aria-current={item.active ? 'page' : undefined}
+                  className={cn(
+                    'text-sm transition-colors',
+                    item.active
+                      ? 'font-semibold text-gray-900'
+                      : 'text-gray-600 hover:text-gray-900',
+                  )}
                 >
                   {item.label}
                 </a>

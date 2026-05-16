@@ -4,24 +4,17 @@ import { Heart } from 'lucide-react'
 import { LISTINGS } from '@/lib/mock-data'
 import { ListingCard } from '@/components/listing-card'
 import { useFavorites } from '@/hooks/use-favorites'
+import { ListingCardSkeleton } from '@/components/skeletons'
 
 export default function FavoritesSection() {
-  const { favorites } = useFavorites()
+  const { favorites, hydrated } = useFavorites()
 
-  // Show skeleton until hook has read localStorage (initial state is empty Set
-  // but we can't distinguish "empty" from "not yet loaded"). Use a size-based
-  // heuristic: render skeleton only before first localStorage read (favorites
-  // is new Set() and document hasn't had time to run the effect yet).
-  // In practice the effect fires synchronously after mount, so any skeleton
-  // flash is imperceptible. We render the real grid immediately.
-  const loaded = typeof window !== 'undefined'
-
-  if (!loaded) {
+  // Show skeleton until the hook has read localStorage.
+  // `hydrated` starts false (matching SSR), turns true after useEffect fires.
+  if (!hydrated) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3].map(i => (
-          <div key={i} className="h-72 animate-pulse rounded-2xl bg-gray-100" />
-        ))}
+        {[1, 2, 3].map(i => <ListingCardSkeleton key={i} />)}
       </div>
     )
   }

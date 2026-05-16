@@ -1,6 +1,8 @@
 import { AlertCircle, ArrowRight } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 
+const DEFAULT_MESSAGE = { title: '로그인 오류', body: '알 수 없는 오류가 발생했습니다.' }
+
 const MESSAGES: Record<string, { title: string; body: string }> = {
   Configuration: { title: '서버 설정 오류', body: 'NextAuth 설정에 문제가 있습니다.' },
   AccessDenied: { title: '접근이 거부되었습니다', body: '권한이 없습니다. 다른 계정으로 시도해 보세요.' },
@@ -11,12 +13,12 @@ const MESSAGES: Record<string, { title: string; body: string }> = {
   OAuthAccountNotLinked: { title: '계정 연결 필요', body: '이 이메일은 다른 로그인 방식으로 이미 가입되어 있습니다.' },
   CredentialsSignin: { title: '로그인 실패', body: '입력하신 정보로 로그인할 수 없습니다.' },
   SessionRequired: { title: '로그인이 필요합니다', body: '이 페이지를 이용하려면 먼저 로그인해 주세요.' },
-  Default: { title: '로그인 오류', body: '알 수 없는 오류가 발생했습니다.' },
+  Default: DEFAULT_MESSAGE,
 }
 
 export default function AuthErrorPage({ searchParams }: { searchParams: { error?: string } }) {
   const code = searchParams.error ?? 'Default'
-  const message = MESSAGES[code] ?? MESSAGES.Default
+  const message = MESSAGES[code] ?? DEFAULT_MESSAGE
 
   return (
     <main className="bg-gray-50">

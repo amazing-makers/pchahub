@@ -5,8 +5,12 @@ import dynamic from 'next/dynamic'
 import { Eye, MessageSquare, PencilLine } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 
-const FavoritesSection = dynamic(() => import('@/components/favorites-section'), { ssr: false })
-const FavoritesStat    = dynamic(() => import('@/components/favorites-stat'),    { ssr: false })
+import { ListingSectionSkeleton, StatSkeleton } from '@/components/skeletons'
+
+const FavoritesSection      = dynamic(() => import('@/components/favorites-section'),                                    { ssr: false, loading: () => <ListingSectionSkeleton count={3} /> })
+const FavoritesStat         = dynamic(() => import('@/components/favorites-stat'),                                       { ssr: false, loading: () => <StatSkeleton /> })
+const RecentlyViewedStat    = dynamic(() => import('@/components/recently-viewed-stat'),                                 { ssr: false, loading: () => <StatSkeleton /> })
+const RecentlyViewedSection = dynamic(() => import('@/components/recently-viewed').then((m) => m.RecentlyViewedSection), { ssr: false, loading: () => <ListingSectionSkeleton count={3} /> })
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
@@ -64,7 +68,7 @@ export default async function MyPage() {
           {/* FavoritesStat reads localStorage on the client */}
           <FavoritesStat />
           <Stat icon={MessageSquare} label="매물 문의" value={`${inquiries.length}건`} />
-          <Stat icon={Eye} label="조회한 매물" value="14건" />
+          <RecentlyViewedStat />
           <Stat icon={PencilLine} label="등록한 매물" value="0건" />
         </div>
 
@@ -108,6 +112,9 @@ export default async function MyPage() {
           </div>
           <FavoritesSection />
         </section>
+
+        {/* Recently viewed — client island */}
+        <RecentlyViewedSection />
 
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="p-5 text-sm">

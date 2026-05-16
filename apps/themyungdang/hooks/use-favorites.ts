@@ -39,10 +39,12 @@ function writeFavorites(favorites: Set<string>) {
  */
 export function useFavorites() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [hydrated,  setHydrated]  = useState(false)
 
   useEffect(() => {
-    // Load on mount
+    // Load on mount (first render after SSR)
     setFavorites(readFavorites())
+    setHydrated(true)
 
     // Stay in sync when any other component toggles a favorite
     const handler = () => setFavorites(readFavorites())
@@ -59,5 +61,5 @@ export function useFavorites() {
     })
   }, [])
 
-  return { favorites, toggle }
+  return { favorites, toggle, hydrated }
 }

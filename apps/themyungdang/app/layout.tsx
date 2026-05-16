@@ -1,12 +1,15 @@
-import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { Footer, type HeaderAction, type HeaderNavItem } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
+import { ActiveHeader } from '@/components/active-header'
+import { ToastContainer } from '@/components/toast-container'
+import { ScrollToTop } from '@/components/scroll-to-top'
 import './globals.css'
 
 export const metadata = buildSiteMetadata('themyungdang')
 
-const navItems = [
+const navItems: HeaderNavItem[] = [
   { href: '/listings/map', label: '지도로 검색' },
   { href: '/listings', label: '매물 목록' },
   { href: '/areas', label: '상권 분석' },
@@ -22,16 +25,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko">
       <body className="flex min-h-screen flex-col">
         <Providers>
-          <Header
-            platform="themyungdang"
+          {/* Accessibility: skip to main content */}
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[9999] focus:rounded-xl focus:bg-gray-900 focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+          >
+            본문으로 이동
+          </a>
+          <ActiveHeader
             navItems={navItems}
             actions={actions}
-            showRole={false}
-            showSiteSwitcher={false}
             rightSlot={<HeaderUserMenu actions={actions} />}
           />
-          <div className="flex-1">{children}</div>
+          <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="themyungdang" />
+          <ToastContainer />
+          <ScrollToTop />
         </Providers>
       </body>
     </html>
