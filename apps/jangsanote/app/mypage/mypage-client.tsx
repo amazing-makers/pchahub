@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bookmark, Calendar, MessageSquare, PencilLine, ThumbsUp } from 'lucide-react'
+import { Bookmark, Calendar, PencilLine, ThumbsUp } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { PostCard } from '@/components/post-card'
 import { POSTS, MEETINGS } from '@/lib/mock-data'
@@ -29,24 +29,54 @@ interface RsvpEntry {
   registeredAt: string
 }
 
+interface MyMeeting {
+  id: string
+  title: string
+  date: string
+  location: string
+  type: string
+  currentParticipants: number
+  maxParticipants: number
+  isFree: boolean
+  feeWon: number
+  createdAt: string
+}
+
+interface Subscription {
+  type: string
+  key: string
+  label: string
+}
+
 export function MyPageClient() {
   const [myPosts, setMyPosts] = useState<LocalPost[]>([])
   const [rsvps, setRsvps] = useState<RsvpEntry[]>([])
+  const [myMeetings, setMyMeetings] = useState<MyMeeting[]>([])
+  const [likedIds, setLikedIds] = useState<string[]>([])
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem('jangsanote:posts')
       if (raw) setMyPosts(JSON.parse(raw) as LocalPost[])
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
     try {
       const raw2 = window.localStorage.getItem('jangsanote:rsvps')
       if (raw2) setRsvps(JSON.parse(raw2) as RsvpEntry[])
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
+    try {
+      const raw3 = window.localStorage.getItem('jangsanote:my-meetings')
+      if (raw3) setMyMeetings(JSON.parse(raw3) as MyMeeting[])
+    } catch { /* ignore */ }
+    try {
+      const raw4 = window.localStorage.getItem('jangsanote:likedPosts')
+      if (raw4) setLikedIds(JSON.parse(raw4) as string[])
+    } catch { /* ignore */ }
+    try {
+      const raw5 = window.localStorage.getItem('jangsanote:subscriptions')
+      if (raw5) setSubscriptions(JSON.parse(raw5) as Subscription[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
@@ -74,9 +104,9 @@ export function MyPageClient() {
       {/* 통계 */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon={PencilLine} label="내가 쓴 글" value={`${myPosts.length}개`} />
-        <StatCard icon={MessageSquare} label="댓글" value="0개" />
-        <StatCard icon={Bookmark} label="저장한 글" value={`${sampleSaved.length}개`} />
-        <StatCard icon={ThumbsUp} label="받은 좋아요" value="0개" />
+        <StatCard icon={Calendar} label="내 모임" value={`${myMeetings.length}개`} />
+        <StatCard icon={ThumbsUp} label="좋아요한 글" value={`${likedIds.length}개`} />
+        <StatCard icon={Bookmark} label="구독 채널" value={`${subscriptions.length}개`} />
       </div>
 
       {/* 내가 쓴 글 (localStorage) */}
@@ -126,6 +156,62 @@ export function MyPageClient() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {rsvpMeetings.map((m) => (
               <MeetingCard key={m.id} meeting={m} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 내가 만든 모임 */}
+      {myMeetings.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-[var(--brand-primary)]" />
+            <h2 className="text-h4 font-semibold text-gray-900">내가 만든 모임</h2>
+          </div>
+          <div className="space-y-2">
+            {myMeetings.map((m) => (
+              <div
+                key={m.id}
+                className="flex items-start justify-between gap-3 rounded-xl border border-[var(--brand-primary)]/20 bg-amber-50/30 p-4"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-semibold text-gray-900">{m.title}</div>
+                  <div className="mt-1 text-xs text-gray-500">
+                    {m.date} · {m.location}
+                  </div>
+                  <div className="mt-1 text-xs text-gray-400">
+                    참여 {m.currentParticipants}/{m.maxParticipants}명 ·{' '}
+                    {m.isFree ? '무료' : `${(m.feeWon / 10000).toFixed(0)}만원`}
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                  검토 중
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 구독 채널 */}
+      {subscriptions.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">구독 중인 채널</h2>
+          <div className="flex flex-wrap gap-2">
+            {subscriptions.map((s) => (
+              <a
+                key={`${s.type}-${s.key}`}
+                href={
+                  s.type === 'general'
+                    ? '/general'
+                    : s.type === 'category'
+                      ? `/categories/${s.key}`
+                      : `/regions/${s.key}`
+                }
+                className="rounded-full border border-[var(--brand-primary)]/30 bg-amber-50 px-3 py-1.5 text-xs font-medium text-[var(--brand-primary)] hover:border-[var(--brand-primary)]/60"
+              >
+                {s.label}
+              </a>
             ))}
           </div>
         </section>
