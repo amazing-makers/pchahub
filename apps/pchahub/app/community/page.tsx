@@ -2,6 +2,7 @@ import { ArrowRight, Eye, MessageSquare, ThumbsUp } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { DISCUSSIONS, QUESTIONS } from '@/lib/mock-community'
+import { LocalCommunityPosts } from './local-posts'
 
 const CATEGORY_LABELS: Record<string, string> = {
   experience: '창업 후기',
@@ -68,6 +69,8 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
             ))}
           </div>
         ) : (
+          <>
+          <LocalCommunityPosts />
           <div className="space-y-3">
             {DISCUSSIONS.map((d) => (
               <a
@@ -103,6 +106,7 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
               </a>
             ))}
           </div>
+          </>
         )}
 
         <div className="mt-10 rounded-2xl border border-gray-200 bg-white px-6 py-8 text-center">
