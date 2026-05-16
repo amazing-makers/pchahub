@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ChevronRight, Clock, Share2, ThumbsUp } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { ChevronRight, Clock } from 'lucide-react'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildArticleJsonLd,
   buildBreadcrumbsJsonLd,
@@ -10,6 +10,7 @@ import {
 } from '@amakers/design-system'
 import { ARTICLES, articleById } from '@/lib/mock-data'
 import { ArticleCard } from '@/components/article-card'
+import { ArticleActions } from './article-actions'
 
 export function generateStaticParams() {
   return ARTICLES.map((a) => ({ id: a.id }))
@@ -137,13 +138,8 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
           )}
 
           {/* Actions */}
-          <div className="mt-8 flex items-center gap-2 border-t border-gray-100 pt-6">
-            <Button size="sm" variant="outline" className="gap-1">
-              <ThumbsUp className="h-3.5 w-3.5" /> 좋아요
-            </Button>
-            <Button size="sm" variant="ghost" className="gap-1 text-gray-600">
-              <Share2 className="h-3.5 w-3.5" /> 공유
-            </Button>
+          <div className="mt-8 border-t border-gray-100 pt-6">
+            <ArticleActions articleId={article.id} title={article.title} />
           </div>
         </div>
       </article>

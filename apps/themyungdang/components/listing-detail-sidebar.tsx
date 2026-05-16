@@ -104,7 +104,22 @@ function InquiryModal({
     e.preventDefault()
     if (!name.trim() || !phone.trim()) return
     try { localStorage.removeItem(draftKey) } catch { /* ignore */ }
-    // Mock submit — no backend yet
+    // Save inquiry to localStorage so mypage/inquiries can show it
+    try {
+      const INQUIRY_KEY = 'themyungdang:inquiries'
+      const prev: unknown[] = JSON.parse(localStorage.getItem(INQUIRY_KEY) ?? '[]')
+      const entry = {
+        id: `inq-${Date.now()}`,
+        listingId: listing.id,
+        title: listing.title,
+        status: 'pending',
+        statusLabel: '응답 대기',
+        message: message.trim(),
+        createdAt: new Date().toISOString().slice(0, 10),
+        updatedAt: new Date().toISOString().slice(0, 10),
+      }
+      localStorage.setItem(INQUIRY_KEY, JSON.stringify([entry, ...prev]))
+    } catch { /* ignore */ }
     setSent(true)
     showToast('문의가 접수되었습니다. 영업일 기준 1일 이내 연락드립니다.', 'success', 5000)
   }

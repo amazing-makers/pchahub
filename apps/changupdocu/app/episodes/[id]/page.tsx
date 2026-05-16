@@ -5,10 +5,9 @@ import {
   Clock,
   Eye,
   PlayCircle,
-  Share2,
   ThumbsUp,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildPageMetadata,
@@ -24,6 +23,7 @@ import {
   type MockEpisode,
 } from '@/lib/mock-data'
 import { EpisodeCard } from '@/components/episode-card'
+import { EpisodeActions } from './episode-actions'
 
 export function generateStaticParams() {
   return EPISODES.map((e) => ({ id: e.id }))
@@ -134,13 +134,8 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
               </span>
             </div>
 
-            <div className="mt-4 flex gap-2">
-              <Button size="sm" variant="outline" className="gap-1">
-                <ThumbsUp className="h-3.5 w-3.5" /> 좋아요
-              </Button>
-              <Button size="sm" variant="ghost" className="gap-1 text-gray-600">
-                <Share2 className="h-3.5 w-3.5" /> 공유
-              </Button>
+            <div className="mt-4">
+              <EpisodeActions episodeId={ep.id} title={ep.title} />
             </div>
           </div>
         </div>

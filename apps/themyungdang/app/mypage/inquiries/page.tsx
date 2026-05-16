@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { ArrowLeft, MessageSquare } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { LISTINGS } from '@/lib/mock-data'
+import { LocalInquiries } from './local-inquiries'
 
 // Mock inquiry data (mirrors what's shown on the mypage overview)
 const MOCK_INQUIRIES = [
@@ -54,6 +55,9 @@ export default async function InquiriesPage() {
       </section>
 
       <div className="container mx-auto py-8">
+        {/* My submitted inquiries from localStorage */}
+        <LocalInquiries />
+
         {MOCK_INQUIRIES.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-gray-200 bg-white py-20 text-center">
             <MessageSquare className="h-10 w-10 text-gray-200" />
