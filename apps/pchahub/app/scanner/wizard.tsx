@@ -141,6 +141,23 @@ export function ScannerWizard() {
     if (isLastQuestion) {
       const result = matchBrands(answers as ScannerAnswers)
       setMatches(result)
+      try {
+        const raw = window.localStorage.getItem('pchahub:scanner-results')
+        const prev: unknown[] = raw ? JSON.parse(raw) : []
+        window.localStorage.setItem(
+          'pchahub:scanner-results',
+          JSON.stringify([
+            {
+              id: `scan-${Date.now()}`,
+              completedAt: new Date().toISOString(),
+              answers,
+              topBrandName: result[0]?.brand.name ?? null,
+              matchCount: result.length,
+            },
+            ...prev,
+          ]),
+        )
+      } catch { /* ignore */ }
     }
     setStepIdx((i) => Math.min(i + 1, STEPS.length - 1))
   }

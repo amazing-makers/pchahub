@@ -9,6 +9,7 @@ export function StatsClient() {
   const [inquiryCount, setInquiryCount] = useState(0)
   const [reviewCount, setReviewCount] = useState(0)
   const [listingContactCount, setListingContactCount] = useState(0)
+  const [scannerCount, setScannerCount] = useState(0)
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -27,6 +28,10 @@ export function StatsClient() {
     try {
       const raw4 = window.localStorage.getItem('pchahub:listing-contacts')
       if (raw4) setListingContactCount((JSON.parse(raw4) as unknown[]).length)
+    } catch { /* ignore */ }
+    try {
+      const raw5 = window.localStorage.getItem('pchahub:scanner-results')
+      if (raw5) setScannerCount((JSON.parse(raw5) as unknown[]).length)
     } catch { /* ignore */ }
     setHydrated(true)
   }, [])
@@ -47,7 +52,7 @@ export function StatsClient() {
       <StatLink href="/mypage/inquiries" icon={MessageSquare} label="가맹 상담" value={`${inquiryCount}건`} />
       <StatLink href="/mypage/reviews" icon={Star} label="작성한 후기" value={`${reviewCount}건`} />
       <StatLink href="/listings" icon={Calculator} label="매물 문의" value={`${listingContactCount}건`} />
-      <StatLink href="/scanner" icon={Sparkles} label="스캐너 결과" value="0건" />
+      <StatLink href="/scanner" icon={Sparkles} label="스캐너 결과" value={`${scannerCount}건`} />
     </div>
   )
 }
