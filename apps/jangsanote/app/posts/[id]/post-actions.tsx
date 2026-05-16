@@ -31,6 +31,7 @@ export function PostActions({
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(likes)
   const [subscribed, setSubscribed] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -64,7 +65,8 @@ export function PostActions({
         await navigator.share({ title: shareTitle, url: shareUrl })
       } else {
         await navigator.clipboard.writeText(shareUrl)
-        alert('링크가 복사되었습니다.')
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
       }
     } catch { /* ignore */ }
   }
@@ -105,7 +107,7 @@ export function PostActions({
           onClick={share}
         >
           <Share2 className="h-3.5 w-3.5" />
-          공유
+          {copied ? '복사됨 ✓' : '공유'}
         </Button>
       </div>
 

@@ -13,6 +13,7 @@ interface EpisodeActionsProps {
 
 export function EpisodeActions({ episodeId, title }: EpisodeActionsProps) {
   const [liked, setLiked] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -34,15 +35,16 @@ export function EpisodeActions({ episodeId, title }: EpisodeActionsProps) {
     } catch { /* ignore */ }
   }
 
-  const share = () => {
+  const share = async () => {
     const url = window.location.href
     if (navigator.share) {
-      navigator.share({ title, url }).catch(() => {})
+      try { await navigator.share({ title, url }) } catch { /* ignore */ }
     } else {
-      navigator.clipboard.writeText(url).then(
-        () => alert('링크가 복사되었습니다.'),
-        () => alert('복사 실패. 주소창에서 직접 복사해 주세요.'),
-      )
+      try {
+        await navigator.clipboard.writeText(url)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } catch { /* ignore */ }
     }
   }
 
@@ -62,7 +64,8 @@ export function EpisodeActions({ episodeId, title }: EpisodeActionsProps) {
         {liked ? '좋아요 취소' : '좋아요'}
       </Button>
       <Button size="sm" variant="ghost" className="gap-1 text-gray-600" onClick={share}>
-        <Share2 className="h-3.5 w-3.5" /> 공유
+        <Share2 className="h-3.5 w-3.5" />
+        {copied ? '복사됨 ✓' : '공유'}
       </Button>
     </div>
   )
