@@ -107,9 +107,11 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
                       이 시공사 견적 받기
                     </Button>
                   </a>
-                  <Button size="lg" variant="outline" className="w-full">
-                    매장 방문 상담
-                  </Button>
+                  <a href={`/quote?contractor=${c.id}&type=visit`} className="block">
+                    <Button size="lg" variant="outline" className="w-full">
+                      매장 방문 상담
+                    </Button>
+                  </a>
                 </CardContent>
               </Card>
             </aside>

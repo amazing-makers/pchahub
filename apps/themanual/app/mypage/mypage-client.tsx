@@ -28,8 +28,14 @@ const TOPIC_LABEL: Record<string, string> = {
   other: '기타',
 }
 
+interface Enrollment {
+  courseId: string
+  enrolledAt: string
+}
+
 export function MyPageClient() {
   const [savedIds, setSavedIds] = useState<string[]>([])
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [consultations, setConsultations] = useState<Consultation[]>([])
   const [hydrated, setHydrated] = useState(false)
 
@@ -37,20 +43,24 @@ export function MyPageClient() {
     try {
       const raw = window.localStorage.getItem('themanual:savedCourses')
       if (raw) setSavedIds(JSON.parse(raw) as string[])
-    } catch {
-      // ignore
-    }
+    } catch { /* ignore */ }
     try {
-      const raw2 = window.localStorage.getItem('themanual:consultations')
-      if (raw2) setConsultations(JSON.parse(raw2) as Consultation[])
-    } catch {
-      // ignore
-    }
+      const raw2 = window.localStorage.getItem('themanual:enrollments')
+      if (raw2) setEnrollments(JSON.parse(raw2) as Enrollment[])
+    } catch { /* ignore */ }
+    try {
+      const raw3 = window.localStorage.getItem('themanual:consultations')
+      if (raw3) setConsultations(JSON.parse(raw3) as Consultation[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
   const savedCourses = savedIds
     .map((id) => COURSES.find((c) => c.id === id))
+    .filter(Boolean) as typeof COURSES
+
+  const enrolledCourses = enrollments
+    .map((e) => COURSES.find((c) => c.id === e.courseId))
     .filter(Boolean) as typeof COURSES
 
   if (!hydrated) {
@@ -69,11 +79,22 @@ export function MyPageClient() {
     <div className="space-y-8">
       {/* 통계 */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard icon={BookOpen} label="수강 중" value="0강" />
-        <StatCard icon={BookOpen} label="완료한 강의" value="0강" />
+        <StatCard icon={BookOpen} label="수강 중" value={`${enrolledCourses.length}강`} />
         <StatCard icon={Heart} label="찜한 강의" value={`${savedCourses.length}강`} />
         <StatCard icon={MessageCircle} label="멘토 상담" value={`${consultations.length}건`} />
       </div>
+
+      {/* 수강 중 강의 */}
+      {enrolledCourses.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">수강 중인 강의</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {enrolledCourses.map((c) => (
+              <CourseCard key={c.id} course={c} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 찜한 강의 */}
       <section>

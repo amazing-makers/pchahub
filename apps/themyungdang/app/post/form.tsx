@@ -144,6 +144,25 @@ export function PostForm({ defaultName, defaultEmail }: { defaultName: string; d
       showToast('필수 항목을 모두 입력해 주세요.', 'error')
       return
     }
+    try {
+      const raw = window.localStorage.getItem('themyungdang:listings-submitted')
+      const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
+      const entry = {
+        id: `lst-${Date.now()}`,
+        listingType: state.listingType,
+        title: state.title,
+        region: state.region,
+        district: state.district,
+        area: state.area,
+        ownerName: state.ownerName,
+        status: 'pending',
+        createdAt: new Date().toISOString().slice(0, 10),
+      }
+      window.localStorage.setItem(
+        'themyungdang:listings-submitted',
+        JSON.stringify([entry, ...prev]),
+      )
+    } catch { /* ignore */ }
     setSubmitted(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }

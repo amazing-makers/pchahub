@@ -9,7 +9,7 @@ import {
   Star,
   Users,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildCourseJsonLd,
@@ -26,6 +26,7 @@ import {
 } from '@/lib/mock-data'
 import { CourseCard } from '@/components/course-card'
 import { SaveCourseButton } from './save-button'
+import { EnrollButton } from './enroll-button'
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ id: c.id }))
@@ -165,10 +166,12 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                       </>
                     )}
                   </div>
-                  <Button size="lg" className="w-full gap-1">
-                    <PlayCircle className="h-4 w-4" />
-                    {isFree ? '바로 수강 시작' : '결제하고 수강 시작'}
-                  </Button>
+                  <EnrollButton
+                    courseId={course.id}
+                    courseTitle={course.title}
+                    isFree={isFree}
+                    price={course.price}
+                  />
                   <SaveCourseButton courseId={course.id} />
                   <p className="text-center text-xs text-gray-500">
                     구매 후 무제한 시청 · 모바일 지원
