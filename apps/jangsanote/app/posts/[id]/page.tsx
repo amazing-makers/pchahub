@@ -26,6 +26,7 @@ import { UserChip } from '@/components/user-chip'
 import { PostCard } from '@/components/post-card'
 import { CommentForm } from './comment-form'
 import { ChannelSubscribeButton, PostActions } from './post-actions'
+import { PostViewTracker } from './post-view-tracker'
 
 export function generateStaticParams() {
   return POSTS.map((p) => ({ id: p.id }))
@@ -80,6 +81,7 @@ export default function PostPage({ params }: PostPageProps) {
 
   return (
     <main className="bg-gray-50">
+      <PostViewTracker postId={post.id} />
       <JsonLd data={postJsonLd} />
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">

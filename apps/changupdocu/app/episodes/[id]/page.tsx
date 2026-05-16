@@ -24,6 +24,7 @@ import {
 } from '@/lib/mock-data'
 import { EpisodeCard } from '@/components/episode-card'
 import { EpisodeActions } from './episode-actions'
+import { EpisodeViewTracker } from './episode-view-tracker'
 
 export function generateStaticParams() {
   return EPISODES.map((e) => ({ id: e.id }))
@@ -73,6 +74,7 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <EpisodeViewTracker episodeId={ep.id} />
       <JsonLd data={videoJsonLd} />
       <JsonLd data={breadcrumbs} />
       {/* Video player placeholder */}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BookOpen, PlayCircle, ThumbsUp } from 'lucide-react'
+import { BookOpen, Clock, PlayCircle, ThumbsUp } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { EPISODES, ARTICLES } from '@/lib/mock-data'
 import { EpisodeCard } from '@/components/episode-card'
@@ -11,6 +11,8 @@ const LIKES_KEY = 'changupdocu:likes'
 
 export function MyPageClient() {
   const [likedIds, setLikedIds] = useState<string[]>([])
+  const [recentEpIds, setRecentEpIds] = useState<string[]>([])
+  const [recentArtIds, setRecentArtIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -18,18 +20,29 @@ export function MyPageClient() {
       const raw = window.localStorage.getItem(LIKES_KEY)
       if (raw) setLikedIds(JSON.parse(raw) as string[])
     } catch { /* ignore */ }
+    try {
+      const raw2 = window.localStorage.getItem('changupdocu:recentEpisodes')
+      if (raw2) setRecentEpIds(JSON.parse(raw2) as string[])
+    } catch { /* ignore */ }
+    try {
+      const raw3 = window.localStorage.getItem('changupdocu:recentArticles')
+      if (raw3) setRecentArtIds(JSON.parse(raw3) as string[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
   const likedEpisodes = EPISODES.filter((e) => likedIds.includes(e.id))
   const likedArticles = ARTICLES.filter((a) => likedIds.includes(a.id))
   const totalLiked = likedEpisodes.length + likedArticles.length
+  const totalViewed = recentEpIds.length + recentArtIds.length
+  const recentEpisodes = recentEpIds.slice(0, 6).map((id) => EPISODES.find((e) => e.id === id)).filter(Boolean) as typeof EPISODES
+  const recentArticles = recentArtIds.slice(0, 4).map((id) => ARTICLES.find((a) => a.id === id)).filter(Boolean) as typeof ARTICLES
 
   if (!hydrated) {
     return (
       <div className="animate-pulse space-y-8">
-        <div className="grid grid-cols-3 gap-3">
-          {Array.from({ length: 3 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-24 rounded-xl bg-gray-100" />
           ))}
         </div>
@@ -40,10 +53,11 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* 통계 */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon={ThumbsUp} label="좋아요" value={`${totalLiked}개`} />
-        <StatCard icon={PlayCircle} label="에피소드" value={`${likedEpisodes.length}개`} />
-        <StatCard icon={BookOpen} label="매거진 글" value={`${likedArticles.length}개`} />
+        <StatCard icon={PlayCircle} label="좋아요 에피소드" value={`${likedEpisodes.length}개`} />
+        <StatCard icon={BookOpen} label="좋아요 매거진" value={`${likedArticles.length}개`} />
+        <StatCard icon={Clock} label="최근 본 콘텐츠" value={`${totalViewed}개`} />
       </div>
 
       {/* 좋아요한 에피소드 */}
@@ -86,6 +100,30 @@ export function MyPageClient() {
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {likedArticles.map((a) => (
+              <ArticleCard key={a.id} article={a} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 최근 본 에피소드 */}
+      {recentEpisodes.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">최근 본 에피소드</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {recentEpisodes.map((e) => (
+              <EpisodeCard key={e.id} episode={e} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 최근 본 매거진 글 */}
+      {recentArticles.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">최근 본 매거진 글</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {recentArticles.map((a) => (
               <ArticleCard key={a.id} article={a} />
             ))}
           </div>

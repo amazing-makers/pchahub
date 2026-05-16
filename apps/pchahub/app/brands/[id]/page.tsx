@@ -44,6 +44,7 @@ import {
 } from '@/lib/mock-brand-detail'
 import { BrandCard } from '@/components/brand-card'
 import { getBrandById, getBrands } from '@/lib/kftc/source'
+import { BrandViewTracker } from './brand-view-tracker'
 
 interface BrandDetailPageProps {
   params: { id: string }
@@ -103,6 +104,7 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
 
   return (
     <main className="bg-gray-50">
+      <BrandViewTracker brandId={brand.id} />
       <JsonLd data={brandJsonLd} />
       <JsonLd data={breadcrumbsJsonLd} />
       <BrandHero brand={brand} detail={detail} totalCost={totalCost} avgRating={avgRating} />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bookmark, Calendar, PencilLine, ThumbsUp } from 'lucide-react'
+import { Bookmark, Calendar, Clock, PencilLine, ThumbsUp } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { PostCard } from '@/components/post-card'
 import { POSTS, MEETINGS } from '@/lib/mock-data'
@@ -54,6 +54,7 @@ export function MyPageClient() {
   const [myMeetings, setMyMeetings] = useState<MyMeeting[]>([])
   const [likedIds, setLikedIds] = useState<string[]>([])
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
+  const [recentPostIds, setRecentPostIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -77,6 +78,10 @@ export function MyPageClient() {
       const raw5 = window.localStorage.getItem('jangsanote:subscriptions')
       if (raw5) setSubscriptions(JSON.parse(raw5) as Subscription[])
     } catch { /* ignore */ }
+    try {
+      const raw6 = window.localStorage.getItem('jangsanote:recentPosts')
+      if (raw6) setRecentPostIds(JSON.parse(raw6) as string[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
@@ -86,6 +91,11 @@ export function MyPageClient() {
 
   // Static mock sample posts for the demo — we show these + any locally written ones
   const sampleSaved = POSTS.slice(0, 3)
+
+  const recentPosts = recentPostIds
+    .slice(0, 6)
+    .map((id) => POSTS.find((p) => p.id === id))
+    .filter(Boolean) as typeof POSTS
 
   if (!hydrated) {
     return (
@@ -102,11 +112,12 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* 통계 */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard icon={PencilLine} label="내가 쓴 글" value={`${myPosts.length}개`} />
         <StatCard icon={Calendar} label="내 모임" value={`${myMeetings.length}개`} />
         <StatCard icon={ThumbsUp} label="좋아요한 글" value={`${likedIds.length}개`} />
         <StatCard icon={Bookmark} label="구독 채널" value={`${subscriptions.length}개`} />
+        <StatCard icon={Clock} label="최근 본 글" value={`${recentPostIds.length}개`} />
       </div>
 
       {/* 내가 쓴 글 (localStorage) */}
@@ -188,6 +199,21 @@ export function MyPageClient() {
                   검토 중
                 </span>
               </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 최근 본 글 */}
+      {recentPosts.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Clock className="h-4 w-4 text-gray-400" />
+            <h2 className="text-h4 font-semibold text-gray-900">최근 본 글</h2>
+          </div>
+          <div className="space-y-2">
+            {recentPosts.map((p) => (
+              <PostCard key={p.id} post={p} />
             ))}
           </div>
         </section>

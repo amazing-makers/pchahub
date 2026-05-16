@@ -11,6 +11,7 @@ import {
 import { ARTICLES, articleById } from '@/lib/mock-data'
 import { ArticleCard } from '@/components/article-card'
 import { ArticleActions } from './article-actions'
+import { ArticleViewTracker } from './article-view-tracker'
 
 export function generateStaticParams() {
   return ARTICLES.map((a) => ({ id: a.id }))
@@ -56,6 +57,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
 
   return (
     <main className="bg-white">
+      <ArticleViewTracker articleId={article.id} />
       <JsonLd data={articleJsonLd} />
       <JsonLd data={breadcrumbs} />
       {/* Hero cover */}

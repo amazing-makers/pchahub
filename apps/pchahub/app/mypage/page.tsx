@@ -11,6 +11,7 @@ import {
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
 import { StatsClient } from './stats-client'
+import { RecentBrands } from './recent-brands'
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
@@ -157,6 +158,9 @@ export default async function MyPage() {
             </div>
           )}
         </section>
+
+        {/* 최근 본 브랜드 (localStorage) */}
+        <RecentBrands />
 
         {/* HQ shortcut */}
         {role === 'hq' && (
