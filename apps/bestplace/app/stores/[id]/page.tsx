@@ -29,6 +29,7 @@ import {
 } from '@/lib/mock-data'
 import { StoreCard } from '@/components/store-card'
 import { SaveStoreButton } from './save-store-button'
+import { StoreViewTracker } from './store-view-tracker'
 
 export function generateStaticParams() {
   return STORES.map((s) => ({ id: s.id }))
@@ -82,6 +83,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <StoreViewTracker storeId={store.id} />
       <JsonLd data={businessJsonLd} />
       <JsonLd data={breadcrumbs} />
       {/* Hero image */}

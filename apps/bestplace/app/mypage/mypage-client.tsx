@@ -8,12 +8,19 @@ import { STORES } from '@/lib/mock-data'
 
 export function MyPageClient() {
   const [savedIds, setSavedIds] = useState<string[]>([])
+  const [recentIds, setRecentIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem('bestplace:savedStores')
       if (raw) setSavedIds(JSON.parse(raw) as string[])
+    } catch {
+      // ignore
+    }
+    try {
+      const raw2 = window.localStorage.getItem('bestplace:recentlyViewed')
+      if (raw2) setRecentIds(JSON.parse(raw2) as string[])
     } catch {
       // ignore
     }
@@ -41,7 +48,7 @@ export function MyPageClient() {
       {/* 통계 */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat icon={Bookmark} label="찜한 매장" value={`${savedStores.length}곳`} />
-        <Stat icon={MapPin} label="방문한 매장" value="0곳" />
+        <Stat icon={MapPin} label="최근 본 매장" value={`${recentIds.length}곳`} />
         <Stat icon={Star} label="작성한 리뷰" value="0개" />
         <Stat icon={Award} label="투표한 어워드" value="0건" />
       </div>
@@ -72,6 +79,22 @@ export function MyPageClient() {
           </div>
         )}
       </section>
+
+      {/* 최근 본 매장 */}
+      {recentIds.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">최근 본 매장</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {recentIds
+              .slice(0, 6)
+              .map((id) => STORES.find((s) => s.id === id))
+              .filter(Boolean)
+              .map((s) => (
+                <StoreCard key={s!.id} store={s!} />
+              ))}
+          </div>
+        </section>
+      )}
 
       <Card className="border-amber-200 bg-amber-50">
         <CardContent className="p-5 text-sm">
