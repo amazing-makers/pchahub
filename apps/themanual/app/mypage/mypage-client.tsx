@@ -37,6 +37,7 @@ export function MyPageClient() {
   const [savedIds, setSavedIds] = useState<string[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [consultations, setConsultations] = useState<Consultation[]>([])
+  const [recentIds, setRecentIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -52,6 +53,10 @@ export function MyPageClient() {
       const raw3 = window.localStorage.getItem('themanual:consultations')
       if (raw3) setConsultations(JSON.parse(raw3) as Consultation[])
     } catch { /* ignore */ }
+    try {
+      const raw4 = window.localStorage.getItem('themanual:recentlyViewed')
+      if (raw4) setRecentIds(JSON.parse(raw4) as string[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
@@ -61,6 +66,11 @@ export function MyPageClient() {
 
   const enrolledCourses = enrollments
     .map((e) => COURSES.find((c) => c.id === e.courseId))
+    .filter(Boolean) as typeof COURSES
+
+  const recentCourses = recentIds
+    .slice(0, 6)
+    .map((id) => COURSES.find((c) => c.id === id))
     .filter(Boolean) as typeof COURSES
 
   if (!hydrated) {
@@ -81,6 +91,7 @@ export function MyPageClient() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon={BookOpen} label="수강 중" value={`${enrolledCourses.length}강`} />
         <StatCard icon={Heart} label="찜한 강의" value={`${savedCourses.length}강`} />
+        <StatCard icon={Clock} label="최근 본 강의" value={`${recentIds.length}강`} />
         <StatCard icon={MessageCircle} label="멘토 상담" value={`${consultations.length}건`} />
       </div>
 
@@ -122,6 +133,18 @@ export function MyPageClient() {
           </div>
         )}
       </section>
+
+      {/* 최근 본 강의 */}
+      {recentCourses.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">최근 본 강의</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {recentCourses.map((c) => (
+              <CourseCard key={c.id} course={c} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 멘토 상담 내역 */}
       <section>

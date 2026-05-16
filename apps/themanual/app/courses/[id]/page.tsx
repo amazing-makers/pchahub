@@ -27,6 +27,7 @@ import {
 import { CourseCard } from '@/components/course-card'
 import { SaveCourseButton } from './save-button'
 import { EnrollButton } from './enroll-button'
+import { CourseViewTracker } from './course-view-tracker'
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ id: c.id }))
@@ -96,6 +97,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
 
   return (
     <main className="bg-gray-50">
+      <CourseViewTracker courseId={course.id} />
       <JsonLd data={courseJsonLd} />
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
