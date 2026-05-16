@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Award, Bookmark, MapPin, Star } from 'lucide-react'
+import { Award, Bookmark, Building2, MapPin, Star } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { STORES } from '@/lib/mock-data'
@@ -15,11 +15,21 @@ interface ReviewEntry {
   createdAt: string
 }
 
+interface StoreApplication {
+  id: string
+  storeName: string
+  region: string
+  district: string
+  status: string
+  createdAt: string
+}
+
 export function MyPageClient() {
   const [savedIds, setSavedIds] = useState<string[]>([])
   const [recentIds, setRecentIds] = useState<string[]>([])
   const [reviews, setReviews] = useState<ReviewEntry[]>([])
   const [voteIds, setVoteIds] = useState<string[]>([])
+  const [applications, setApplications] = useState<StoreApplication[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -38,6 +48,10 @@ export function MyPageClient() {
     try {
       const raw4 = window.localStorage.getItem('bestplace:votes')
       if (raw4) setVoteIds(JSON.parse(raw4) as string[])
+    } catch { /* ignore */ }
+    try {
+      const raw5 = window.localStorage.getItem('bestplace:store-applications')
+      if (raw5) setApplications(JSON.parse(raw5) as StoreApplication[])
     } catch { /* ignore */ }
     setHydrated(true)
   }, [])
@@ -144,6 +158,34 @@ export function MyPageClient() {
                 <div className="mt-1 text-xs text-gray-400">
                   {new Date(r.createdAt).toLocaleDateString('ko-KR')}
                 </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 매장 등록 신청 내역 */}
+      {applications.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Building2 className="h-4 w-4 text-gray-400" />
+            <h2 className="text-h4 font-semibold text-gray-900">매장 등록 신청 내역</h2>
+          </div>
+          <div className="space-y-2">
+            {applications.map((a) => (
+              <div
+                key={a.id}
+                className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-4"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-semibold text-gray-900">{a.storeName}</div>
+                  <div className="mt-0.5 text-xs text-gray-500">
+                    {a.region} {a.district} · {a.createdAt}
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                  검토 중
+                </span>
               </div>
             ))}
           </div>
