@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Building2, FileText, PencilLine } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Building2, FileText, PencilLine } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
+import { PORTFOLIO, portfolioById, CATEGORIES, CONTRACTORS, contractorById } from '@/lib/mock-data'
+import type { MockPortfolioItem, MockContractor } from '@/lib/mock-data'
 
 interface QuoteEntry {
   id: string
@@ -50,6 +52,8 @@ function StatCard({ icon: Icon, label, value }: { icon: typeof Building2; label:
 export function MyPageClient() {
   const [quotes, setQuotes] = useState<QuoteEntry[]>([])
   const [applications, setApplications] = useState<ContractorEntry[]>([])
+  const [savedPortfolios, setSavedPortfolios] = useState<MockPortfolioItem[]>([])
+  const [savedContractors, setSavedContractors] = useState<MockContractor[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -61,13 +65,25 @@ export function MyPageClient() {
       const raw = window.localStorage.getItem('gongganhansu:contractor-applications')
       if (raw) setApplications(JSON.parse(raw) as ContractorEntry[])
     } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('gongganhansu:savedPortfolios')
+      const ids: string[] = raw ? JSON.parse(raw) : []
+      const items = ids.map((id) => portfolioById(id)).filter((p): p is MockPortfolioItem => p !== undefined)
+      setSavedPortfolios(items)
+    } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('gongganhansu:savedContractors')
+      const ids: string[] = raw ? JSON.parse(raw) : []
+      const items = ids.map((id) => contractorById(id)).filter((c): c is MockContractor => c !== undefined)
+      setSavedContractors(items)
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
   if (!hydrated) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 animate-pulse">
-        {[...Array(2)].map((_, i) => (
+        {[...Array(3)].map((_, i) => (
           <div key={i} className="h-24 rounded-xl bg-gray-100" />
         ))}
       </div>
@@ -77,9 +93,11 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatCard icon={FileText} label="견적 요청" value={`${quotes.length}건`} />
         <StatCard icon={PencilLine} label="시공사 등록 신청" value={`${applications.length}건`} />
+        <StatCard icon={Bookmark} label="저장한 사례" value={`${savedPortfolios.length}건`} />
+        <StatCard icon={BookmarkCheck} label="저장한 시공사" value={`${savedContractors.length}건`} />
       </div>
 
       {/* Quote requests */}
@@ -134,6 +152,62 @@ export function MyPageClient() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Saved portfolios */}
+      {savedPortfolios.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">저장한 시공 사례</h2>
+          <div className="space-y-3">
+            {savedPortfolios.map((item) => {
+              const cat = CATEGORIES.find((c) => c.key === item.category)
+              return (
+                <a key={item.id} href={`/gallery/${item.id}`} className="block">
+                  <Card className="border-gray-200 transition-shadow hover:shadow-md">
+                    <CardContent className="flex items-center justify-between p-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-semibold text-gray-900">{item.title}</div>
+                        <div className="mt-0.5 text-xs text-gray-500">
+                          {cat?.label ?? item.category} · {item.area}평 · 예산 {item.budget.toLocaleString()}만
+                        </div>
+                      </div>
+                      <Bookmark className="h-4 w-4 shrink-0 text-[var(--brand-primary)]" />
+                    </CardContent>
+                  </Card>
+                </a>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Saved contractors */}
+      {savedContractors.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">저장한 시공사</h2>
+          <div className="space-y-3">
+            {savedContractors.map((c) => {
+              const specialtyLabels = c.specialties
+                .map((s) => CATEGORIES.find((cat) => cat.key === s)?.label ?? s)
+                .join(' · ')
+              return (
+                <a key={c.id} href={`/contractors/${c.id}`} className="block">
+                  <Card className="border-gray-200 transition-shadow hover:shadow-md">
+                    <CardContent className="flex items-center justify-between p-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-semibold text-gray-900">{c.name}</div>
+                        <div className="mt-0.5 text-xs text-gray-500">
+                          {c.region} · {specialtyLabels}
+                        </div>
+                      </div>
+                      <BookmarkCheck className="h-4 w-4 shrink-0 text-[var(--brand-primary)]" />
+                    </CardContent>
+                  </Card>
+                </a>
+              )
+            })}
           </div>
         </section>
       )}

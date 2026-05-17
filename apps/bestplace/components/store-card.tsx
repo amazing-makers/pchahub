@@ -1,7 +1,41 @@
-import { Award, CheckCircle2, MapPin, Star, Users } from 'lucide-react'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Award, Bookmark, CheckCircle2, MapPin, Star, Users } from 'lucide-react'
 import { Badge, BrandLogo, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { brandById, type MockStore } from '@/lib/mock-data'
+
+const SAVE_KEY = 'bestplace:savedStores'
+
+function useSaved(storeId: string) {
+  const [saved, setSaved] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(SAVE_KEY)
+      const ids: string[] = raw ? (JSON.parse(raw) as string[]) : []
+      setSaved(ids.includes(storeId))
+    } catch { /* ignore */ }
+    setHydrated(true)
+  }, [storeId])
+
+  function toggle(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      const raw = window.localStorage.getItem(SAVE_KEY)
+      const ids: string[] = raw ? (JSON.parse(raw) as string[]) : []
+      const next = ids.includes(storeId)
+        ? ids.filter((id) => id !== storeId)
+        : [storeId, ...ids]
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify(next))
+      setSaved(!saved)
+    } catch { /* ignore */ }
+  }
+
+  return { saved, hydrated, toggle }
+}
 
 interface StoreCardProps {
   store: MockStore
@@ -9,6 +43,7 @@ interface StoreCardProps {
 
 export function StoreCard({ store }: StoreCardProps) {
   const brand = brandById(store.brandId)
+  const { saved, hydrated, toggle } = useSaved(store.id)
 
   return (
     <a href={`/stores/${store.id}`} className="group block h-full">
@@ -23,6 +58,23 @@ export function StoreCard({ store }: StoreCardProps) {
               loading="lazy"
             />
             <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent" />
+            {/* Save / bookmark overlay */}
+            {hydrated && (
+              <button
+                type="button"
+                onClick={toggle}
+                aria-label={saved ? '찜 취소' : '찜하기'}
+                aria-pressed={saved}
+                className={
+                  'absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full shadow transition-colors ' +
+                  (saved
+                    ? 'bg-rose-600 text-white'
+                    : 'bg-white/90 text-gray-600 hover:bg-white hover:text-rose-600')
+                }
+              >
+                <Bookmark className={`h-4 w-4 ${saved ? 'fill-white' : ''}`} />
+              </button>
+            )}
             <div className="absolute left-3 top-3 flex flex-wrap gap-1">
               {brand && (
                 <Badge variant="default" className="bg-white/95 text-gray-900">

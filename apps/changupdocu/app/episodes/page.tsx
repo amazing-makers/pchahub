@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { PlayCircle } from 'lucide-react'
-import { EpisodeCard } from '@/components/episode-card'
+import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
 import { buildPageMetadata } from '@amakers/design-system'
 
@@ -97,7 +97,7 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((e) => (
-              <EpisodeCard key={e.id} episode={e} />
+              <EpisodeCardWithSave key={e.id} episode={e} />
             ))}
           </div>
         )}

@@ -28,6 +28,8 @@ import { CourseCard } from '@/components/course-card'
 import { SaveCourseButton } from './save-button'
 import { EnrollButton } from './enroll-button'
 import { CourseViewTracker } from './course-view-tracker'
+import { LessonCompleteButton } from './lesson-complete-button'
+import { CourseProgress } from './course-progress'
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ id: c.id }))
@@ -61,6 +63,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
   ).slice(0, 3)
 
   const isFree = course.price === 0
+  const allLessonIds = course.curriculum.flatMap((sec) => sec.lessons.map((l) => l.id))
   const totalLessons = course.curriculum.reduce((s, sec) => s + sec.lessons.length, 0)
   const totalDuration = course.curriculum.reduce(
     (s, sec) => s + sec.lessons.reduce((ss, l) => ss + l.durationMin, 0),
@@ -218,6 +221,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
             </SectionCard>
 
             {/* Curriculum */}
+            <CourseProgress lessonIds={allLessonIds} />
             <SectionCard
               title="커리큘럼"
               subtitle={`${course.curriculum.length}개 섹션 · ${totalLessons}개 강의 · 총 ${Math.floor(totalDuration / 60)}시간 ${totalDuration % 60}분`}
@@ -253,7 +257,10 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                               </span>
                             )}
                           </div>
-                          <span className="text-xs text-gray-500">{l.durationMin}분</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">{l.durationMin}분</span>
+                            <LessonCompleteButton lessonId={l.id} courseId={course.id} />
+                          </div>
                         </div>
                       ))}
                     </div>

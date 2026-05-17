@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Award, Bookmark, Building2, MapPin, Star } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
-import { STORES } from '@/lib/mock-data'
+import { AWARDS, RANK_LABEL, STORES, type MockAward } from '@/lib/mock-data'
 
 interface ReviewEntry {
   id: string
@@ -160,6 +160,52 @@ export function MyPageClient() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* 투표한 어워드 */}
+      {voteIds.length > 0 && (
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <Award className="h-4 w-4 text-amber-400" />
+            <h2 className="text-h4 font-semibold text-gray-900">내 어워드 투표</h2>
+          </div>
+          <div className="space-y-2">
+            {voteIds.map((id) => {
+              const award: MockAward | undefined = AWARDS.find((a) => a.id === id)
+              if (award) {
+                const rankLabel = RANK_LABEL[award.rank]
+                const href = `/awards/${award.year}?category=${award.category}`
+                return (
+                  <a
+                    key={id}
+                    href={href}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:bg-gray-50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold text-gray-900">
+                        {award.year} {award.categoryLabel} {rankLabel}
+                      </div>
+                      <div className="mt-0.5 truncate text-xs text-gray-500">{award.citation}</div>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                      {rankLabel}
+                    </span>
+                  </a>
+                )
+              }
+              // Fallback: unknown ID — show as a simple chip
+              return (
+                <div
+                  key={id}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs text-amber-800"
+                >
+                  <Award className="h-3 w-3" />
+                  {id}
+                </div>
+              )
+            })}
           </div>
         </section>
       )}

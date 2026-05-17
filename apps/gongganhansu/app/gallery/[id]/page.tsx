@@ -16,6 +16,7 @@ import {
   portfolioById,
 } from '@/lib/mock-data'
 import { PortfolioCard } from '@/components/portfolio-card'
+import { SavePortfolioButton } from './save-portfolio-button'
 
 export function generateStaticParams() {
   return PORTFOLIO.map((p) => ({ id: p.id }))
@@ -141,6 +142,9 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                         이 시공사 견적 받기
                       </Button>
                     </a>
+                    <div className="mt-2">
+                      <SavePortfolioButton itemId={item.id} />
+                    </div>
 
                     <div className="mt-5 space-y-2 border-t border-gray-100 pt-4">
                       <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">

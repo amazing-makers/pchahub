@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BookOpen, Clock, Heart, MessageCircle } from 'lucide-react'
+import { BookOpen, CheckCircle2, Clock, Heart, MessageCircle } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
 import { COURSES } from '@/lib/mock-data'
@@ -38,6 +38,7 @@ export function MyPageClient() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [consultations, setConsultations] = useState<Consultation[]>([])
   const [recentIds, setRecentIds] = useState<string[]>([])
+  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -56,6 +57,10 @@ export function MyPageClient() {
     try {
       const raw4 = window.localStorage.getItem('themanual:recentlyViewed')
       if (raw4) setRecentIds(JSON.parse(raw4) as string[])
+    } catch { /* ignore */ }
+    try {
+      const raw5 = window.localStorage.getItem('themanual:completedLessons')
+      if (raw5) setCompletedLessonIds(JSON.parse(raw5) as string[])
     } catch { /* ignore */ }
     setHydrated(true)
   }, [])
@@ -76,8 +81,8 @@ export function MyPageClient() {
   if (!hydrated) {
     return (
       <div className="animate-pulse space-y-8">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="h-24 rounded-xl bg-gray-100" />
           ))}
         </div>
@@ -88,8 +93,9 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* 통계 */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard icon={BookOpen} label="수강 중" value={`${enrolledCourses.length}강`} />
+        <StatCard icon={CheckCircle2} label="완료한 강의" value={`${completedLessonIds.length}강`} />
         <StatCard icon={Heart} label="찜한 강의" value={`${savedCourses.length}강`} />
         <StatCard icon={Clock} label="최근 본 강의" value={`${recentIds.length}강`} />
         <StatCard icon={MessageCircle} label="멘토 상담" value={`${consultations.length}건`} />

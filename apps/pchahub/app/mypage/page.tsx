@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import {
   Bell,
   Building2,
@@ -12,6 +13,12 @@ import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
 import { StatsClient } from './stats-client'
 import { RecentBrands } from './recent-brands'
+import { SavedCalcs } from './saved-calcs'
+
+const InquiriesSection = dynamic(
+  () => import('./inquiries-section').then((m) => m.InquiriesSection),
+  { ssr: false },
+)
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
@@ -30,24 +37,6 @@ export default async function MyPage() {
 
   // Mock data for the dashboard sections
   const savedBrands = BRANDS.slice(0, 3)
-  const inquiries = [
-    {
-      id: 'i1',
-      brandId: 'b1',
-      brandName: '치킨다이스',
-      status: 'pending' as const,
-      statusLabel: '본사 응답 대기',
-      createdAt: '2026-05-09',
-    },
-    {
-      id: 'i2',
-      brandId: 'b2',
-      brandName: '데일리브루',
-      status: 'replied' as const,
-      statusLabel: '본사 답변 완료',
-      createdAt: '2026-05-05',
-    },
-  ]
 
   return (
     <main className="bg-gray-50">
@@ -91,36 +80,7 @@ export default async function MyPage() {
               전체 보기 →
             </a>
           </div>
-          {inquiries.length === 0 ? (
-            <EmptyState
-              title="아직 상담 신청 내역이 없습니다"
-              body="관심 브랜드 페이지에서 가맹 상담을 신청해보세요."
-              cta={{ href: '/brands', label: '브랜드 둘러보기' }}
-            />
-          ) : (
-            <div className="space-y-2">
-              {inquiries.map((i) => (
-                <Card key={i.id} className="border-gray-200">
-                  <CardContent className="flex items-center justify-between p-4">
-                    <div>
-                      <a
-                        href={`/brands/${i.brandId}`}
-                        className="text-sm font-semibold text-gray-900 hover:underline"
-                      >
-                        {i.brandName}
-                      </a>
-                      <div className="mt-0.5 text-xs text-gray-500">
-                        신청일 {i.createdAt}
-                      </div>
-                    </div>
-                    <Badge variant={i.status === 'replied' ? 'success' : 'warning'}>
-                      {i.statusLabel}
-                    </Badge>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+          <InquiriesSection />
         </section>
 
         {/* Saved brands */}
@@ -183,6 +143,9 @@ export default async function MyPage() {
             </Card>
           </section>
         )}
+
+        {/* Saved calculator results (localStorage, client-only) */}
+        <SavedCalcs />
 
         {/* Reviews CTA */}
         <section className="mt-8">

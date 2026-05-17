@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bookmark, Briefcase, Calendar, FileText, PlusCircle, TrendingUp } from 'lucide-react'
+import { Bookmark, Briefcase, Calendar, CheckCircle2, FileText, PlusCircle, TrendingUp } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { brandById, daysUntil, progressPercent, ROUND_TYPE_LABEL, roundById } from '@/lib/mock-data'
+import { brandById, daysUntil, maListingById, MA_LISTINGS, progressPercent, ROUND_TYPE_LABEL, roundById } from '@/lib/mock-data'
 
 interface InterestEntry {
   id: string
@@ -57,9 +57,26 @@ interface InvestmentRegEntry {
   status: string
 }
 
+interface ParticipationEntry {
+  id: string
+  roundId: string
+  roundTitle: string
+  amount: string
+  name: string
+  phone: string
+  status: string
+  submittedAt: string
+}
+
 interface WatchedRound {
   roundId: string
   addedAt: string
+}
+
+const MA_DEAL_TYPE_MAP: Record<string, string> = {
+  ma1: '사업 양도',
+  ma2: '지분 매각',
+  ma3: '사업 양도',
 }
 
 const INVESTOR_TYPE_LABEL: Record<string, string> = {
@@ -90,7 +107,9 @@ export function MyPageClient() {
   const [irRequests, setIrRequests] = useState<IrEntry[]>([])
   const [maConsults, setMaConsults] = useState<MaConsultEntry[]>([])
   const [investmentRegs, setInvestmentRegs] = useState<InvestmentRegEntry[]>([])
+  const [participations, setParticipations] = useState<ParticipationEntry[]>([])
   const [watchlist, setWatchlist] = useState<WatchedRound[]>([])
+  const [maWatchlist, setMaWatchlist] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -115,8 +134,16 @@ export function MyPageClient() {
       if (raw) setInvestmentRegs(JSON.parse(raw) as InvestmentRegEntry[])
     } catch { /* ignore */ }
     try {
+      const raw = window.localStorage.getItem('pchabridge:participations')
+      if (raw) setParticipations(JSON.parse(raw) as ParticipationEntry[])
+    } catch { /* ignore */ }
+    try {
       const raw = window.localStorage.getItem('pchabridge:watchlist')
       if (raw) setWatchlist(JSON.parse(raw) as WatchedRound[])
+    } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('pchabridge:ma-watchlist')
+      if (raw) setMaWatchlist(JSON.parse(raw) as string[])
     } catch { /* ignore */ }
     setHydrated(true)
   }, [])
@@ -136,8 +163,9 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         <StatCard icon={TrendingUp} label="투자 신청" value={`${interests.length}건`} />
+        <StatCard icon={CheckCircle2} label="투자 참여 신청" value={`${participations.length}건`} />
         <StatCard icon={FileText} label="IR 자료 신청" value={`${irRequests.length}건`} />
         <StatCard icon={Briefcase} label="M&A 문의/자문" value={`${maRequests.length + maConsults.length}건`} />
         <StatCard icon={PlusCircle} label="투자 유치 등록" value={`${investmentRegs.length}건`} />
@@ -146,6 +174,7 @@ export function MyPageClient() {
           label="신청 금액 합계"
           value={totalAmount > 0 ? `${formatNumber(totalAmount)}만` : '-'}
         />
+        <StatCard icon={Bookmark} label="관심 M&A" value={`${maWatchlist.length}건`} />
       </div>
 
       {/* Investment applications */}
@@ -184,6 +213,33 @@ export function MyPageClient() {
           </div>
         )}
       </section>
+
+      {/* 투자 참여 신청 내역 (pchabridge:participations) */}
+      {participations.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">투자 참여 신청 내역</h2>
+          <div className="space-y-3">
+            {participations.map((item) => (
+              <Card key={item.id} className="border-gray-200">
+                <CardContent className="flex items-center justify-between p-4">
+                  <div className="min-w-0 flex-1">
+                    <a
+                      href={`/investments/${item.roundId}`}
+                      className="text-sm font-semibold text-gray-900 hover:underline"
+                    >
+                      {item.roundTitle}
+                    </a>
+                    <div className="mt-0.5 text-xs text-gray-500">
+                      {item.name} · {item.phone} · {formatNumber(parseFloat(item.amount) || 0)}만원 · {item.submittedAt}
+                    </div>
+                  </div>
+                  <Badge variant="warning">{item.status}</Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* M&A requests */}
       <section>
@@ -363,6 +419,59 @@ export function MyPageClient() {
                         {days > 0 ? `${days}일 남음` : '마감'}
                       </span>
                       <span>최소 {formatNumber(round.minInvestment)}만</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* 관심 M&A */}
+      <section>
+        <h2 className="mb-4 text-h4 font-semibold text-gray-900 inline-flex items-center gap-2">
+          <Bookmark className="h-4 w-4 text-amber-500" />
+          관심 M&A
+        </h2>
+        {maWatchlist.length === 0 ? (
+          <Card className="border-gray-200">
+            <CardContent className="py-10 text-center text-sm text-gray-400">
+              관심 M&A 매물이 없습니다.{' '}
+              <a href="/ma" className="font-medium text-[var(--brand-primary)] hover:underline">
+                M&A 매물 보기 →
+              </a>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {maWatchlist.map((id) => {
+              const listing = maListingById(id)
+              if (!listing) return null
+              const brand = brandById(listing.brandId)
+              const dealType = MA_DEAL_TYPE_MAP[listing.id] ?? '기타'
+              return (
+                <Card key={id} className="border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <a
+                          href={`/ma/${listing.id}`}
+                          className="text-sm font-semibold text-gray-900 hover:underline"
+                        >
+                          {brand?.name ?? '브랜드'} · {dealType}
+                        </a>
+                        <p className="mt-0.5 line-clamp-1 text-xs text-gray-500">{listing.rationale}</p>
+                      </div>
+                      <Badge variant="warning">{listing.status === 'open' ? '공개 매물' : '협상 중'}</Badge>
+                    </div>
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                      <span className="inline-flex items-center gap-0.5">
+                        <Briefcase className="h-3 w-3" />
+                        매각가 {formatNumber(listing.askingPrice)}만
+                      </span>
+                      <span>가맹점 {listing.storeCount}개</span>
+                      <span>{dealType}</span>
                     </div>
                   </CardContent>
                 </Card>

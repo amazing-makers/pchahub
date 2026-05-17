@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MessageSquare, Megaphone } from 'lucide-react'
+import { MessageSquare, Megaphone, Bookmark } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
+import { CaseCard } from '@/components/case-card'
+import { PORTFOLIO } from '@/lib/mock-data'
+import type { MockPortfolioCase } from '@/lib/mock-data'
 
 interface ContactEntry {
   id: string
@@ -69,6 +72,7 @@ function InquiryBadge({ status }: { status: string }) {
 export function MyPageClient() {
   const [contacts, setContacts] = useState<ContactEntry[]>([])
   const [inquiries, setInquiries] = useState<CampaignInquiry[]>([])
+  const [savedCases, setSavedCases] = useState<MockPortfolioCase[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -79,6 +83,11 @@ export function MyPageClient() {
     try {
       const raw = window.localStorage.getItem('openrun:inquiries')
       if (raw) setInquiries(JSON.parse(raw) as CampaignInquiry[])
+    } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('openrun:savedCases')
+      const ids: string[] = raw ? JSON.parse(raw) : []
+      setSavedCases(PORTFOLIO.filter((c) => ids.includes(c.id)))
     } catch { /* ignore */ }
     setHydrated(true)
   }, [])
@@ -97,6 +106,7 @@ export function MyPageClient() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatCard icon={Megaphone} label="캠페인 의뢰" value={`${contacts.length}건`} />
+        <StatCard icon={Bookmark} label="저장한 사례" value={`${savedCases.length}건`} />
       </div>
 
       {/* Contact submissions */}
@@ -140,6 +150,18 @@ export function MyPageClient() {
           </div>
         )}
       </section>
+
+      {/* Saved cases */}
+      {savedCases.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-h4 font-semibold text-gray-900">저장한 사례</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {savedCases.map((c) => (
+              <CaseCard key={c.id} case={c} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Campaign inquiry tracking (openrun:inquiries) */}
       <section>

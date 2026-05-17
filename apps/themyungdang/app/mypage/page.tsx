@@ -3,7 +3,7 @@ import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Eye, MessageSquare, PencilLine } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Button, Card, CardContent } from '@amakers/ui'
 
 import { ListingSectionSkeleton, StatSkeleton } from '@/components/skeletons'
 
@@ -12,30 +12,13 @@ const FavoritesStat          = dynamic(() => import('@/components/favorites-stat
 const RecentlyViewedStat     = dynamic(() => import('@/components/recently-viewed-stat'),                                    { ssr: false, loading: () => <StatSkeleton /> })
 const RecentlyViewedSection  = dynamic(() => import('@/components/recently-viewed').then((m) => m.RecentlyViewedSection),   { ssr: false, loading: () => <ListingSectionSkeleton count={3} /> })
 const ListingsSubmittedStat  = dynamic(() => import('@/components/listings-submitted-stat').then((m) => m.ListingsSubmittedStat), { ssr: false, loading: () => <StatSkeleton /> })
+const InquiriesSection       = dynamic(() => import('./inquiries-section').then((m) => m.InquiriesSection),                 { ssr: false, loading: () => <div className="space-y-2">{[1,2].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-100" />)}</div> })
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/auth/signin?callbackUrl=/mypage')
 
   const name = session.user?.name ?? session.user?.email?.split('@')[0] ?? '회원'
-  const inquiries = [
-    {
-      id: 'q1',
-      listingId: 'l001',
-      title: '강남역 도보 5분, 1층 코너 양도 매물',
-      status: 'pending' as const,
-      statusLabel: '응답 대기',
-      createdAt: '2026-05-09',
-    },
-    {
-      id: 'q2',
-      listingId: 'l008',
-      title: '판교 IT 단지 1층 코너 신축 매물',
-      status: 'replied' as const,
-      statusLabel: '답변 완료',
-      createdAt: '2026-05-06',
-    },
-  ]
 
   return (
     <main className="bg-gray-50">
@@ -76,7 +59,7 @@ export default async function MyPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {/* FavoritesStat reads localStorage on the client */}
           <FavoritesStat />
-          <Stat icon={MessageSquare} label="매물 문의" value={`${inquiries.length}건`} />
+          <Stat icon={MessageSquare} label="매물 문의" value="—" />
           <RecentlyViewedStat />
           <ListingsSubmittedStat />
         </div>
@@ -89,26 +72,7 @@ export default async function MyPage() {
               전체 보기 →
             </a>
           </div>
-          <div className="space-y-2">
-            {inquiries.map((i) => (
-              <Card key={i.id} className="border-gray-200">
-                <CardContent className="flex items-center justify-between p-4">
-                  <div>
-                    <a
-                      href={`/listings/${i.listingId}`}
-                      className="text-sm font-semibold text-gray-900 hover:underline"
-                    >
-                      {i.title}
-                    </a>
-                    <div className="mt-0.5 text-xs text-gray-500">신청일 {i.createdAt}</div>
-                  </div>
-                  <Badge variant={i.status === 'replied' ? 'success' : 'warning'}>
-                    {i.statusLabel}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <InquiriesSection />
         </section>
 
         {/* Saved listings — reads from localStorage via client island */}

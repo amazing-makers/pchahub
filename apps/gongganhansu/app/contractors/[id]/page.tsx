@@ -9,6 +9,7 @@ import {
   portfolioByContractor,
 } from '@/lib/mock-data'
 import { PortfolioCard } from '@/components/portfolio-card'
+import { SaveContractorButton } from './save-contractor-button'
 
 export function generateStaticParams() {
   return CONTRACTORS.map((c) => ({ id: c.id }))
@@ -112,6 +113,9 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
                       매장 방문 상담
                     </Button>
                   </a>
+                  <div className="flex justify-center">
+                    <SaveContractorButton contractorId={c.id} />
+                  </div>
                 </CardContent>
               </Card>
             </aside>

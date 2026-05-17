@@ -29,6 +29,7 @@ import {
 import { ListingCard } from '@/components/listing-card'
 import { TrackView, RecentlyViewedSection } from '@/components/recently-viewed'
 import { ListingImageGallery } from '@/components/listing-image-gallery'
+import { InquiryButton } from './inquiry-button'
 
 import { ListingDetailSidebarSkeleton, MiniMapSkeleton } from '@/components/skeletons'
 
@@ -302,6 +303,11 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 </div>
               </SectionCard>
             )}
+
+            {/* Inquiry button — mobile only (sidebar handles desktop) */}
+            <div className="lg:hidden">
+              <InquiryButton listingId={listing.id} listingTitle={listing.title} />
+            </div>
           </div>
 
           {/* Sidebar — client component (favorites, inquiry modal, share) */}

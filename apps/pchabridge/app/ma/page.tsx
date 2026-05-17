@@ -9,6 +9,7 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
 
 import { MACard } from '@/components/ma-card'
 import { MA_LISTINGS } from '@/lib/mock-data'
+import { MaWatchButton } from './ma-watch-button'
 
 /** Deal-type label derived from each listing's includes / rationale */
 const DEAL_TYPE_MAP: Record<string, string> = {
@@ -83,7 +84,12 @@ export default function MAPage({ searchParams }: MAPageProps) {
             <h2 className="mb-4 text-h4 font-semibold text-gray-900">공개 매물</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {open.map((m) => (
-                <MACard key={m.id} listing={m} />
+                <div key={m.id} className="relative">
+                  <MACard listing={m} />
+                  <div className="absolute right-2 top-2 z-10">
+                    <MaWatchButton listingId={m.id} />
+                  </div>
+                </div>
               ))}
             </div>
           </section>
@@ -94,7 +100,12 @@ export default function MAPage({ searchParams }: MAPageProps) {
             <h2 className="mb-4 text-h4 font-semibold text-gray-900">협상 중인 매물</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {underNeg.map((m) => (
-                <MACard key={m.id} listing={m} />
+                <div key={m.id} className="relative">
+                  <MACard listing={m} />
+                  <div className="absolute right-2 top-2 z-10">
+                    <MaWatchButton listingId={m.id} />
+                  </div>
+                </div>
               ))}
             </div>
           </section>

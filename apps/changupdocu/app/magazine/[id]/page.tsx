@@ -12,6 +12,7 @@ import { ARTICLES, articleById } from '@/lib/mock-data'
 import { ArticleCard } from '@/components/article-card'
 import { ArticleActions } from './article-actions'
 import { ArticleViewTracker } from './article-view-tracker'
+import { SaveArticleButton } from './save-article-button'
 
 export function generateStaticParams() {
   return ARTICLES.map((a) => ({ id: a.id }))
@@ -143,8 +144,9 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
           )}
 
           {/* Actions */}
-          <div className="mt-8 border-t border-gray-100 pt-6">
+          <div className="mt-8 border-t border-gray-100 pt-6 flex items-center gap-3">
             <ArticleActions articleId={article.id} title={article.title} />
+            <SaveArticleButton articleId={article.id} />
           </div>
         </div>
       </article>

@@ -26,6 +26,7 @@ import {
   roundById,
 } from '@/lib/mock-data'
 import { RoundCard } from '@/components/round-card'
+import { WatchButton } from '../watch-button'
 import { InvestForm } from './invest-form'
 import { IrRequestButton } from './ir-request-button'
 
@@ -104,7 +105,7 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
                     aria-hidden
                   />
                 )}
-                <div>
+                <div className="min-w-0 flex-1">
                   <h1 className="text-h2 font-bold text-gray-900">
                     {brand?.name ?? '브랜드'} {ROUND_TYPE_LABEL[round.type]}
                   </h1>
@@ -112,6 +113,9 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
                     {brand?.categoryLabel} · 매장 {brand?.storeCount}개 ·{' '}
                     {brand?.foundedYear}년 설립
                   </div>
+                </div>
+                <div className="shrink-0">
+                  <WatchButton roundId={round.id} />
                 </div>
               </div>
 

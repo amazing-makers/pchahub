@@ -24,6 +24,7 @@ import { UserChip } from '@/components/user-chip'
 import { PostCard } from '@/components/post-card'
 import { CommentForm } from './comment-form'
 import { ChannelSubscribeButton, PostActions, ReportButton } from './post-actions'
+import { PostSaveButton } from './post-save-button'
 import { PostViewTracker } from './post-view-tracker'
 import { CommentLikeButton } from './comment-like-button'
 
@@ -142,15 +143,18 @@ export default function PostPage({ params }: PostPageProps) {
                 )}
 
                 <div className="mt-6 flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
-                  <PostActions
-                    postId={post.id}
-                    likes={post.likes}
-                    channelType={post.channelType}
-                    channelKey={post.channelKey}
-                    channelName={channelName}
-                    shareTitle={post.title}
-                    shareUrl={postUrl}
-                  />
+                  <div className="flex items-center gap-2">
+                    <PostActions
+                      postId={post.id}
+                      likes={post.likes}
+                      channelType={post.channelType}
+                      channelKey={post.channelKey}
+                      channelName={channelName}
+                      shareTitle={post.title}
+                      shareUrl={postUrl}
+                    />
+                    <PostSaveButton postId={post.id} />
+                  </div>
                   <ReportButton postId={post.id} />
                 </div>
               </CardContent>

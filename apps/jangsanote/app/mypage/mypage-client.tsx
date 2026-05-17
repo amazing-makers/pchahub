@@ -53,6 +53,7 @@ export function MyPageClient() {
   const [rsvps, setRsvps] = useState<RsvpEntry[]>([])
   const [myMeetings, setMyMeetings] = useState<MyMeeting[]>([])
   const [likedIds, setLikedIds] = useState<string[]>([])
+  const [savedPostIds, setSavedPostIds] = useState<string[]>([])
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [recentPostIds, setRecentPostIds] = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)
@@ -82,6 +83,10 @@ export function MyPageClient() {
       const raw6 = window.localStorage.getItem('jangsanote:recentPosts')
       if (raw6) setRecentPostIds(JSON.parse(raw6) as string[])
     } catch { /* ignore */ }
+    try {
+      const raw7 = window.localStorage.getItem('jangsanote:savedPosts')
+      if (raw7) setSavedPostIds(JSON.parse(raw7) as string[])
+    } catch { /* ignore */ }
     setHydrated(true)
   }, [])
 
@@ -89,8 +94,15 @@ export function MyPageClient() {
     .map((r) => MEETINGS.find((m) => m.id === r.meetingId))
     .filter(Boolean) as typeof MEETINGS
 
-  // Static mock sample posts for the demo — we show these + any locally written ones
-  const sampleSaved = POSTS.slice(0, 3)
+  const likedPosts = likedIds
+    .slice(0, 8)
+    .map((id) => POSTS.find((p) => p.id === id))
+    .filter(Boolean) as typeof POSTS
+
+  const savedPosts = savedPostIds
+    .slice(0, 8)
+    .map((id) => POSTS.find((p) => p.id === id))
+    .filter(Boolean) as typeof POSTS
 
   const recentPosts = recentPostIds
     .slice(0, 6)
@@ -112,10 +124,11 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* 통계 */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatCard icon={PencilLine} label="내가 쓴 글" value={`${myPosts.length}개`} />
         <StatCard icon={Calendar} label="내 모임" value={`${myMeetings.length}개`} />
         <StatCard icon={ThumbsUp} label="좋아요한 글" value={`${likedIds.length}개`} />
+        <StatCard icon={Bookmark} label="저장한 글" value={`${savedPostIds.length}개`} />
         <StatCard icon={Bookmark} label="구독 채널" value={`${subscriptions.length}개`} />
         <StatCard icon={Clock} label="최근 본 글" value={`${recentPostIds.length}개`} />
       </div>
@@ -147,14 +160,46 @@ export function MyPageClient() {
         </section>
       )}
 
-      {/* 저장한 글 (샘플) */}
+      {/* 좋아요한 글 */}
+      <section>
+        <h2 className="mb-4 text-h4 font-semibold text-gray-900">좋아요한 글</h2>
+        {likedPosts.length === 0 ? (
+          <Card className="border-dashed border-gray-200">
+            <CardContent className="p-8 text-center">
+              <ThumbsUp className="mx-auto h-8 w-8 text-gray-300" />
+              <p className="mt-3 text-sm text-gray-500">
+                아직 좋아요한 글이 없습니다. 글에서 좋아요를 눌러보세요.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {likedPosts.map((p) => (
+              <PostCard key={p.id} post={p} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* 저장한 글 */}
       <section>
         <h2 className="mb-4 text-h4 font-semibold text-gray-900">저장한 글</h2>
-        <div className="space-y-3">
-          {sampleSaved.map((p) => (
-            <PostCard key={p.id} post={p} />
-          ))}
-        </div>
+        {savedPosts.length === 0 ? (
+          <Card className="border-dashed border-gray-200">
+            <CardContent className="p-8 text-center">
+              <Bookmark className="mx-auto h-8 w-8 text-gray-300" />
+              <p className="mt-3 text-sm text-gray-500">
+                아직 저장한 글이 없습니다. 글 상세 페이지에서 저장 버튼을 눌러보세요.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {savedPosts.map((p) => (
+              <PostCard key={p.id} post={p} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 참여 신청한 모임 */}

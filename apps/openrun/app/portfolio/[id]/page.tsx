@@ -10,6 +10,7 @@ import {
 } from '@amakers/design-system'
 import { CaseCard } from '@/components/case-card'
 import { caseById, PORTFOLIO } from '@/lib/mock-data'
+import { SaveCaseButton } from './save-case-button'
 
 export function generateStaticParams() {
   return PORTFOLIO.map((c) => ({ id: c.id }))
@@ -184,9 +185,12 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
             <p className="mx-auto mt-2 max-w-xl text-gray-300">
               간단한 폼을 채워주시면 영업일 24시간 이내 기획안과 견적을 보내드립니다.
             </p>
-            <a href="/contact" className="mt-5 inline-block">
-              <Button size="lg">캠페인 의뢰</Button>
-            </a>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <a href="/contact" className="inline-block">
+                <Button size="lg">캠페인 의뢰</Button>
+              </a>
+              <SaveCaseButton caseId={c.id} />
+            </div>
           </CardContent>
         </Card>
       </div>
