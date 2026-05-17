@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Briefcase, FileText, PlusCircle, TrendingUp } from 'lucide-react'
+import { Bookmark, Briefcase, Calendar, FileText, PlusCircle, TrendingUp } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { brandById, daysUntil, progressPercent, ROUND_TYPE_LABEL, roundById } from '@/lib/mock-data'
 
 interface InterestEntry {
   id: string
@@ -56,6 +57,11 @@ interface InvestmentRegEntry {
   status: string
 }
 
+interface WatchedRound {
+  roundId: string
+  addedAt: string
+}
+
 const INVESTOR_TYPE_LABEL: Record<string, string> = {
   individual: '개인 투자자',
   angel: '엔젤 투자자',
@@ -84,6 +90,7 @@ export function MyPageClient() {
   const [irRequests, setIrRequests] = useState<IrEntry[]>([])
   const [maConsults, setMaConsults] = useState<MaConsultEntry[]>([])
   const [investmentRegs, setInvestmentRegs] = useState<InvestmentRegEntry[]>([])
+  const [watchlist, setWatchlist] = useState<WatchedRound[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -106,6 +113,10 @@ export function MyPageClient() {
     try {
       const raw = window.localStorage.getItem('pchabridge:investment-registrations')
       if (raw) setInvestmentRegs(JSON.parse(raw) as InvestmentRegEntry[])
+    } catch { /* ignore */ }
+    try {
+      const raw = window.localStorage.getItem('pchabridge:watchlist')
+      if (raw) setWatchlist(JSON.parse(raw) as WatchedRound[])
     } catch { /* ignore */ }
     setHydrated(true)
   }, [])
@@ -286,6 +297,80 @@ export function MyPageClient() {
           </div>
         </section>
       )}
+
+      {/* 관심 투자 라운드 */}
+      <section>
+        <h2 className="mb-4 text-h4 font-semibold text-gray-900 inline-flex items-center gap-2">
+          <Bookmark className="h-4 w-4 text-amber-500" />
+          관심 투자 라운드
+        </h2>
+        {watchlist.length === 0 ? (
+          <Card className="border-gray-200">
+            <CardContent className="py-10 text-center text-sm text-gray-400">
+              관심 라운드가 없습니다.{' '}
+              <a href="/investments" className="font-medium text-[var(--brand-primary)] hover:underline">
+                라운드 둘러보기 →
+              </a>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {watchlist.map((entry) => {
+              const round = roundById(entry.roundId)
+              if (!round) return null
+              const brand = brandById(round.brandId)
+              const progress = progressPercent(round)
+              const days = daysUntil(round.closeDate)
+              return (
+                <Card key={entry.roundId} className="border-gray-200">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <a
+                          href={`/investments/${round.id}`}
+                          className="text-sm font-semibold text-gray-900 hover:underline"
+                        >
+                          {brand?.name ?? '브랜드'} · {ROUND_TYPE_LABEL[round.type]}
+                        </a>
+                        <p className="mt-0.5 line-clamp-1 text-xs text-gray-500">{round.hook}</p>
+                      </div>
+                      <span className="shrink-0 text-xs text-gray-400">{entry.addedAt}</span>
+                    </div>
+                    {/* mini progress */}
+                    <div className="mt-3">
+                      <div className="flex items-end justify-between text-xs">
+                        <span className="text-gray-500">
+                          {formatNumber(round.currentAmount)}만 / {formatNumber(round.targetAmount)}만
+                        </span>
+                        <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>
+                          {progress}%
+                        </span>
+                      </div>
+                      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-gray-100">
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${progress}%`, background: 'var(--brand-primary)' }}
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+                      <span className="inline-flex items-center gap-0.5">
+                        <TrendingUp className="h-3 w-3" />
+                        +{round.expectedAnnualROI}% ROI
+                      </span>
+                      <span className="inline-flex items-center gap-0.5">
+                        <Calendar className="h-3 w-3" />
+                        {days > 0 ? `${days}일 남음` : '마감'}
+                      </span>
+                      <span>최소 {formatNumber(round.minInvestment)}만</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
+      </section>
     </div>
   )
 }

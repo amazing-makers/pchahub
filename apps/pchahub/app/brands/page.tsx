@@ -1,6 +1,7 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
+import { CompareButton } from '@/components/compare-button'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
 
@@ -173,7 +174,12 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {FEATURED_BRANDS.map((b) => (
-                    <BrandCard key={b.id} brand={b} featured />
+                    <div key={b.id} className="relative">
+                      <BrandCard brand={b} featured />
+                      <div className="absolute bottom-[72px] right-3 z-10">
+                        <CompareButton brandId={b.id} brandName={b.name} />
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -199,7 +205,12 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
               ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {pagedResults.map((b) => (
-                    <BrandCard key={b.id} brand={b} />
+                    <div key={b.id} className="relative">
+                      <BrandCard brand={b} />
+                      <div className="absolute bottom-[72px] right-3 z-10">
+                        <CompareButton brandId={b.id} brandName={b.name} />
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}

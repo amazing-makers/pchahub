@@ -61,16 +61,33 @@ export function ContactForm() {
     if (!isValid) return
 
     // localStorage 저장
+    const entryId = `or-${Date.now()}`
     try {
       const raw = window.localStorage.getItem('openrun:contacts')
       const prev: object[] = raw ? (JSON.parse(raw) as object[]) : []
       const entry = {
-        id: `or-${Date.now()}`,
+        id: entryId,
         ...state,
         status: 'pending',
         createdAt: new Date().toISOString().slice(0, 10),
       }
       window.localStorage.setItem('openrun:contacts', JSON.stringify([entry, ...prev]))
+    } catch {
+      // ignore
+    }
+
+    // 의뢰 추적 스냅샷 저장 (openrun:inquiries)
+    const INQUIRIES_KEY = 'openrun:inquiries'
+    try {
+      const inquiry = {
+        id: entryId,
+        service: state.services.join(', '),
+        brandName: state.brandName,
+        status: '검토 중',
+        submittedAt: new Date().toISOString().slice(0, 10),
+      }
+      const existing = JSON.parse(window.localStorage.getItem(INQUIRIES_KEY) ?? '[]') as object[]
+      window.localStorage.setItem(INQUIRIES_KEY, JSON.stringify([inquiry, ...existing].slice(0, 20)))
     } catch {
       // ignore
     }

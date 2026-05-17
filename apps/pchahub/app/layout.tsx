@@ -3,6 +3,7 @@ import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import { BackToTop } from '@/components/back-to-top'
+import { CompareBar } from '@/components/compare-bar'
 import './globals.css'
 
 export const metadata = buildSiteMetadata('pchahub')
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="pchahub" />
           <BackToTop />
+          <CompareBar />
         </Providers>
       </body>
     </html>
