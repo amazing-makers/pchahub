@@ -96,14 +96,13 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
 
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <nav className="flex items-center gap-1 text-sm text-gray-500">
+          {/* 브레드크럼 */}
+          <nav aria-label="breadcrumb" className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
+            <a href="/" className="hover:text-gray-900">홈</a>
+            <ChevronRight className="h-3.5 w-3.5" />
             <a href="/episodes" className="hover:text-gray-900">에피소드</a>
             <ChevronRight className="h-3.5 w-3.5" />
-            <a href={`/categories/${ep.category}`} className="hover:text-gray-900">
-              {CATEGORY_LABEL[ep.category]}
-            </a>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-gray-700 line-clamp-1">{ep.title}</span>
+            <span className="truncate font-medium text-gray-900">{ep.title}</span>
           </nav>
 
           <div className="mt-4">

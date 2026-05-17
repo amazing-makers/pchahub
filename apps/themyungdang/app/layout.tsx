@@ -4,7 +4,7 @@ import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
 import { ActiveHeader } from '@/components/active-header'
 import { ToastContainer } from '@/components/toast-container'
-import { ScrollToTop } from '@/components/scroll-to-top'
+import { BackToTop } from '@/components/back-to-top'
 import './globals.css'
 
 export const metadata = buildSiteMetadata('themyungdang')
@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="themyungdang" />
           <ToastContainer />
-          <ScrollToTop />
+          <BackToTop />
         </Providers>
       </body>
     </html>

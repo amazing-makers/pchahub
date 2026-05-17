@@ -69,10 +69,13 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
 
       <section className="border-b border-gray-100 bg-white">
         <div className="container mx-auto py-8">
-          <nav className="flex items-center gap-1 text-sm text-gray-500">
+          {/* 브레드크럼 */}
+          <nav aria-label="breadcrumb" className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
+            <a href="/" className="hover:text-gray-900">홈</a>
+            <ChevronRight className="h-3.5 w-3.5" />
             <a href="/magazine" className="hover:text-gray-900">매거진</a>
             <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-gray-700 line-clamp-1">{article.title}</span>
+            <span className="truncate font-medium text-gray-900">{article.title}</span>
           </nav>
 
           <div className="mt-4 mx-auto max-w-3xl">

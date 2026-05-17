@@ -54,12 +54,13 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
     <main className="bg-gray-50">
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <nav className="flex items-center gap-1 text-sm text-gray-500">
-            <a href="/" className="hover:text-gray-900">장사노트</a>
+          {/* 브레드크럼 */}
+          <nav aria-label="breadcrumb" className="mb-4 flex items-center gap-1.5 text-sm text-gray-500">
+            <a href="/" className="hover:text-gray-900">홈</a>
             <ChevronRight className="h-3.5 w-3.5" />
             <a href="/meetings" className="hover:text-gray-900">모임</a>
             <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-gray-700">{meeting.title}</span>
+            <span className="truncate font-medium text-gray-900">{meeting.title}</span>
           </nav>
 
           <div className="mt-5">
