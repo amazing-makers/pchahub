@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { CheckCircle2, Send, Tag, X } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { CheckCircle2, Save, Send, Tag, X } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { CHANNELS } from '@/lib/mock-data'
+
+const DRAFT_KEY = 'jangsanote:draft'
 
 // 채널 그룹
 const CATEGORY_CHANNELS = CHANNELS.filter((c) => c.type === 'category')
@@ -46,6 +48,41 @@ export function WriteForm({ name }: WriteFormProps) {
   })
   const [submitted, setSubmitted] = useState(false)
   const [postId, setPostId] = useState('')
+  const [draftSaved, setDraftSaved] = useState(false)
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Load draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(DRAFT_KEY)
+      if (raw) {
+        const draft = JSON.parse(raw) as Partial<FormState>
+        setState((p) => ({ ...p, ...draft }))
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  // Autosave draft to localStorage whenever title or content changes
+  useEffect(() => {
+    if (!state.title && !state.content) return
+    if (draftTimer.current) clearTimeout(draftTimer.current)
+    draftTimer.current = setTimeout(() => {
+      try {
+        window.localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          channelType: state.channelType,
+          channelKey: state.channelKey,
+          category: state.category,
+          title: state.title,
+          content: state.content,
+          tags: state.tags,
+          anonymous: state.anonymous,
+        }))
+        setDraftSaved(true)
+        setTimeout(() => setDraftSaved(false), 2000)
+      } catch { /* ignore */ }
+    }, 1500)
+    return () => { if (draftTimer.current) clearTimeout(draftTimer.current) }
+  }, [state.title, state.content, state.channelType, state.channelKey, state.category, state.tags, state.anonymous])
 
   const channelOptions =
     state.channelType === 'category'
@@ -60,9 +97,14 @@ export function WriteForm({ name }: WriteFormProps) {
     state.channelKey
 
   const addTag = () => {
-    const t = state.tagInput.trim().replace(/^#/, '')
-    if (t && !state.tags.includes(t) && state.tags.length < 5) {
-      setState((p) => ({ ...p, tags: [...p.tags, t], tagInput: '' }))
+    // Support comma-separated input
+    const parts = state.tagInput.split(',').map((s) => s.trim().replace(/^#/, '')).filter(Boolean)
+    const newTags = parts.filter((t) => !state.tags.includes(t))
+    const merged = [...state.tags, ...newTags].slice(0, 5)
+    if (merged.length > state.tags.length) {
+      setState((p) => ({ ...p, tags: merged, tagInput: '' }))
+    } else {
+      setState((p) => ({ ...p, tagInput: '' }))
     }
   }
 
@@ -94,6 +136,8 @@ export function WriteForm({ name }: WriteFormProps) {
         commentCount: 0,
       }
       window.localStorage.setItem('jangsanote:posts', JSON.stringify([entry, ...prev]))
+      // Clear draft after successful post
+      window.localStorage.removeItem(DRAFT_KEY)
     } catch {
       // ignore
     }
@@ -270,7 +314,7 @@ export function WriteForm({ name }: WriteFormProps) {
           {/* 태그 */}
           <div>
             <label className="block text-sm font-semibold text-gray-900">
-              태그 <span className="text-xs font-normal text-gray-400">(선택, 최대 5개)</span>
+              태그 <span className="text-xs font-normal text-gray-400">(선택, 최대 5개 · 쉼표로 구분)</span>
             </label>
             <div className="mt-1.5 flex gap-2">
               <input
@@ -278,12 +322,12 @@ export function WriteForm({ name }: WriteFormProps) {
                 value={state.tagInput}
                 onChange={(e) => setState((p) => ({ ...p, tagInput: e.target.value }))}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' || e.key === ',') {
                     e.preventDefault()
                     addTag()
                   }
                 }}
-                placeholder="#본사갈등 #저자본 #회계"
+                placeholder="본사갈등, 저자본, 회계 (쉼표로 구분)"
                 className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
               />
               <Button type="button" size="sm" variant="outline" onClick={addTag}>
@@ -357,7 +401,13 @@ export function WriteForm({ name }: WriteFormProps) {
                 취소
               </Button>
             </a>
-            {!isValid && (
+            {draftSaved && (
+              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                <Save className="h-3 w-3" />
+                임시저장됨
+              </span>
+            )}
+            {!isValid && !draftSaved && (
               <span className="text-xs text-gray-400">
                 제목 5자·내용 20자 이상 입력해주세요
               </span>

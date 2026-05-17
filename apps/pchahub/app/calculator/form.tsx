@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
-import { ArrowRight, RotateCcw, TrendingUp } from 'lucide-react'
+import { useMemo, useState, useEffect, useCallback } from 'react'
+import { ArrowRight, BookmarkPlus, Check, Copy, RotateCcw, Trash2, TrendingUp } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { BRANDS, type MockBrand } from '@/lib/mock-data'
@@ -12,6 +12,19 @@ import {
   inputsFromBrand,
   type CalculatorInputs,
 } from '@/lib/calculator'
+
+const SAVED_CALCS_KEY = 'pchahub:savedCalcs'
+
+interface SavedCalc {
+  id: string
+  savedAt: string
+  brandName?: string
+  inputs: CalculatorInputs
+  monthlyRevenue: number
+  operatingProfit: number
+  profitMargin: number
+  recoveryMonths: number | null
+}
 
 interface CalculatorFormProps {
   initialBrandId?: string
@@ -36,6 +49,59 @@ export function CalculatorForm({ initialBrandId }: CalculatorFormProps) {
   const result = useMemo(() => calculate(inputs), [inputs])
   const selectedBrand = brandId ? BRANDS.find((b) => b.id === brandId) : null
   const brandAvg = selectedBrand ? getBrandDetail(selectedBrand).revenue.averageMonthly : null
+
+  const [savedCalcs, setSavedCalcs] = useState<SavedCalc[]>([])
+  const [justSaved, setJustSaved] = useState(false)
+  const [justCopied, setJustCopied] = useState(false)
+
+  // Load saved calcs from localStorage on mount
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(SAVED_CALCS_KEY)
+      if (raw) setSavedCalcs(JSON.parse(raw) as SavedCalc[])
+    } catch { /* ignore */ }
+  }, [])
+
+  const saveCalc = useCallback(() => {
+    const entry: SavedCalc = {
+      id: `calc-${Date.now()}`,
+      savedAt: new Date().toISOString(),
+      brandName: selectedBrand?.name,
+      inputs,
+      monthlyRevenue: result.monthlyRevenue,
+      operatingProfit: result.operatingProfit,
+      profitMargin: result.profitMargin,
+      recoveryMonths: result.recoveryMonths,
+    }
+    try {
+      const raw = window.localStorage.getItem(SAVED_CALCS_KEY)
+      const prev: SavedCalc[] = raw ? (JSON.parse(raw) as SavedCalc[]) : []
+      const next = [entry, ...prev].slice(0, 10) // keep latest 10
+      window.localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(next))
+      setSavedCalcs(next)
+      setJustSaved(true)
+      setTimeout(() => setJustSaved(false), 2000)
+    } catch { /* ignore */ }
+  }, [inputs, result, selectedBrand])
+
+  const deleteSavedCalc = (id: string) => {
+    try {
+      const next = savedCalcs.filter((c) => c.id !== id)
+      window.localStorage.setItem(SAVED_CALCS_KEY, JSON.stringify(next))
+      setSavedCalcs(next)
+    } catch { /* ignore */ }
+  }
+
+  const shareCalc = useCallback(() => {
+    const params = new URLSearchParams()
+    if (brandId) params.set('brand', brandId)
+    Object.entries(inputs).forEach(([k, v]) => params.set(k, String(v)))
+    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`
+    navigator.clipboard.writeText(url).then(() => {
+      setJustCopied(true)
+      setTimeout(() => setJustCopied(false), 2000)
+    }).catch(() => { /* ignore */ })
+  }, [inputs, brandId])
 
   const onResetBrand = () => {
     setBrandId('')
@@ -304,6 +370,26 @@ export function CalculatorForm({ initialBrandId }: CalculatorFormProps) {
               </div>
             </div>
 
+            {/* Save + Share actions */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={saveCalc}
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                {justSaved ? <Check className="h-4 w-4 text-emerald-600" /> : <BookmarkPlus className="h-4 w-4" />}
+                {justSaved ? '저장됨' : '결과 저장'}
+              </button>
+              <button
+                type="button"
+                onClick={shareCalc}
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                {justCopied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                {justCopied ? '복사됨' : '결과 공유'}
+              </button>
+            </div>
+
             <a
               href={selectedBrand ? `/inquiry?brand=${selectedBrand.id}` : '/inquiry'}
               className="block"
@@ -319,6 +405,63 @@ export function CalculatorForm({ initialBrandId }: CalculatorFormProps) {
           본 계산은 입력값을 바탕으로 한 추정치이며 실제 매출과 차이가 있을 수 있습니다. 협회 등록 평균은
           참고용입니다.
         </p>
+
+        {/* Saved calculation history */}
+        {savedCalcs.length > 0 && (
+          <div className="mt-6">
+            <h3 className="mb-3 text-sm font-semibold text-gray-900">저장된 계산 내역</h3>
+            <div className="space-y-2">
+              {savedCalcs.map((calc) => (
+                <div
+                  key={calc.id}
+                  className="rounded-lg border border-gray-200 bg-white p-3 text-sm"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-medium text-gray-900 truncate">
+                        {calc.brandName ?? '브랜드 미선택'}
+                      </div>
+                      <div className="mt-0.5 text-xs text-gray-500">
+                        {new Date(calc.savedAt).toLocaleString('ko-KR', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => deleteSavedCalc(calc.id)}
+                      className="shrink-0 rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                      aria-label="삭제"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                  <div className="mt-2 grid grid-cols-3 gap-1 text-xs">
+                    <div>
+                      <div className="text-gray-500">월매출</div>
+                      <div className="font-semibold text-gray-900">{formatNumber(Math.round(calc.monthlyRevenue))}만</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">영업이익</div>
+                      <div className={`font-semibold ${calc.operatingProfit >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                        {calc.operatingProfit >= 0 ? '+' : ''}{formatNumber(Math.round(calc.operatingProfit))}만
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500">회수 기간</div>
+                      <div className="font-semibold text-gray-900">
+                        {calc.recoveryMonths === null ? '불가' : calc.recoveryMonths >= 120 ? '120개월+' : `${calc.recoveryMonths}개월`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

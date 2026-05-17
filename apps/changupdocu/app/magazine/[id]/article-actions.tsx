@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Share2, ThumbsUp } from 'lucide-react'
+import { Printer, Share2, ThumbsUp } from 'lucide-react'
 import { Button } from '@amakers/ui'
 
 const LIKES_KEY = 'changupdocu:likes'
@@ -67,6 +67,14 @@ export function ArticleActions({ articleId, title }: ArticleActionsProps) {
         <Share2 className="h-3.5 w-3.5" />
         {copied ? '복사됨 ✓' : '공유'}
       </Button>
+      <button
+        type="button"
+        onClick={() => window.print()}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+      >
+        <Printer className="h-4 w-4" />
+        인쇄
+      </button>
     </div>
   )
 }
