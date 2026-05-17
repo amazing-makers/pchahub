@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { BookOpen, CheckCircle2, Clock, Heart, MessageCircle } from 'lucide-react'
+import { Bookmark, BookOpen, CheckCircle2, Clock, Heart, MessageCircle } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
-import { COURSES } from '@/lib/mock-data'
+import { COURSES, MENTORS } from '@/lib/mock-data'
 
 interface Consultation {
   id: string
@@ -35,6 +35,7 @@ interface Enrollment {
 
 export function MyPageClient() {
   const [savedIds, setSavedIds] = useState<string[]>([])
+  const [savedMentorIds, setSavedMentorIds] = useState<string[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [consultations, setConsultations] = useState<Consultation[]>([])
   const [recentIds, setRecentIds] = useState<string[]>([])
@@ -45,6 +46,10 @@ export function MyPageClient() {
     try {
       const raw = window.localStorage.getItem('themanual:savedCourses')
       if (raw) setSavedIds(JSON.parse(raw) as string[])
+    } catch { /* ignore */ }
+    try {
+      const rawM = window.localStorage.getItem('themanual:savedMentors')
+      if (rawM) setSavedMentorIds(JSON.parse(rawM) as string[])
     } catch { /* ignore */ }
     try {
       const raw2 = window.localStorage.getItem('themanual:enrollments')
@@ -78,11 +83,15 @@ export function MyPageClient() {
     .map((id) => COURSES.find((c) => c.id === id))
     .filter(Boolean) as typeof COURSES
 
+  const savedMentors = savedMentorIds
+    .map((id) => MENTORS.find((m) => m.id === id))
+    .filter(Boolean) as typeof MENTORS
+
   if (!hydrated) {
     return (
       <div className="animate-pulse space-y-8">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-24 rounded-xl bg-gray-100" />
           ))}
         </div>
@@ -93,12 +102,13 @@ export function MyPageClient() {
   return (
     <div className="space-y-8">
       {/* 통계 */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatCard icon={BookOpen} label="수강 중" value={`${enrolledCourses.length}강`} />
         <StatCard icon={CheckCircle2} label="완료한 강의" value={`${completedLessonIds.length}강`} />
         <StatCard icon={Heart} label="찜한 강의" value={`${savedCourses.length}강`} />
         <StatCard icon={Clock} label="최근 본 강의" value={`${recentIds.length}강`} />
         <StatCard icon={MessageCircle} label="멘토 상담" value={`${consultations.length}건`} />
+        <StatCard icon={Bookmark} label="저장한 멘토" value={`${savedMentors.length}명`} />
       </div>
 
       {/* 수강 중 강의 */}
@@ -151,6 +161,65 @@ export function MyPageClient() {
           </div>
         </section>
       )}
+
+      {/* 저장한 멘토 */}
+      <section>
+        <div className="mb-4 flex items-center gap-2">
+          <Bookmark className="h-4 w-4 text-[var(--brand-primary)]" />
+          <h2 className="text-h4 font-semibold text-gray-900">저장한 멘토</h2>
+        </div>
+        {savedMentors.length === 0 ? (
+          <Card className="border-dashed border-gray-200">
+            <CardContent className="p-8 text-center">
+              <Bookmark className="mx-auto h-8 w-8 text-gray-300" />
+              <p className="mt-3 text-sm text-gray-500">
+                아직 저장한 멘토가 없습니다.
+              </p>
+              <a
+                href="/mentors"
+                className="mt-4 inline-flex rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                멘토 찾기
+              </a>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-2">
+            {savedMentors.map((m) => (
+              <a
+                key={m.id}
+                href={`/mentors/${m.id}`}
+                className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-gray-400"
+              >
+                <div className="h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={m.avatarUrl}
+                    alt={m.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-gray-900">{m.name}</div>
+                  <div className="text-sm text-gray-500">{m.role}</div>
+                  {m.specialties.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {m.specialties.slice(0, 3).map((s) => (
+                        <span
+                          key={s}
+                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* 멘토 상담 내역 */}
       <section>

@@ -1,7 +1,7 @@
 import { ArrowRight, Flame } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
-import { EpisodeCard } from '@/components/episode-card'
+import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { ArticleCard } from '@/components/article-card'
 import {
   CATEGORY_COLOR,
@@ -47,7 +47,7 @@ export default function HomePage() {
           <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
             {heroEpisode && (
               <div>
-                <EpisodeCard episode={heroEpisode} large />
+                <EpisodeCardWithSave episode={heroEpisode} large />
               </div>
             )}
             <aside className="space-y-3">
@@ -88,7 +88,7 @@ export default function HomePage() {
           <h2 className="mb-6 text-h3 font-semibold text-gray-900">대표 에피소드</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {otherFeatured.map((e) => (
-              <EpisodeCard key={e.id} episode={e} />
+              <EpisodeCardWithSave key={e.id} episode={e} />
             ))}
           </div>
         </section>
@@ -136,7 +136,7 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {recent.map((e) => (
-            <EpisodeCard key={e.id} episode={e} />
+            <EpisodeCardWithSave key={e.id} episode={e} />
           ))}
         </div>
       </section>

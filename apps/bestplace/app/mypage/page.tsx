@@ -42,6 +42,12 @@ export default async function MyPage() {
                 >
                   계정 설정
                 </a>
+                <a
+                  href="/register"
+                  className="rounded-full border border-gray-900 bg-gray-900 px-3 py-1 text-white hover:bg-gray-800"
+                >
+                  내 매장 등록하기
+                </a>
               </div>
             </div>
           </div>

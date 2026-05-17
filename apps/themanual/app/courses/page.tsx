@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
+import { CourseCardWithSave } from '@/components/course-card-with-save'
 import { COURSE_CATEGORIES, COURSES, LEVEL_LABEL, type CourseLevel } from '@/lib/mock-data'
 import { buildPageMetadata } from '@amakers/design-system'
 
@@ -175,7 +176,7 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {results.map((c) => (
-                  <CourseCard key={c.id} course={c} />
+                  <CourseCardWithSave key={c.id} course={c} />
                 ))}
               </div>
             )}

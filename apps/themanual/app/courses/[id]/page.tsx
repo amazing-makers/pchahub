@@ -30,6 +30,7 @@ import { EnrollButton } from './enroll-button'
 import { CourseViewTracker } from './course-view-tracker'
 import { LessonCompleteButton } from './lesson-complete-button'
 import { CourseProgress } from './course-progress'
+import { CertificateButton } from './certificate-button'
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ id: c.id }))
@@ -221,7 +222,14 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
             </SectionCard>
 
             {/* Curriculum */}
-            <CourseProgress lessonIds={allLessonIds} />
+            <div className="flex items-center justify-between gap-4">
+              <CourseProgress lessonIds={allLessonIds} />
+              <CertificateButton
+                courseId={course.id}
+                courseTitle={course.title}
+                lessonIds={allLessonIds}
+              />
+            </div>
             <SectionCard
               title="커리큘럼"
               subtitle={`${course.curriculum.length}개 섹션 · ${totalLessons}개 강의 · 총 ${Math.floor(totalDuration / 60)}시간 ${totalDuration % 60}분`}

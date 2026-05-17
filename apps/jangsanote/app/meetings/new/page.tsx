@@ -1,26 +1,35 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@amakers/auth'
-import { redirect } from 'next/navigation'
-import { MeetingNewForm } from './form'
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
 
-export default async function MeetingNewPage() {
-  const session = await getServerSession(authOptions)
-  if (!session) redirect('/auth/signin?callbackUrl=/meetings/new')
+export const metadata: Metadata = buildPageMetadata('jangsanote', {
+  title: '모임 만들기',
+  description: '자영업자·가맹점주와 함께할 모임을 만들어보세요.',
+  path: '/meetings/new',
+})
 
-  const name = (session.user as { name?: string } | null)?.name ?? '익명'
+import { Suspense } from 'react'
+import { ArrowLeft } from 'lucide-react'
+import { MeetingForm } from './meeting-form'
 
+export default function NewMeetingPage() {
   return (
-    <main className="bg-gray-50 min-h-screen">
+    <main className="bg-gray-50">
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h2 font-bold text-gray-900">모임 열기</h1>
+          <a href="/meetings" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            모임 목록
+          </a>
+          <h1 className="mt-3 text-h3 font-bold text-gray-900">모임 만들기</h1>
           <p className="mt-1 text-sm text-gray-500">
-            자영업·가맹 관련 오프라인 또는 온라인 모임을 직접 개설하세요.
+            자영업자·가맹점주와 함께할 모임을 만들어보세요.
           </p>
         </div>
       </section>
-      <div className="container mx-auto max-w-2xl py-8">
-        <MeetingNewForm hostName={name} />
+      <div className="container mx-auto max-w-xl py-10">
+        <Suspense>
+          <MeetingForm />
+        </Suspense>
       </div>
     </main>
   )

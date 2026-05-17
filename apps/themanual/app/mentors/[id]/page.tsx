@@ -10,6 +10,7 @@ import { formatNumber } from '@amakers/utils'
 import { CourseCard } from '@/components/course-card'
 import { coursesByInstructor, MENTORS } from '@/lib/mock-data'
 import { ConsultForm } from './consult-form'
+import { SaveMentorButton } from './save-mentor-button'
 
 export function generateStaticParams() {
   return MENTORS.map((m) => ({ id: m.id }))
@@ -73,6 +74,9 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
                     {s}
                   </span>
                 ))}
+              </div>
+              <div className="mt-4">
+                <SaveMentorButton mentorId={mentor.id} />
               </div>
             </div>
           </div>

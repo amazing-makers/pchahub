@@ -7,9 +7,8 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
   path: '/investments',
 })
 
-import { RoundCard } from '@/components/round-card'
+import { RoundCardWithWatch } from '@/components/round-card-with-watch'
 import { ROUND_TYPE_LABEL, ROUNDS, type RoundType } from '@/lib/mock-data'
-import { WatchButton } from './watch-button'
 
 interface InvestmentsPageProps {
   searchParams: { type?: string; status?: string }
@@ -123,12 +122,7 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {rounds.map((r) => (
-            <div key={r.id} className="relative">
-              <RoundCard round={r} />
-              <div className="absolute right-3 top-3">
-                <WatchButton roundId={r.id} />
-              </div>
-            </div>
+            <RoundCardWithWatch key={r.id} round={r} />
           ))}
         </div>
       </div>

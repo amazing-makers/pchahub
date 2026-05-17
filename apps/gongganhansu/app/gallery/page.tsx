@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   path: '/gallery',
 })
 
-import { PortfolioCard } from '@/components/portfolio-card'
+import { PortfolioCardWithSave } from '@/components/portfolio-card-with-save'
 import { CATEGORIES, PORTFOLIO } from '@/lib/mock-data'
 
 interface GalleryPageProps {
@@ -64,7 +64,7 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {items.map((p) => (
-            <PortfolioCard key={p.id} item={p} />
+            <PortfolioCardWithSave key={p.id} item={p} />
           ))}
         </div>
       </div>

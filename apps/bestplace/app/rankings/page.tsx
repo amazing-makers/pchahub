@@ -7,14 +7,17 @@ export const metadata: Metadata = buildPageMetadata('bestplace', {
   path: '/rankings',
 })
 
+import { Trophy } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { RankingList } from '@/components/ranking-list'
+import { AwardCard } from '@/components/award-card'
 import {
   newestStores,
   STORES,
   topStoresByRating,
   topStoresByVisitors,
   brandById,
+  awardsByYear,
 } from '@/lib/mock-data'
 
 export default function RankingsPage() {
@@ -22,6 +25,8 @@ export default function RankingsPage() {
   const topVisitors = topStoresByVisitors(10)
   const newOpen = newestStores(10)
   const topReviewed = [...STORES].sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 10)
+  // Show rank-1 winners from the current year as award highlights
+  const topAwards = awardsByYear(2026).filter((a) => a.rank === 1)
 
   // #1 store by rating for Hall of Fame callout
   const hallOfFameStore = topRated[0]
@@ -95,6 +100,29 @@ export default function RankingsPage() {
             </p>
           </CardContent>
         </Card>
+
+        {/* 2026 베스트 어워드 — 카테고리별 대상 */}
+        {topAwards.length > 0 && (
+          <section className="mt-12">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-amber-500" />
+                <h2 className="text-h4 font-bold text-gray-900">2026 베스트 어워드 — 대상</h2>
+              </div>
+              <a
+                href="/awards/2026"
+                className="text-sm font-medium text-amber-700 hover:underline"
+              >
+                전체 어워드 보기 →
+              </a>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {topAwards.map((award) => (
+                <AwardCard key={award.id} award={award} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </main>
   )

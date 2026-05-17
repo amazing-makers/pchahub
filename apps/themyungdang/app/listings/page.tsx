@@ -1,6 +1,7 @@
 ﻿import { ChevronLeft, ChevronRight, Map, X } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
+import { ListingCardWithSave } from '@/components/listing-card-with-save'
 import {
   LISTING_CATEGORIES,
   LISTINGS,
@@ -343,7 +344,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {paginatedResults.map((l) => (
-                  <ListingCard key={l.id} listing={l} />
+                  <ListingCardWithSave key={l.id} listing={l} />
                 ))}
               </div>
             )}

@@ -1,6 +1,7 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
+import { BrandSaveButton } from '@/components/brand-save-button'
 import { CompareButton } from '@/components/compare-button'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
@@ -176,6 +177,9 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                   {FEATURED_BRANDS.map((b) => (
                     <div key={b.id} className="relative">
                       <BrandCard brand={b} featured />
+                      <div className="absolute top-2 left-2 z-10">
+                        <BrandSaveButton brandId={b.id} />
+                      </div>
                       <div className="absolute bottom-[72px] right-3 z-10">
                         <CompareButton brandId={b.id} brandName={b.name} />
                       </div>
@@ -207,6 +211,9 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                   {pagedResults.map((b) => (
                     <div key={b.id} className="relative">
                       <BrandCard brand={b} />
+                      <div className="absolute top-2 left-2 z-10">
+                        <BrandSaveButton brandId={b.id} />
+                      </div>
                       <div className="absolute bottom-[72px] right-3 z-10">
                         <CompareButton brandId={b.id} brandName={b.name} />
                       </div>

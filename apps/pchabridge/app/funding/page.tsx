@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
   path: '/funding',
 })
 
-import { RoundCard } from '@/components/round-card'
+import { RoundCardWithWatch } from '@/components/round-card-with-watch'
 import { ROUNDS, daysUntil } from '@/lib/mock-data'
 
 type SortKey = 'latest' | 'closing' | 'target'
@@ -106,7 +106,7 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {sorted.map((r) => (
-              <RoundCard key={r.id} round={r} />
+              <RoundCardWithWatch key={r.id} round={r} />
             ))}
           </div>
         )}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Megaphone } from 'lucide-react'
-import { CaseCard } from '@/components/case-card'
+import { CaseCardWithSave } from '@/components/case-card-with-save'
 import { PORTFOLIO, SERVICES, SERVICE_LABEL, type ServiceSlug } from '@/lib/mock-data'
 import { buildPageMetadata } from '@amakers/design-system'
 
@@ -79,7 +79,7 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {cases.map((c) => (
-              <CaseCard key={c.id} case={c} />
+              <CaseCardWithSave key={c.id} case={c} />
             ))}
           </div>
         )}
