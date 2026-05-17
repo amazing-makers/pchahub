@@ -11,6 +11,7 @@ const navItems = [
   { href: '/investments', label: '투자 라운드' },
   { href: '/ma', label: 'M&A 매물' },
   { href: '/funding', label: '다점포 펀딩' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

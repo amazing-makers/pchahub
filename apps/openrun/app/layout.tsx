@@ -11,6 +11,7 @@ const navItems = [
   { href: '/services', label: '서비스' },
   { href: '/portfolio', label: '사례' },
   { href: '/contact', label: '문의' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

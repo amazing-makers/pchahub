@@ -11,6 +11,7 @@ const navItems = [
   { href: '/awards', label: '어워드' },
   { href: '/stores', label: '매장 디렉토리' },
   { href: '/rankings', label: '실시간 랭킹' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

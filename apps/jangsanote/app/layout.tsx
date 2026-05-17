@@ -14,6 +14,7 @@ const navItems = [
   { href: '/regions/seoul', label: '지역방' },
   { href: '/meetings', label: '모임' },
   { href: '/general', label: '자유' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

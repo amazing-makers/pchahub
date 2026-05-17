@@ -12,6 +12,7 @@ const navItems = [
   { href: '/contractors', label: '시공사' },
   { href: '/insights', label: '인사이트' },
   { href: '/quote', label: '견적 요청' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

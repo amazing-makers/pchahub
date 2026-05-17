@@ -11,6 +11,7 @@ const navItems = [
   { href: '/courses', label: '강의' },
   { href: '/courses?free=1', label: '무료 강의' },
   { href: '/mentors', label: '멘토' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

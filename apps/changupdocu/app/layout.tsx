@@ -13,6 +13,7 @@ const navItems = [
   { href: '/categories/failure', label: '실패' },
   { href: '/categories/brand', label: '브랜드' },
   { href: '/magazine', label: '매거진' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = []

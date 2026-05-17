@@ -15,6 +15,7 @@ const navItems = [
   { href: '/community', label: '커뮤니티' },
   { href: '/scanner', label: '창업 스캐너' },
   { href: '/calculator', label: '수익 계산기' },
+  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

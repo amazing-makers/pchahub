@@ -1,0 +1,134 @@
+import { Search, TrendingUp, Building2 } from 'lucide-react'
+import { Badge, Card, CardContent } from '@amakers/ui'
+import { ROUNDS, MA_LISTINGS, BRANDS, ROUND_TYPE_LABEL, ROUND_STATUS_LABEL, progressPercent, daysUntil } from '@/lib/mock-data'
+import { RoundCard } from '@/components/round-card'
+import { MACard } from '@/components/ma-card'
+
+interface SearchPageProps {
+  searchParams: { q?: string }
+}
+
+export default function SearchPage({ searchParams }: SearchPageProps) {
+  const q = (searchParams.q ?? '').trim()
+  const needle = q.toLowerCase()
+
+  const brandName = (brandId: string) => BRANDS.find((b) => b.id === brandId)?.name ?? brandId
+
+  const rounds = q
+    ? ROUNDS.filter(
+        (r) =>
+          r.hook.toLowerCase().includes(needle) ||
+          r.tags.some((t) => t.toLowerCase().includes(needle)) ||
+          brandName(r.brandId).toLowerCase().includes(needle) ||
+          ROUND_TYPE_LABEL[r.type].toLowerCase().includes(needle),
+      )
+    : []
+
+  const maListings = q
+    ? MA_LISTINGS.filter(
+        (m) =>
+          brandName(m.brandId).toLowerCase().includes(needle) ||
+          m.rationale.toLowerCase().includes(needle) ||
+          m.includes.some((i) => i.toLowerCase().includes(needle)),
+      )
+    : []
+
+  const total = rounds.length + maListings.length
+
+  return (
+    <main className="bg-gray-50 min-h-screen">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto py-8">
+          <h1 className="text-h3 font-bold text-gray-900">검색</h1>
+          <form method="get" action="/search" className="mt-4">
+            <div className="relative max-w-xl">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                defaultValue={q}
+                placeholder="브랜드명, 투자 유형, 업종 검색..."
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-4 text-sm focus:border-gray-400 focus:outline-none"
+                autoFocus={!q}
+              />
+            </div>
+          </form>
+          {q && (
+            <p className="mt-3 text-sm text-gray-500">
+              <span className="font-medium text-gray-900">'{q}'</span> 검색 결과 · 총 {total}건
+            </p>
+          )}
+        </div>
+      </section>
+
+      <div className="container mx-auto py-8 space-y-8">
+        {!q && (
+          <>
+            <Card>
+              <CardContent className="py-16 text-center">
+                <Search className="mx-auto h-8 w-8 text-gray-300" />
+                <p className="mt-3 text-sm text-gray-500">브랜드명·업종·투자 유형으로 검색하세요.</p>
+              </CardContent>
+            </Card>
+            <div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">인기 검색어</p>
+              <div className="flex flex-wrap gap-2">
+                {['카페', '치킨', 'Series A', 'IPO', '크라우드', 'M&A'].map((keyword) => (
+                  <a
+                    key={keyword}
+                    href={`/search?q=${encodeURIComponent(keyword)}`}
+                    className="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    {keyword}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {q && total === 0 && (
+          <Card>
+            <CardContent className="py-16 text-center">
+              <Search className="mx-auto h-8 w-8 text-gray-300" />
+              <p className="mt-3 text-sm text-gray-500">
+                '<span className="font-medium">{q}</span>'에 대한 결과가 없습니다.
+              </p>
+              <p className="mt-1 text-xs text-gray-400">다른 키워드로 검색해보세요.</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {rounds.length > 0 && (
+          <section>
+            <h2 className="mb-4 text-h4 font-semibold text-gray-900">
+              투자 라운드 <span className="text-sm font-normal text-gray-400">({rounds.length})</span>
+            </h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {rounds.slice(0, 6).map((r) => (
+                <RoundCard key={r.id} round={r} />
+              ))}
+            </div>
+            {rounds.length > 6 && (
+              <a href="/investments" className="mt-3 inline-flex text-sm text-[var(--brand-primary)] hover:underline">
+                라운드 {rounds.length}개 전체보기 →
+              </a>
+            )}
+          </section>
+        )}
+
+        {maListings.length > 0 && (
+          <section>
+            <h2 className="mb-4 text-h4 font-semibold text-gray-900">
+              M&A 매물 <span className="text-sm font-normal text-gray-400">({maListings.length})</span>
+            </h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {maListings.map((m) => (
+                <MACard key={m.id} listing={m} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </main>
+  )
+}
