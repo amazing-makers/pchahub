@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ChevronDown, LogOut, User } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, User } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import type { HeaderAction } from '@amakers/ui'
 import { cn } from '@amakers/utils'
@@ -69,6 +69,14 @@ export function HeaderUserMenu({ actions }: HeaderUserMenuProps) {
             <div className="text-sm font-semibold text-gray-900">{name}</div>
             <div className="truncate text-xs text-gray-500">{session.user?.email}</div>
           </div>
+          <a
+            href="/notifications"
+            role="menuitem"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <Bell className="h-4 w-4 text-gray-400" />
+            알림
+          </a>
           <a
             href="/mypage"
             role="menuitem"
