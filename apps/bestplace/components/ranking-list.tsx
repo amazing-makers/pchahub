@@ -35,7 +35,7 @@ export function RankingList({ stores, metric, title }: RankingListProps) {
                           : 'bg-gray-100 text-gray-700')
                   }
                 >
-                  {i + 1}
+                  {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
                 </span>
                 {brand && (
                   <span

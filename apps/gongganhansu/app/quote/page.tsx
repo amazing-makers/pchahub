@@ -17,6 +17,20 @@ export default function QuotePage({ searchParams }: QuotePageProps) {
         </div>
       </section>
       <div className="container mx-auto py-8">
+        {/* Step indicator — visual only, form is rendered by QuoteForm */}
+        <div className="mb-8 flex items-center justify-between">
+          {['공간 정보', '예산·일정', '연락처 확인'].map((step, i) => (
+            <div key={i} className="flex flex-1 items-center">
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+                  {i + 1}
+                </div>
+                <span className="text-xs text-gray-600">{step}</span>
+              </div>
+              {i < 2 && <div className="mx-2 h-px flex-1 bg-gray-200" />}
+            </div>
+          ))}
+        </div>
         <QuoteForm preselectedContractor={searchParams.contractor} />
       </div>
     </main>

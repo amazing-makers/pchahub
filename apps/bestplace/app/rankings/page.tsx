@@ -14,6 +14,7 @@ import {
   STORES,
   topStoresByRating,
   topStoresByVisitors,
+  brandById,
 } from '@/lib/mock-data'
 
 export default function RankingsPage() {
@@ -21,6 +22,10 @@ export default function RankingsPage() {
   const topVisitors = topStoresByVisitors(10)
   const newOpen = newestStores(10)
   const topReviewed = [...STORES].sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 10)
+
+  // #1 store by rating for Hall of Fame callout
+  const hallOfFameStore = topRated[0]
+  const hallOfFameBrand = hallOfFameStore ? brandById(hallOfFameStore.brandId) : undefined
 
   return (
     <main className="bg-gray-50">
@@ -34,6 +39,30 @@ export default function RankingsPage() {
       </section>
 
       <div className="container mx-auto py-8">
+        {hallOfFameStore && (
+          <div className="mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 shadow-md">
+            <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center">
+              <div className="text-4xl">🏆</div>
+              <div className="flex-1">
+                <p className="text-xs font-bold uppercase tracking-widest text-amber-900">
+                  명예의 전당 · 이번 주 종합 1위
+                </p>
+                <h2 className="mt-1 text-xl font-bold text-white">{hallOfFameStore.name}</h2>
+                <p className="mt-0.5 text-sm text-amber-100">
+                  {hallOfFameBrand?.categoryLabel} · {hallOfFameStore.region} {hallOfFameStore.district}
+                  &nbsp;·&nbsp;평점 ⭐ {hallOfFameStore.rating}
+                  &nbsp;·&nbsp;리뷰 {hallOfFameStore.reviewCount.toLocaleString()}건
+                </p>
+              </div>
+              <a
+                href={`/stores/${hallOfFameStore.id}`}
+                className="shrink-0 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-amber-700 shadow-sm transition-colors hover:bg-amber-50"
+              >
+                매장 보기 →
+              </a>
+            </div>
+          </div>
+        )}
         <div className="grid gap-6 lg:grid-cols-2">
           <Card className="border-gray-200 shadow-sm">
             <CardContent className="p-6">
