@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle2, FileText, Send, X } from 'lucide-react'
+import { CheckCircle2, FileText, Lock, Mail, Send, X } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 
 interface NdaFormProps {
@@ -115,9 +115,43 @@ export function NdaForm({ listingId, brandName, ndaRequired }: NdaFormProps) {
         </div>
 
         {ndaRequired && (
-          <p className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-            이 매물은 기밀 유지 계약(NDA) 서명 후 상세 정보가 제공됩니다.
-          </p>
+          <>
+            {/* NDA 프로세스 단계 표시 */}
+            <div className="mb-5 flex items-center gap-0">
+              {[
+                { icon: FileText, label: '정보 제출', step: 1 },
+                { icon: Mail,     label: 'NDA 수신',  step: 2 },
+                { icon: Lock,     label: '자료 열람',  step: 3 },
+              ].map(({ icon: Icon, label, step }, idx, arr) => (
+                <div key={step} className="flex flex-1 items-center">
+                  <div className="flex flex-col items-center gap-1">
+                    <div
+                      className={
+                        'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ' +
+                        (step === 1
+                          ? 'bg-[var(--brand-primary)] text-white'
+                          : 'bg-gray-100 text-gray-400')
+                      }
+                    >
+                      {step === 1 ? <Icon className="h-3.5 w-3.5" /> : step}
+                    </div>
+                    <span className={
+                      'text-[10px] font-medium ' +
+                      (step === 1 ? 'text-gray-900' : 'text-gray-400')
+                    }>
+                      {label}
+                    </span>
+                  </div>
+                  {idx < arr.length - 1 && (
+                    <div className="mb-3 h-px flex-1 bg-gray-200" />
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              ① 아래 정보를 제출하면 ② 영업일 2일 내 NDA 서류를 이메일로 받습니다. ③ 서명 완료 후 상세 자료가 공개됩니다.
+            </p>
+          </>
         )}
 
         <form onSubmit={submit} className="space-y-3">

@@ -13,6 +13,7 @@ import { ArticleCard } from '@/components/article-card'
 import { ArticleActions } from './article-actions'
 import { ArticleViewTracker } from './article-view-tracker'
 import { SaveArticleButton } from './save-article-button'
+import { ReadingProgress } from './reading-progress'
 
 export function generateStaticParams() {
   return ARTICLES.map((a) => ({ id: a.id }))
@@ -61,6 +62,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
 
   return (
     <main className="bg-white">
+      <ReadingProgress />
       <ArticleViewTracker articleId={article.id} />
       <JsonLd data={articleJsonLd} />
       <JsonLd data={breadcrumbs} />
@@ -89,12 +91,27 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
 
             <div className="mt-6 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={article.authorAvatar}
-                  alt={article.authorName}
-                  className="h-12 w-12 shrink-0 rounded-full object-cover"
-                />
+                {article.authorAvatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={article.authorAvatar}
+                    alt={article.authorName}
+                    className="h-12 w-12 shrink-0 rounded-full object-cover"
+                    onError={(e) => {
+                      const target = e.currentTarget
+                      target.style.display = 'none'
+                      const fallback = target.nextElementSibling as HTMLElement | null
+                      if (fallback) fallback.style.display = 'flex'
+                    }}
+                  />
+                ) : null}
+                <div
+                  className="h-12 w-12 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
+                  style={{ background: 'var(--brand-primary)', display: article.authorAvatar ? 'none' : 'flex' }}
+                  aria-hidden="true"
+                >
+                  {article.authorName.slice(0, 1)}
+                </div>
                 <div className="text-sm">
                   <div className="font-semibold text-gray-900">{article.authorName}</div>
                   <div className="text-xs text-gray-500">{article.authorRole}</div>

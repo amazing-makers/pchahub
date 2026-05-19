@@ -13,11 +13,11 @@ const REGION_CHANNELS = CHANNELS.filter((c) => c.type === 'region')
 const GENERAL_CHANNELS = CHANNELS.filter((c) => c.type === 'general')
 
 const CATEGORIES = [
-  { key: 'experience', label: '운영 후기' },
-  { key: 'question', label: '질문' },
-  { key: 'tip', label: '팁·노하우' },
-  { key: 'news', label: '시장 동향' },
-  { key: 'discussion', label: '토론' },
+  { key: 'experience', label: '운영 후기', emoji: '📋' },
+  { key: 'question',   label: '질문',      emoji: '❓' },
+  { key: 'tip',        label: '팁·노하우', emoji: '💡' },
+  { key: 'news',       label: '시장 동향', emoji: '📰' },
+  { key: 'discussion', label: '토론',      emoji: '💬' },
 ] as const
 
 interface FormState {
@@ -261,20 +261,21 @@ export function WriteForm({ name }: WriteFormProps) {
             <label className="block text-sm font-semibold text-gray-900">
               카테고리 <span className="text-rose-500">*</span>
             </label>
-            <div className="mt-2 flex flex-wrap gap-1.5">
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-5">
               {CATEGORIES.map((c) => (
                 <button
                   key={c.key}
                   type="button"
                   onClick={() => setState((p) => ({ ...p, category: c.key }))}
                   className={
-                    'rounded-full border px-3 py-1 text-xs transition-colors ' +
+                    'flex flex-col items-center gap-1 rounded-xl border-2 py-3 text-center transition-colors ' +
                     (state.category === c.key
                       ? 'border-gray-900 bg-gray-900 text-white'
                       : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
                   }
                 >
-                  {c.label}
+                  <span className="text-lg leading-none">{c.emoji}</span>
+                  <span className="text-xs font-medium">{c.label}</span>
                 </button>
               ))}
             </div>
@@ -308,7 +309,14 @@ export function WriteForm({ name }: WriteFormProps) {
               rows={8}
               className="mt-1.5 w-full resize-y rounded-lg border border-gray-200 px-3 py-2.5 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
             />
-            <div className="mt-1 text-right text-xs text-gray-400">{state.content.length}자</div>
+            <div className="mt-1 flex items-center justify-between text-xs">
+              <span className={state.content.trim().length < 20 ? 'text-rose-400' : 'text-emerald-600'}>
+                {state.content.trim().length < 20
+                  ? `최소 ${20 - state.content.trim().length}자 더 입력`
+                  : '✓ 글자 수 충족'}
+              </span>
+              <span className="text-gray-400">{state.content.length}자</span>
+            </div>
           </div>
 
           {/* 태그 */}
