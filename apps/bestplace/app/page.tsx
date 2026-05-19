@@ -26,7 +26,7 @@ const otherPlatforms = (
 ).filter(([key]) => key !== 'bestplace')
 
 export default function HomePage() {
-  const currentYear = 2026
+  const currentYear = new Date().getFullYear()
   const yearAwards = awardsByYear(currentYear)
   // 카테고리별 1위만 추출
   const firstPlaceAwards = yearAwards.filter((a) => a.rank === 1).slice(0, 4)

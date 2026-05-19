@@ -124,7 +124,12 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
 
   return (
     <main className="bg-gray-50">
-      <BrandViewTracker brandId={brand.id} />
+      <BrandViewTracker
+        brandId={brand.id}
+        brandName={brand.name}
+        brandCategory={brand.categoryLabel}
+        brandLogoColor={brand.logoColor}
+      />
       <JsonLd data={brandJsonLd} />
       <JsonLd data={breadcrumbsJsonLd} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}

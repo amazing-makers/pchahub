@@ -8,10 +8,17 @@ interface CourseCardProps {
   featured?: boolean
 }
 
+/** 강의가 30일 이내 등록된 경우 "NEW" 뱃지를 표시 */
+function isNewCourse(createdAt: string) {
+  const msDiff = Date.now() - new Date(createdAt).getTime()
+  return msDiff < 30 * 24 * 60 * 60 * 1000
+}
+
 export function CourseCard({ course, featured = false }: CourseCardProps) {
   const category = COURSE_CATEGORIES.find((c) => c.key === course.category)
   const firstInstructor = MENTORS.find((m) => m.id === course.instructorIds[0])
   const isFree = course.price === 0
+  const isNew = course.createdAt ? isNewCourse(course.createdAt) : false
 
   return (
     <a href={`/courses/${course.id}`} className="group block h-full">
@@ -35,16 +42,11 @@ export function CourseCard({ course, featured = false }: CourseCardProps) {
                 {LEVEL_LABEL[course.level]}
               </Badge>
             </div>
-            {isFree && (
-              <div className="absolute right-3 top-3">
-                <Badge variant="success">무료</Badge>
-              </div>
-            )}
-            {featured && !isFree && (
-              <div className="absolute right-3 top-3">
-                <Badge variant="warning">추천</Badge>
-              </div>
-            )}
+            <div className="absolute right-3 top-3 flex flex-col items-end gap-1">
+              {isNew && <Badge variant="primary">NEW</Badge>}
+              {isFree && <Badge variant="success">무료</Badge>}
+              {featured && !isFree && !isNew && <Badge variant="warning">추천</Badge>}
+            </div>
             <div className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-md">
               <PlayCircle className="h-5 w-5 text-gray-900" />
             </div>

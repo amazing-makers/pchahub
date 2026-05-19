@@ -11,6 +11,7 @@ import { ArrowRight, Building2, Calculator, CheckCircle2, Flame, Handshake, MapP
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { SearchBar } from '@/components/search-bar'
+import { RecentlyViewedBrands } from '@/components/recently-viewed-brands'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
 import { ListingCard } from '@/components/listing-card'
@@ -110,6 +111,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 최근 본 브랜드 — 클라이언트 전용, localStorage 기반 */}
+      <RecentlyViewedBrands />
 
       {/* Featured (paid) placements */}
       {FEATURED_BRANDS.length > 0 && (

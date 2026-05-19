@@ -240,18 +240,25 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
         )}
 
         {related.length > 0 && (
-          <Card className="border-gray-200 shadow-sm">
-            <CardContent className="p-6">
+          <div>
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-h4 font-semibold text-gray-900">
-                같은 {CATEGORY_LABEL[ep.category]} 카테고리
+                다음에 볼 에피소드
               </h2>
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                {related.map((r) => (
-                  <EpisodeCard key={r.id} episode={r} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              <a
+                href={`/categories/${ep.category}`}
+                className="text-sm font-medium hover:underline"
+                style={{ color: CATEGORY_COLOR[ep.category] }}
+              >
+                {CATEGORY_LABEL[ep.category]} 전체 보기 →
+              </a>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {related.map((r) => (
+                <EpisodeCard key={r.id} episode={r} />
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </main>

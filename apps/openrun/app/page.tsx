@@ -8,11 +8,12 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
 })
 
 import { ArrowRight, BarChart3, Target, Zap } from 'lucide-react'
-import { Button, Card, CardContent } from '@amakers/ui'
+import { Button, Card } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { ServiceCard } from '@/components/service-card'
 import { CaseCard } from '@/components/case-card'
+import { Testimonials } from '@/components/testimonials'
 import { FEATURED_PORTFOLIO, SERVICES, STATS, TESTIMONIALS } from '@/lib/mock-data'
 
 const otherPlatforms = (
@@ -144,33 +145,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto py-section">
-        <h2 className="mb-8 text-h2 font-bold text-gray-900">고객 후기</h2>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <Card key={t.id} className="border-gray-200 shadow-sm">
-              <CardContent className="p-6">
-                <div className="text-3xl font-bold" style={{ color: 'var(--brand-primary)' }}>
-                  “
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-gray-700">{t.quote}</p>
-                <div className="mt-5 flex items-center gap-3 border-t border-gray-100 pt-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={t.avatarUrl}
-                    alt={t.author}
-                    className="h-10 w-10 shrink-0 rounded-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="text-sm">
-                    <div className="font-semibold text-gray-900">{t.author}</div>
-                    <div className="text-xs text-gray-500">{t.role}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <section className=”container mx-auto py-section”>
+        <h2 className=”mb-8 text-h2 font-bold text-gray-900”>고객 후기</h2>
+        <Testimonials testimonials={TESTIMONIALS} />
       </section>
 
       <section className="container mx-auto pb-section">

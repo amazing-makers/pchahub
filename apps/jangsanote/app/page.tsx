@@ -14,7 +14,9 @@ import { ChannelList } from '@/components/channel-list'
 import { PostCard } from '@/components/post-card'
 import { MeetingCard } from '@/components/meeting-card'
 import {
+  CHANNELS,
   HOT_POSTS,
+  MEETINGS,
   PINNED_POSTS,
   popularPosts,
   POSTS,
@@ -27,6 +29,11 @@ const otherPlatforms = (
 ).filter(([key]) => key !== 'jangsanote')
 
 export default function HomePage() {
+  // 동적 통계 — mock 데이터 기반으로 계산
+  const totalPosts    = POSTS.length + PINNED_POSTS.length
+  const totalMeetings = MEETINGS.length
+  const totalChannels = CHANNELS.length
+
   const recent = [...POSTS]
     .filter((p) => !p.pinned)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
@@ -57,10 +64,12 @@ export default function HomePage() {
                 전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티.
               </p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-500">
-              <span>전체 회원 14,820명</span>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+              <span>채널 {totalChannels}개</span>
               <span>·</span>
-              <span>오늘 새 글 38개</span>
+              <span>누적 게시글 {formatNumber(totalPosts)}개</span>
+              <span>·</span>
+              <span>모임 {totalMeetings}건</span>
             </div>
           </div>
         </div>

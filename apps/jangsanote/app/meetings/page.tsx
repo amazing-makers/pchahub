@@ -11,6 +11,7 @@ import { Calendar, Plus, Search } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { MEETINGS, MEETING_TYPE_LABEL, type MeetingType } from '@/lib/mock-data'
 import { MeetingCard } from '@/components/meeting-card'
+import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
 const TYPES: Array<{ value: '' | MeetingType; label: string }> = [
   { value: '', label: '전체' },
@@ -75,8 +76,48 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
+        {/* 모바일 필터 */}
+        <div className="mb-4">
+          <MobileFilterToggle>
+            <div className="space-y-4">
+              <FilterGroup title="유형">
+                <div className="space-y-1">
+                  {TYPES.map((t) => (
+                    <FilterLink
+                      key={t.value || 'all'}
+                      href={makeHref(searchParams, { type: t.value })}
+                      active={(t.value === '' && !type) || type === t.value}
+                    >
+                      {t.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+              <FilterGroup title="지역">
+                <div className="space-y-1">
+                  {REGIONS.map((r) => (
+                    <FilterLink
+                      key={r}
+                      href={makeHref(searchParams, { region: r })}
+                      active={(r === '전국' && !region) || region === r}
+                    >
+                      {r}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+              <FilterGroup title="상태">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { status: 'upcoming' })} active={status === 'upcoming'}>예정된 모임</FilterLink>
+                  <FilterLink href={makeHref(searchParams, { status: 'all' })} active={status === 'all'}>전체 (마감 포함)</FilterLink>
+                </div>
+              </FilterGroup>
+            </div>
+          </MobileFilterToggle>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
+          <aside className="hidden space-y-5 lg:block lg:sticky lg:top-20 lg:self-start">
             <FilterGroup title="유형">
               <div className="space-y-1">
                 {TYPES.map((t) => (
@@ -135,7 +176,7 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
           </aside>
 
           <div>
-            {/* Search bar */}
+            {/* 검색 */}
             <form method="GET" action="/meetings" className="mb-4 flex gap-2">
               {type && <input type="hidden" name="type" value={type} />}
               {region && region !== '전국' && <input type="hidden" name="region" value={region} />}
