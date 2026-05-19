@@ -13,6 +13,7 @@ import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { AwardCard } from '@/components/award-card'
 import { StoreCard } from '@/components/store-card'
 import { RankingList } from '@/components/ranking-list'
+import { RecentlyViewedStores } from '@/components/recently-viewed-stores'
 import {
   awardsByYear,
   newestStores,
@@ -86,6 +87,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 최근 본 매장 — localStorage 기반, hydration 후 렌더 */}
+      <RecentlyViewedStores />
 
       {/* Awards — 카테고리별 1위 4개 */}
       <section className="container mx-auto pt-section">

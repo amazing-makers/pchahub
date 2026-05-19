@@ -3,11 +3,16 @@ import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import type { MockMentor } from '@/lib/mock-data'
 
+function isNewMentor(createdAt: string) {
+  return Date.now() - new Date(createdAt).getTime() < 30 * 24 * 60 * 60 * 1000
+}
+
 interface MentorCardProps {
   mentor: MockMentor
 }
 
 export function MentorCard({ mentor }: MentorCardProps) {
+  const isNew = mentor.createdAt ? isNewMentor(mentor.createdAt) : false
   return (
     <a href={`/mentors/${mentor.id}`} className="group block h-full">
       <Card className="h-full transition-shadow hover:shadow-md">
@@ -20,12 +25,26 @@ export function MentorCard({ mentor }: MentorCardProps) {
                 alt={mentor.name}
                 className="h-full w-full object-cover"
                 loading="lazy"
+                onError={(e) => {
+                  const img = e.currentTarget
+                  const fallback = img.nextElementSibling as HTMLElement | null
+                  img.style.display = 'none'
+                  if (fallback) fallback.style.display = 'flex'
+                }}
               />
+              <div
+                className="absolute inset-0 hidden items-center justify-center text-xl font-bold text-white"
+                style={{ background: 'var(--brand-primary)' }}
+                aria-hidden
+              >
+                {mentor.name.slice(0, 1)}
+              </div>
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <h3 className="text-base font-bold text-gray-900">{mentor.name}</h3>
-                {mentor.featured && <Badge variant="primary">추천</Badge>}
+                {isNew && <Badge variant="primary">NEW</Badge>}
+                {mentor.featured && !isNew && <Badge variant="warning">추천</Badge>}
               </div>
               <p className="mt-0.5 text-sm text-gray-600">{mentor.role}</p>
               <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">

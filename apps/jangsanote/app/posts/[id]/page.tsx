@@ -223,6 +223,39 @@ export default function PostPage({ params }: PostPageProps) {
             )}
           </div>
 
+          {/* 모바일 채널 정보 — lg에서 숨김 */}
+          <div className="lg:hidden">
+            <Card className="border-gray-200">
+              <CardContent className="p-5">
+                <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">채널 정보</div>
+                <a
+                  href={channelHref}
+                  className="mt-2 block text-base font-bold text-gray-900 hover:text-[var(--brand-primary)]"
+                >
+                  {channelName}
+                </a>
+                <ChannelSubscribeButton
+                  channelType={post.channelType}
+                  channelKey={post.channelKey}
+                  channelName={channelName}
+                />
+                {post.channelType === 'category' && (
+                  <div className="mt-4 space-y-2 border-t border-gray-100 pt-4 text-sm">
+                    <a href={`https://pchahub.amakers.co.kr/categories/${post.channelKey}`} className="block text-gray-700 hover:text-gray-900">
+                      → 가맹 브랜드 (프차허브)
+                    </a>
+                    <a href={`https://themyungdang.amakers.co.kr/listings?category=${post.channelKey}`} className="block text-gray-700 hover:text-gray-900">
+                      → 입점 매물 (더명당)
+                    </a>
+                    <a href={`https://themanual.amakers.co.kr/courses?category=${post.channelKey}`} className="block text-gray-700 hover:text-gray-900">
+                      → 운영 강의 (더메뉴얼)
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Sidebar */}
           <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start">
             <Card className="border-gray-200">

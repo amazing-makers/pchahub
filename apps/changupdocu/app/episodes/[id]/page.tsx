@@ -25,6 +25,7 @@ import {
 import { EpisodeCard } from '@/components/episode-card'
 import { EpisodeActions } from './episode-actions'
 import { EpisodeViewTracker } from './episode-view-tracker'
+import { SaveEpisodeButton } from './save-episode-button'
 
 export function generateStaticParams() {
   return EPISODES.map((e) => ({ id: e.id }))
@@ -152,8 +153,9 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
               </span>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 flex flex-wrap items-center gap-2">
               <EpisodeActions episodeId={ep.id} title={ep.title} />
+              <SaveEpisodeButton episodeId={ep.id} />
             </div>
           </div>
         </div>

@@ -70,6 +70,8 @@ export interface MockMentor {
   totalConsultations: number
   yearsOfExperience: number
   featured: boolean
+  /** ISO date string — used to detect recently added mentors (NEW badge). */
+  createdAt?: string
 }
 
 export const COURSE_CATEGORIES: CourseCategory[] = [
@@ -182,6 +184,7 @@ const RAW_MENTORS: RawMentor[] = [
     totalConsultations: 64,
     yearsOfExperience: 8,
     featured: false,
+    createdAt: '2026-05-01',
   },
   {
     id: 'm8',
@@ -195,6 +198,7 @@ const RAW_MENTORS: RawMentor[] = [
     totalConsultations: 108,
     yearsOfExperience: 7,
     featured: false,
+    createdAt: '2026-05-10',
   },
 ]
 

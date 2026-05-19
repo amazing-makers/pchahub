@@ -63,12 +63,29 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
       <JsonLd data={breadcrumbs} />
       {/* Hero image */}
       <div
-        className="relative h-56 w-full sm:h-72"
+        className="relative h-56 w-full overflow-hidden sm:h-72"
         style={{
           background: `linear-gradient(135deg, ${c.imageColors[0]}, ${c.imageColors[1] ?? c.imageColors[0]})`,
         }}
-        aria-hidden
-      />
+      >
+        {c.coverImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={c.coverImage}
+            alt={c.title}
+            className="h-full w-full object-cover opacity-80"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/50" />
+        <div className="absolute bottom-6 left-0 right-0 container mx-auto">
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-3 py-1.5"
+            style={{ background: c.brandColor }}
+          >
+            <span className="text-xs font-bold text-white">{c.client}</span>
+          </div>
+        </div>
+      </div>
 
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

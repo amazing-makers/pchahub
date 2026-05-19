@@ -9,6 +9,7 @@ export const metadata: Metadata = buildPageMetadata('themanual', {
 
 import { Card, CardContent } from '@amakers/ui'
 import { MentorCard } from '@/components/mentor-card'
+import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { MENTORS } from '@/lib/mock-data'
 import { formatNumber } from '@amakers/utils'
 
@@ -107,8 +108,54 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-          {/* 사이드바 필터 */}
-          <aside className="space-y-6">
+          {/* 모바일 필터 토글 */}
+          <div className="lg:hidden">
+            <MobileFilterToggle label="멘토 필터">
+              <div className="space-y-5">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">검색</div>
+                  <form className="mt-2" action="/mentors" method="GET">
+                    {specialty && <input type="hidden" name="specialty" value={specialty} />}
+                    {featured && <input type="hidden" name="featured" value={featured} />}
+                    {sort !== 'popular' && <input type="hidden" name="sort" value={sort} />}
+                    <input
+                      name="q"
+                      defaultValue={q}
+                      placeholder="이름·분야·키워드"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                    />
+                  </form>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">구분</div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <a href={makeHref(searchParams, { featured: undefined })} className={`rounded-full border px-3 py-1 text-sm ${!featured ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'}`}>전체 ({MENTORS.length})</a>
+                    <a href={makeHref(searchParams, { featured: '1' })} className={`rounded-full border px-3 py-1 text-sm ${featured === '1' ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'}`}>추천 ({featuredCount})</a>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">전문 분야</div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <a href={makeHref(searchParams, { specialty: undefined })} className={`rounded-full border px-3 py-1 text-sm ${!specialty ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'}`}>전체</a>
+                    {ALL_SPECIALTIES.map((s) => (
+                      <a key={s} href={makeHref(searchParams, { specialty: s })} className={`rounded-full border px-3 py-1 text-sm ${specialty === s ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'}`}>{s}</a>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">정렬</div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {SORT_OPTIONS.map((o) => (
+                      <a key={o.key} href={makeHref(searchParams, { sort: o.key })} className={`rounded-full border px-3 py-1 text-sm ${sort === o.key ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 text-gray-700'}`}>{o.label}</a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </MobileFilterToggle>
+          </div>
+
+          {/* 사이드바 필터 (데스크톱) */}
+          <aside className="hidden space-y-6 lg:block">
             {/* 검색 */}
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">

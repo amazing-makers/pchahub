@@ -169,7 +169,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
               icon={Calendar}
               label="오픈"
               value={`${store.openedYear}년`}
-              sub={`${2026 - store.openedYear}년차`}
+              sub={`${new Date().getFullYear() - store.openedYear}년차`}
             />
             <StatBlock
               icon={MapPin}

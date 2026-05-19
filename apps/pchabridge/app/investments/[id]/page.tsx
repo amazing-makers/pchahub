@@ -7,7 +7,7 @@ import {
   ChevronRight,
   TrendingUp,
 } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, BrandLogo, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildInvestmentJsonLd,
@@ -99,11 +99,7 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
 
               <div className="mt-4 flex items-start gap-4">
                 {brand && (
-                  <span
-                    className="h-14 w-14 shrink-0 rounded-2xl"
-                    style={{ background: brand.logoColor }}
-                    aria-hidden
-                  />
+                  <BrandLogo brand={brand} size="lg" bordered />
                 )}
                 <div className="min-w-0 flex-1">
                   <h1 className="text-h2 font-bold text-gray-900">

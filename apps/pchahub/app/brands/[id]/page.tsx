@@ -185,7 +185,7 @@ function BrandHero({
   // 가맹사업 연수 계산
   const jngYrs = brand.jngBizStartYear
     ? new Date().getFullYear() - brand.jngBizStartYear
-    : 2026 - detail.hq.franchiseStartYear
+    : new Date().getFullYear() - detail.hq.franchiseStartYear
   // 폐점률 계산 (closedCount / storeCount × 100)
   const closureRate = brand.closedCount && brand.storeCount > 0
     ? ((brand.closedCount / brand.storeCount) * 100).toFixed(1)

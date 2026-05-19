@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Calendar, ChevronRight, ArrowRight, MapPin, Store } from 'lucide-react'
+import { Calendar, ChevronRight, ArrowRight, MapPin, Store, XCircle, CheckCircle2 as CheckCircleIcon } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import {
   buildArticleJsonLd,
@@ -238,9 +238,21 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
               <h2 className="text-h4 font-semibold text-gray-900">설계 도전 + 해결</h2>
               <div className="mt-4 space-y-4">
                 {item.challenges.map((ch, i) => (
-                  <div key={i} className="rounded-xl border border-gray-100 bg-white p-4">
-                    <div className="text-sm font-semibold text-rose-600">문제 · {ch.problem}</div>
-                    <div className="mt-2 text-sm text-gray-700">해결 · {ch.solution}</div>
+                  <div key={i} className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+                    <div className="flex items-start gap-3 border-b border-gray-100 bg-rose-50 p-4">
+                      <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
+                      <div>
+                        <div className="text-xs font-semibold uppercase tracking-wider text-rose-600">설계 문제</div>
+                        <div className="mt-1 text-sm font-medium text-rose-900">{ch.problem}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-4">
+                      <CheckCircleIcon className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                      <div>
+                        <div className="text-xs font-semibold uppercase tracking-wider text-emerald-600">해결 방법</div>
+                        <div className="mt-1 text-sm text-gray-700">{ch.solution}</div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
