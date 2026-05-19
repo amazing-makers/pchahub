@@ -11,12 +11,22 @@ import { Search } from 'lucide-react'
 import { RoundCardWithWatch } from '@/components/round-card-with-watch'
 import { BRANDS, ROUND_TYPE_LABEL, ROUNDS, type RoundType } from '@/lib/mock-data'
 
+const SORT_OPTIONS = [
+  { key: 'featured',  label: '추천 순' },
+  { key: 'roi',       label: '수익률 높은 순' },
+  { key: 'deadline',  label: '마감 임박 순' },
+  { key: 'amount',    label: '목표금액 적은 순' },
+  { key: 'progress',  label: '달성률 높은 순' },
+] as const
+type SortKey = typeof SORT_OPTIONS[number]['key']
+
 interface InvestmentsPageProps {
-  searchParams: { type?: string; status?: string; q?: string }
+  searchParams: { type?: string; status?: string; q?: string; sort?: string }
 }
 
 export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) {
-  const { type, status = 'open', q } = searchParams
+  const { type, status = 'open', q, sort = 'featured' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'featured') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let rounds = ROUNDS.slice()
   if (status === 'open') rounds = rounds.filter((r) => r.status === 'open' || r.status === 'closing-soon')
@@ -30,6 +40,25 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
         (BRANDS.find((b) => b.id === r.brandId)?.name ?? '').toLowerCase().includes(needle),
     )
   }
+
+  // 정렬 적용
+  rounds = [...rounds].sort((a, b) => {
+    switch (activeSort) {
+      case 'roi':
+        return b.expectedAnnualROI - a.expectedAnnualROI
+      case 'deadline':
+        return a.closeDate.localeCompare(b.closeDate)
+      case 'amount':
+        return a.targetAmount - b.targetAmount
+      case 'progress': {
+        const pa = Math.min(100, (a.currentAmount / Math.max(a.targetAmount, 1)) * 100)
+        const pb = Math.min(100, (b.currentAmount / Math.max(b.targetAmount, 1)) * 100)
+        return pb - pa
+      }
+      default: // featured
+        return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+    }
+  })
 
   const TYPES: Array<RoundType | ''> = ['', 'seed', 'series-a', 'series-b', 'crowd', 'store-fund']
 
@@ -144,8 +173,8 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
       })()}
 
       <div className="container mx-auto py-8">
-        <div className="mb-3 flex items-center justify-between">
-          <div className="text-sm text-gray-700">
+        <div className="mb-3 flex flex-wrap items-center gap-3">
+          <div className="flex-1 text-sm text-gray-700">
             {q ? (
               <>
                 <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
@@ -155,6 +184,7 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
               <>{rounds.length}건</>
             )}
           </div>
+          {/* 상태 필터 */}
           <div className="flex gap-2 text-sm">
             {[
               { key: 'open', label: '모집 중' },
@@ -165,8 +195,8 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
                 key={s.key}
                 href={
                   type
-                    ? `/investments?type=${type}&status=${s.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`
-                    : `/investments?status=${s.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`
+                    ? `/investments?type=${type}&status=${s.key}${activeSort !== 'featured' ? `&sort=${activeSort}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`
+                    : `/investments?status=${s.key}${activeSort !== 'featured' ? `&sort=${activeSort}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`
                 }
                 className={
                   'rounded-md px-2 py-1 transition-colors ' +
@@ -176,6 +206,28 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
                 }
               >
                 {s.label}
+              </a>
+            ))}
+          </div>
+          {/* 정렬 */}
+          <div className="flex flex-wrap gap-1.5">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/investments?${new URLSearchParams({
+                  ...(type ? { type } : {}),
+                  status,
+                  sort: o.key,
+                  ...(q ? { q } : {}),
+                }).toString()}`}
+                className={
+                  'rounded-full border px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'border-gray-900 bg-gray-900 text-white'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
               </a>
             ))}
           </div>

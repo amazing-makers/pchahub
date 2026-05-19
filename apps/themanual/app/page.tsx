@@ -13,6 +13,7 @@ import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
 import { CourseCard } from '@/components/course-card'
 import { MentorCard } from '@/components/mentor-card'
+import { SavedCoursesSection } from '@/components/saved-courses-section'
 import {
   COURSE_CATEGORIES,
   FEATURED_COURSES,
@@ -81,6 +82,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <SavedCoursesSection />
 
       {/* Featured courses */}
       {FEATURED_COURSES.length > 0 && (
