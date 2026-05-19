@@ -134,7 +134,20 @@ export function buildSiteMetadata(platform: PlatformKey): Metadata {
  */
 export function buildPageMetadata(
   platform: PlatformKey,
-  overrides: { title?: string; description?: string; path?: string },
+  overrides: {
+    title?: string
+    description?: string
+    path?: string
+    /**
+     * Open Graph 타입. 기사·영상·포스트 페이지는 'article', 기본값은 'website'.
+     * 'article'로 설정하면 publishedTime·authors 메타 태그도 자동으로 포함.
+     */
+    openGraphType?: 'website' | 'article'
+    /** ISO 날짜 문자열 (openGraphType === 'article'일 때 사용) */
+    publishedTime?: string
+    /** 저자 이름 목록 (openGraphType === 'article'일 때 사용) */
+    authors?: string[]
+  },
 ): Metadata {
   const base = buildSiteMetadata(platform)
   const brand = platformColors[platform]
@@ -142,15 +155,24 @@ export function buildPageMetadata(
     ? new URL(overrides.path, `https://${brand.domain}`).toString()
     : `https://${brand.domain}`
 
+  const isArticle = overrides.openGraphType === 'article'
+
   return {
     ...base,
     title: overrides.title,
     description: overrides.description ?? base.description,
     openGraph: {
       ...(base.openGraph ?? {}),
+      type: isArticle ? 'article' : 'website',
       title: overrides.title ?? undefined,
       description: overrides.description ?? base.description ?? undefined,
       url,
+      ...(isArticle && overrides.publishedTime && {
+        publishedTime: overrides.publishedTime,
+      }),
+      ...(isArticle && overrides.authors && {
+        authors: overrides.authors,
+      }),
     },
     twitter: {
       ...(base.twitter ?? {}),

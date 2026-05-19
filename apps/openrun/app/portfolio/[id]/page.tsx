@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import { ChevronRight, MapPin } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import {
+  buildArticleJsonLd,
   buildBreadcrumbsJsonLd,
-  buildCreativeWorkJsonLd,
   buildPageMetadata,
   JsonLd,
 } from '@amakers/design-system'
@@ -27,6 +27,9 @@ export function generateMetadata({ params }: CaseDetailProps): Metadata {
     title: `${c.title} — ${c.client}`,
     description: `${c.hook} · ${c.industry} · ${c.region} · ${c.duration} 캠페인.`,
     path: `/portfolio/${c.id}`,
+    openGraphType: 'article',
+    publishedTime: c.startedAt,
+    authors: [c.client],
   })
 }
 
@@ -36,12 +39,14 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
   const related = PORTFOLIO.filter((x) => x.id !== c.id && x.service === c.service).slice(0, 3)
 
   const caseUrl = `https://openrun.kr/portfolio/${c.id}`
-  const workJsonLd = buildCreativeWorkJsonLd({
-    name: c.title,
+  const workJsonLd = buildArticleJsonLd({
+    headline: c.title,
     description: c.hook,
     url: caseUrl,
     image: c.coverImage,
     publishedAt: c.startedAt,
+    authorName: c.client,
+    authorRole: c.industry,
     publisher: { name: '오픈런', url: 'https://openrun.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({

@@ -31,6 +31,12 @@ export function HeaderUserMenu({ actions }: HeaderUserMenuProps) {
       <>
         <StaticActions actions={actions} />
         <a
+          href="/auth/signup?role=contractor"
+          className="rounded-md border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          업체 회원가입
+        </a>
+        <a
           href="/auth/signin"
           className="rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
         >

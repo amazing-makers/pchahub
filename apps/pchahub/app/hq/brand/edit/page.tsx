@@ -12,9 +12,6 @@ export default async function HQBrandEditPage() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/auth/signin?callbackUrl=/hq/brand/edit')
 
-  const role = (session.user as { role?: string } | null | undefined)?.role
-  if (role !== 'hq') redirect('/mypage')
-
   // Mock: first brand belongs to the logged-in HQ.
   // Real implementation would use session.brandId or a brand_owner_id lookup.
   const myBrand = BRANDS[0]

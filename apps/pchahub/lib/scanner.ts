@@ -86,14 +86,17 @@ function scoreBrand(brand: MockBrand, answers: ScannerAnswers): ScannerMatch {
 
   // -- Hours fit --------------------------------------------------------
   const brandHours = detail.operations.operatingHours
-  const isLateNight = brandHours.includes('02:00') || brandHours.includes('01:00')
+  const is24h = brandHours.includes('24시간')
+  const isLateNight = is24h || brandHours.includes('02:00') || brandHours.includes('01:00') || brandHours.includes('23:00')
   if (answers.hours === 'night' && isLateNight) {
     score += HOURS_WEIGHT
-    reasons.push('야간 상권 위주 운영')
+    if (is24h) reasons.push('24시간 운영으로 야간 수익 가능')
+    else reasons.push('야간 상권 위주 운영')
+  } else if (answers.hours === 'flexible') {
+    score += is24h ? HOURS_WEIGHT : HOURS_WEIGHT * 0.6
+    if (is24h) reasons.push('24시간 운영으로 시간대 유연성 높음')
   } else if (answers.hours === 'day' && brand.category !== 'bar') {
     score += HOURS_WEIGHT * 0.7
-  } else if (answers.hours === 'flexible') {
-    score += HOURS_WEIGHT * 0.5
   } else {
     score += HOURS_WEIGHT * 0.3
   }
@@ -104,15 +107,20 @@ function scoreBrand(brand: MockBrand, answers: ScannerAnswers): ScannerMatch {
     if (answers.staff === 1 && detail.operations.averageStaff === 1) {
       reasons.push('1인 운영 가능한 브랜드')
     }
+  } else if (answers.staff >= detail.operations.averageStaff - 1) {
+    // 1명 부족해도 준수한 적합도
+    score += STAFF_WEIGHT * 0.6
   } else {
     score += STAFF_WEIGHT * 0.4
   }
 
   // -- Experience fit ---------------------------------------------------
   // Bars and Japanese kitchen-heavy concepts benefit from experience.
-  // Cafés/snack are friendlier to first-timers.
+  // PC방 needs light IT/gaming know-how. Cafés/snack/non-food are first-timer-friendly.
   const complexity =
-    brand.category === 'bar' || brand.category === 'japanese' ? 2 : brand.category === 'korean' ? 1 : 0
+    brand.category === 'bar' || brand.category === 'japanese' ? 2
+    : brand.category === 'korean' || brand.category === 'pcbang' ? 1
+    : 0
   const userExpLevel = answers.experience === 'none' ? 0 : answers.experience === 'some' ? 1 : 2
   if (userExpLevel >= complexity) {
     score += EXPERIENCE_WEIGHT

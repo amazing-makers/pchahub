@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
 import { ServiceCard } from '@/components/service-card'
 import { SERVICES } from '@/lib/mock-data'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('openrun', {
   title: '서비스',
@@ -10,9 +10,15 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
   path: '/services',
 })
 
+const serviceListJsonLd = buildItemListJsonLd({
+  url: 'https://openrun.kr/services',
+  items: SERVICES.map((s) => ({ name: s.title, url: `https://openrun.kr/services/${s.slug}` })),
+})
+
 export default function ServicesPage() {
   return (
     <main className="bg-gray-50">
+      <JsonLd data={serviceListJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">서비스</h1>

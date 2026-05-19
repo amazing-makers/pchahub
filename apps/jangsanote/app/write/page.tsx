@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('jangsanote', {
+    title: '글쓰기',
+    description: '업종방·지역방·자유게시판 중 하나를 골라 이야기를 나누세요. 익명으로도 작성 가능합니다.',
+    path: '/write',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'

@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themyungdang', {
+  title: '더명당 — 프랜차이즈 가맹 입점 매물·권리금 거래',
+  description: '전국 프랜차이즈 가맹 입점 매물 플랫폼. 권리금 양도·신규임대·상권 분석. amakers 안전 거래로 권리금 분쟁 위험을 줄이세요.',
+  path: '/',
+})
+
 import dynamic from 'next/dynamic'
 import { ArrowRight, CheckCircle2, Eye, Map, Shield, Sparkles, TrendingUp } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
@@ -58,8 +67,20 @@ export default function HomePage() {
     convenience: '🏪', education: '📚',
   }
 
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '더명당',
+    url: 'https://themyungdang.kr',
+    description: '전국 프랜차이즈 가맹 입점 매물 플랫폼. 권리금 양도·신규임대·상권 분석. amakers 안전 거래로 권리금 분쟁 위험을 줄이세요.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '더명당',
+    url: 'https://themyungdang.kr',
+    searchUrlTemplate: 'https://themyungdang.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto py-section">

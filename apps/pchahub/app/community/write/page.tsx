@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchahub', {
+    title: '커뮤니티 글쓰기',
+    description: '프랜차이즈 창업 경험, 질문, 팁을 커뮤니티에 공유하세요.',
+    path: '/community/write',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'

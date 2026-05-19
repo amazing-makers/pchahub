@@ -1,10 +1,42 @@
-import { ArrowRight, CheckCircle2 } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import type { Metadata } from 'next'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '브랜드 검색',
+  description: '공정거래위원회 가맹정보 기준 프랜차이즈 브랜드 전체 목록. 창업비·성장률·가맹비·매장 수로 필터·정렬하여 나에게 맞는 브랜드를 찾으세요.',
+  path: '/brands',
+})
+
+import { Search } from 'lucide-react'
+import { Card, CardContent } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
 import { BrandSaveButton } from '@/components/brand-save-button'
 import { CompareButton } from '@/components/compare-button'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
+
+// 카테고리별 이모지 아이콘
+const CATEGORY_EMOJI: Record<string, string> = {
+  chicken:     '🍗',
+  cafe:        '☕',
+  korean:      '🍱',
+  japanese:    '🍣',
+  snack:       '🍢',
+  dessert:     '🍰',
+  bar:         '🍺',
+  western:     '🍔',
+  pizza:       '🍕',
+  chinese:     '🥟',
+  convenience: '🏪',
+  bakery:      '🥐',
+  fastfood:    '🍔',
+  pcbang:      '🖥️',
+  education:   '📚',
+  study:       '📖',
+  laundry:     '👕',
+  life:        '🛒',
+  leisure:     '🎮',
+}
 
 interface BrandsPageProps {
   searchParams: { category?: string; region?: string; q?: string; sort?: string; page?: string }
@@ -19,7 +51,9 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
   const { category: activeCategory, region: activeRegion, q, sort = 'recommended', page } = searchParams
   const pageNum = Math.max(1, parseInt(page ?? '1', 10) || 1)
 
-  let results = allBrands.filter((b) => !b.featured)
+  // 검색어·카테고리 필터 시 featured 포함 전체 대상, 조건 없는 기본 목록만 광고섹션과 중복 방지로 featured 제외
+  const isFiltered = Boolean(q || activeCategory || activeRegion)
+  let results = isFiltered ? [...allBrands] : allBrands.filter((b) => !b.featured)
   if (activeCategory) {
     results = results.filter((b) => b.category === activeCategory)
   }
@@ -60,23 +94,33 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
     ? CATEGORIES.find((c) => c.key === activeCategory)?.label
     : null
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://pchahub.kr/brands',
+    items: pagedResults.map((b) => ({ name: b.name, url: `https://pchahub.kr/brands/${b.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
-      {/* Page header */}
+      <JsonLd data={listJsonLd} />
+      {/* ── 통합 검색 헤더 ── */}
       <section className="border-b border-gray-200 bg-white">
-        <div className="container mx-auto py-8">
-          <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="container mx-auto py-6">
+
+          {/* 타이틀 행 */}
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h1 className="text-h3 font-bold text-gray-900">
-                {categoryLabel ? `${categoryLabel} 브랜드` : '전체 브랜드'}
+                {categoryLabel
+                  ? <>{CATEGORY_EMOJI[activeCategory ?? ''] ?? ''} {categoryLabel} 브랜드</>
+                  : '브랜드 검색'}
                 {q && (
                   <span className="ml-2 text-base font-normal text-gray-500">
                     '{q}' 검색 결과
                   </span>
                 )}
               </h1>
-              <p className="mt-1 text-sm text-gray-500">
-                공정거래위원회 가맹정보 기준 · 총 {allBrands.length.toLocaleString()}개 브랜드
+              <p className="mt-0.5 text-sm text-gray-500">
+                공정위 가맹정보 기준 · 총 {allBrands.length.toLocaleString()}개 브랜드
                 {dataSource === 'kftc' && (
                   <span className="ml-1.5 inline-flex items-center rounded-full bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
                     실시간
@@ -88,9 +132,114 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
               href="/brands/compare"
               className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
             >
-              브랜드 비교하기 →
+              브랜드 비교 →
             </a>
           </div>
+
+          {/* 검색 폼 */}
+          <form method="get" action="/brands" className="mt-4">
+            {/* 현재 카테고리·정렬은 유지 */}
+            {activeCategory && <input type="hidden" name="category" value={activeCategory} />}
+            {sort !== 'recommended' && <input type="hidden" name="sort" value={sort} />}
+            <div className="flex w-full max-w-2xl gap-2">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  name="q"
+                  defaultValue={q ?? ''}
+                  placeholder="브랜드명·키워드 검색"
+                  className="h-10 w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-[var(--brand-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
+                />
+              </div>
+              <select
+                name="region"
+                defaultValue={activeRegion ?? ''}
+                className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:border-[var(--brand-primary)] focus:outline-none"
+              >
+                <option value="">전국</option>
+                {REGION_OPTIONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="flex h-10 items-center gap-1.5 rounded-xl bg-[var(--brand-primary)] px-4 text-sm font-semibold text-white hover:opacity-90"
+              >
+                <Search className="h-4 w-4" />
+                검색
+              </button>
+            </div>
+          </form>
+
+          {/* 테마별 카테고리 칩 */}
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <a
+              href={makeHref(searchParams, { category: undefined, page: undefined })}
+              className={
+                'flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ' +
+                (!activeCategory
+                  ? 'border-gray-900 bg-gray-900 text-white'
+                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
+              }
+            >
+              전체
+            </a>
+            {CATEGORIES.map((c) => {
+              const isActive = activeCategory === c.key
+              return (
+                <a
+                  key={c.key}
+                  href={makeHref(searchParams, { category: c.key, page: undefined })}
+                  className={
+                    'flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ' +
+                    (isActive
+                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
+                  }
+                >
+                  <span>{CATEGORY_EMOJI[c.key]}</span>
+                  {c.label}
+                </a>
+              )
+            })}
+          </div>
+
+          {/* 활성 필터 요약 */}
+          {(activeCategory || activeRegion || q) && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-gray-400">필터:</span>
+              {activeCategory && (
+                <a
+                  href={makeHref(searchParams, { category: undefined, page: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700 hover:bg-gray-200"
+                >
+                  {CATEGORY_EMOJI[activeCategory]} {categoryLabel} ✕
+                </a>
+              )}
+              {activeRegion && (
+                <a
+                  href={makeHref(searchParams, { region: undefined, page: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700 hover:bg-gray-200"
+                >
+                  📍 {activeRegion} ✕
+                </a>
+              )}
+              {q && (
+                <a
+                  href={makeHref(searchParams, { q: undefined, page: undefined })}
+                  className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-700 hover:bg-gray-200"
+                >
+                  🔍 '{q}' ✕
+                </a>
+              )}
+              <a
+                href="/brands"
+                className="text-xs text-[var(--brand-primary)] hover:underline"
+              >
+                전체 초기화
+              </a>
+            </div>
+          )}
         </div>
       </section>
 
@@ -98,27 +247,29 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
           {/* Filter sidebar */}
           <aside className="space-y-5">
-            <FilterGroup title="업종">
-              <div className="space-y-1">
-                <FilterLink href={makeHref(searchParams, { category: undefined, page: undefined })} active={!activeCategory}>
-                  전체 ({allBrands.length.toLocaleString()})
-                </FilterLink>
-                {CATEGORIES.map((c) => {
-                  const count = allBrands.filter((b) => b.category === c.key).length
-                  if (count === 0) return null
-                  return (
-                    <FilterLink
-                      key={c.key}
-                      href={makeHref(searchParams, { category: c.key, page: undefined })}
-                      active={activeCategory === c.key}
-                    >
-                      {c.label} ({count.toLocaleString()})
-                    </FilterLink>
-                  )
-                })}
-              </div>
-            </FilterGroup>
+            {/* 검색 결과 요약 */}
+            <div className="rounded-xl border border-gray-200 bg-white p-4">
+              <div className="text-xs font-semibold uppercase tracking-wider text-gray-400">검색 결과</div>
+              <div className="mt-2 text-2xl font-bold text-gray-900">{totalResults.toLocaleString()}<span className="ml-1 text-sm font-normal text-gray-500">개</span></div>
+              {activeCategory && (
+                <div className="mt-1 text-sm text-gray-600">
+                  {CATEGORY_EMOJI[activeCategory]} {categoryLabel} 브랜드
+                </div>
+              )}
+              {activeRegion && (
+                <div className="mt-0.5 text-sm text-gray-600">📍 {activeRegion} 본사</div>
+              )}
+              {q && (
+                <div className="mt-0.5 text-sm text-gray-600">🔍 &apos;{q}&apos; 검색</div>
+              )}
+              {(activeCategory || activeRegion || q) && (
+                <a href="/brands" className="mt-2 block text-xs text-[var(--brand-primary)] hover:underline">
+                  필터 초기화
+                </a>
+              )}
+            </div>
 
+            {/* 본사 지역 */}
             <FilterGroup title="본사 지역">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { region: undefined, page: undefined })} active={!activeRegion}>
@@ -140,6 +291,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
               </div>
             </FilterGroup>
 
+            {/* 정렬 */}
             <FilterGroup title="정렬">
               <div className="space-y-1">
                 {SORT_OPTIONS.map((s) => (
@@ -154,6 +306,25 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
               </div>
             </FilterGroup>
 
+            {/* 창업 도구 바로가기 */}
+            <FilterGroup title="창업 도구">
+              <div className="space-y-1.5">
+                <a href="/scanner" className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                  ✨ 창업 스캐너
+                </a>
+                <a href="/calculator" className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                  🧮 수익 계산기
+                </a>
+                <a href="/brands/compare" className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                  ⚖️ 브랜드 비교
+                </a>
+                <a href="/themes" className="flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100">
+                  🎯 테마별 보기
+                </a>
+              </div>
+            </FilterGroup>
+
+            {/* 데이터 출처 */}
             <Card className="border-gray-200 bg-indigo-50">
               <CardContent className="p-4 text-sm">
                 <div className="font-semibold text-gray-900">데이터 출처</div>

@@ -1,5 +1,5 @@
-﻿import type { Metadata } from 'next'
-import { buildPageMetadata } from '@amakers/design-system'
+import type { Metadata } from 'next'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
   title: '펀딩',
@@ -7,19 +7,34 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
   path: '/funding',
 })
 
+import { Search } from 'lucide-react'
 import { RoundCardWithWatch } from '@/components/round-card-with-watch'
-import { ROUNDS, daysUntil } from '@/lib/mock-data'
+import { BRANDS, ROUNDS, daysUntil } from '@/lib/mock-data'
 
 type SortKey = 'latest' | 'closing' | 'target'
 
 interface FundingPageProps {
-  searchParams: { sort?: string }
+  searchParams: { sort?: string; q?: string }
 }
 
 export default function FundingPage({ searchParams }: FundingPageProps) {
   const sort = (searchParams.sort ?? 'latest') as SortKey
+  const { q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
 
-  const fund = ROUNDS.filter((r) => r.type === 'store-fund' || r.type === 'crowd')
+  // All funding rounds (for stats panel — unaffected by search)
+  const allFund = ROUNDS.filter((r) => r.type === 'store-fund' || r.type === 'crowd')
+
+  // Filtered by search query
+  let fund = allFund
+  if (needle) {
+    fund = fund.filter(
+      (r) =>
+        r.hook.toLowerCase().includes(needle) ||
+        r.tags.some((t) => t.toLowerCase().includes(needle)) ||
+        (BRANDS.find((b) => b.id === r.brandId)?.name ?? '').toLowerCase().includes(needle),
+    )
+  }
 
   const sorted = fund.slice().sort((a, b) => {
     if (sort === 'closing') return daysUntil(a.closeDate) - daysUntil(b.closeDate)
@@ -28,15 +43,13 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
     return 0
   })
 
-  const totalAmount = fund.reduce((s, r) => s + r.targetAmount, 0)
+  const totalAmount = allFund.reduce((s, r) => s + r.targetAmount, 0)
   const totalStr =
     totalAmount >= 10000
       ? `${Math.round(totalAmount / 10000)}억`
       : `${totalAmount.toLocaleString()}만원`
 
-  const minInvest = fund.length
-    ? Math.min(...fund.map((r) => r.minInvestment))
-    : 0
+  const minInvest = allFund.length ? Math.min(...allFund.map((r) => r.minInvestment)) : 0
   const minInvestStr =
     minInvest >= 10000
       ? `${Math.round(minInvest / 10000)}억`
@@ -48,8 +61,14 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
     { key: 'target', label: '목표액 높은순' },
   ]
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://pchabridge.kr/funding',
+    items: sorted.slice(0, 20).map((r) => ({ name: r.hook, url: `https://pchabridge.kr/investments/${r.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">다점포 펀딩 + 크라우드</h1>
@@ -57,6 +76,34 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
             본사 직영점 2 ~ 5개 동시 오픈에 자금 참여하거나, 30만원부터 시작하는 크라우드펀딩.
             소액 투자자 대상.
           </p>
+          <form method="GET" action="/funding" className="mt-4 flex max-w-md gap-2">
+            <input type="hidden" name="sort" value={sort} />
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q ?? ''}
+                placeholder="브랜드명, 태그 검색…"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+            {q && (
+              <a
+                href={`/funding?sort=${sort}`}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                초기화
+              </a>
+            )}
+          </form>
         </div>
       </section>
 
@@ -66,7 +113,7 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
           <h2 className="text-sm font-semibold text-gray-700">전체 펀딩 현황</h2>
           <div className="mt-4 grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-xl font-black text-gray-900">{fund.length}건</div>
+              <div className="text-xl font-black text-gray-900">{allFund.length}건</div>
               <div className="text-xs text-gray-500">모집 중 라운드</div>
             </div>
             <div>
@@ -82,12 +129,21 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
 
         {/* 정렬 */}
         <div className="mb-4 flex items-center justify-between">
-          <div className="text-sm text-gray-700">{fund.length}건</div>
+          <div className="text-sm text-gray-700">
+            {q ? (
+              <>
+                <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
+                {fund.length}건
+              </>
+            ) : (
+              <>{fund.length}건</>
+            )}
+          </div>
           <div className="flex gap-2">
             {SORT_OPTIONS.map((opt) => (
               <a
                 key={opt.key}
-                href={`/funding?sort=${opt.key}`}
+                href={`/funding?sort=${opt.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
                 className={
                   'rounded-md px-3 py-1 text-sm transition-colors ' +
                   (sort === opt.key
@@ -102,7 +158,9 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
         </div>
 
         {sorted.length === 0 ? (
-          <p className="text-center text-sm text-gray-500">현재 모집 중인 라운드가 없습니다.</p>
+          <p className="text-center text-sm text-gray-500">
+            {q ? `"${q}" 검색 결과가 없습니다.` : '현재 모집 중인 라운드가 없습니다.'}
+          </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {sorted.map((r) => (

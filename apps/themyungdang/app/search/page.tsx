@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('themyungdang', {
+    title: '매물 검색',
+    description: '지역·업종·상권 키워드로 더명당 프랜차이즈 가맹 입점 매물을 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { LISTINGS, TYPE_LABEL, AREAS } from '@/lib/mock-data'

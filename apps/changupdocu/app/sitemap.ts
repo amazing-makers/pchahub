@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/', changeFrequency: 'daily', priority: 1 },
     { path: '/episodes', changeFrequency: 'daily', priority: 0.9 },
     { path: '/magazine', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/categories', changeFrequency: 'weekly', priority: 0.7 },
     ...categoryKeys.map((key) => ({
       path: `/categories/${key}`,
       changeFrequency: 'weekly' as const,

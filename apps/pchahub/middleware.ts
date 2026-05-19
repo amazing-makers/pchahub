@@ -7,5 +7,6 @@ export default withAuth({
 })
 
 export const config = {
-  matcher: ['/mypage/:path*', '/hq/:path*'],
+  // Protect: my page, HQ console, admin console
+  matcher: ['/mypage/:path*', '/hq/:path*', '/admin/:path*'],
 }

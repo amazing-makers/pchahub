@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('changupdocu', {
+  title: '창업다큐 — 자영업·가맹의 진짜 이야기',
+  description: '성공 다큐·실패 분석·브랜드 인사이드·점주 인터뷰. 실제 데이터와 현장 인터뷰로 풀어내는 프랜차이즈 창업 이야기.',
+  path: '/',
+})
+
 import { ArrowRight, Flame } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -26,8 +35,20 @@ export default function HomePage() {
   const recent = recentEpisodes(6)
   const recentMag = recentArticles(4)
 
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '창업다큐',
+    url: 'https://changupdocu.kr',
+    description: '성공 다큐·실패 분석·브랜드 인사이드·점주 인터뷰. 실제 데이터와 현장 인터뷰로 풀어내는 프랜차이즈 창업 이야기.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '창업다큐',
+    url: 'https://changupdocu.kr',
+    searchUrlTemplate: 'https://changupdocu.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero — featured episode + sidebar */}
       <section className="border-b border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">

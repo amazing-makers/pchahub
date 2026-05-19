@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('gongganhansu', {
+    title: '검색',
+    description: '업종·지역·시공사 이름으로 F&B 매장 인테리어 시공 사례와 시공사를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { CONTRACTORS, PORTFOLIO } from '@/lib/mock-data'

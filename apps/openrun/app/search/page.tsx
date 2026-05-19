@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('openrun', {
+    title: '검색',
+    description: '브랜드명·서비스·캠페인 키워드로 오픈런 마케팅 사례와 서비스를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { PORTFOLIO, SERVICES, SERVICE_LABEL } from '@/lib/mock-data'

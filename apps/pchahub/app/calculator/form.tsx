@@ -4,12 +4,13 @@ import { useMemo, useState, useEffect, useCallback } from 'react'
 import { ArrowRight, BookmarkPlus, Check, Copy, RotateCcw, Trash2, TrendingUp } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { BRANDS, type MockBrand } from '@/lib/mock-data'
+import { BRANDS } from '@/lib/mock-data'
 import { getBrandDetail } from '@/lib/mock-brand-detail'
 import {
   DEFAULT_INPUTS,
   calculate,
   inputsFromBrand,
+  isNonFoodCategory,
   type CalculatorInputs,
 } from '@/lib/calculator'
 
@@ -46,8 +47,10 @@ export function CalculatorForm({ initialBrandId }: CalculatorFormProps) {
     if (b) setInputs(inputsFromBrand(b))
   }, [brandId])
 
-  const result = useMemo(() => calculate(inputs), [inputs])
   const selectedBrand = brandId ? BRANDS.find((b) => b.id === brandId) : null
+  const isNonFood = selectedBrand ? isNonFoodCategory(selectedBrand.category) : false
+  const variableCostLabel = isNonFood ? '원가·소모품' : '식자재'
+  const result = useMemo(() => calculate(inputs, variableCostLabel), [inputs, variableCostLabel])
   const brandAvg = selectedBrand ? getBrandDetail(selectedBrand).revenue.averageMonthly : null
 
   const [savedCalcs, setSavedCalcs] = useState<SavedCalc[]>([])
@@ -199,12 +202,16 @@ export function CalculatorForm({ initialBrandId }: CalculatorFormProps) {
                   step={10}
                 />
               </FormGroup>
-              <FormGroup label="식자재 원가율" suffix="%">
+              <FormGroup
+                label={selectedBrand && isNonFoodCategory(selectedBrand.category) ? '원가율 (소모품·재료)' : '식자재 원가율'}
+                suffix="%"
+                helper={selectedBrand && isNonFoodCategory(selectedBrand.category) ? '식음료·소모품·전기 등 직접비율' : undefined}
+              >
                 <NumberInput
                   value={inputs.foodCostRate}
                   onChange={(v) => update('foodCostRate', v)}
                   min={0}
-                  max={70}
+                  max={80}
                   step={1}
                 />
               </FormGroup>

@@ -47,7 +47,7 @@ const ROLE_META: Record<string, { label: string; icon: typeof BookOpen; welcome:
 function WelcomeContent() {
   const searchParams = useSearchParams()
   const role = searchParams.get('role') ?? 'student'
-  const meta = ROLE_META[role] ?? ROLE_META.student
+  const meta = ROLE_META[role] ?? ROLE_META.student!
   const Icon = meta.icon
 
   return (

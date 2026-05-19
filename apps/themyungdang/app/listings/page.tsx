@@ -1,4 +1,13 @@
-﻿import { ChevronLeft, ChevronRight, Map, X } from 'lucide-react'
+﻿import type { Metadata } from 'next'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themyungdang', {
+  title: '매물 목록',
+  description: '전국 프랜차이즈 가맹 입점 매물. 권리금 양도·신규임대·업종·지역·면적별로 나에게 맞는 입점 매물을 찾으세요.',
+  path: '/listings',
+})
+
+import { ChevronLeft, ChevronRight, Map, X } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
 import { ListingCardWithSave } from '@/components/listing-card-with-save'
@@ -86,8 +95,14 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const sourceLabel      = source      ? (SOURCE_OPTIONS.find((s) => s.key === source)?.label ?? null) : null
   const hasActiveFilters = !!(type || region || fitCategory || q || source)
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://themyungdang.kr/listings',
+    items: paginatedResults.map((l) => ({ name: l.title, url: `https://themyungdang.kr/listings/${l.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       {/* Header */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

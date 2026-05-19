@@ -11,6 +11,8 @@ const navItems = [
   { href: '/courses', label: '강의' },
   { href: '/courses?free=1', label: '무료 강의' },
   { href: '/mentors', label: '멘토' },
+  { href: '/recipes', label: '레시피' },
+  { href: '/knowhow', label: '노하우' },
   { href: '/search', label: '검색' },
 ]
 

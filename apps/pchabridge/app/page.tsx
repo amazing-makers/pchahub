@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchabridge', {
+  title: '프차브릿지 — 프랜차이즈 투자·M&A·다점포 펀딩',
+  description: '본사 투자 라운드, M&A 매물, 다점포 펀딩을 한 곳에서. 소액 투자부터 본사 인수까지 프랜차이즈 자본 시장을 연결합니다.',
+  path: '/',
+})
+
 import { ArrowRight, Shield, ShieldCheck, TrendingUp, Users } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -21,8 +30,20 @@ export default function HomePage() {
     .filter((r) => r.status === 'open' || r.status === 'closing-soon')
     .slice(0, 6)
 
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '프차브릿지',
+    url: 'https://pchabridge.kr',
+    description: '본사 투자 라운드, M&A 매물, 다점포 펀딩을 한 곳에서. 소액 투자부터 본사 인수까지 프랜차이즈 자본 시장을 연결합니다.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '프차브릿지',
+    url: 'https://pchabridge.kr',
+    searchUrlTemplate: 'https://pchabridge.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero — dark purple */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">

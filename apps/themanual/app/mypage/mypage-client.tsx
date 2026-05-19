@@ -14,6 +14,8 @@ interface Consultation {
   phone: string
   topic: string
   question: string
+  date?: string
+  time?: string
   status: string
   createdAt: string
 }
@@ -257,6 +259,11 @@ export function MyPageClient() {
                       </div>
                       <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
                         <span>주제 · {TOPIC_LABEL[c.topic] ?? c.topic}</span>
+                        {c.date && c.time && (
+                          <span className="font-medium text-[var(--brand-primary)]">
+                            📅 {c.date} {c.time}
+                          </span>
+                        )}
                         <span>신청일 · {c.createdAt}</span>
                       </div>
                     </div>

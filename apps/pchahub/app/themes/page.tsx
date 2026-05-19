@@ -1,11 +1,26 @@
+import type { Metadata } from 'next'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '테마별 브랜드',
+  description: '저자본 창업·프리미엄·소자본·공동창업 등 테마별로 나에게 맞는 프랜차이즈 브랜드를 찾아보세요.',
+  path: '/themes',
+})
+
 import { ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ThemeIcon } from '@/components/theme-icon'
 import { THEMES, THEME_COUNTS } from '@/lib/themes'
 
+const listJsonLd = buildItemListJsonLd({
+  url: 'https://pchahub.kr/themes',
+  items: THEMES.map((t) => ({ name: t.label, url: `https://pchahub.kr/themes/${t.key}` })),
+})
+
 export default function ThemesPage() {
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">테마별 보기</h1>

@@ -29,6 +29,9 @@ export function generateMetadata({ params }: ArticleDetailProps): Metadata {
     title: article.title,
     description: `${article.subtitle} · ${article.authorName} (${article.authorRole}) · ${article.readTime}분 읽기.`,
     path: `/magazine/${article.id}`,
+    openGraphType: 'article',
+    publishedTime: article.publishedAt,
+    authors: [article.authorName],
   })
 }
 

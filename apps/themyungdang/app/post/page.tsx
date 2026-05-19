@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('themyungdang', {
+    title: '매물 등록',
+    description: '매물 정보를 입력하시면 운영팀의 실사 후 영업일 2일 이내 검색에 노출됩니다. 검증 매물은 문의 전환율이 평균 3배 이상 높습니다.',
+    path: '/post',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'

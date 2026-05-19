@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themanual', {
+  title: '멘토 목록',
+  description: '가맹 창업 전문 멘토 목록. 현직 점주·회계사·법무사·마케터로 구성된 멘토와 1:1 상담을 예약하세요.',
+  path: '/mentors',
+})
+
 import { Card, CardContent } from '@amakers/ui'
 import { MentorCard } from '@/components/mentor-card'
 import { MENTORS } from '@/lib/mock-data'
@@ -66,8 +75,14 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
 
   const featuredCount = MENTORS.filter((m) => m.featured).length
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://themanual.kr/mentors',
+    items: results.slice(0, 20).map((m) => ({ name: m.name, url: `https://themanual.kr/mentors/${m.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       {/* 헤더 */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

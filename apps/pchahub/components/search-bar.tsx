@@ -21,6 +21,28 @@ const REGIONS = [
   '제주',
 ]
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  chicken:     '🍗',
+  cafe:        '☕',
+  korean:      '🍱',
+  japanese:    '🍣',
+  snack:       '🍢',
+  dessert:     '🍰',
+  bar:         '🍺',
+  western:     '🍔',
+  pizza:       '🍕',
+  chinese:     '🥟',
+  convenience: '🏪',
+  bakery:      '🥐',
+  fastfood:    '🍔',
+  pcbang:      '🖥️',
+  education:   '📚',
+  study:       '📖',
+  laundry:     '👕',
+  life:        '🛒',
+  leisure:     '🎮',
+}
+
 const MAX_SUGGESTIONS = 5
 
 export function SearchBar() {
@@ -30,7 +52,6 @@ export function SearchBar() {
   const [focused, setFocused] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // Filter brands by keyword (and category if selected).
   const suggestions = useMemo(() => {
     const q = keyword.trim().toLowerCase()
     if (q.length === 0) return []
@@ -44,7 +65,6 @@ export function SearchBar() {
     }).slice(0, MAX_SUGGESTIONS)
   }, [keyword, category])
 
-  // Close dropdown on outside click.
   useEffect(() => {
     if (!focused) return
     const onClickAway = (e: MouseEvent) => {
@@ -69,6 +89,7 @@ export function SearchBar() {
 
   return (
     <div ref={wrapperRef} className="relative mx-auto w-full max-w-2xl">
+      {/* search form */}
       <form
         onSubmit={handleSubmit}
         className="flex w-full flex-col gap-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-md sm:flex-row sm:items-center sm:p-1.5"
@@ -76,26 +97,24 @@ export function SearchBar() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] sm:w-32 sm:border-0 sm:border-r"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] sm:w-28 sm:border-0 sm:border-r"
           aria-label="업종 선택"
         >
           <option value="">전체 업종</option>
           {CATEGORIES.map((c) => (
             <option key={c.key} value={c.key}>
-              {c.label}
+              {CATEGORY_EMOJI[c.key]} {c.label}
             </option>
           ))}
         </select>
         <select
           value={region}
           onChange={(e) => setRegion(e.target.value)}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] sm:w-32 sm:border-0 sm:border-r"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] sm:w-28 sm:border-0 sm:border-r"
           aria-label="지역 선택"
         >
           {REGIONS.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
+            <option key={r} value={r}>{r}</option>
           ))}
         </select>
         <input
@@ -116,6 +135,7 @@ export function SearchBar() {
         </Button>
       </form>
 
+      {/* autocomplete dropdown */}
       {showDropdown && (
         <div
           id="search-suggestions"
@@ -143,7 +163,7 @@ export function SearchBar() {
                   )}
                 </div>
                 <div className="truncate text-xs text-gray-500">
-                  {b.categoryLabel} · 매장 {b.storeCount}개
+                  {b.categoryLabel} &middot; 매장 {b.storeCount}개
                 </div>
               </div>
             </a>
@@ -152,10 +172,11 @@ export function SearchBar() {
             href={`/brands?q=${encodeURIComponent(keyword)}`}
             className="block border-t border-gray-100 px-3 py-2.5 text-center text-xs text-gray-600 hover:bg-gray-50"
           >
-            ‘{keyword}’에 대한 전체 결과 보기
+            &apos;{keyword}&apos;에 대한 전체 결과 보기
           </a>
         </div>
       )}
+
     </div>
   )
 }

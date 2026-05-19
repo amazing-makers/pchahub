@@ -22,6 +22,7 @@ import {
   Sparkles,
   Star,
   Store,
+  Tag,
   TrendingUp,
   Users,
 } from 'lucide-react'
@@ -29,6 +30,7 @@ import { Badge, BrandLogo, Button, Card, CardContent } from '@amakers/ui'
 import {
   buildBrandJsonLd,
   buildBreadcrumbsJsonLd,
+  buildFaqPageJsonLd,
   JsonLd,
 } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
@@ -41,10 +43,21 @@ import {
   type BrandDetail,
   type BrandReview,
   type BrandFAQ,
+  type BrandServiceItem,
 } from '@/lib/mock-brand-detail'
 import { BrandCard } from '@/components/brand-card'
 import { getBrandById, getBrands } from '@/lib/kftc/source'
 import { BrandViewTracker } from './brand-view-tracker'
+
+// ========================================================================
+// 카테고리 분류 — 음식 vs 비음식
+// ========================================================================
+
+/** 음식 카테고리 — 메뉴 섹션 표시, 서비스 섹션 숨김 */
+const FOOD_CATEGORIES = new Set([
+  'chicken', 'cafe', 'korean', 'japanese', 'snack', 'dessert',
+  'beverage', 'bar', 'pizza', 'bakery', 'fastfood',
+])
 
 interface BrandDetailPageProps {
   params: { id: string }
@@ -101,25 +114,34 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
       { name: brand.name, url: brandUrl },
     ],
   })
+  const faqJsonLd =
+    detail.faqs.length > 0
+      ? buildFaqPageJsonLd({
+          url: brandUrl,
+          items: detail.faqs.map((f) => ({ question: f.q, answer: f.a })),
+        })
+      : null
 
   return (
     <main className="bg-gray-50">
       <BrandViewTracker brandId={brand.id} />
       <JsonLd data={brandJsonLd} />
       <JsonLd data={breadcrumbsJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <BrandHero brand={brand} detail={detail} totalCost={totalCost} avgRating={avgRating} />
 
       <div className="container mx-auto py-12">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0 space-y-8">
-            {/* 사용자 노출 순서: 대표메뉴 → 인테리어 → 홍보영상 (myfranchise.kr 패턴) */}
+            {/* 사용자 노출 순서: 대표메뉴/서비스 → 인테리어 → 홍보영상 (myfranchise.kr 패턴) */}
+            <ServicesSection detail={detail} brand={brand} />
             <MenuSection detail={detail} brand={brand} />
             <PhotoGallerySection detail={detail} brand={brand} />
             <BrandVideoSection brand={brand} />
             <HQSection detail={detail} />
             <CostsSection detail={detail} totalCost={totalCost} />
             <DisclosureExtrasSection detail={detail} />
-            <OperationsSection detail={detail} />
+            <OperationsSection detail={detail} brand={brand} />
             <RevenueSection detail={detail} />
             <RecentOpeningsSection detail={detail} brand={brand} />
             <StoreHistorySection detail={detail} />
@@ -223,7 +245,8 @@ function BrandHero({
         },
   ]
 
-  const showHeroPhoto = hasRealPhoto(brand)
+  // heroImage가 있으면 항상 표시 (카테고리 대표 Unsplash도 포함)
+  const showHeroPhoto = !!brand.heroImage
   // 슬라이더에 보여줄 사진들 — hero(대표) + store(매장) 중복 제거
   const heroImages = showHeroPhoto
     ? Array.from(new Set([detail.photos.hero, ...detail.photos.store].filter(Boolean)))
@@ -438,8 +461,10 @@ function CostsSection({ detail, totalCost }: { detail: BrandDetail; totalCost: n
 // Operations Section
 // ========================================================================
 
-function OperationsSection({ detail }: { detail: BrandDetail }) {
+function OperationsSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
   const o = detail.operations
+  // 비음식 카테고리에서는 "주력 채널" 대신 "운영 방식"으로 표기
+  const isFood = FOOD_CATEGORIES.has(brand.category)
   return (
     <SectionCard title="매장 운영 정보">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -460,8 +485,8 @@ function OperationsSection({ detail }: { detail: BrandDetail }) {
         />
         <StatBlock
           icon={TrendingUp}
-          label="주력 채널"
-          value={o.primaryChannel}
+          label={isFood ? '주력 채널' : '운영 방식'}
+          value={isFood ? o.primaryChannel : '현장 직접 운영'}
         />
       </div>
     </SectionCard>
@@ -1001,8 +1026,6 @@ function StatBlock({
 // ========================================================================
 
 function PhotoGallerySection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
-  // 진짜 매장 사진 없으면 섹션 통째로 숨김 (stock 사진 노출 금지)
-  if (!hasRealPhoto(brand)) return null
   // 인테리어 섹션 — 매장 사진만 사용 (메뉴 사진은 MenuSection에서 따로).
   const photos = detail.photos.store
   if (photos.length === 0) return null
@@ -1093,11 +1116,106 @@ function BrandVideoSection({ brand }: { brand: MockBrand }) {
 }
 
 // ========================================================================
+// Services Section — 비음식 브랜드의 이용권·서비스 항목
+// ========================================================================
+
+const SERVICE_SECTION_META: Record<string, { title: string; subtitle: string }> = {
+  pcbang:     { title: '이용 요금',     subtitle: 'PC·좌석 종류별 이용 요금 안내' },
+  study:      { title: '이용권 안내',   subtitle: '시간권·월정액·스터디룸 이용 요금' },
+  education:  { title: '수업 프로그램', subtitle: '과정별 수강료 및 수업 구성 안내' },
+  laundry:    { title: '기기 이용 요금', subtitle: '세탁기·건조기 용량별 요금 안내' },
+  life:       { title: '서비스 요금',   subtitle: '서비스 종류 및 요금 안내' },
+  leisure:    { title: '이용권 안내',   subtitle: '시간권·정기권·그룹권 요금 안내' },
+  convenience:{ title: '서비스 안내',   subtitle: '이용 가능한 서비스 및 요금' },
+}
+
+function ServicesSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
+  if (FOOD_CATEGORIES.has(brand.category)) return null
+  if (detail.services.length === 0) return null
+
+  const meta = SERVICE_SECTION_META[brand.category] ?? {
+    title: '서비스 안내',
+    subtitle: '이용 가능한 서비스 및 이용권 안내',
+  }
+
+  // 그룹별로 묶기
+  const groups = detail.services.reduce<Record<string, BrandServiceItem[]>>((acc, item) => {
+    const key = item.group ?? '기본'
+    if (!acc[key]) acc[key] = []
+    acc[key].push(item)
+    return acc
+  }, {})
+
+  return (
+    <SectionCard title={meta.title} subtitle={meta.subtitle}>
+      <div className="space-y-6">
+        {Object.entries(groups).map(([groupName, items]) => (
+          <div key={groupName}>
+            <div className="mb-3 flex items-center gap-2">
+              <Tag className="h-3.5 w-3.5 text-gray-400" />
+              <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                {groupName}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              {items.map((item, i) => (
+                <div
+                  key={i}
+                  className={
+                    'relative flex items-start justify-between gap-3 rounded-xl border p-4 ' +
+                    (item.popular
+                      ? 'border-indigo-200 bg-indigo-50/60'
+                      : 'border-gray-100 bg-white')
+                  }
+                >
+                  {item.popular && (
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-0.5 rounded-full bg-indigo-500 px-1.5 py-0.5 text-[9px] font-bold text-white">
+                      <Sparkles className="h-2 w-2" />
+                      인기
+                    </span>
+                  )}
+                  <div className="min-w-0 flex-1 pr-8">
+                    <div className="text-sm font-semibold text-gray-900">{item.name}</div>
+                    {item.description && (
+                      <div className="mt-0.5 text-xs text-gray-500">{item.description}</div>
+                    )}
+                  </div>
+                  <div className="shrink-0 text-right">
+                    {item.priceWon > 0 ? (
+                      <>
+                        <span className="text-base font-bold text-gray-900">
+                          {item.priceWon.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-gray-500">원</span>
+                        {item.unit && (
+                          <div className="mt-0.5 text-[10px] text-gray-400">{item.unit}</div>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-sm font-medium text-gray-400">문의</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 text-[11px] text-gray-400">
+        * 이용 요금은 지역·매장에 따라 다를 수 있습니다. 정확한 금액은 가맹 계약서를 확인하세요.
+      </p>
+    </SectionCard>
+  )
+}
+
+// ========================================================================
 // Menu Section — 메뉴 라인업
 // ========================================================================
 
 function MenuSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
-  // 진짜 매장 사진이 없는 브랜드는 메뉴 사진도 stock — 섹션 숨김
+  // 비음식 카테고리는 ServicesSection이 담당 — 메뉴 섹션 미표시
+  if (!FOOD_CATEGORIES.has(brand.category)) return null
+  // 메뉴 사진이 없거나 실제 사진이 아닌 브랜드는 숨김
   if (!hasRealPhoto(brand)) return null
   if (detail.menu.length === 0) return null
   return (
@@ -1138,7 +1256,7 @@ function MenuSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand 
 
 function RecentOpeningsSection({ detail, brand }: { detail: BrandDetail; brand: MockBrand }) {
   if (detail.recentOpenings.length === 0) return null
-  const showPhoto = hasRealPhoto(brand)
+  const showPhoto = !!brand.heroImage
   return (
     <SectionCard
       title="최근 신규 오픈 매장"

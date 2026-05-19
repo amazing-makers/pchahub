@@ -1,0 +1,232 @@
+import type { Metadata } from 'next'
+import { Search, ChefHat } from 'lucide-react'
+import { Card, CardContent } from '@amakers/ui'
+import { RecipeCard } from '@/components/recipe-card'
+import {
+  FEATURED_RECIPES,
+  RECIPE_CATEGORY_LABEL,
+  DIFFICULTY_LABEL,
+  RECIPES,
+  type RecipeCategory,
+  type RecipeDifficulty,
+} from '@/lib/recipes'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themanual', {
+  title: '업소용 레시피',
+  description: '프랜차이즈 창업자·점주를 위한 실전 업소용 레시피. 한식·밑반찬·고기 요리·국찌개 등 검증된 레시피를 확인하세요.',
+  path: '/recipes',
+})
+
+interface RecipesPageProps {
+  searchParams: {
+    category?: string
+    difficulty?: string
+    q?: string
+    sort?: string
+  }
+}
+
+const SORT_OPTIONS = [
+  { key: 'popular',  label: '조회 많은 순' },
+  { key: 'newest',   label: '최신 등록순' },
+  { key: 'fastest',  label: '조리 시간 짧은 순' },
+]
+
+function makeHref(
+  current: RecipesPageProps['searchParams'],
+  changes: Partial<RecipesPageProps['searchParams']>,
+) {
+  const next = { ...current, ...changes }
+  const params = new URLSearchParams()
+  if (next.category) params.set('category', next.category)
+  if (next.difficulty) params.set('difficulty', next.difficulty)
+  if (next.q) params.set('q', next.q)
+  if (next.sort && next.sort !== 'popular') params.set('sort', next.sort)
+  const qs = params.toString()
+  return qs ? `/recipes?${qs}` : '/recipes'
+}
+
+function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</div>
+      <div className="mt-2">{children}</div>
+    </div>
+  )
+}
+
+function FilterLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      className={
+        'block rounded-md px-3 py-1.5 text-sm transition-colors ' +
+        (active ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100')
+      }
+    >
+      {children}
+    </a>
+  )
+}
+
+export default function RecipesPage({ searchParams }: RecipesPageProps) {
+  const { category, difficulty, q, sort = 'popular' } = searchParams
+
+  let results = RECIPES.slice()
+
+  if (category) results = results.filter((r) => r.category === category)
+  if (difficulty) results = results.filter((r) => r.difficulty === difficulty)
+  if (q) {
+    const needle = q.toLowerCase()
+    results = results.filter(
+      (r) =>
+        r.title.toLowerCase().includes(needle) ||
+        r.excerpt.toLowerCase().includes(needle) ||
+        r.tags.some((t) => t.toLowerCase().includes(needle)),
+    )
+  }
+
+  results = [...results].sort((a, b) => {
+    switch (sort) {
+      case 'newest':  return b.publishedAt.localeCompare(a.publishedAt)
+      case 'fastest': return a.cookingTime - b.cookingTime
+      default:        return b.viewCount - a.viewCount
+    }
+  })
+
+  const isFiltered = !!(category || difficulty || q)
+  const categoryLabel = category
+    ? RECIPE_CATEGORY_LABEL[category as RecipeCategory]
+    : null
+
+  return (
+    <main className="bg-gray-50">
+      {/* Header */}
+      <section className="border-b border-gray-200 bg-white">
+        <div className="container mx-auto py-8">
+          <div className="flex items-center gap-3">
+            <ChefHat className="h-8 w-8 text-[var(--brand-primary)]" />
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">
+                {categoryLabel ? `${categoryLabel} 레시피` : '업소용 레시피'}
+                {q && <span className="ml-2 text-base font-normal text-gray-500">'{q}' 검색 결과</span>}
+              </h1>
+              <p className="mt-0.5 text-sm text-gray-500">
+                {isFiltered
+                  ? `${results.length}개 레시피`
+                  : `프랜차이즈 창업자·점주를 위한 검증된 업소용 레시피 ${RECIPES.length}선`}
+              </p>
+            </div>
+          </div>
+
+          {/* Search */}
+          <form method="get" action="/recipes" className="mt-5">
+            {category && <input type="hidden" name="category" value={category} />}
+            {difficulty && <input type="hidden" name="difficulty" value={difficulty} />}
+            {sort !== 'popular' && <input type="hidden" name="sort" value={sort} />}
+            <div className="relative max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                defaultValue={q ?? ''}
+                placeholder="레시피명·재료·태그 검색"
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-[var(--brand-primary)] focus:outline-none"
+              />
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <div className="container mx-auto py-8">
+        {/* Featured section (only on unfiltered first page) */}
+        {!isFiltered && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-h4 font-semibold text-gray-900">추천 레시피</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {FEATURED_RECIPES.map((r) => (
+                <RecipeCard key={r.id} recipe={r} featured />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Main content with sidebar */}
+        <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
+          {/* Sidebar */}
+          <aside className="space-y-5">
+            <FilterGroup title="카테고리">
+              <div className="space-y-1">
+                <FilterLink href={makeHref(searchParams, { category: undefined })} active={!category}>
+                  전체
+                </FilterLink>
+                {(Object.keys(RECIPE_CATEGORY_LABEL) as RecipeCategory[]).map((cat) => {
+                  const count = RECIPES.filter((r) => r.category === cat).length
+                  if (count === 0) return null
+                  return (
+                    <FilterLink
+                      key={cat}
+                      href={makeHref(searchParams, { category: cat })}
+                      active={category === cat}
+                    >
+                      {RECIPE_CATEGORY_LABEL[cat]} ({count})
+                    </FilterLink>
+                  )
+                })}
+              </div>
+            </FilterGroup>
+
+            <FilterGroup title="난이도">
+              <div className="space-y-1">
+                <FilterLink href={makeHref(searchParams, { difficulty: undefined })} active={!difficulty}>
+                  전체
+                </FilterLink>
+                {(Object.keys(DIFFICULTY_LABEL) as RecipeDifficulty[]).map((d) => (
+                  <FilterLink
+                    key={d}
+                    href={makeHref(searchParams, { difficulty: d })}
+                    active={difficulty === d}
+                  >
+                    {DIFFICULTY_LABEL[d]}
+                  </FilterLink>
+                ))}
+              </div>
+            </FilterGroup>
+
+            <FilterGroup title="정렬">
+              <div className="space-y-1">
+                {SORT_OPTIONS.map((s) => (
+                  <FilterLink
+                    key={s.key}
+                    href={makeHref(searchParams, { sort: s.key })}
+                    active={sort === s.key}
+                  >
+                    {s.label}
+                  </FilterLink>
+                ))}
+              </div>
+            </FilterGroup>
+          </aside>
+
+          {/* Grid */}
+          <div>
+            <div className="mb-3 text-sm font-semibold text-gray-700">{results.length}개</div>
+            {results.length === 0 ? (
+              <Card>
+                <CardContent className="p-10 text-center text-sm text-gray-500">
+                  검색 결과가 없습니다. 필터를 줄여 다시 시도해보세요.
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {results.map((r) => (
+                  <RecipeCard key={r.id} recipe={r} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </main>
+  )
+}

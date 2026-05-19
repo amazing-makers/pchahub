@@ -1,7 +1,9 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CheckCircle2, ChevronRight, Lock } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { buildBrandJsonLd, buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { brandById, MA_LISTINGS, maListingById } from '@/lib/mock-data'
 import { MACard } from '@/components/ma-card'
 import { NdaForm } from './nda-form'
@@ -15,6 +17,17 @@ interface MADetailProps {
   params: { id: string }
 }
 
+export function generateMetadata({ params }: MADetailProps): Metadata {
+  const listing = maListingById(params.id)
+  if (!listing) return {}
+  const brand = brandById(listing.brandId)
+  return buildPageMetadata('pchabridge', {
+    title: `${brand?.name ?? '브랜드'} M&A 매물 — 프차브릿지`,
+    description: `${listing.rationale} · 매장 ${listing.storeCount}개 · 운영 ${listing.yearsOperating}년 · ${listing.ndaRequired ? 'NDA 필요' : '공개 매물'}.`,
+    path: `/ma/${listing.id}`,
+  })
+}
+
 export default function MADetailPage({ params }: MADetailProps) {
   const listing = maListingById(params.id)
   if (!listing) notFound()
@@ -22,8 +35,27 @@ export default function MADetailPage({ params }: MADetailProps) {
   const others = MA_LISTINGS.filter((m) => m.id !== listing.id).slice(0, 2)
   const pe = (listing.askingPrice / listing.annualProfit).toFixed(1)
 
+  const maUrl = `https://pchabridge.kr/ma/${listing.id}`
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: 'M&A 매물', url: 'https://pchabridge.kr/ma' },
+      { name: brand?.name ?? '본사', url: maUrl },
+    ],
+  })
+  const brandJsonLd = brand
+    ? buildBrandJsonLd({
+        name: brand.name,
+        description: listing.rationale,
+        url: maUrl,
+        category: brand.categoryLabel,
+        numberOfStores: listing.storeCount,
+      })
+    : null
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
+      {brandJsonLd && <JsonLd data={brandJsonLd} />}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">

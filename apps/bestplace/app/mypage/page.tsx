@@ -37,6 +37,12 @@ export default async function MyPage() {
                   랭킹 보기
                 </a>
                 <a
+                  href="/mypage/reviews"
+                  className="rounded-full border border-[var(--brand-primary)]/40 bg-[var(--brand-primary)]/5 px-3 py-1 text-[var(--brand-primary)] hover:border-[var(--brand-primary)]/70"
+                >
+                  내 리뷰
+                </a>
+                <a
                   href="/mypage/settings"
                   className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
                 >

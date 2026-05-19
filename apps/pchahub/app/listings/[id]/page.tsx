@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, buildRealEstateListingJsonLd, JsonLd } from '@amakers/design-system'
 import {
   CheckCircle2,
   ChevronRight,
@@ -39,6 +39,25 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
   if (!listing) notFound()
 
   const others = LISTINGS.filter((l) => l.id !== listing.id && l.region === listing.region).slice(0, 3)
+
+  const listingUrl = `https://pchahub.kr/listings/${listing.id}`
+  const listingJsonLd = buildRealEstateListingJsonLd({
+    name: listing.title,
+    description: `${listing.region} ${listing.district} · ${listing.area}평 · ${listing.listingType}`,
+    url: listingUrl,
+    priceWon: listing.deposit,
+    listingType: listing.listingType as '양도' | '신규임대' | '매각',
+    region: listing.region,
+    district: listing.district,
+    areaPyeong: listing.area,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '매물', url: 'https://pchahub.kr/listings' },
+      { name: `${listing.region} ${listing.district}`, url: `https://pchahub.kr/listings?region=${listing.region}` },
+      { name: listing.title, url: listingUrl },
+    ],
+  })
   const totalMonthly = listing.monthlyRent
   const totalUpfront = listing.deposit + listing.rightFee
 
@@ -60,6 +79,8 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listingJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-6">
           <nav className="flex items-center gap-1 text-sm text-gray-500">

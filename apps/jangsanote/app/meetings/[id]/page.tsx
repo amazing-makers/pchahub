@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   Calendar,
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { buildBreadcrumbsJsonLd, buildEventJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import {
   channelLabel,
   MEETING_TYPE_LABEL,
@@ -29,6 +31,16 @@ interface MeetingDetailProps {
   params: { id: string }
 }
 
+export function generateMetadata({ params }: MeetingDetailProps): Metadata {
+  const m = MEETINGS.find((m) => m.id === params.id)
+  if (!m) return {}
+  return buildPageMetadata('jangsanote', {
+    title: m.title,
+    description: `${m.description} · ${MEETING_TYPE_LABEL[m.type]} · ${m.location} · 정원 ${m.maxParticipants}명.`,
+    path: `/meetings/${m.id}`,
+  })
+}
+
 export default function MeetingDetailPage({ params }: MeetingDetailProps) {
   const meeting = MEETINGS.find((m) => m.id === params.id)
   if (!meeting) notFound()
@@ -39,6 +51,29 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
   ).slice(0, 3)
   const full = meeting.currentParticipants >= meeting.maxParticipants
   const closed = meeting.status === 'closed'
+
+  const meetingUrl = `https://jangsanote.kr/meetings/${meeting.id}`
+  const eventStatus = meeting.status === 'closed' ? 'sold-out' : 'scheduled'
+  const meetingJsonLd = buildEventJsonLd({
+    name: meeting.title,
+    description: meeting.description,
+    url: meetingUrl,
+    image: meeting.coverImage,
+    startDate: meeting.date,
+    startTime: meeting.startTime,
+    endTime: meeting.endTime,
+    eventType: meeting.type,
+    locationName: meeting.location,
+    priceWon: meeting.isFree ? 0 : meeting.feeWon,
+    status: eventStatus,
+    organizer: { name: host?.handle ?? '장사노트', url: 'https://jangsanote.kr' },
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '모임', url: 'https://jangsanote.kr/meetings' },
+      { name: meeting.title, url: meetingUrl },
+    ],
+  })
 
   const formatLongDate = (iso: string) => {
     const d = new Date(iso)
@@ -52,6 +87,8 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={meetingJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           {/* 브레드크럼 */}

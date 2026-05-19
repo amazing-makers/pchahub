@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchahub', {
+    title: '매물 등록',
+    description: '양도 또는 신규임대 매물을 등록하세요. 등록 후 운영팀 실사를 거쳐 영업일 2일 이내 노출됩니다.',
+    path: '/listings/new',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { ListingForm } from './form'
 
 export default function NewListingPage() {

@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, Trophy } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import {
   awardsByCategory,
   AVAILABLE_YEARS,
@@ -22,6 +24,16 @@ interface YearPageProps {
   searchParams: { category?: string }
 }
 
+export function generateMetadata({ params }: YearPageProps): Metadata {
+  const year = Number(params.year)
+  if (!AVAILABLE_YEARS.includes(year)) return {}
+  return buildPageMetadata('bestplace', {
+    title: `${year} 베스트 어워드`,
+    description: `${year}년 amakers 베스트 어워드. 매장 운영·점주 만족도·매출 안정성 기준 카테고리별 베스트를 선정합니다.`,
+    path: `/awards/${year}`,
+  })
+}
+
 export default function AwardsYearPage({ params, searchParams }: YearPageProps) {
   const year = Number(params.year)
   if (!AVAILABLE_YEARS.includes(year)) notFound()
@@ -36,8 +48,24 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
     ? awardsByCategory(year, activeCategory)
     : allYearAwards
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '어워드', url: 'https://bestplace.kr/awards' },
+      { name: `${year} 어워드`, url: `https://bestplace.kr/awards/${year}` },
+    ],
+  })
+  const listJsonLd = buildItemListJsonLd({
+    url: `https://bestplace.kr/awards/${year}`,
+    items: filteredAwards.slice(0, 20).map((a) => {
+      const store = a.representativeStoreId ? storeById(a.representativeStoreId) : undefined
+      return { name: store?.name ?? a.citation, url: store ? `https://bestplace.kr/stores/${store.id}` : `https://bestplace.kr/awards/${year}` }
+    }),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">

@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchahub', {
+    title: '브랜드 비교',
+    description: '최대 3개 프랜차이즈 브랜드를 창업비·평균 매출·가맹비·성장률 기준으로 나란히 비교하세요.',
+    path: '/brands/compare',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { ArrowLeft, ArrowRight, CheckCircle2, Crown, Plus, X } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'

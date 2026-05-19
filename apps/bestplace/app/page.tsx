@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('bestplace', {
+  title: '베스트플레이스 — 올해의 베스트 매장·브랜드 어워드',
+  description: '매년 amakers가 선정하는 프랜차이즈 베스트 어워드와 전국 매장 실시간 랭킹. 평점·방문객·리뷰 기준 Top 10을 확인하세요.',
+  path: '/',
+})
+
 import { ArrowRight, Award, Flame, Trophy } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -25,8 +34,20 @@ export default function HomePage() {
   const topVisitors = topStoresByVisitors(5)
   const newStores = newestStores(4)
 
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '베스트플레이스',
+    url: 'https://bestplace.kr',
+    description: '매년 amakers가 선정하는 프랜차이즈 베스트 어워드와 전국 매장 실시간 랭킹.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '베스트플레이스',
+    url: 'https://bestplace.kr',
+    searchUrlTemplate: 'https://bestplace.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero — gold gradient */}
       <section className="border-b border-gray-100 bg-gradient-to-br from-amber-50 to-white">
         <div className="container mx-auto py-section">

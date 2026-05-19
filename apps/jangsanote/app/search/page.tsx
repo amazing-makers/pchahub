@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('jangsanote', {
+    title: '검색',
+    description: '게시글·모임·채널 키워드로 장사노트 커뮤니티 콘텐츠를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { POSTS, MEETINGS, CHANNELS, CATEGORY_LABEL, MEETING_TYPE_LABEL } from '@/lib/mock-data'

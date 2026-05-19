@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CHANNELS } from '@/lib/mock-data'
 
@@ -12,8 +12,15 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 
 export default function RegionsPage() {
   const regions = CHANNELS.filter((c) => c.type === 'region')
+
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://jangsanote.kr/regions',
+    items: regions.map((c) => ({ name: c.label, url: `https://jangsanote.kr/regions/${c.key}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">지역</h1>

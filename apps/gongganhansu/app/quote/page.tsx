@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('gongganhansu', {
+  title: '무료 견적 신청',
+  description: '매장 카테고리·면적·지역·예산을 입력하면 적합한 시공사 3~5곳의 견적을 영업일 기준 48시간 내에 받아보실 수 있습니다.',
+  path: '/quote',
+})
+
 import { QuoteForm } from './form'
 
 interface QuotePageProps {

@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import { buildPageMetadata } from '@amakers/design-system'
 
-export const metadata: Metadata = buildPageMetadata('jangsanote', {
-  title: '모임 만들기',
-  description: '자영업자·가맹점주와 함께할 모임을 만들어보세요.',
-  path: '/meetings/new',
-})
+export const metadata: Metadata = {
+  ...buildPageMetadata('jangsanote', {
+    title: '모임 만들기',
+    description: '자영업자·가맹점주와 함께할 모임을 만들어보세요.',
+    path: '/meetings/new',
+  }),
+  robots: { index: false, follow: false },
+}
 
 import { Suspense } from 'react'
 import { ArrowLeft } from 'lucide-react'

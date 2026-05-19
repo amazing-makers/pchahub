@@ -37,6 +37,12 @@ export default async function MyPage() {
             <a href="/contact" className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50">
               캠페인 의뢰
             </a>
+            <a
+              href="/mypage/campaigns"
+              className="rounded-lg border border-[var(--brand-primary)]/30 bg-[var(--brand-primary)]/5 px-3 py-1.5 text-[var(--brand-primary)] hover:border-[var(--brand-primary)]/60"
+            >
+              캠페인 현황
+            </a>
             <a href="/mypage/settings" className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50">
               계정 설정
             </a>

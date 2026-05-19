@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('jangsanote', {
+  title: '장사노트 — 자영업·가맹점주 커뮤니티',
+  description: '전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티. 상권 정보, 창업 팁, 업종별 채널, 오프라인 모임까지.',
+  path: '/',
+})
+
 import { ArrowRight, Calendar, Flame } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
@@ -13,6 +22,10 @@ import {
 } from '@/lib/mock-data'
 import { LocalPostsFeed } from './local-posts-feed'
 
+const otherPlatforms = (
+  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
+).filter(([key]) => key !== 'jangsanote')
+
 export default function HomePage() {
   const recent = [...POSTS]
     .filter((p) => !p.pinned)
@@ -20,8 +33,20 @@ export default function HomePage() {
     .slice(0, 12)
   const popular = popularPosts(5)
 
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '장사노트',
+    url: 'https://jangsanote.kr',
+    description: '전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티. 상권 정보, 창업 팁, 업종별 채널, 오프라인 모임까지.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '장사노트',
+    url: 'https://jangsanote.kr',
+    searchUrlTemplate: 'https://jangsanote.kr/search?q={search_term_string}',
+  })
   return (
     <main className="bg-gray-50">
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
@@ -187,6 +212,34 @@ export default function HomePage() {
             </form>
             <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
           </div>
+        </div>
+      </section>
+
+      {/* Other platforms */}
+      <section className="container mx-auto py-section">
+        <div className="mb-4">
+          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
+          {otherPlatforms.map(([key, p]) => (
+            <a key={key} href={`https://${p.domain}`} className="group">
+              <Card className="h-full transition-shadow hover:shadow-md">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="h-7 w-7 shrink-0 rounded-md"
+                      style={{ background: p.primary }}
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-gray-900">{p.name}</div>
+                      <div className="truncate text-xs text-gray-500">{p.role}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          ))}
         </div>
       </section>
     </main>

@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchabridge', {
+    title: '검색',
+    description: '브랜드명·업종·투자 유형으로 프차브릿지 투자 라운드와 M&A 매물을 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search, TrendingUp, Building2 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { ROUNDS, MA_LISTINGS, BRANDS, ROUND_TYPE_LABEL, ROUND_STATUS_LABEL, progressPercent, daysUntil } from '@/lib/mock-data'

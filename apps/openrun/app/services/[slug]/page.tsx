@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CheckCircle2, ChevronRight, Target, Users } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
+import { buildBreadcrumbsJsonLd, buildHowToJsonLd, buildServiceJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { CaseCard } from '@/components/case-card'
 import { caseById, SERVICE_LABEL, SERVICES, serviceBySlug } from '@/lib/mock-data'
 
@@ -12,13 +14,50 @@ interface ServiceDetailProps {
   params: { slug: string }
 }
 
+export function generateMetadata({ params }: ServiceDetailProps): Metadata {
+  const service = serviceBySlug(params.slug)
+  if (!service) return {}
+  return buildPageMetadata('openrun', {
+    title: `${service.title} — 오픈런 서비스`,
+    description: service.description,
+    path: `/services/${service.slug}`,
+  })
+}
+
 export default function ServiceDetailPage({ params }: ServiceDetailProps) {
   const service = serviceBySlug(params.slug)
   if (!service) notFound()
   const cases = service.portfolioIds.map((id) => caseById(id)).filter((c): c is NonNullable<typeof c> => Boolean(c))
 
+  const serviceUrl = `https://openrun.kr/services/${service.slug}`
+  const workJsonLd = buildServiceJsonLd({
+    name: service.title,
+    description: service.description,
+    url: serviceUrl,
+    provider: { name: '오픈런', url: 'https://openrun.kr' },
+    serviceType: SERVICE_LABEL[service.slug],
+    priceLabel: service.priceLabel,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '서비스', url: 'https://openrun.kr/services' },
+      { name: service.title, url: serviceUrl },
+    ],
+  })
+  const howToJsonLd = service.process.length > 0
+    ? buildHowToJsonLd({
+        name: `${service.title} 진행 프로세스`,
+        description: service.description,
+        url: serviceUrl,
+        steps: service.process.map((p) => ({ name: p.title, text: p.body })),
+      })
+    : null
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={workJsonLd} />
+      <JsonLd data={breadcrumbs} />
+      {howToJsonLd && <JsonLd data={howToJsonLd} />}
       {/* Hero */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">

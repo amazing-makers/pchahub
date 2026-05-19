@@ -27,6 +27,11 @@ export interface MockEpisode {
   tags: string[]
   featured: boolean
   trending: boolean
+  /**
+   * Real YouTube video URL (공개 영상만). undefined면 자체 플레이어 플레이스홀더.
+   * 예: 'https://www.youtube.com/watch?v=XXXXXXXXXX'
+   */
+  youtubeUrl?: string
   /** Real thumbnail image — auto-filled. */
   thumbnailImage: string
 }
@@ -80,15 +85,15 @@ type RawEpisode = Omit<MockEpisode, 'thumbnailImage'>
 const RAW_EPISODES: RawEpisode[] = [
   {
     id: 'e1',
-    title: '강남에서 5년, 한식 가맹의 진짜 손익',
+    title: '강남에서 5년, 한솥도시락 가맹의 진짜 손익',
     subtitle: '월 매출 4,200만원의 매장이 실제로 가져가는 돈은',
     category: 'success',
     duration: '24분 18초',
     thumbnailColors: ['#10B981', '#34D399'],
-    brand: '한솥미식',
-    hook: '강남역 인근 한식 가맹점주가 5년 운영 끝에 보여주는 매출과 비용의 모든 것.',
+    brand: '한솥도시락',
+    hook: '강남역 인근 한솥도시락 점주가 5년 운영 끝에 보여주는 매출과 비용의 모든 것.',
     description: [
-      '강남역 인근에서 한식 도시락 가맹점을 5년째 운영 중인 김민호 점주의 매장은 월 매출 평균 4,200만원으로 같은 브랜드 매장 평균보다 +35% 높은 곳입니다.',
+      '강남역 인근에서 한솥도시락 가맹점을 5년째 운영 중인 김민호 점주의 매장은 월 매출 평균 4,200만원으로 같은 브랜드 매장 평균보다 +35% 높은 곳입니다.',
       '카메라가 매장에 6주 동안 머무르며 매출·비용·인력 흐름을 모두 기록했습니다. 단순한 성공담이 아니라 식자재 32%·인건비 24%·임대료 8%·로열티 5%·기타 6% 같은 매장 운영의 실제 숫자를 펼쳐 보여줍니다.',
       '5년 운영 끝에 본사와 합의해 만든 점심 메뉴 패키지, 단골 관리 노하우, 인력 시급 협상까지 한 점주가 만든 매출 +35%의 구체적인 출처를 따라갑니다.',
     ],
@@ -137,15 +142,15 @@ const RAW_EPISODES: RawEpisode[] = [
   },
   {
     id: 'e3',
-    title: '치킨다이스가 빠르게 성장한 5가지 이유',
-    subtitle: '본사 직접 운영 사례 분석',
+    title: '굽네치킨이 빠르게 성장한 5가지 이유',
+    subtitle: '오븐구이 콘셉트로 틈새를 찾은 본사 분석',
     category: 'brand',
     duration: '18분 50초',
     thumbnailColors: ['#F97316', '#FB923C'],
-    brand: '치킨다이스',
-    hook: '4년 만에 매장 80개. 본사 운영팀이 직접 풀어주는 성장의 진짜 이유.',
+    brand: '굽네치킨',
+    hook: '오븐구이 콘셉트로 치킨 시장 틈새를 찾은 굽네치킨. 본사 운영팀이 직접 풀어주는 성장의 진짜 이유.',
     description: [
-      '치킨다이스는 2022년 첫 매장 오픈 후 4년 만에 80개 매장으로 성장했습니다. 본사 운영팀이 카메라 앞에서 직접 5가지 핵심 요인을 설명합니다.',
+      '굽네치킨은 튀김 기름 없이 오븐구이 콘셉트로 기름진 치킨 시장의 틈새를 찾아 빠르게 성장했습니다. 본사 운영팀이 카메라 앞에서 직접 5가지 핵심 요인을 설명합니다.',
       '인테리어 단가 조정, SNS 마케팅 자원 투자, 가맹 점주 선별 기준, 본사 SV 인력 배치, 메뉴 회전 주기까지 — 본사 입장에서 본 성장 비결을 솔직하게 풀어냅니다.',
     ],
     chapters: [
@@ -190,13 +195,13 @@ const RAW_EPISODES: RawEpisode[] = [
   },
   {
     id: 'e5',
-    title: '분식나라 5년차 점주 인터뷰',
+    title: '죠스떡볶이 5년차 점주 인터뷰',
     subtitle: '학원가 분식의 일상과 손익',
     category: 'interview',
     duration: '12분 48초',
     thumbnailColors: ['#DC2626', '#F87171'],
-    brand: '분식나라',
-    hook: '대구 동성로 분식 점주의 일하는 모습 + 5년치 손익 + 후배 점주들에게 하고 싶은 말.',
+    brand: '죠스떡볶이',
+    hook: '대구 동성로 죠스떡볶이 점주의 일하는 모습 + 5년치 손익 + 후배 점주들에게 하고 싶은 말.',
     description: [
       '대구 동성로에서 분식 가맹점을 5년째 운영 중인 최서윤 점주의 매장을 카메라가 하루 종일 따라다닙니다.',
       '오픈 준비부터 점심 피크, 학생 객수, 폐점 정리까지 한 매장의 하루를 보여주고, 5년치 손익 데이터와 후배 점주들에게 전하는 솔직한 조언을 듣습니다.',
@@ -221,7 +226,7 @@ const RAW_EPISODES: RawEpisode[] = [
     category: 'failure',
     duration: '19분 15초',
     thumbnailColors: ['#92400E', '#A16207'],
-    brand: '데일리브루',
+    brand: '이디야커피',
     hook: '1인 운영 카페가 매출 1,800만원에서 천장을 만나는 이유를 데이터로 보여줍니다.',
     description: [
       '1인 카페 운영은 인건비 0원이라는 장점이 있지만 매출 천장이 존재합니다. 안양 평촌 카페 점주의 1년치 데이터를 분석해 매출 1,800만원이라는 천장의 정확한 원인을 찾습니다.',

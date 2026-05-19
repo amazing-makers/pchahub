@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildFaqPageJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '광고 상품',
+  description: '예비 창업자 월 12만 명에게 브랜드를 노출하는 프차허브 광고 상품. 배너·피처드·카탈로그 패키지를 비교하세요.',
+  path: '/for-brands/ads',
+})
+
 import { ArrowRight, Check, Minus } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
@@ -134,9 +143,15 @@ const FAQS = [
   },
 ]
 
+const faqJsonLd = buildFaqPageJsonLd({
+  url: 'https://pchahub.kr/for-brands/ads',
+  items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+})
+
 export default function AdsPage() {
   return (
     <main className="bg-gray-50">
+      <JsonLd data={faqJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-section">
           <a

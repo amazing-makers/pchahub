@@ -104,22 +104,160 @@ export async function getDisclosureContent(
 }
 
 // ============================================================
-// XML 파싱 — 정식 fast-xml-parser는 Supabase 연결 시점에 추가.
-// 지금은 throw하는 placeholder. (런타임에는 호출되지 않음 — KFTC_API_KEY가
-// 없으면 client 함수 진입 시점에 throw되어 polled 페이지가 mock으로 fallback)
+// XML 파싱 — 외부 라이브러리 없이 순수 regex 기반 구현.
+// KFTC XML은 구조가 단순하고 예측 가능하므로 regex로 충분히 처리 가능.
 // ============================================================
 
-function parseListXml(_xml: string): KftcDisclosureListResponse {
-  // TODO(amakers): fast-xml-parser로 <item> 노드 추출 → KftcDisclosureListItem[] 변환
-  throw new Error('KFTC XML parser 미구현 — Supabase 연결 시점에 fast-xml-parser 추가 예정')
+/**
+ * 태그 하나의 텍스트 내용을 추출한다.
+ * <tagName>value</tagName> → "value"
+ */
+function tag(xml: string, tagName: string): string {
+  const m = xml.match(new RegExp(`<${tagName}>([\\s\\S]*?)</${tagName}>`))
+  return m ? m[1]!.trim() : ''
 }
 
-function parseTitleXml(_xml: string, jngIfrmpSn: DisclosureSerialNumber): KftcDisclosureTOC {
-  throw new Error('KFTC XML parser 미구현')
+/**
+ * 반복 태그 블록을 배열로 추출한다.
+ * <item>...</item> 여러 개 → string[]
+ */
+function allTags(xml: string, tagName: string): string[] {
+  const re = new RegExp(`<${tagName}>([\\s\\S]*?)</${tagName}>`, 'g')
+  const results: string[] = []
+  let m: RegExpExecArray | null
+  while ((m = re.exec(xml)) !== null) {
+    results.push(m[1]!.trim())
+  }
+  return results
 }
 
-function parseContentXml(_xml: string, jngIfrmpSn: DisclosureSerialNumber): KftcDisclosureContent {
-  throw new Error('KFTC XML parser 미구현')
+/** 한국 공공API 금액 문자열 → 만원 (숫자). "0" / "" → 0 */
+function toMan(s: string): number {
+  const n = parseInt(s.replace(/,/g, ''), 10)
+  return isFinite(n) ? n : 0
+}
+
+/** yyyy-MM-dd → yyyy 연도만 */
+function yearOf(s: string): number {
+  return parseInt(s.substring(0, 4), 10) || 0
+}
+
+function parseListXml(xml: string): KftcDisclosureListResponse {
+  const header = tag(xml, 'header') || xml
+  const body = tag(xml, 'body') || xml
+  const items: KftcDisclosureListItem[] = allTags(xml, 'item').map((item) => ({
+    jngIfrmpSn: tag(item, 'jngIfrmpSn'),
+    brandNm:    tag(item, 'brandNm'),
+    crpoNm:     tag(item, 'crpoNm'),
+    regDt:      tag(item, 'regDt'),
+    bizCondCd:  tag(item, 'bizCondCd') || undefined,
+    indutyClsfNm: tag(item, 'indutyClsfNm') || undefined,
+    fcCrpoMngNo: tag(item, 'fcCrpoMngNo') || undefined,
+    bizRgNo:    tag(item, 'bizRgNo') || undefined,
+  }))
+  return {
+    resultCode: tag(header, 'resultCode'),
+    resultMsg:  tag(header, 'resultMsg'),
+    totalCount: parseInt(tag(body, 'totalCount'), 10) || 0,
+    pageNo:     parseInt(tag(body, 'pageNo'), 10) || 1,
+    numOfRows:  parseInt(tag(body, 'numOfRows'), 10) || 0,
+    items,
+  }
+}
+
+function parseTitleXml(xml: string, jngIfrmpSn: DisclosureSerialNumber): KftcDisclosureTOC {
+  const entries = allTags(xml, 'item').map((item, i) => ({
+    sectionId: tag(item, 'sectionId') || `s${i + 1}`,
+    title:     tag(item, 'title') || tag(item, 'sectionNm') || `섹션 ${i + 1}`,
+    level:     parseInt(tag(item, 'level') || '1', 10),
+  }))
+  return { jngIfrmpSn, entries }
+}
+
+function parseContentXml(xml: string, jngIfrmpSn: DisclosureSerialNumber): KftcDisclosureContent {
+  // ── 1장. 본부 일반현황 ──
+  const ch1 = tag(xml, 'ch1') || xml
+  const ch1_hqInfo = {
+    crpoNm:              tag(ch1, 'crpoNm') || tag(xml, 'crpoNm'),
+    repNm:               tag(ch1, 'repNm') || tag(xml, 'repNm'),
+    estbsDt:             tag(ch1, 'estbsDt') || '',
+    fcStartDt:           tag(ch1, 'fcStartDt') || '',
+    addr:                tag(ch1, 'addr') || tag(xml, 'addr'),
+    telNo:               tag(ch1, 'telNo') || '',
+    homepageUrl:         tag(ch1, 'homepageUrl') || undefined,
+    bizRgNo:             tag(ch1, 'bizRgNo') || tag(xml, 'bizRgNo') || '',
+    trademarkRegistered: tag(ch1, 'trdmarkRgsYn') === 'Y',
+  }
+
+  // ── 2장. 가맹사업자의 부담 ──
+  const ch2 = tag(xml, 'ch2') || xml
+  const royaltyStr = tag(ch2, 'royaltyType') || tag(xml, 'royaltyType')
+  let royaltyType: 'fixed' | 'percentage' | 'none' = 'none'
+  if (royaltyStr === 'fixed' || royaltyStr === '고정') royaltyType = 'fixed'
+  else if (royaltyStr === 'percentage' || royaltyStr === '매출비례' || royaltyStr === '비율') royaltyType = 'percentage'
+  const ch2_costs = {
+    franchiseFee:     toMan(tag(ch2, 'jngFee') || tag(xml, 'jngFee')),
+    deposit:          toMan(tag(ch2, 'dpst') || tag(xml, 'dpst')),
+    educationFee:     toMan(tag(ch2, 'eduFee') || tag(xml, 'eduFee')),
+    interiorFee:      toMan(tag(ch2, 'intrFee') || tag(xml, 'intrFee')),
+    interiorPerPyeong: toMan(tag(ch2, 'intrFeePerPyeong') || '0'),
+    otherFees:        toMan(tag(ch2, 'etcFee') || tag(xml, 'etcFee')),
+    standardArea:     toMan(tag(ch2, 'stdArea') || tag(xml, 'stdArea')),
+    royaltyType,
+    royaltyValue:     toMan(tag(ch2, 'royaltyValue') || tag(xml, 'royaltyValue')),
+  }
+
+  // ── 3장. 영업활동 조건 ──
+  const ch3 = tag(xml, 'ch3') || xml
+  const ch3_terms = {
+    contractYears:       parseInt(tag(ch3, 'ctrctYears') || tag(xml, 'ctrctYears') || '2', 10),
+    renewalTerms:        tag(ch3, 'renewalTerms') || '협의',
+    territoryProtection: tag(ch3, 'terrtProtect') || '미지정',
+    hqAdvertisingShare:  parseInt(tag(ch3, 'hqAdvShare') || '100', 10),
+    storeAdvertisingShare: parseFloat(tag(ch3, 'storeAdvShare') || '0'),
+  }
+
+  // ── 4장. 매장 현황 ──
+  const ch4 = tag(xml, 'ch4') || xml
+  const storeYearItems = allTags(ch4 || xml, 'storeYearItem')
+  const byYear = storeYearItems.map((it) => ({
+    year:              parseInt(tag(it, 'yr'), 10) || 0,
+    totalStores:       toMan(tag(it, 'totalCnt')),
+    newStores:         toMan(tag(it, 'newCnt')),
+    closedStores:      toMan(tag(it, 'closedCnt')),
+    contractTerminated: toMan(tag(it, 'ctrctTermCnt')),
+    ownershipChanged:  toMan(tag(it, 'ownrChgCnt')),
+  })).filter((r) => r.year > 2010)
+  const ch4_stores = {
+    totalStoresLastYear: byYear.at(-1)?.totalStores ?? toMan(tag(ch4, 'totalStoreCnt')),
+    byYear,
+  }
+
+  // ── 5장. 매출 정보 ──
+  const ch5 = tag(xml, 'ch5') || xml
+  const regionItems = allTags(ch5 || xml, 'regionItem')
+  const byRegion = regionItems.map((it) => ({
+    region: tag(it, 'regionNm'),
+    share:  parseFloat(tag(it, 'share')) || 0,
+  })).filter((r) => r.region)
+  const ch5_revenue = {
+    averageMonthly:         toMan(tag(ch5, 'avgMonthlySales') || tag(xml, 'avgMonthlySales')),
+    averageOperatingProfit: toMan(tag(ch5, 'avgOpProfit') || tag(xml, 'avgOpProfit')),
+    byRegion: byRegion.length > 0 ? byRegion : [],
+  }
+
+  return {
+    jngIfrmpSn,
+    ch1_hqInfo,
+    ch2_costs,
+    ch3_terms,
+    ch4_stores,
+    ch5_revenue,
+    meta: {
+      registrationNumber: tag(xml, 'regNo') || tag(xml, 'jngIfrmpSn') || jngIfrmpSn,
+      publishedAt:        tag(xml, 'pubDt') || tag(xml, 'regDt') || '',
+    },
+  }
 }
 
 export type { KftcDisclosureListItem, KftcDisclosureContent }

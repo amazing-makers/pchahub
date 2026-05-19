@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   ChevronRight,
@@ -5,8 +6,9 @@ import {
   MessageCircle,
   Star,
 } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, buildPersonJsonLd, JsonLd } from '@amakers/design-system'
 import { CourseCard } from '@/components/course-card'
 import { coursesByInstructor, MENTORS } from '@/lib/mock-data'
 import { ConsultForm } from './consult-form'
@@ -20,14 +22,50 @@ interface MentorDetailProps {
   params: { id: string }
 }
 
+export function generateMetadata({ params }: MentorDetailProps): Metadata {
+  const mentor = MENTORS.find((m) => m.id === params.id)
+  if (!mentor) return {}
+  return buildPageMetadata('themanual', {
+    title: `${mentor.name} — 멘토`,
+    description: `${mentor.role} · ${mentor.specialties.slice(0, 3).join(' · ')} 전문 · 평점 ${mentor.rating} · 상담 ${mentor.totalConsultations}건.`,
+    path: `/mentors/${mentor.id}`,
+  })
+}
+
 export default function MentorDetailPage({ params }: MentorDetailProps) {
   const mentor = MENTORS.find((m) => m.id === params.id)
   if (!mentor) notFound()
   const courses = coursesByInstructor(mentor.id)
   const otherMentors = MENTORS.filter((m) => m.id !== mentor.id).slice(0, 3)
 
+  const mentorUrl = `https://themanual.kr/mentors/${mentor.id}`
+  const personJsonLd = buildPersonJsonLd({
+    name: mentor.name,
+    jobTitle: mentor.role,
+    description: mentor.bio,
+    url: mentorUrl,
+    image: mentor.avatarUrl || undefined,
+    knowsAbout: mentor.specialties,
+    offer: {
+      price: mentor.hourlyRate,
+      description: '시간당 멘토링 상담',
+    },
+    aggregateRating: {
+      ratingValue: mentor.rating,
+      reviewCount: mentor.totalConsultations,
+    },
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '멘토', url: 'https://themanual.kr/mentors' },
+      { name: mentor.name, url: mentorUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={personJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">
@@ -135,7 +173,26 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
             </Card>
           </div>
 
-          <aside className="lg:sticky lg:top-20 lg:self-start">
+          <aside className="lg:sticky lg:top-20 lg:self-start space-y-4">
+            {/* 예약하기 CTA */}
+            <Card className="border-[var(--brand-primary)]/30 bg-gradient-to-br from-[var(--brand-primary)]/5 to-white shadow-sm">
+              <CardContent className="p-5">
+                <div className="text-xs font-semibold uppercase tracking-wider text-[var(--brand-primary)]">1:1 화상 상담 예약</div>
+                <p className="mt-1 text-sm text-gray-600">
+                  날짜·시간을 선택하고 상담 내용을 입력하면 {mentor.name} 멘토와 바로 예약됩니다.
+                </p>
+                <div className="mt-3 flex items-baseline gap-1">
+                  <span className="text-h4 font-bold text-gray-900">{formatNumber(mentor.hourlyRate)}만원</span>
+                  <span className="text-xs text-gray-500">/ 시간</span>
+                </div>
+                <a href={`/mentors/${mentor.id}/book`} className="mt-3 block">
+                  <Button size="md" className="w-full">
+                    예약하기
+                  </Button>
+                </a>
+              </CardContent>
+            </Card>
+
             <ConsultForm
               mentorId={mentor.id}
               mentorName={mentor.name}

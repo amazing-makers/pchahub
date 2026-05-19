@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('bestplace', {
+    title: '매장 등록',
+    description: '베스트플레이스에 우리 매장을 등록하세요. 방문객·평점·리뷰 랭킹에 자동 참여됩니다.',
+    path: '/register',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { RegisterForm } from './register-form'
 
 export default function RegisterPage() {

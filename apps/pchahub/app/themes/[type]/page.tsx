@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AlertCircle, ArrowRight, ChevronRight } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { BrandCard } from '@/components/brand-card'
 import { ThemeIcon } from '@/components/theme-icon'
 import { THEMES, THEME_COUNTS, brandsForTheme } from '@/lib/themes'
@@ -13,6 +15,17 @@ interface ThemePageProps {
   params: { type: string }
 }
 
+export function generateMetadata({ params }: ThemePageProps): Metadata {
+  const theme = THEMES.find((t) => t.key === params.type)
+  if (!theme) return {}
+  const count = THEME_COUNTS[theme.key] ?? 0
+  return buildPageMetadata('pchahub', {
+    title: `${theme.label} 브랜드 ${count}개`,
+    description: `${theme.description} 프랜차이즈 브랜드 ${count}곳을 확인하세요.`,
+    path: `/themes/${theme.key}`,
+  })
+}
+
 export default function ThemePage({ params }: ThemePageProps) {
   const theme = THEMES.find((t) => t.key === params.type)
   if (!theme) notFound()
@@ -20,8 +33,22 @@ export default function ThemePage({ params }: ThemePageProps) {
   const brands = brandsForTheme(theme.key)
   const otherThemes = THEMES.filter((t) => t.key !== theme.key).slice(0, 4)
 
+  const themeUrl = `https://pchahub.kr/themes/${theme.key}`
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '테마별', url: 'https://pchahub.kr/themes' },
+      { name: theme.label, url: themeUrl },
+    ],
+  })
+  const listJsonLd = buildItemListJsonLd({
+    url: themeUrl,
+    items: brands.slice(0, 20).map((b) => ({ name: b.name, url: `https://pchahub.kr/brands/${b.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-10">
           <nav className="flex items-center gap-1 text-sm text-gray-500">

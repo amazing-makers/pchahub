@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchabridge', {
+    title: '투자 유치 등록',
+    description: '투자 라운드 정보를 등록하면 검증된 투자자에게 브랜드를 노출합니다. amakers 팀이 IR 자료 호스팅과 NDA 체결을 지원합니다.',
+    path: '/investments/register',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'

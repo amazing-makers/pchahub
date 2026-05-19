@@ -113,6 +113,22 @@ export interface BrandMenuItem {
   description?: string
 }
 
+/** 비음식 브랜드(PC방·스터디카페·교육·빨래방 등)의 이용권·서비스 항목 */
+export interface BrandServiceItem {
+  /** 이용권 또는 서비스 이름 */
+  name: string
+  /** 원 단위 가격 — 0이면 "문의" */
+  priceWon: number
+  /** 가격 단위 표기 (예: "/시간", "/월", "/회") */
+  unit?: string
+  /** 한 줄 부가 설명 */
+  description?: string
+  /** 인기·추천 항목 */
+  popular?: boolean
+  /** 카테고리 내 그룹 (예: "일반석", "프리미엄석", "스터디룸") */
+  group?: string
+}
+
 export interface BrandRecentOpening {
   storeName: string
   region: string
@@ -144,6 +160,8 @@ export interface BrandDetail {
   faqs: BrandFAQ[]
   disclosure: BrandDisclosureExtras
   menu: BrandMenuItem[]
+  /** 비음식 카테고리(PC방·스터디카페·교육·빨래방·여가 등)의 이용권·서비스 항목 */
+  services: BrandServiceItem[]
   recentOpenings: BrandRecentOpening[]
   photos: BrandPhotos
 }
@@ -642,7 +660,15 @@ const MENU_BY_CATEGORY: Record<string, Array<{ name: string; priceWon: number; s
   ],
 }
 
+/** 음식 카테고리 — 이 카테고리에만 메뉴 항목을 생성 */
+const FOOD_CATS_FOR_MENU = new Set([
+  'chicken', 'cafe', 'korean', 'japanese', 'snack', 'dessert',
+  'beverage', 'bar', 'pizza', 'bakery', 'fastfood', 'western', 'chinese',
+])
+
 function menuFor(brand: MockBrand): BrandMenuItem[] {
+  // 비음식 카테고리는 메뉴 없음 (ServicesSection이 대신 표시)
+  if (!FOOD_CATS_FOR_MENU.has(brand.category)) return []
   // 메뉴 사진이 없는 브랜드는 섹션 통째로 숨김 — <img src=undefined> 방지.
   if (brand.menuImages.length === 0) return []
 
@@ -819,16 +845,25 @@ export function getBrandDetail(brand: MockBrand): BrandDetail {
     minArea: Math.max(recommendedArea - 5, 6),
   }
 
+  // Non-food 카테고리별 운영 특성
+  const NON_FOOD_OPS: Record<string, { staff: number; hours: string; channel: BrandOperations['primaryChannel'] }> = {
+    pcbang:      { staff: 2, hours: '24시간 운영', channel: '매장 중심' },
+    study:       { staff: 2, hours: '24시간 운영', channel: '매장 중심' },
+    convenience: { staff: 1, hours: '24시간 운영', channel: '혼합' },
+    laundry:     { staff: 1, hours: '09:00 - 23:00', channel: '매장 중심' },
+    life:        { staff: 2, hours: '09:00 - 21:00', channel: '매장 중심' },
+    education:   { staff: 3, hours: '13:00 - 21:00', channel: '매장 중심' },
+    leisure:     { staff: 3, hours: '10:00 - 23:00', channel: '매장 중심' },
+  }
+  const nfOps = NON_FOOD_OPS[brand.category]
   const operations: BrandOperations = {
     averageArea: recommendedArea + 2,
-    averageStaff: brand.category === 'cafe' ? 2 : brand.category === 'snack' ? 2 : 4,
-    operatingHours: brand.category === 'bar' ? '17:00 - 02:00' : '10:00 - 22:00',
-    primaryChannel:
+    averageStaff: nfOps ? nfOps.staff : brand.category === 'cafe' ? 2 : brand.category === 'snack' ? 2 : 4,
+    operatingHours: nfOps ? nfOps.hours : brand.category === 'bar' ? '17:00 - 02:00' : '10:00 - 22:00',
+    primaryChannel: nfOps ? nfOps.channel :
       brand.category === 'korean' || brand.category === 'snack'
         ? '혼합'
-        : brand.category === 'bar'
-          ? '매장 중심'
-          : '매장 중심',
+        : '매장 중심',
   }
 
   const baseRevenue = 1800 + brand.startupCost * 0.15 + brand.growthRate * 8
@@ -883,9 +918,82 @@ export function getBrandDetail(brand: MockBrand): BrandDetail {
     faqs: FAQ_DEFAULTS,
     disclosure: disclosureExtrasFor(brand),
     menu: menuFor(brand),
+    services: servicesFor(brand),
     recentOpenings: recentOpeningsFor(brand),
     photos,
   }
+}
+
+// ============================================================
+// 서비스 항목 — 비음식 카테고리별 이용권·서비스 데이터
+// ============================================================
+
+const SERVICES_BY_CATEGORY: Record<string, BrandServiceItem[]> = {
+  pcbang: [
+    { name: '일반석 1시간', priceWon: 1200, unit: '/시간', group: '일반석', popular: false },
+    { name: '일반석 3시간 패키지', priceWon: 3000, unit: '/3시간', group: '일반석', popular: true, description: '시간당 1,000원 (16.7% 절약)' },
+    { name: '일반석 5시간 패키지', priceWon: 4500, unit: '/5시간', group: '일반석', description: '시간당 900원 (25% 절약)' },
+    { name: '프리미엄석 1시간', priceWon: 1800, unit: '/시간', group: '프리미엄석' },
+    { name: '프리미엄석 3시간 패키지', priceWon: 4800, unit: '/3시간', group: '프리미엄석', popular: true, description: '4K 모니터 + 고사양 PC + 고급의자' },
+    { name: '1인 소파석 1시간', priceWon: 2200, unit: '/시간', group: '소파·개인실', description: '반독립형 개인 공간' },
+    { name: '2인 개인실 1시간', priceWon: 3500, unit: '/시간', group: '소파·개인실', description: '독립 공간, 소음 차단' },
+    { name: '야간권 (자정~오전6시)', priceWon: 7000, unit: '/6시간', group: '야간·패키지', popular: true, description: '일반석 기준, 무제한 음료 포함' },
+  ],
+  study: [
+    { name: '1시간권', priceWon: 1200, unit: '/시간', group: '시간권' },
+    { name: '3시간권', priceWon: 3000, unit: '/3시간', group: '시간권', popular: true, description: '가장 많이 선택하는 이용권' },
+    { name: '1일권', priceWon: 7000, unit: '/일', group: '시간권', description: '당일 입퇴장 제한 없음' },
+    { name: '30일 자유이용권 (일반석)', priceWon: 65000, unit: '/월', group: '월정액', popular: true, description: '매일 이용 시 하루 2,167원' },
+    { name: '30일 자유이용권 (독립석)', priceWon: 95000, unit: '/월', group: '월정액', description: '3면 파티션, 개인 수납공간 제공' },
+    { name: '스터디룸 (4인)', priceWon: 5000, unit: '/시간', group: '스터디룸', description: '사전 예약 필수, 최소 2시간' },
+    { name: '스터디룸 (8인)', priceWon: 9000, unit: '/시간', group: '스터디룸', description: '빔프로젝터·화이트보드 포함' },
+    { name: '사물함', priceWon: 20000, unit: '/월', group: '부가서비스', description: '개인 물품 보관, A4 높이' },
+  ],
+  education: [
+    { name: '기초 과정 (주 2회)', priceWon: 150000, unit: '/월', group: '정규 수업', popular: false, description: '초급~중급, 60분 수업' },
+    { name: '심화 과정 (주 3회)', priceWon: 220000, unit: '/월', group: '정규 수업', popular: true, description: '중급~고급, 입시·자격증 대비' },
+    { name: '집중반 (주 5회)', priceWon: 320000, unit: '/월', group: '정규 수업', description: '방학 특강·시험 직전 집중 코스' },
+    { name: '1:1 개인 지도', priceWon: 50000, unit: '/시간', group: '개인 지도', popular: true, description: '맞춤 커리큘럼, 강사 직접 배정' },
+    { name: '소그룹 (3~5인)', priceWon: 25000, unit: '/시간', group: '개인 지도', description: '3~5인 기준, 인당 가격' },
+    { name: '방학 특강 (2주)', priceWon: 180000, unit: '/과정', group: '단기 특강', description: '여름·겨울 방학, 집중 완성 과정' },
+    { name: '성인반 (주 2회)', priceWon: 120000, unit: '/월', group: '성인반', description: '직장인·성인 대상, 저녁 시간대 운영' },
+  ],
+  laundry: [
+    { name: '소형 세탁기 (10kg)', priceWon: 3000, unit: '/회', group: '세탁기', popular: false, description: '약 35분 소요' },
+    { name: '중형 세탁기 (18kg)', priceWon: 4500, unit: '/회', group: '세탁기', popular: true, description: '약 40분 소요, 이불·침구류 가능' },
+    { name: '대형 세탁기 (25kg)', priceWon: 6000, unit: '/회', group: '세탁기', description: '약 45분, 두꺼운 겨울 이불 전용' },
+    { name: '소형 건조기 (10kg)', priceWon: 2500, unit: '/회', group: '건조기', description: '30분 기준, 추가 10분 500원' },
+    { name: '중형 건조기 (18kg)', priceWon: 4000, unit: '/회', group: '건조기', popular: true, description: '40분 기준, 의류 건조 최적' },
+    { name: '대형 건조기 (25kg)', priceWon: 5500, unit: '/회', group: '건조기', description: '50분 기준, 침구류·겨울 의류 전용' },
+    { name: '세탁+건조 패키지 (18kg)', priceWon: 7500, unit: '/세트', group: '패키지', popular: true, description: '세탁 40분 + 건조 40분, 총 80분' },
+    { name: '세제 자동 투입', priceWon: 500, unit: '/회', group: '부가서비스', description: '친환경 액체 세제, 별도 구매 불필요' },
+  ],
+  life: [
+    { name: '기본 서비스 (소형)', priceWon: 30000, unit: '/회', group: '기본', popular: false, description: '기본 서비스, 1인 기준' },
+    { name: '표준 서비스 (중형)', priceWon: 50000, unit: '/회', group: '기본', popular: true, description: '가장 많이 선택하는 서비스' },
+    { name: '프리미엄 서비스 (대형)', priceWon: 80000, unit: '/회', group: '프리미엄', description: '전문 장비 + 친환경 용품' },
+    { name: '정기권 (월 2회)', priceWon: 90000, unit: '/월', group: '정기권', popular: true, description: '1회 45,000원, 15% 절약' },
+    { name: '정기권 (월 4회)', priceWon: 160000, unit: '/월', group: '정기권', description: '1회 40,000원, 20% 절약' },
+    { name: '특수 서비스', priceWon: 0, unit: '/별도문의', group: '특수·추가', description: '특수 대상 서비스, 견적 후 안내' },
+  ],
+  leisure: [
+    { name: '기본 이용권 1시간', priceWon: 10000, unit: '/시간', group: '시간권', popular: false },
+    { name: '기본 이용권 3시간', priceWon: 25000, unit: '/3시간', group: '시간권', popular: true, description: '가장 많이 선택하는 이용권' },
+    { name: '종일권', priceWon: 40000, unit: '/일', group: '시간권', description: '입장 후 당일 자유 이용' },
+    { name: '정기권 (월 4회)', priceWon: 80000, unit: '/월', group: '정기권', popular: true, description: '1회 20,000원, 20% 절약' },
+    { name: '정기권 (월 8회)', priceWon: 140000, unit: '/월', group: '정기권', description: '1회 17,500원, 30% 절약' },
+    { name: '그룹 이용 (4인)', priceWon: 80000, unit: '/4인·3시간', group: '그룹권', description: '1인 20,000원, 단체 할인 적용' },
+    { name: '파티룸 대관', priceWon: 50000, unit: '/시간', group: '그룹권', description: '최대 10인, 음식 반입 가능' },
+  ],
+  convenience: [
+    { name: '기본 서비스', priceWon: 10000, unit: '/회', group: '기본', popular: true },
+    { name: '프리미엄 서비스', priceWon: 20000, unit: '/회', group: '프리미엄' },
+    { name: '정기 이용권 (월 10회)', priceWon: 80000, unit: '/월', group: '정기권', popular: true, description: '1회 8,000원, 20% 절약' },
+  ],
+}
+
+function servicesFor(brand: MockBrand): BrandServiceItem[] {
+  return SERVICES_BY_CATEGORY[brand.category] ?? []
 }
 
 const BRAND_CEO_MAP: Record<string, string> = {

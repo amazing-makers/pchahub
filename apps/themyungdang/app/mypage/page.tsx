@@ -35,10 +35,22 @@ export default async function MyPage() {
             <div className="min-w-0 flex-1">
               <h1 className="text-h3 font-bold text-gray-900">{name}</h1>
               <div className="mt-1 text-sm text-gray-500">{session.user?.email}</div>
-              <div className="mt-2">
+              <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                <a
+                  href="/mypage/alerts"
+                  className="rounded-full border border-[var(--brand-primary)]/40 bg-[var(--brand-primary)]/5 px-3 py-1 text-[var(--brand-primary)] hover:border-[var(--brand-primary)]/70"
+                >
+                  🔔 매물 알림 설정
+                </a>
+                <a
+                  href="/mypage/inquiries"
+                  className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
+                >
+                  문의 내역
+                </a>
                 <a
                   href="/mypage/settings"
-                  className="text-xs text-gray-500 hover:text-gray-900 hover:underline"
+                  className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
                 >
                   계정 설정
                 </a>

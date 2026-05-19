@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('openrun', {
+  title: '캠페인 의뢰',
+  description: '그랜드 오픈·가맹 모집 캠페인을 의뢰하세요. 영업일 기준 24시간 이내 캠페인 기획안과 예상 견적을 보내드립니다.',
+  path: '/contact',
+})
+
 import { ContactForm } from './form'
 
 export default function ContactPage() {

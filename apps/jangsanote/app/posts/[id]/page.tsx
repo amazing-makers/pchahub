@@ -44,6 +44,8 @@ export function generateMetadata({ params }: PostPageProps): Metadata {
     title: `${post.title} — ${channelName}`,
     description: `${post.excerpt} · ${CATEGORY_LABEL[post.category]} · 추천 ${post.likes} · 댓글 ${post.commentCount}.`,
     path: `/posts/${post.id}`,
+    openGraphType: 'article',
+    publishedTime: post.createdAt,
   })
 }
 

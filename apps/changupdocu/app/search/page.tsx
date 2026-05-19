@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('changupdocu', {
+    title: '검색',
+    description: '에피소드·매거진 키워드로 창업다큐 콘텐츠를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { EPISODES, ARTICLES, CATEGORY_LABEL } from '@/lib/mock-data'

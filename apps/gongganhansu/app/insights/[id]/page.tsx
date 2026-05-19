@@ -1,6 +1,13 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ChevronRight, Clock } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbsJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import { INSIGHTS, insightById } from '@/lib/mock-data'
 import { InsightCard } from '@/components/insight-card'
 
@@ -12,13 +19,45 @@ interface InsightDetailProps {
   params: { id: string }
 }
 
+export function generateMetadata({ params }: InsightDetailProps): Metadata {
+  const ins = insightById(params.id)
+  if (!ins) return {}
+  return buildPageMetadata('gongganhansu', {
+    title: `${ins.title} — 한 수 인사이트`,
+    description: `${ins.subtitle} · ${ins.authorName} · ${ins.readTime}분 읽기.`,
+    path: `/insights/${ins.id}`,
+    openGraphType: 'article',
+    publishedTime: ins.publishedAt,
+    authors: [ins.authorName],
+  })
+}
+
 export default function InsightDetailPage({ params }: InsightDetailProps) {
   const ins = insightById(params.id)
   if (!ins) notFound()
   const related = INSIGHTS.filter((i) => i.id !== ins.id).slice(0, 3)
 
+  const insightUrl = `https://gongganhansu.kr/insights/${ins.id}`
+  const articleJsonLd = buildArticleJsonLd({
+    headline: ins.title,
+    description: ins.subtitle,
+    url: insightUrl,
+    authorName: ins.authorName,
+    authorRole: ins.authorRole,
+    publishedAt: ins.publishedAt,
+    publisher: { name: '공간의한수', url: 'https://gongganhansu.kr' },
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '인사이트', url: 'https://gongganhansu.kr/insights' },
+      { name: ins.title, url: insightUrl },
+    ],
+  })
+
   return (
     <main className="bg-white">
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <div
         className="h-56 w-full sm:h-72"
         style={{

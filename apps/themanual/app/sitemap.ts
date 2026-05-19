@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { buildSitemap } from '@amakers/design-system'
-import { COURSE_CATEGORIES, COURSES, MENTORS } from '@/lib/mock-data'
+import { COURSES, MENTORS } from '@/lib/mock-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return buildSitemap('themanual', [
@@ -17,11 +17,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       path: `/mentors/${m.id}`,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
-    })),
-    ...COURSE_CATEGORIES.map((cat) => ({
-      path: `/courses?category=${cat.key}`,
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
     })),
   ])
 }

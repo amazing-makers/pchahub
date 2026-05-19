@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '가맹 상담 신청',
+  description: '관심 브랜드의 가맹 상담을 신청하세요. 영업일 1일 이내 담당자가 연락드립니다.',
+  path: '/inquiry',
+})
+
 import { Suspense } from 'react'
 import { InquiryPageContent } from './inquiry-form'
 

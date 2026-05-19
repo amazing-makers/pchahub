@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import {
   AlertCircle,
   ArrowLeft,
@@ -36,6 +38,16 @@ interface AreaDetailPageProps {
   params: { name: string }
 }
 
+export function generateMetadata({ params }: AreaDetailPageProps): Metadata {
+  const area = AREAS.find((a) => a.key === params.name)
+  if (!area) return {}
+  return buildPageMetadata('themyungdang', {
+    title: `${area.name} 상권 분석`,
+    description: `${area.region} ${area.name} 상권. 월 유동인구 ${formatNumber(area.footTraffic)}명 · 평균 보증금 ${formatNumber(area.avgDeposit)}만 · 평당 임대료 ${formatNumber(area.avgMonthlyRentPerPyeong)}만원.`,
+    path: `/areas/${area.key}`,
+  })
+}
+
 export default function AreaDetailPage({ params }: AreaDetailPageProps) {
   const area = AREAS.find((a) => a.key === params.name)
   if (!area) notFound()
@@ -46,10 +58,25 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
   ).slice(0, 3)
   const otherAreas = AREAS.filter((a) => a.key !== area.key && a.region !== area.region).slice(0, 4)
 
+  const areaUrl = `https://themyungdang.kr/areas/${area.key}`
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '상권 분석', url: 'https://themyungdang.kr/areas' },
+      { name: area.region, url: `https://themyungdang.kr/areas?region=${encodeURIComponent(area.region)}` },
+      { name: area.name, url: areaUrl },
+    ],
+  })
+  const listJsonLd = buildItemListJsonLd({
+    url: areaUrl,
+    items: listings.slice(0, 20).map((l) => ({ name: l.title, url: `https://themyungdang.kr/listings/${l.id}` })),
+  })
+
   const maxShare = Math.max(...area.topCategories.map((c) => c.share))
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
+      <JsonLd data={listJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-10">

@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildHowToJsonLd, buildOrganizationJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '본사 파트너십',
+  description: '프랜차이즈 본사를 위한 브랜드 노출·가맹 모집·정보공개서 등록 서비스. 예비 창업자 월 12만 명에게 브랜드를 알리세요.',
+  path: '/for-brands',
+})
+
 import {
   ArrowRight,
   BarChart3,
@@ -86,9 +95,25 @@ const FEATURES = [
   { icon: Megaphone, label: '광고 캠페인 운영' },
 ]
 
+const orgJsonLd = buildOrganizationJsonLd({
+  name: '프차허브',
+  url: 'https://pchahub.kr',
+  description: '프랜차이즈 본사를 위한 예비 점주 매칭 + 정보공개서 자동 연동 + 광고 플랫폼.',
+})
+
+const processHowToJsonLd = buildHowToJsonLd({
+  name: '프차허브 본사 파트너십 시작 4단계',
+  description: '본사 등록부터 광고 운영·가맹 문의 응답까지 프차허브에서 파트너십을 시작하는 방법.',
+  url: 'https://pchahub.kr/for-brands',
+  steps: PROCESS_STEPS.map((s) => ({ name: s.title, text: s.body })),
+  price: 0,
+})
+
 export default function ForBrandsPage() {
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={processHowToJsonLd} />
       {/* Hero — dark */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">

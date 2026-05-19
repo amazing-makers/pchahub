@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '모임',
@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
   path: '/meetings',
 })
 
-import { Calendar, Plus } from 'lucide-react'
+import { Calendar, Plus, Search } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { MEETINGS, MEETING_TYPE_LABEL, type MeetingType } from '@/lib/mock-data'
 import { MeetingCard } from '@/components/meeting-card'
@@ -22,20 +22,36 @@ const TYPES: Array<{ value: '' | MeetingType; label: string }> = [
 const REGIONS = ['전국', '서울', '경기', '부산', '대구', '대전', '광주', '울산']
 
 interface MeetingsPageProps {
-  searchParams: { type?: string; region?: string; status?: string }
+  searchParams: { type?: string; region?: string; status?: string; q?: string }
 }
 
 export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
-  const { type = '', region = '전국', status = 'upcoming' } = searchParams
+  const { type = '', region = '전국', status = 'upcoming', q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
 
   let results = MEETINGS.slice()
   if (status !== 'all') results = results.filter((m) => m.status === status)
   if (type) results = results.filter((m) => m.type === type)
   if (region && region !== '전국') results = results.filter((m) => m.region === region)
+  if (needle) {
+    results = results.filter(
+      (m) =>
+        m.title.toLowerCase().includes(needle) ||
+        m.description.toLowerCase().includes(needle) ||
+        m.location.toLowerCase().includes(needle) ||
+        m.tags.some((t) => t.toLowerCase().includes(needle)),
+    )
+  }
   results.sort((a, b) => a.date.localeCompare(b.date))
+
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://jangsanote.kr/meetings',
+    items: results.slice(0, 20).map((m) => ({ name: m.title, url: `https://jangsanote.kr/meetings/${m.id}` })),
+  })
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex flex-wrap items-end justify-between gap-3">
@@ -119,6 +135,37 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
           </aside>
 
           <div>
+            {/* Search bar */}
+            <form method="GET" action="/meetings" className="mb-4 flex gap-2">
+              {type && <input type="hidden" name="type" value={type} />}
+              {region && region !== '전국' && <input type="hidden" name="region" value={region} />}
+              {status && status !== 'upcoming' && <input type="hidden" name="status" value={status} />}
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  name="q"
+                  type="search"
+                  defaultValue={q ?? ''}
+                  placeholder="모임 제목, 장소, 태그 검색…"
+                  className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+                />
+              </div>
+              <button
+                type="submit"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                검색
+              </button>
+              {q && (
+                <a
+                  href={makeHref({ type, region, status }, {})}
+                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                >
+                  초기화
+                </a>
+              )}
+            </form>
             <div className="mb-3 text-sm font-semibold text-gray-700">{results.length}건</div>
             {results.length === 0 ? (
               <Card>
@@ -140,10 +187,9 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
   )
 }
 
-function makeHref(
-  current: MeetingsPageProps['searchParams'],
-  changes: Partial<MeetingsPageProps['searchParams']>,
-) {
+type MeetingsFilters = Omit<MeetingsPageProps['searchParams'], 'q'>
+
+function makeHref(current: MeetingsFilters, changes: Partial<MeetingsFilters>) {
   const next = { ...current, ...changes }
   const params = new URLSearchParams()
   if (next.type) params.set('type', next.type)

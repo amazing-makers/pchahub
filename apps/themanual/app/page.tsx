@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themanual', {
+  title: '더메뉴얼 — 가맹 운영 교육·멘토 상담',
+  description: '협회 정보공개서 해석·매장 운영·회계·법률·마케팅. 현직 점주와 전문가가 가르치는 프랜차이즈 가맹 사업 교육 플랫폼.',
+  path: '/',
+})
+
 import { ArrowRight, BookOpen, GraduationCap, MessageCircle, ShieldCheck } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -24,8 +33,20 @@ export default function HomePage() {
     { icon: MessageCircle, label: '1:1 멘토 상담 가능', color: 'text-amber-500' },
   ]
 
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '더메뉴얼',
+    url: 'https://themanual.kr',
+    description: '협회 정보공개서 해석·매장 운영·회계·법률·마케팅. 현직 점주와 전문가가 가르치는 프랜차이즈 가맹 사업 교육 플랫폼.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '더메뉴얼',
+    url: 'https://themanual.kr',
+    searchUrlTemplate: 'https://themanual.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto py-section">

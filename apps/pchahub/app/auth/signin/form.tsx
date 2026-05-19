@@ -116,25 +116,36 @@ export function SigninForm({ enabled, callbackUrl, error }: SigninFormProps) {
               </Field>
               <Field label="역할">
                 <div className="grid grid-cols-3 gap-2">
-                  {(['user', 'franchisee', 'hq'] as const).map((r) => (
+                  {(
+                    [
+                      { value: 'user', label: '일반' },
+                      { value: 'franchisee', label: '점주' },
+                      { value: 'hq', label: '본사 HQ' },
+                    ] as const
+                  ).map(({ value, label }) => (
                     <button
-                      key={r}
+                      key={value}
                       type="button"
-                      onClick={() => setDevRole(r)}
+                      onClick={() => setDevRole(value)}
                       className={
                         'rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-colors ' +
-                        (devRole === r
+                        (devRole === value
                           ? 'border-gray-900 bg-gray-900 text-white'
                           : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300')
                       }
                     >
-                      {r === 'user' ? '일반' : r === 'franchisee' ? '점주' : '본사'}
+                      {label}
                     </button>
                   ))}
                 </div>
+                {devRole === 'hq' && (
+                  <p className="mt-1.5 text-[10px] text-amber-700">
+                    → 로그인 후 /hq/dashboard로 이동하세요
+                  </p>
+                )}
               </Field>
               <Button type="submit" size="lg" className="w-full">
-                개발용 로그인
+                로그인
               </Button>
             </form>
           </>

@@ -1,7 +1,7 @@
 import { CheckCircle2, TrendingUp } from 'lucide-react'
 import { BrandLogo, Card, CardContent, Badge } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { hasRealPhoto, type MockBrand } from '@/lib/mock-data'
+import type { MockBrand } from '@/lib/mock-data'
 
 interface BrandCardProps {
   brand: MockBrand
@@ -10,7 +10,8 @@ interface BrandCardProps {
 }
 
 export function BrandCard({ brand, featured = false }: BrandCardProps) {
-  const showPhoto = hasRealPhoto(brand)
+  // 카테고리 대표 사진(Unsplash)도 포함 — heroImage가 있으면 표시
+  const showPhoto = !!brand.heroImage
   return (
     <a href={`/brands/${brand.id}`} className="group block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">

@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import { Calendar, ChevronRight, ArrowRight, MapPin, Store } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import {
+  buildArticleJsonLd,
   buildBreadcrumbsJsonLd,
-  buildCreativeWorkJsonLd,
   buildPageMetadata,
   JsonLd,
 } from '@amakers/design-system'
@@ -34,6 +34,8 @@ export function generateMetadata({ params }: GalleryDetailProps): Metadata {
     title: `${item.title} — ${cat?.label ?? item.category} 시공 사례`,
     description: `${item.excerpt} · ${item.region} ${item.district} · ${item.area}평 · 예산 ${formatNumber(item.budget)}만 · ${item.durationDays}일 시공.`,
     path: `/gallery/${item.id}`,
+    openGraphType: 'article',
+    publishedTime: item.completedAt,
   })
 }
 
@@ -45,13 +47,14 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
   const related = PORTFOLIO.filter((p) => p.id !== item.id && p.category === item.category).slice(0, 3)
 
   const itemUrl = `https://gongganhansu.kr/gallery/${item.id}`
-  const workJsonLd = buildCreativeWorkJsonLd({
-    name: item.title,
+  const workJsonLd = buildArticleJsonLd({
+    headline: item.title,
     description: item.excerpt,
     url: itemUrl,
     image: item.heroImage,
     publishedAt: item.completedAt,
-    authorName: contractor?.name,
+    authorName: contractor?.name ?? '공간의한수',
+    authorRole: '시공사',
     publisher: { name: '공간의한수', url: 'https://gongganhansu.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({

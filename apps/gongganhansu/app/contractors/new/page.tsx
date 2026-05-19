@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('gongganhansu', {
+    title: '시공사 등록',
+    description: '가맹점 인테리어 시공사로 등록하시면 amakers 9개 사이트의 점주·본사 견적 요청을 받을 수 있습니다. 등록 후 영업일 3일 이내 활성화됩니다.',
+    path: '/contractors/new',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { ContractorForm } from './form'
 
 export default function NewContractorPage() {

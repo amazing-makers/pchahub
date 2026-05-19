@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { PlayCircle } from 'lucide-react'
+import { PlayCircle, Search } from 'lucide-react'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '에피소드',
@@ -11,14 +11,24 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
 })
 
 interface EpisodesPageProps {
-  searchParams: { category?: string; sort?: string }
+  searchParams: { category?: string; sort?: string; q?: string }
 }
 
 export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
-  const { category, sort = 'recent' } = searchParams
+  const { category, sort = 'recent', q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
 
   let results = EPISODES.slice()
   if (category) results = results.filter((e) => e.category === category)
+  if (needle) {
+    results = results.filter(
+      (e) =>
+        e.title.toLowerCase().includes(needle) ||
+        e.hook.toLowerCase().includes(needle) ||
+        (e.brand ?? '').toLowerCase().includes(needle) ||
+        e.tags.some((t) => t.toLowerCase().includes(needle)),
+    )
+  }
   results = [...results].sort((a, b) => {
     switch (sort) {
       case 'views':
@@ -32,8 +42,14 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
 
   const categories: Array<EpisodeCategory | ''> = ['', 'success', 'failure', 'brand', 'trend', 'interview']
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://changupdocu.kr/episodes',
+    items: results.slice(0, 20).map((e) => ({ name: e.title, url: `https://changupdocu.kr/episodes/${e.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">
@@ -43,12 +59,43 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
             성공·실패·브랜드·트렌드·인터뷰. 자영업·가맹의 실제 데이터와 이야기.
           </p>
 
+          {/* Search bar */}
+          <form method="GET" action="/episodes" className="mt-5 flex max-w-md gap-2">
+            {category && <input type="hidden" name="category" value={category} />}
+            {sort !== 'recent' && <input type="hidden" name="sort" value={sort} />}
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q ?? ''}
+                placeholder="제목, 브랜드, 태그 검색…"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+            {q && (
+              <a
+                href={category ? `/episodes?category=${category}` : '/episodes'}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                초기화
+              </a>
+            )}
+          </form>
+
           {/* Category chips */}
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {categories.map((c) => (
               <a
                 key={c || 'all'}
-                href={c ? `/episodes?category=${c}` : '/episodes'}
+                href={c ? `/episodes?category=${c}${q ? `&q=${encodeURIComponent(q)}` : ''}` : `/episodes${q ? `?q=${encodeURIComponent(q)}` : ''}`}
                 className={
                   'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                   ((c === '' && !category) || category === c
@@ -65,7 +112,16 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
 
       <div className="container mx-auto py-8">
         <div className="mb-4 flex items-center justify-between">
-          <div className="text-sm text-gray-700">{results.length}편</div>
+          <div className="text-sm text-gray-700">
+            {q ? (
+              <>
+                <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
+                {results.length}편
+              </>
+            ) : (
+              <>{results.length}편</>
+            )}
+          </div>
           <div className="flex gap-2 text-sm">
             {SORT_OPTIONS.map((s) => (
               <a
@@ -116,6 +172,7 @@ function makeHref(current: EpisodesPageProps['searchParams'], sort: string) {
   const params = new URLSearchParams()
   if (current.category) params.set('category', current.category)
   if (sort !== 'recent') params.set('sort', sort)
+  if (current.q) params.set('q', current.q)
   const qs = params.toString()
   return qs ? `/episodes?${qs}` : '/episodes'
 }

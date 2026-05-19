@@ -1,7 +1,14 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CheckCircle2, ChevronRight, Star } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
+import {
+  buildBreadcrumbsJsonLd,
+  buildLocalBusinessJsonLd,
+  buildPageMetadata,
+  JsonLd,
+} from '@amakers/design-system'
 import {
   CATEGORIES,
   CONTRACTORS,
@@ -19,14 +26,45 @@ interface ContractorDetailProps {
   params: { id: string }
 }
 
+export function generateMetadata({ params }: ContractorDetailProps): Metadata {
+  const c = contractorById(params.id)
+  if (!c) return {}
+  return buildPageMetadata('gongganhansu', {
+    title: `${c.name} — F&B 매장 시공사`,
+    description: `${c.tagline} · ${c.region} · 시공 ${c.projectCount}건 · 평점 ${c.rating} · 전문 분야: ${c.specialties.slice(0, 3).join(', ')}.`,
+    path: `/contractors/${c.id}`,
+  })
+}
+
 export default function ContractorDetailPage({ params }: ContractorDetailProps) {
   const c = contractorById(params.id)
   if (!c) notFound()
   const portfolio = portfolioByContractor(c.id)
   const others = CONTRACTORS.filter((x) => x.id !== c.id).slice(0, 3)
 
+  const contractorUrl = `https://gongganhansu.kr/contractors/${c.id}`
+  const businessJsonLd = buildLocalBusinessJsonLd({
+    name: c.name,
+    description: c.tagline,
+    url: contractorUrl,
+    image: c.heroImage,
+    region: c.region,
+    district: c.region,
+    openedYear: c.foundedYear,
+    rating: c.rating,
+    reviewCount: c.reviewCount,
+  })
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '시공사', url: 'https://gongganhansu.kr/contractors' },
+      { name: c.name, url: contractorUrl },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={businessJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <div className="relative h-56 w-full overflow-hidden bg-gray-100 sm:h-72">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

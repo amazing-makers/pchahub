@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CATEGORY_COLOR, CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
 
@@ -20,8 +20,14 @@ export default function CategoriesPage() {
     count: EPISODES.filter((e) => e.category === cat).length,
   }))
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://changupdocu.kr/categories',
+    items: summaries.map((s) => ({ name: s.label, url: `https://changupdocu.kr/categories/${s.key}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">카테고리</h1>

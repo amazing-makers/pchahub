@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 const ALLOWED_HOSTS = new Set([
   'cdn.myfranchise.kr',
   'prod-myfranchise-cdn.s3.ap-northeast-2.amazonaws.com',
+  'images.unsplash.com',
 ])
 
 export async function GET(req: NextRequest) {

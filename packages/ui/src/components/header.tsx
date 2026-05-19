@@ -27,7 +27,7 @@ export interface HeaderProps {
   showSearch?: boolean
   /** Show the small "· {role}" label next to the brand name. Default true. */
   showRole?: boolean
-  /** Show the 9-site dropdown switcher in the header. Default true. */
+  /** Show the 9-site dropdown switcher in the header. Default false. */
   showSiteSwitcher?: boolean
   /** Escape hatch for arbitrary right-side content; takes precedence over `actions`. */
   rightSlot?: React.ReactNode
@@ -39,7 +39,7 @@ export function Header({
   actions,
   showSearch = false,
   showRole = true,
-  showSiteSwitcher = true,
+  showSiteSwitcher = false,
   rightSlot,
 }: HeaderProps) {
   const brand = platformColors[platform]

@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('themanual', {
+    title: '검색',
+    description: '강의·멘토 이름으로 더메뉴얼 가맹 운영 교육 콘텐츠를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { COURSES, MENTORS, LEVEL_LABEL } from '@/lib/mock-data'
@@ -127,7 +139,7 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
                     <div className="text-xs text-gray-500">{m.role}</div>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {m.specialties.slice(0, 3).map((s) => (
-                        <Badge key={s} variant="secondary" className="text-[10px]">{s}</Badge>
+                        <Badge key={s} variant="default" className="text-[10px]">{s}</Badge>
                       ))}
                     </div>
                   </div>

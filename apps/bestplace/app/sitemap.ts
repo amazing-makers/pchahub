@@ -6,7 +6,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return buildSitemap('bestplace', [
     { path: '/', changeFrequency: 'daily', priority: 1 },
     { path: '/stores', changeFrequency: 'daily', priority: 0.9 },
-    { path: '/stores/new', changeFrequency: 'monthly', priority: 0.6 },
     { path: '/awards', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/rankings', changeFrequency: 'daily', priority: 0.8 },
     ...AVAILABLE_YEARS.map((y) => ({

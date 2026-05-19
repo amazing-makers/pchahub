@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchahub', {
+    title: '브랜드 검색',
+    description: '브랜드명·업종·카테고리로 프차허브의 전체 프랜차이즈 브랜드를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { getBrands } from '@/lib/kftc/source'

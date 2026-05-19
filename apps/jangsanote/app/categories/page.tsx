@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CHANNELS } from '@/lib/mock-data'
 
@@ -12,8 +12,15 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 
 export default function CategoriesPage() {
   const categories = CHANNELS.filter((c) => c.type === 'category')
+
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://jangsanote.kr/categories',
+    items: categories.map((c) => ({ name: c.label, url: `https://jangsanote.kr/categories/${c.key}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">카테고리</h1>

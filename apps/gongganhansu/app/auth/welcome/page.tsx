@@ -47,7 +47,7 @@ const ROLE_META: Record<string, { label: string; icon: typeof Search; welcome: s
 function WelcomeContent() {
   const searchParams = useSearchParams()
   const role = searchParams.get('role') ?? 'tenant'
-  const meta = ROLE_META[role] ?? ROLE_META.tenant
+  const meta = ROLE_META[role] ?? ROLE_META.tenant!
   const Icon = meta.icon
 
   return (

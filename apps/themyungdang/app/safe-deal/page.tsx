@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildFaqPageJsonLd, buildHowToJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('themyungdang', {
+  title: '안전 거래',
+  description: '매물 실사·표준 계약서·에스크로 결제·30일 분쟁 보호. amakers 안전 거래로 권리금 분쟁과 허위 매물 위험을 줄이세요.',
+  path: '/safe-deal',
+})
+
 import {
   ArrowRight,
   CheckCircle2,
@@ -107,9 +116,24 @@ const STATS = [
   { label: '고객 만족도', value: '94%' },
 ]
 
+const faqJsonLd = buildFaqPageJsonLd({
+  url: 'https://themyungdang.kr/safe-deal',
+  items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+})
+
+const howToJsonLd = buildHowToJsonLd({
+  name: '더명당 안전 거래 4단계',
+  description: '매물 실사부터 에스크로 결제·분쟁 보호까지 권리금 분쟁 없이 거래하는 방법.',
+  url: 'https://themyungdang.kr/safe-deal',
+  totalTime: 'P3D',
+  steps: STEPS.map((s) => ({ name: s.title, text: s.body })),
+})
+
 export default function SafeDealPage() {
   return (
     <main>
+      <JsonLd data={faqJsonLd} />
+      <JsonLd data={howToJsonLd} />
       {/* Hero */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">

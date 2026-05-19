@@ -37,6 +37,12 @@ export default async function MyPage() {
                   멘토 상담
                 </a>
                 <a
+                  href="/mypage/consultations"
+                  className="rounded-full border border-[var(--brand-primary)]/40 bg-[var(--brand-primary)]/5 px-3 py-1 text-[var(--brand-primary)] hover:border-[var(--brand-primary)]/70"
+                >
+                  예약 내역
+                </a>
+                <a
                   href="/mypage/settings"
                   className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
                 >

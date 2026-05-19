@@ -9,8 +9,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return buildSitemap('jangsanote', [
     { path: '/', changeFrequency: 'hourly', priority: 1 },
     { path: '/general', changeFrequency: 'hourly', priority: 0.9 },
+    { path: '/categories', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/regions', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/posts', changeFrequency: 'hourly', priority: 0.8 },
     { path: '/meetings', changeFrequency: 'daily', priority: 0.9 },
-    { path: '/write', changeFrequency: 'monthly', priority: 0.6 },
     ...categoryChannels.map((c) => ({
       path: `/categories/${c.key}`,
       changeFrequency: 'hourly' as const,

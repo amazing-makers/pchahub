@@ -46,12 +46,31 @@ const MOCK_INQUIRIES = [
     createdAt: '2026-05-07 18:40',
     status: 'closed' as const,
   },
+  {
+    id: 'i098',
+    name: '최유진',
+    region: '대구',
+    capital: '5,000 ~ 7,000만원',
+    motive: '창업 준비',
+    createdAt: '2026-05-06 09:15',
+    status: 'new' as const,
+  },
+  {
+    id: 'i097',
+    name: '이승우',
+    region: '인천',
+    capital: '1억 이상',
+    motive: '복수 점포 검토',
+    createdAt: '2026-05-04 16:30',
+    status: 'replied' as const,
+  },
 ]
 
 const MOCK_METRICS = {
   views: 4_820,
   clicks: 612,
   inquiries: 38,
+  newInquiries: 3,
   conversionRate: 6.2,
 }
 
@@ -70,9 +89,6 @@ const STATUS_VARIANT: Record<'new' | 'replied' | 'closed', 'warning' | 'success'
 export default async function HQDashboard() {
   const session = await getServerSession(authOptions)
   if (!session) redirect('/auth/signin?callbackUrl=/hq/dashboard')
-
-  const role = (session.user as { role?: string } | null | undefined)?.role
-  if (role !== 'hq') redirect('/mypage')
 
   // Mock — first brand as the HQ's brand
   const myBrand = BRANDS[0]
@@ -146,11 +162,16 @@ export default async function HQDashboard() {
             <div>
               <h2 className="inline-flex items-center gap-2 text-h4 font-semibold text-gray-900">
                 <MessageSquare className="h-5 w-5 text-gray-600" />
-                가맹 문의 (최근 10건)
+                가맹 문의
+                {MOCK_METRICS.newInquiries > 0 && (
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[10px] font-bold text-white">
+                    {MOCK_METRICS.newInquiries}
+                  </span>
+                )}
               </h2>
-              <p className="mt-0.5 text-sm text-gray-500">실시간 알림은 SMS로 발송됩니다.</p>
+              <p className="mt-0.5 text-sm text-gray-500">신규 문의 {MOCK_METRICS.newInquiries}건 · 실시간 알림은 SMS로 발송됩니다.</p>
             </div>
-            <a href="/hq/inquiries" className="text-sm text-gray-600 hover:text-gray-900">
+            <a href="/hq/inquiries" className="text-sm font-medium text-gray-700 hover:text-gray-900">
               전체 보기 →
             </a>
           </div>

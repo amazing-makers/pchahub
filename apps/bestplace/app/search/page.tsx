@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('bestplace', {
+    title: '검색',
+    description: '매장명·브랜드·지역으로 베스트플레이스 수상 매장과 브랜드를 검색하세요.',
+    path: '/search',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { STORES, BRANDS } from '@/lib/mock-data'

@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '프차허브 — 프랜차이즈 브랜드 정보 비교',
+  description: '공정거래위원회 가맹정보 기반 브랜드 비교 플랫폼. 창업비·매출·성장률·가맹비를 한눈에 비교하고 나에게 맞는 브랜드를 찾으세요.',
+  path: '/',
+})
+
 import { ArrowRight, Building2, Calculator, CheckCircle2, Flame, Handshake, MapPin, Sparkles, Users } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
@@ -8,6 +17,10 @@ import { ListingCard } from '@/components/listing-card'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended, hasRealPhoto } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { getBrands } from '@/lib/kftc/source'
+
+const otherPlatforms = (
+  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
+).filter(([key]) => key !== 'pchahub')
 
 // 협찬 기업 — 프차허브 메인 화면 하단 노출
 const SPONSORS = [
@@ -43,8 +56,20 @@ export default async function HomePage() {
   const recruitingBrands = [...photoBrands]
     .sort((a, b) => b.storeCount - a.storeCount)
     .slice(0, 6)
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '프차허브',
+    url: 'https://pchahub.kr',
+    description: '공정거래위원회 가맹정보 기반 브랜드 비교 플랫폼. 창업비·매출·성장률·가맹비를 한눈에 비교하고 나에게 맞는 브랜드를 찾으세요.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '프차허브',
+    url: 'https://pchahub.kr',
+    searchUrlTemplate: 'https://pchahub.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero — search-led, matchmaking framing */}
       <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto py-section">
@@ -111,11 +136,16 @@ export default async function HomePage() {
 
       {/* Categories */}
       <section className="container mx-auto pt-section">
-        <div className="mb-6">
-          <h2 className="text-h3 font-semibold text-gray-900">업종별 찾기</h2>
-          <p className="mt-1 text-sm text-gray-500">관심 업종의 협회 등록 브랜드만 모아 보세요</p>
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="text-h3 font-semibold text-gray-900">업종별 브랜드 찾기</h2>
+            <p className="mt-1 text-sm text-gray-500">원하는 업종을 선택하면 해당 브랜드 목록과 창업 정보를 바로 볼 수 있습니다</p>
+          </div>
+          <a href="/brands" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
+            전체 브랜드 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {CATEGORIES.map((c) => (
             <CategoryChip key={c.key} category={c} />
           ))}
@@ -232,33 +262,38 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Listings preview */}
-      {LISTINGS.length > 0 && (
-        <section className="container mx-auto pt-section">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
-                <MapPin className="h-6 w-6 text-gray-600" />
-                추천 입지 매물
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                전국 양도·신규임대 매물 {formatNumber(LISTINGS.length)}건 중 신규 등록 6건
-              </p>
+      {/* Listings preview — 사진 있는 매물만 메인에 노출 */}
+      {(() => {
+        const photoListings = LISTINGS.filter((l) => l.images.length > 0)
+        if (photoListings.length === 0) return null
+        const preview = photoListings.slice(0, 6)
+        return (
+          <section className="container mx-auto pt-section">
+            <div className="mb-6 flex items-end justify-between">
+              <div>
+                <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+                  <MapPin className="h-6 w-6 text-gray-600" />
+                  추천 입지 매물
+                </h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  전국 양도·신규임대 매물 {formatNumber(LISTINGS.length)}건 중 사진 등록 {formatNumber(photoListings.length)}건
+                </p>
+              </div>
+              <a
+                href="/listings"
+                className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex"
+              >
+                전체 매물 보기 <ArrowRight className="h-3.5 w-3.5" />
+              </a>
             </div>
-            <a
-              href="/listings"
-              className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex"
-            >
-              전체 매물 보기 <ArrowRight className="h-3.5 w-3.5" />
-            </a>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {LISTINGS.slice(0, 6).map((l) => (
-              <ListingCard key={l.id} listing={l} />
-            ))}
-          </div>
-        </section>
-      )}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {preview.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </div>
+          </section>
+        )
+      })()}
 
       {/* HQ CTA */}
       <section className="container mx-auto pt-section">
@@ -352,6 +387,34 @@ export default async function HomePage() {
           <p className="mt-3 text-xs text-gray-500">
             협회·기관과의 데이터 협력 및 산업 동향 공유 협의 중 — 협회 회원사 우대 혜택 준비
           </p>
+        </div>
+      </section>
+
+      {/* Other platforms */}
+      <section className="container mx-auto py-section">
+        <div className="mb-4">
+          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
+          {otherPlatforms.map(([key, p]) => (
+            <a key={key} href={`https://${p.domain}`} className="group">
+              <Card className="h-full transition-shadow hover:shadow-md">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="h-7 w-7 shrink-0 rounded-md"
+                      style={{ background: p.primary }}
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-gray-900">{p.name}</div>
+                      <div className="truncate text-xs text-gray-500">{p.role}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          ))}
         </div>
       </section>
     </main>

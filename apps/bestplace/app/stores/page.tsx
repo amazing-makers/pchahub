@@ -3,7 +3,7 @@ import { MapPin, Plus, Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
   title: '매장 디렉토리',
@@ -50,8 +50,14 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
     }
   })
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://bestplace.kr/stores',
+    items: results.slice(0, 20).map((s) => ({ name: s.name, url: `https://bestplace.kr/stores/${s.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex items-start justify-between gap-4">

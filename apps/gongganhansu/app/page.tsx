@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('gongganhansu', {
+  title: '공간의한수 — F&B 매장 인테리어·시공사 매칭',
+  description: 'F&B 매장 시공 전문 플랫폼. 검증된 시공사 매칭, 실제 시공 갤러리, 평당 단가 인사이트까지. 무료 견적 비교로 시작하세요.',
+  path: '/',
+})
+
 import { ArrowRight, CheckCircle2, Sparkles, Wrench } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -22,8 +31,20 @@ const TRUST = [
 ]
 
 export default function HomePage() {
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '공간의한수',
+    url: 'https://gongganhansu.kr',
+    description: 'F&B 매장 시공 전문 플랫폼. 검증된 시공사 매칭, 실제 시공 갤러리, 평당 단가 인사이트까지.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '공간의한수',
+    url: 'https://gongganhansu.kr',
+    searchUrlTemplate: 'https://gongganhansu.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       {/* Hero — slate gradient */}
       <section className="border-b border-gray-100 bg-gradient-to-br from-slate-50 to-white">
         <div className="container mx-auto py-section">

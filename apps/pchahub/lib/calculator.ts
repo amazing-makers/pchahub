@@ -43,7 +43,7 @@ export interface CalculatorResult {
   recoveryMonths: number | null
 }
 
-export function calculate(inputs: CalculatorInputs): CalculatorResult {
+export function calculate(inputs: CalculatorInputs, variableCostLabel = '식자재'): CalculatorResult {
   // 매출 — 일평균 고객 × 객단가 × 운영일수, 결과는 만원 단위
   const monthlyRevenue =
     (inputs.customersPerDay * inputs.avgOrderValue * inputs.openDaysPerMonth) / 10_000
@@ -60,7 +60,7 @@ export function calculate(inputs: CalculatorInputs): CalculatorResult {
   const other = inputs.otherMonthlyCost
 
   const lines: CostLine[] = [
-    { label: '식자재', amount: foodCost, share: percent(foodCost, monthlyRevenue) },
+    { label: variableCostLabel, amount: foodCost, share: percent(foodCost, monthlyRevenue) },
     { label: '인건비', amount: labor, share: percent(labor, monthlyRevenue) },
     { label: '임대료', amount: rent, share: percent(rent, monthlyRevenue) },
     { label: '로열티', amount: royalty, share: percent(royalty, monthlyRevenue) },
@@ -103,6 +103,48 @@ export const DEFAULT_INPUTS: CalculatorInputs = {
   totalStartupCost: 5500,
 }
 
+// 비음식 업종별 기본값 프리셋 — 객단가·원가율·인건비는 업종 특성 반영
+const NON_FOOD_PRESETS: Record<string, {
+  avgOrderValue: number   // 원 (방문당 평균 매출)
+  customersPerDay: number
+  openDaysPerMonth: number
+  costRate: number        // 식자재·소모품 원가율 (%)
+  labor: number           // 만원/월
+  rent: number            // 만원/월
+  otherMonthlyCost: number
+}> = {
+  pcbang: {
+    avgOrderValue: 7_500, customersPerDay: 80, openDaysPerMonth: 30,
+    costRate: 18, labor: 350, rent: 300, otherMonthlyCost: 120,
+  },
+  study: {
+    avgOrderValue: 8_000, customersPerDay: 60, openDaysPerMonth: 30,
+    costRate: 12, labor: 280, rent: 250, otherMonthlyCost: 80,
+  },
+  convenience: {
+    avgOrderValue: 8_000, customersPerDay: 300, openDaysPerMonth: 30,
+    costRate: 68, labor: 420, rent: 320, otherMonthlyCost: 80,
+  },
+  laundry: {
+    avgOrderValue: 5_000, customersPerDay: 40, openDaysPerMonth: 30,
+    costRate: 10, labor: 150, rent: 200, otherMonthlyCost: 60,
+  },
+  education: {
+    avgOrderValue: 45_000, customersPerDay: 15, openDaysPerMonth: 26,
+    costRate: 5, labor: 480, rent: 280, otherMonthlyCost: 60,
+  },
+  leisure: {
+    avgOrderValue: 15_000, customersPerDay: 50, openDaysPerMonth: 28,
+    costRate: 12, labor: 400, rent: 280, otherMonthlyCost: 80,
+  },
+  life: {
+    avgOrderValue: 20_000, customersPerDay: 20, openDaysPerMonth: 26,
+    costRate: 20, labor: 320, rent: 200, otherMonthlyCost: 60,
+  },
+}
+
+const NON_FOOD_CATS = new Set(Object.keys(NON_FOOD_PRESETS))
+
 /**
  * Build initial inputs tailored to a selected brand. Pulls cost/operation
  * defaults from the brand's disclosure and assumes a customer count that
@@ -118,9 +160,25 @@ export function inputsFromBrand(brand: MockBrand, detail?: BrandDetail): Calcula
     d.costs.educationFee +
     d.costs.otherFees
 
-  // Heuristic: pick a daily customer count that lands close to the
-  // disclosure-average monthly revenue at a 12,000 KRW order value
-  // (typical café/chicken AOV). Roundable; user can edit.
+  // 비음식 업종 — 업종별 프리셋 사용
+  if (NON_FOOD_CATS.has(brand.category)) {
+    const p = NON_FOOD_PRESETS[brand.category]!
+    return {
+      area: d.costs.recommendedArea,
+      monthlyRent: p.rent,
+      customersPerDay: p.customersPerDay,
+      avgOrderValue: p.avgOrderValue,
+      openDaysPerMonth: p.openDaysPerMonth,
+      foodCostRate: p.costRate,
+      monthlyLabor: p.labor,
+      otherMonthlyCost: p.otherMonthlyCost,
+      royaltyType: d.costs.royaltyType,
+      royaltyValue: d.costs.royaltyValue,
+      totalStartupCost: totalStartup,
+    }
+  }
+
+  // 음식 업종 — 협회 평균 월매출 기반 역산 고객 수 사용
   const avgOrderValue = brand.category === 'cafe' ? 7500 : brand.category === 'snack' ? 8500 : 14_000
   const customersPerDay = Math.round(
     (d.revenue.averageMonthly * 10_000) / (avgOrderValue * 28),
@@ -142,4 +200,9 @@ export function inputsFromBrand(brand: MockBrand, detail?: BrandDetail): Calcula
     royaltyValue: d.costs.royaltyValue,
     totalStartupCost: totalStartup,
   }
+}
+
+/** 비음식 업종 여부 — form UI 레이블 조정에 사용 */
+export function isNonFoodCategory(category: string): boolean {
+  return NON_FOOD_CATS.has(category)
 }

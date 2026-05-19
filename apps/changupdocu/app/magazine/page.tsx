@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
+import { Search } from 'lucide-react'
 import { ArticleCard } from '@/components/article-card'
 import { ARTICLES } from '@/lib/mock-data'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '매거진',
@@ -10,23 +11,39 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
 })
 
 interface MagazinePageProps {
-  searchParams: { category?: string }
+  searchParams: { category?: string; q?: string }
 }
 
 export default function MagazinePage({ searchParams }: MagazinePageProps) {
-  const { category } = searchParams
+  const { category, q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
 
   const allArticles = [...ARTICLES].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 
   // 고유 카테고리 목록 추출
   const categories = Array.from(new Set(allArticles.map((a) => a.category))).sort()
 
-  const filtered = category ? allArticles.filter((a) => a.category === category) : allArticles
+  let filtered = category ? allArticles.filter((a) => a.category === category) : allArticles
+  if (needle) {
+    filtered = filtered.filter(
+      (a) =>
+        a.title.toLowerCase().includes(needle) ||
+        a.authorName.toLowerCase().includes(needle) ||
+        a.tags.some((t) => t.toLowerCase().includes(needle)) ||
+        a.category.toLowerCase().includes(needle),
+    )
+  }
   const featured = filtered.filter((a) => a.featured)
   const rest = filtered.filter((a) => !a.featured)
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://changupdocu.kr/magazine',
+    items: filtered.slice(0, 20).map((a) => ({ name: a.title, url: `https://changupdocu.kr/magazine/${a.id}` })),
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">
@@ -36,10 +53,40 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
             현장에서 길어 올린 분석과 인사이트. 회계사·변호사·컨설턴트·점주가 함께 쓰는 글.
           </p>
 
+          {/* Search bar */}
+          <form method="GET" action="/magazine" className="mt-5 flex max-w-md gap-2">
+            {category && <input type="hidden" name="category" value={category} />}
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q ?? ''}
+                placeholder="제목, 저자, 태그 검색…"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+            {q && (
+              <a
+                href={category ? `/magazine?category=${encodeURIComponent(category)}` : '/magazine'}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                초기화
+              </a>
+            )}
+          </form>
+
           {/* 카테고리 필터 칩 */}
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <a
-              href="/magazine"
+              href={q ? `/magazine?q=${encodeURIComponent(q)}` : '/magazine'}
               className={
                 'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                 (!category
@@ -54,7 +101,7 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
               return (
                 <a
                   key={c}
-                  href={`/magazine?category=${encodeURIComponent(c)}`}
+                  href={`/magazine?category=${encodeURIComponent(c)}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
                   className={
                     'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                     (category === c
@@ -85,13 +132,23 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-h4 font-semibold text-gray-900">
-              {category ? category : '전체 매거진'}
+              {q ? (
+                <>
+                  <span className="text-gray-500 font-normal">&ldquo;{q}&rdquo;</span> 검색 결과
+                </>
+              ) : category ? (
+                category
+              ) : (
+                '전체 매거진'
+              )}
             </h2>
             <span className="text-sm text-gray-500">{rest.length}편</span>
           </div>
           {rest.length === 0 && featured.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center">
-              <p className="text-sm font-medium text-gray-500">해당 카테고리의 글이 없습니다</p>
+              <p className="text-sm font-medium text-gray-500">
+                {q ? `"${q}" 검색 결과가 없습니다` : '해당 카테고리의 글이 없습니다'}
+              </p>
               <a
                 href="/magazine"
                 className="mt-4 inline-flex rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"

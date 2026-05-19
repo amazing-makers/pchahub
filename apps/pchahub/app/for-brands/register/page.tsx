@@ -1,3 +1,15 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@amakers/design-system'
+
+export const metadata: Metadata = {
+  ...buildPageMetadata('pchahub', {
+    title: '본사 등록',
+    description: '본사 정보와 브랜드 기본 정보를 입력하시면 운영팀 검수 후 영업일 기준 3일 이내 활성화됩니다. 기본 등록은 무료입니다.',
+    path: '/for-brands/register',
+  }),
+  robots: { index: false, follow: false },
+}
+
 import { RegisterForm } from './form'
 
 export default function RegisterPage() {

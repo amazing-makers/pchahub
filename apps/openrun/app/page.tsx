@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('openrun', {
+  title: '오픈런 — 프랜차이즈 그랜드 오픈·가맹 모집 마케팅',
+  description: '오픈 30일·가맹 모집 6개월·본사 12개월 통합 마케팅. SNS·광고·PR을 통합 운영해 ROI를 책임지는 프랜차이즈 마케팅 파트너.',
+  path: '/',
+})
+
 import { ArrowRight, BarChart3, Target, Zap } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -24,8 +33,20 @@ const SIGNALS = [
 ]
 
 export default function HomePage() {
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '오픈런',
+    url: 'https://openrun.kr',
+    description: '오픈 30일·가맹 모집 6개월·본사 12개월 통합 마케팅. SNS·광고·PR을 통합 운영해 ROI를 책임지는 프랜차이즈 마케팅 파트너.',
+  })
+  const siteJsonLd = buildWebSiteJsonLd({
+    name: '오픈런',
+    url: 'https://openrun.kr',
+    searchUrlTemplate: 'https://openrun.kr/search?q={search_term_string}',
+  })
   return (
     <main>
+      <JsonLd data={orgJsonLd} />
+      <JsonLd data={siteJsonLd} />
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">
           <p

@@ -1,3 +1,12 @@
+import type { Metadata } from 'next'
+import { buildOrganizationJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '프차허브 소개',
+  description: '공정거래위원회 가맹정보 기반 브랜드 비교·창업 수익 계산·가맹 매물·커뮤니티까지. 한국 프랜차이즈 통합 플랫폼 프차허브.',
+  path: '/about',
+})
+
 import { CheckCircle2, Layers, ShieldCheck, Sparkles, Target } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
@@ -30,8 +39,15 @@ const PRINCIPLES = [
 ]
 
 export default function AboutPage() {
+  const orgJsonLd = buildOrganizationJsonLd({
+    name: '프차허브',
+    url: 'https://pchahub.kr',
+    description: '공정거래위원회 가맹정보 기반 프랜차이즈 브랜드 비교·창업 수익 계산·가맹 매물·커뮤니티. 한국 프랜차이즈 통합 플랫폼.',
+  })
+
   return (
     <main className="bg-white">
+      <JsonLd data={orgJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto py-section">

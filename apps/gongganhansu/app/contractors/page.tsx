@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Building2, Plus } from 'lucide-react'
+import { Building2, Plus, Search } from 'lucide-react'
 import { ContractorCard } from '@/components/contractor-card'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '시공사 디렉토리',
@@ -13,17 +13,34 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
 const REGIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주']
 
 interface ContractorsPageProps {
-  searchParams: { region?: string; specialty?: string }
+  searchParams: { region?: string; specialty?: string; q?: string }
 }
 
 export default function ContractorsPage({ searchParams }: ContractorsPageProps) {
-  const { region, specialty } = searchParams
+  const { region, specialty, q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
   let results = CONTRACTORS.slice()
   if (region) results = results.filter((c) => c.region === region)
   if (specialty) results = results.filter((c) => c.specialties.includes(specialty))
+  if (needle) {
+    results = results.filter(
+      (c) =>
+        c.name.toLowerCase().includes(needle) ||
+        c.specialties.some((s) => s.toLowerCase().includes(needle)) ||
+        c.region.toLowerCase().includes(needle) ||
+        c.tagline.toLowerCase().includes(needle) ||
+        c.highlights.some((h) => h.toLowerCase().includes(needle)),
+    )
+  }
+
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://gongganhansu.kr/contractors',
+    items: results.slice(0, 20).map((c) => ({ name: c.name, url: `https://gongganhansu.kr/contractors/${c.id}` })),
+  })
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex items-start justify-between gap-4">
@@ -90,7 +107,46 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
           </aside>
 
           <div>
-            <div className="mb-3 text-sm font-semibold text-gray-700">{results.length}곳</div>
+            {/* Search bar */}
+            <form method="GET" action="/contractors" className="mb-4 flex gap-2">
+              {region && <input type="hidden" name="region" value={region} />}
+              {specialty && <input type="hidden" name="specialty" value={specialty} />}
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  name="q"
+                  type="search"
+                  defaultValue={q ?? ''}
+                  placeholder="시공사명, 전문분야, 특징 검색…"
+                  className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+                />
+              </div>
+              <button
+                type="submit"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                검색
+              </button>
+              {q && (
+                <a
+                  href={makeHref({ region, specialty }, {})}
+                  className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                >
+                  초기화
+                </a>
+              )}
+            </form>
+            <div className="mb-3 text-sm font-semibold text-gray-700">
+              {q ? (
+                <>
+                  <span className="font-normal text-gray-500">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
+                  {results.length}곳
+                </>
+              ) : (
+                <>{results.length}곳</>
+              )}
+            </div>
             {results.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center">
                 <Building2 className="mx-auto h-10 w-10 text-gray-300" />
@@ -117,8 +173,8 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
 }
 
 function makeHref(
-  current: ContractorsPageProps['searchParams'],
-  changes: Partial<ContractorsPageProps['searchParams']>,
+  current: Omit<ContractorsPageProps['searchParams'], 'q'>,
+  changes: Partial<Omit<ContractorsPageProps['searchParams'], 'q'>>,
 ) {
   const next = { ...current, ...changes }
   const params = new URLSearchParams()

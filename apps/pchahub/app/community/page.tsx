@@ -1,4 +1,13 @@
-import { ArrowRight, Eye, MessageSquare, ThumbsUp } from 'lucide-react'
+import type { Metadata } from 'next'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '커뮤니티',
+  description: '프랜차이즈 창업 예비 점주 커뮤니티. 가맹비·수익·브랜드 질문과 토론을 자유롭게 나누세요.',
+  path: '/community',
+})
+
+import { ArrowRight, Eye, MessageSquare, Search, ThumbsUp } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { DISCUSSIONS, QUESTIONS } from '@/lib/mock-community'
@@ -12,37 +21,95 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 interface CommunityPageProps {
-  searchParams: { tab?: string }
+  searchParams: { tab?: string; q?: string }
 }
 
 export default function CommunityPage({ searchParams }: CommunityPageProps) {
   const tab = searchParams.tab ?? 'discussions'
+  const { q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
+
+  const filteredDiscussions = needle
+    ? DISCUSSIONS.filter(
+        (d) =>
+          d.title.toLowerCase().includes(needle) ||
+          d.excerpt.toLowerCase().includes(needle) ||
+          d.author.toLowerCase().includes(needle),
+      )
+    : DISCUSSIONS
+
+  const filteredQuestions = needle
+    ? QUESTIONS.filter(
+        (qItem) =>
+          qItem.q.toLowerCase().includes(needle) ||
+          qItem.a.toLowerCase().includes(needle) ||
+          qItem.answeredBy.toLowerCase().includes(needle),
+      )
+    : QUESTIONS
+
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://pchahub.kr/community',
+    items: filteredDiscussions.slice(0, 20).map((d) => ({ name: d.title, url: `https://pchahub.kr/community/${d.id}` })),
+  })
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">프랜차이즈 커뮤니티</h1>
           <p className="mt-1 text-sm text-gray-500">
             가맹점주·예비창업자·전문가가 모인 프랜차이즈 창업 커뮤니티입니다.
           </p>
+          <form method="GET" action="/community" className="mt-5 flex max-w-lg gap-2">
+            {tab !== 'discussions' && <input type="hidden" name="tab" value={tab} />}
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q ?? ''}
+                placeholder="제목, 내용, 작성자 검색…"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+            {q && (
+              <a
+                href={tab !== 'discussions' ? `/community?tab=${tab}` : '/community'}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                초기화
+              </a>
+            )}
+          </form>
         </div>
       </section>
 
       <div className="container mx-auto py-8">
         <div className="mb-6 flex gap-1 border-b border-gray-200">
-          <TabLink href="/community?tab=discussions" active={tab === 'discussions'}>
-            토론 / 후기 ({DISCUSSIONS.length})
+          <TabLink href={`/community?tab=discussions${q ? `&q=${encodeURIComponent(q)}` : ''}`} active={tab === 'discussions'}>
+            토론 / 후기 ({filteredDiscussions.length})
           </TabLink>
-          <TabLink href="/community?tab=questions" active={tab === 'questions'}>
-            전문가 Q&A ({QUESTIONS.length})
+          <TabLink href={`/community?tab=questions${q ? `&q=${encodeURIComponent(q)}` : ''}`} active={tab === 'questions'}>
+            전문가 Q&A ({filteredQuestions.length})
           </TabLink>
         </div>
 
         {tab === 'questions' ? (
           <div className="space-y-3">
-            {QUESTIONS.map((q) => (
-              <Card key={q.id} className="border-gray-200">
+            {filteredQuestions.length === 0 ? (
+              <p className="py-10 text-center text-sm text-gray-500">
+                {q ? `"${q}" 검색 결과가 없습니다` : '등록된 Q&A가 없습니다'}
+              </p>
+            ) : filteredQuestions.map((qItem) => (
+              <Card key={qItem.id} className="border-gray-200">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-2.5">
                     <span
@@ -51,17 +118,17 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
                     >
                       Q
                     </span>
-                    <h3 className="text-base font-semibold text-gray-900">{q.q}</h3>
+                    <h3 className="text-base font-semibold text-gray-900">{qItem.q}</h3>
                   </div>
                   <div className="mt-3 flex items-start gap-2.5">
                     <span className="mt-0.5 shrink-0 text-base font-bold text-gray-400">A</span>
-                    <p className="text-sm text-gray-700">{q.a}</p>
+                    <p className="text-sm text-gray-700">{qItem.a}</p>
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
-                    <span>{q.answeredBy}</span>
+                    <span>{qItem.answeredBy}</span>
                     <span className="inline-flex items-center gap-1">
                       <ThumbsUp className="h-3 w-3" />
-                      도움됨 {q.helpful}
+                      도움됨 {qItem.helpful}
                     </span>
                   </div>
                 </CardContent>
@@ -71,8 +138,13 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
         ) : (
           <>
           <LocalCommunityPosts />
+          {filteredDiscussions.length === 0 && (
+            <p className="py-10 text-center text-sm text-gray-500">
+              {q ? `"${q}" 검색 결과가 없습니다` : '등록된 토론이 없습니다'}
+            </p>
+          )}
           <div className="space-y-3">
-            {DISCUSSIONS.map((d) => (
+            {filteredDiscussions.map((d) => (
               <a
                 key={d.id}
                 href={`/community/${d.id}`}

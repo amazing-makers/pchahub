@@ -38,6 +38,12 @@ export default async function MyPage() {
                   매거진
                 </a>
                 <a
+                  href="/mypage/history"
+                  className="rounded-full border border-[var(--brand-primary)]/40 bg-[var(--brand-primary)]/5 px-3 py-1 text-[var(--brand-primary)] hover:border-[var(--brand-primary)]/70"
+                >
+                  시청 기록
+                </a>
+                <a
                   href="/mypage/settings"
                   className="rounded-full border border-gray-200 px-3 py-1 text-gray-700 hover:border-gray-400"
                 >

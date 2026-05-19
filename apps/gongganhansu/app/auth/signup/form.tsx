@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { ArrowRight, Building2, Hammer, Search } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
@@ -16,6 +16,8 @@ interface SignupFormProps {
 
 type Role = 'tenant' | 'contractor' | 'landlord'
 
+const VALID_ROLES = new Set<Role>(['tenant', 'contractor', 'landlord'])
+
 const ROLES: Array<{ key: Role; label: string; helper: string; icon: typeof Search }> = [
   { key: 'tenant', label: '임차인 (창업 준비)', helper: '공간 탐색·시공 의뢰', icon: Search },
   { key: 'contractor', label: '시공·인테리어업체', helper: '포트폴리오 등록·수주', icon: Hammer },
@@ -25,6 +27,16 @@ const ROLES: Array<{ key: Role; label: string; helper: string; icon: typeof Sear
 export function SignupForm({ enabled }: SignupFormProps) {
   const [role, setRole] = useState<Role>('tenant')
   const [step, setStep] = useState<'role' | 'auth'>('role')
+
+  // URL ?role= 파라미터로 역할 자동 선택 및 인증 단계 바로 진입
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const roleParam = params.get('role')
+    if (roleParam && VALID_ROLES.has(roleParam as Role)) {
+      setRole(roleParam as Role)
+      setStep('auth')
+    }
+  }, [])
 
   const hasRealOAuth = enabled.kakao || enabled.naver || enabled.google
 

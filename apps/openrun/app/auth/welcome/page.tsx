@@ -47,7 +47,7 @@ const ROLE_META: Record<string, { label: string; icon: typeof ShoppingBag; welco
 function WelcomeContent() {
   const searchParams = useSearchParams()
   const role = searchParams.get('role') ?? 'franchisee'
-  const meta = ROLE_META[role] ?? ROLE_META.franchisee
+  const meta = ROLE_META[role] ?? ROLE_META.franchisee!
   const Icon = meta.icon
 
   return (

@@ -1,8 +1,26 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
+
+export const metadata: Metadata = buildPageMetadata('pchahub', {
+  title: '창업 스캐너',
+  description: '7가지 질문에 답하면 자본·운영 조건에 맞는 프랜차이즈 브랜드를 자동으로 추천해 드립니다. 협회 정보공개서 데이터 기반.',
+  path: '/scanner',
+})
+
 import { ScannerWizard } from './wizard'
+
+const scannerJsonLd = buildSoftwareApplicationJsonLd({
+  name: '프차허브 창업 스캐너',
+  description: '7가지 질문에 답하면 자본·운영 조건에 맞는 프랜차이즈 브랜드 Top 3를 추천해 드립니다. 협회 정보공개서 데이터 기반.',
+  url: 'https://pchahub.kr/scanner',
+  applicationCategory: 'BusinessApplication',
+  price: 'Free',
+})
 
 export default function ScannerPage() {
   return (
     <main className="bg-gray-50">
+      <JsonLd data={scannerJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">창업 스캐너</h1>

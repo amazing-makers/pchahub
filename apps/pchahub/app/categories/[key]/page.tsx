@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation'
 import { ChevronRight, TrendingUp, Users, Wallet } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { Search } from 'lucide-react'
 import { BrandCard } from '@/components/brand-card'
 import { CATEGORIES, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands } from '@/lib/kftc/source'
@@ -16,7 +17,7 @@ export const revalidate = 3600
 
 interface CategoryPageProps {
   params: { key: string }
-  searchParams: { sort?: string }
+  searchParams: { sort?: string; q?: string }
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
@@ -36,8 +37,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   if (!category) notFound()
 
   const allBrands = await getBrands()
-  const brands = allBrands.filter((b) => b.category === category.key)
+  const { q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
   const sort = searchParams.sort ?? 'recommended'
+
+  const categoryBrands = allBrands.filter((b) => b.category === category.key)
+  const brands = needle
+    ? categoryBrands.filter((b) => b.name.toLowerCase().includes(needle))
+    : categoryBrands
 
   const sorted = [...brands].sort((a, b) => {
     switch (sort) {
@@ -54,10 +61,24 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     }
   })
 
-  const stats = computeCategoryStats(brands)
+  const stats = computeCategoryStats(categoryBrands)
+
+  const categoryUrl = `https://pchahub.kr/categories/${category.key}`
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '브랜드 검색', url: 'https://pchahub.kr/brands' },
+      { name: category.label, url: categoryUrl },
+    ],
+  })
+  const listJsonLd = buildItemListJsonLd({
+    url: categoryUrl,
+    items: sorted.slice(0, 20).map((b) => ({ name: b.name, url: `https://pchahub.kr/brands/${b.id}` })),
+  })
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
+      <JsonLd data={listJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <nav className="flex items-center gap-1 text-sm text-gray-500">
@@ -70,11 +91,44 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             <div>
               <h1 className="text-h2 font-bold text-gray-900">{category.label} 가맹 브랜드</h1>
               <p className="mt-2 max-w-2xl text-sm text-gray-500">
-                협회 등록 정보공개서 기준 {category.label} 카테고리 가맹 브랜드 {brands.length}곳을
+                협회 등록 정보공개서 기준 {category.label} 카테고리 가맹 브랜드 {categoryBrands.length}곳을
                 한눈에 확인하세요.
               </p>
             </div>
           </div>
+
+          <form
+            method="GET"
+            action={`/categories/${category.key}`}
+            className="mt-4 flex max-w-md gap-2"
+          >
+            <input type="hidden" name="sort" value={sort} />
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q ?? ''}
+                placeholder="브랜드명 검색…"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+            {q && (
+              <a
+                href={`/categories/${category.key}?sort=${sort}`}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                초기화
+              </a>
+            )}
+          </form>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <CategoryStat
@@ -107,14 +161,26 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
       <div className="container mx-auto py-8">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-gray-700">{brands.length}개 브랜드</h2>
+          <h2 className="text-sm font-semibold text-gray-700">
+            {q ? (
+              <>
+                <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
+                {brands.length}개
+              </>
+            ) : (
+              <>{brands.length}개 브랜드</>
+            )}
+          </h2>
           <div className="flex flex-wrap gap-1.5 text-sm">
             {SORT_OPTIONS.map((s) => {
               const active = sort === s.key
+              const baseHref = s.key === 'growth-desc'
+                ? `/categories/${category.key}`
+                : `/categories/${category.key}?sort=${s.key}`
               return (
                 <a
                   key={s.key}
-                  href={`/categories/${category.key}${s.key === 'growth-desc' ? '' : `?sort=${s.key}`}`}
+                  href={`${baseHref}${q ? `${baseHref.includes('?') ? '&' : '?'}q=${encodeURIComponent(q)}` : ''}`}
                   className={
                     'rounded-md px-3 py-1 transition-colors ' +
                     (active

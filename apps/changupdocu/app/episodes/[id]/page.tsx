@@ -41,6 +41,8 @@ export function generateMetadata({ params }: EpisodeDetailProps): Metadata {
     title: `${ep.title} — ${CATEGORY_LABEL[ep.category]}`,
     description: `${ep.subtitle} · ${ep.duration} · 조회 ${formatNumber(ep.views)}회${ep.brand ? ` · ${ep.brand}` : ''}.`,
     path: `/episodes/${ep.id}`,
+    openGraphType: 'article',
+    publishedTime: ep.publishedAt,
   })
 }
 
