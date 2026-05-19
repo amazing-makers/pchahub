@@ -1,4 +1,4 @@
-import { Award, Trophy } from 'lucide-react'
+﻿import { Award, Trophy } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { brandById, RANK_COLOR, RANK_LABEL, storeById, type MockAward } from '@/lib/mock-data'
 import { AwardVoteButton } from './award-vote-button'
@@ -55,7 +55,7 @@ export function AwardCard({ award, compact = false }: AwardCardProps) {
             <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3 text-xs">
               <AwardVoteButton awardId={award.id} />
               <a
-                href={`https://pchahub.kr/brands/${award.brandId}`}
+                href={`https://pchahub.amakers.co.kr/brands/${award.brandId}`}
                 className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50"
               >
                 브랜드 정보 (프차허브) →

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -12,7 +12,7 @@ import { CalculatorForm } from './form'
 const calculatorJsonLd = buildSoftwareApplicationJsonLd({
   name: '프차허브 창업 수익 계산기',
   description: '브랜드·지역·면적·운영 조건을 입력하면 예상 월 매출·순이익·회수 기간을 시뮬레이션합니다.',
-  url: 'https://pchahub.kr/calculator',
+  url: 'https://pchahub.amakers.co.kr/calculator',
   applicationCategory: 'FinanceApplication',
   price: 'Free',
 })

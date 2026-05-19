@@ -63,16 +63,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   const stats = computeCategoryStats(categoryBrands)
 
-  const categoryUrl = `https://pchahub.kr/categories/${category.key}`
+  const categoryUrl = `https://pchahub.amakers.co.kr/categories/${category.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '브랜드 검색', url: 'https://pchahub.kr/brands' },
+      { name: '브랜드 검색', url: 'https://pchahub.amakers.co.kr/brands' },
       { name: category.label, url: categoryUrl },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
     url: categoryUrl,
-    items: sorted.slice(0, 20).map((b) => ({ name: b.name, url: `https://pchahub.kr/brands/${b.id}` })),
+    items: sorted.slice(0, 20).map((b) => ({ name: b.name, url: `https://pchahub.amakers.co.kr/brands/${b.id}` })),
   })
 
   return (

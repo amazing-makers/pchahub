@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
@@ -34,8 +34,8 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
     : allPosts
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://jangsanote.kr/general',
-    items: posts.slice(0, 20).map((p) => ({ name: p.title, url: `https://jangsanote.kr/posts/${p.id}` })),
+    url: 'https://jangsanote.amakers.co.kr/general',
+    items: posts.slice(0, 20).map((p) => ({ name: p.title, url: `https://jangsanote.amakers.co.kr/posts/${p.id}` })),
   })
 
   return (

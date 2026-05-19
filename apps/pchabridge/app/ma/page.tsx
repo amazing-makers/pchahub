@@ -36,8 +36,8 @@ export default function MAPage({ searchParams }: MAPageProps) {
   const underNeg = filtered.filter((m) => m.status === 'under-negotiation')
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://pchabridge.kr/ma',
-    items: filtered.slice(0, 20).map((m) => ({ name: m.rationale, url: `https://pchabridge.kr/ma/${m.id}` })),
+    url: 'https://pchabridge.amakers.co.kr/ma',
+    items: filtered.slice(0, 20).map((m) => ({ name: m.rationale, url: `https://pchabridge.amakers.co.kr/ma/${m.id}` })),
   })
 
   return (

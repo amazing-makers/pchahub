@@ -59,7 +59,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
   const sameBrand = storesByBrand(store.brandId).filter((s) => s.id !== store.id).slice(0, 3)
   const sameRegion = storesByRegion(store.region).filter((s) => s.id !== store.id).slice(0, 3)
 
-  const storeUrl = `https://bestplace.kr/stores/${store.id}`
+  const storeUrl = `https://bestplace.amakers.co.kr/stores/${store.id}`
   const businessJsonLd = buildLocalBusinessJsonLd({
     name: store.name,
     description: store.highlights.join(' · '),
@@ -74,9 +74,9 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '매장 디렉토리', url: 'https://bestplace.kr/stores' },
+      { name: '매장 디렉토리', url: 'https://bestplace.amakers.co.kr/stores' },
       ...(brand
-        ? [{ name: brand.name, url: `https://bestplace.kr/stores?brand=${brand.name}` }]
+        ? [{ name: brand.name, url: `https://bestplace.amakers.co.kr/stores?brand=${brand.name}` }]
         : []),
       { name: store.name, url: storeUrl },
     ],
@@ -133,7 +133,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                     aria-hidden
                   />
                   <a
-                    href={`https://pchahub.kr/brands/${brand.id}`}
+                    href={`https://pchahub.amakers.co.kr/brands/${brand.id}`}
                     className="inline-flex items-center gap-1 text-sm text-gray-700 hover:underline"
                   >
                     {brand.name} (프차허브에서 브랜드 정보)
@@ -272,7 +272,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                 </div>
                 <div className="mt-3 text-center text-xs text-gray-500">
                   <a
-                    href="https://jangsanote.kr"
+                    href="https://jangsanote.amakers.co.kr"
                     className="inline-flex items-center gap-1 hover:text-gray-900"
                   >
                     장사노트에서 점주 후기 더 보기 →
@@ -318,26 +318,26 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                   </div>
                 </div>
                 {brand && (
-                  <a href={`https://pchahub.kr/brands/${brand.id}`} className="block">
+                  <a href={`https://pchahub.amakers.co.kr/brands/${brand.id}`} className="block">
                     <Button size="md" variant="outline" className="w-full justify-between gap-1">
                       <span>{brand.name} 브랜드 정보</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   </a>
                 )}
-                <a href="https://themyungdang.kr/listings" className="block">
+                <a href="https://themyungdang.amakers.co.kr/listings" className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>{store.region} 매물 보기</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </a>
-                <a href="https://jangsanote.kr" className="block">
+                <a href="https://jangsanote.amakers.co.kr" className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>점주 커뮤니티 (장사노트)</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </a>
-                <a href={`https://themanual.kr/courses?category=${brand?.category}`} className="block">
+                <a href={`https://themanual.amakers.co.kr/courses?category=${brand?.category}`} className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>{brand?.categoryLabel} 운영 강의</span>
                     <ArrowRight className="h-3.5 w-3.5" />

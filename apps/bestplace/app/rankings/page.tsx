@@ -33,8 +33,8 @@ export default function RankingsPage() {
   const hallOfFameBrand = hallOfFameStore ? brandById(hallOfFameStore.brandId) : undefined
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://bestplace.kr/rankings',
-    items: topRated.map((s) => ({ name: s.name, url: `https://bestplace.kr/stores/${s.id}` })),
+    url: 'https://bestplace.amakers.co.kr/rankings',
+    items: topRated.map((s) => ({ name: s.name, url: `https://bestplace.amakers.co.kr/stores/${s.id}` })),
   })
 
   return (

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
 import { ServiceCard } from '@/components/service-card'
 import { SERVICES } from '@/lib/mock-data'
@@ -11,8 +11,8 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
 })
 
 const serviceListJsonLd = buildItemListJsonLd({
-  url: 'https://openrun.kr/services',
-  items: SERVICES.map((s) => ({ name: s.title, url: `https://openrun.kr/services/${s.slug}` })),
+  url: 'https://openrun.amakers.co.kr/services',
+  items: SERVICES.map((s) => ({ name: s.title, url: `https://openrun.amakers.co.kr/services/${s.slug}` })),
 })
 
 export default function ServicesPage() {

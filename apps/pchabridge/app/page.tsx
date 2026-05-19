@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
@@ -32,13 +32,13 @@ export default function HomePage() {
 
   const orgJsonLd = buildOrganizationJsonLd({
     name: '프차브릿지',
-    url: 'https://pchabridge.kr',
+    url: 'https://pchabridge.amakers.co.kr',
     description: '본사 투자 라운드, M&A 매물, 다점포 펀딩을 한 곳에서. 소액 투자부터 본사 인수까지 프랜차이즈 자본 시장을 연결합니다.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '프차브릿지',
-    url: 'https://pchabridge.kr',
-    searchUrlTemplate: 'https://pchabridge.kr/search?q={search_term_string}',
+    url: 'https://pchabridge.amakers.co.kr',
+    searchUrlTemplate: 'https://pchabridge.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main>

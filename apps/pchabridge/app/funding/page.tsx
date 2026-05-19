@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
@@ -62,8 +62,8 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
   ]
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://pchabridge.kr/funding',
-    items: sorted.slice(0, 20).map((r) => ({ name: r.hook, url: `https://pchabridge.kr/investments/${r.id}` })),
+    url: 'https://pchabridge.amakers.co.kr/funding',
+    items: sorted.slice(0, 20).map((r) => ({ name: r.hook, url: `https://pchabridge.amakers.co.kr/investments/${r.id}` })),
   })
 
   return (

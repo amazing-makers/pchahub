@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -12,7 +12,7 @@ import { ScannerWizard } from './wizard'
 const scannerJsonLd = buildSoftwareApplicationJsonLd({
   name: '프차허브 창업 스캐너',
   description: '7가지 질문에 답하면 자본·운영 조건에 맞는 프랜차이즈 브랜드 Top 3를 추천해 드립니다. 협회 정보공개서 데이터 기반.',
-  url: 'https://pchahub.kr/scanner',
+  url: 'https://pchahub.amakers.co.kr/scanner',
   applicationCategory: 'BusinessApplication',
   price: 'Free',
 })

@@ -37,7 +37,7 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
   if (!ins) notFound()
   const related = INSIGHTS.filter((i) => i.id !== ins.id).slice(0, 3)
 
-  const insightUrl = `https://gongganhansu.kr/insights/${ins.id}`
+  const insightUrl = `https://gongganhansu.amakers.co.kr/insights/${ins.id}`
   const articleJsonLd = buildArticleJsonLd({
     headline: ins.title,
     description: ins.subtitle,
@@ -45,11 +45,11 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
     authorName: ins.authorName,
     authorRole: ins.authorRole,
     publishedAt: ins.publishedAt,
-    publisher: { name: '공간의한수', url: 'https://gongganhansu.kr' },
+    publisher: { name: '공간의한수', url: 'https://gongganhansu.amakers.co.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '인사이트', url: 'https://gongganhansu.kr/insights' },
+      { name: '인사이트', url: 'https://gongganhansu.amakers.co.kr/insights' },
       { name: ins.title, url: insightUrl },
     ],
   })

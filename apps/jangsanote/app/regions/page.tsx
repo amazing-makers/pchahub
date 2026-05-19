@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
@@ -14,8 +14,8 @@ export default function RegionsPage() {
   const regions = CHANNELS.filter((c) => c.type === 'region')
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://jangsanote.kr/regions',
-    items: regions.map((c) => ({ name: c.label, url: `https://jangsanote.kr/regions/${c.key}` })),
+    url: 'https://jangsanote.amakers.co.kr/regions',
+    items: regions.map((c) => ({ name: c.label, url: `https://jangsanote.amakers.co.kr/regions/${c.key}` })),
   })
 
   return (

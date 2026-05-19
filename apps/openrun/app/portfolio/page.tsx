@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Megaphone, Search } from 'lucide-react'
 import { CaseCardWithSave } from '@/components/case-card-with-save'
 import { PORTFOLIO, SERVICES, SERVICE_LABEL, type ServiceSlug } from '@/lib/mock-data'
@@ -30,8 +30,8 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
   }
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://openrun.kr/portfolio',
-    items: cases.slice(0, 20).map((c) => ({ name: c.hook, url: `https://openrun.kr/portfolio/${c.id}` })),
+    url: 'https://openrun.amakers.co.kr/portfolio',
+    items: cases.slice(0, 20).map((c) => ({ name: c.hook, url: `https://openrun.amakers.co.kr/portfolio/${c.id}` })),
   })
 
   return (

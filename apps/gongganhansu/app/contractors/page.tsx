@@ -1,6 +1,7 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Building2, Plus, Search } from 'lucide-react'
 import { ContractorCard } from '@/components/contractor-card'
+import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
@@ -12,12 +13,23 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
 
 const REGIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주']
 
+const SORT_OPTIONS = [
+  { value: 'rating', label: '평점 높은 순' },
+  { value: 'price-asc', label: '단가 낮은 순' },
+  { value: 'price-desc', label: '단가 높은 순' },
+  { value: 'projects', label: '시공 건수 순' },
+] as const
+
+type SortValue = (typeof SORT_OPTIONS)[number]['value']
+
 interface ContractorsPageProps {
-  searchParams: { region?: string; specialty?: string; q?: string }
+  searchParams: { region?: string; specialty?: string; q?: string; sort?: string }
 }
 
 export default function ContractorsPage({ searchParams }: ContractorsPageProps) {
-  const { region, specialty, q } = searchParams
+  const { region, specialty, q, sort } = searchParams
+  const activeSort: SortValue =
+    (SORT_OPTIONS.find((o) => o.value === sort)?.value ?? 'rating') as SortValue
   const needle = q?.toLowerCase().trim() ?? ''
   let results = CONTRACTORS.slice()
   if (region) results = results.filter((c) => c.region === region)
@@ -33,9 +45,20 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
     )
   }
 
+  // Sort results
+  if (activeSort === 'rating') {
+    results = results.sort((a, b) => b.rating - a.rating)
+  } else if (activeSort === 'price-asc') {
+    results = results.sort((a, b) => a.avgPricePerPyeong - b.avgPricePerPyeong)
+  } else if (activeSort === 'price-desc') {
+    results = results.sort((a, b) => b.avgPricePerPyeong - a.avgPricePerPyeong)
+  } else if (activeSort === 'projects') {
+    results = results.sort((a, b) => b.projectCount - a.projectCount)
+  }
+
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://gongganhansu.kr/contractors',
-    items: results.slice(0, 20).map((c) => ({ name: c.name, url: `https://gongganhansu.kr/contractors/${c.id}` })),
+    url: 'https://gongganhansu.amakers.co.kr/contractors',
+    items: results.slice(0, 20).map((c) => ({ name: c.name, url: `https://gongganhansu.amakers.co.kr/contractors/${c.id}` })),
   })
 
   return (
@@ -62,8 +85,85 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
       </section>
 
       <div className="container mx-auto py-8">
+        {/* Mobile filter toggle — shown below header on small screens */}
+        <div className="mb-4">
+          <MobileFilterToggle>
+            <div className="space-y-5">
+              <FilterGroup title="정렬">
+                <div className="space-y-1">
+                  {SORT_OPTIONS.map((o) => (
+                    <FilterLink
+                      key={o.value}
+                      href={makeHref(searchParams, { sort: o.value })}
+                      active={activeSort === o.value}
+                    >
+                      {o.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="지역">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { region: undefined })} active={!region}>
+                    전체
+                  </FilterLink>
+                  {REGIONS.map((r) => {
+                    const count = CONTRACTORS.filter((c) => c.region === r).length
+                    if (count === 0) return null
+                    return (
+                      <FilterLink
+                        key={r}
+                        href={makeHref(searchParams, { region: r })}
+                        active={region === r}
+                      >
+                        {r} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="전문 카테고리">
+                <div className="space-y-1">
+                  <FilterLink
+                    href={makeHref(searchParams, { specialty: undefined })}
+                    active={!specialty}
+                  >
+                    전체
+                  </FilterLink>
+                  {CATEGORIES.map((c) => (
+                    <FilterLink
+                      key={c.key}
+                      href={makeHref(searchParams, { specialty: c.key })}
+                      active={specialty === c.key}
+                    >
+                      {c.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+            </div>
+          </MobileFilterToggle>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
+          {/* Desktop sidebar */}
+          <aside className="hidden space-y-5 lg:block lg:sticky lg:top-20 lg:self-start">
+            <FilterGroup title="정렬">
+              <div className="space-y-1">
+                {SORT_OPTIONS.map((o) => (
+                  <FilterLink
+                    key={o.value}
+                    href={makeHref(searchParams, { sort: o.value })}
+                    active={activeSort === o.value}
+                  >
+                    {o.label}
+                  </FilterLink>
+                ))}
+              </div>
+            </FilterGroup>
+
             <FilterGroup title="지역">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { region: undefined })} active={!region}>
@@ -111,6 +211,7 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
             <form method="GET" action="/contractors" className="mb-4 flex gap-2">
               {region && <input type="hidden" name="region" value={region} />}
               {specialty && <input type="hidden" name="specialty" value={specialty} />}
+              {activeSort !== 'rating' && <input type="hidden" name="sort" value={activeSort} />}
               <div className="relative flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
@@ -180,6 +281,7 @@ function makeHref(
   const params = new URLSearchParams()
   if (next.region) params.set('region', next.region)
   if (next.specialty) params.set('specialty', next.specialty)
+  if (next.sort && next.sort !== 'rating') params.set('sort', next.sort)
   const qs = params.toString()
   return qs ? `/contractors?${qs}` : '/contractors'
 }

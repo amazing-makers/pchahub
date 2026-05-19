@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
@@ -35,13 +35,13 @@ export default function HomePage() {
 
   const orgJsonLd = buildOrganizationJsonLd({
     name: '더메뉴얼',
-    url: 'https://themanual.kr',
+    url: 'https://themanual.amakers.co.kr',
     description: '협회 정보공개서 해석·매장 운영·회계·법률·마케팅. 현직 점주와 전문가가 가르치는 프랜차이즈 가맹 사업 교육 플랫폼.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '더메뉴얼',
-    url: 'https://themanual.kr',
-    searchUrlTemplate: 'https://themanual.kr/search?q={search_term_string}',
+    url: 'https://themanual.amakers.co.kr',
+    searchUrlTemplate: 'https://themanual.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main>
@@ -210,7 +210,7 @@ export default function HomePage() {
                 </p>
               </div>
               <div>
-                <a href="https://pchahub.kr">
+                <a href="https://pchahub.amakers.co.kr">
                   <Button size="lg" className="gap-1">
                     프차허브로 이동 <ArrowRight className="h-4 w-4" />
                   </Button>

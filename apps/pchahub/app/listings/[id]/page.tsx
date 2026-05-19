@@ -40,7 +40,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
 
   const others = LISTINGS.filter((l) => l.id !== listing.id && l.region === listing.region).slice(0, 3)
 
-  const listingUrl = `https://pchahub.kr/listings/${listing.id}`
+  const listingUrl = `https://pchahub.amakers.co.kr/listings/${listing.id}`
   const listingJsonLd = buildRealEstateListingJsonLd({
     name: listing.title,
     description: `${listing.region} ${listing.district} · ${listing.area}평 · ${listing.listingType}`,
@@ -53,8 +53,8 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '매물', url: 'https://pchahub.kr/listings' },
-      { name: `${listing.region} ${listing.district}`, url: `https://pchahub.kr/listings?region=${listing.region}` },
+      { name: '매물', url: 'https://pchahub.amakers.co.kr/listings' },
+      { name: `${listing.region} ${listing.district}`, url: `https://pchahub.amakers.co.kr/listings?region=${listing.region}` },
       { name: listing.title, url: listingUrl },
     ],
   })

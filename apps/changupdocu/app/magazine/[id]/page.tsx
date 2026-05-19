@@ -40,7 +40,7 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
   if (!article) notFound()
   const related = ARTICLES.filter((a) => a.id !== article.id && a.category === article.category).slice(0, 3)
 
-  const articleUrl = `https://changupdocu.kr/magazine/${article.id}`
+  const articleUrl = `https://changupdocu.amakers.co.kr/magazine/${article.id}`
   const articleJsonLd = buildArticleJsonLd({
     headline: article.title,
     description: article.subtitle,
@@ -49,12 +49,12 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
     authorName: article.authorName,
     authorRole: article.authorRole,
     publishedAt: article.publishedAt,
-    publisher: { name: '창업다큐', url: 'https://changupdocu.kr' },
+    publisher: { name: '창업다큐', url: 'https://changupdocu.amakers.co.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '매거진', url: 'https://changupdocu.kr/magazine' },
-      { name: article.category, url: 'https://changupdocu.kr/magazine' },
+      { name: '매거진', url: 'https://changupdocu.amakers.co.kr/magazine' },
+      { name: article.category, url: 'https://changupdocu.amakers.co.kr/magazine' },
       { name: article.title, url: articleUrl },
     ],
   })

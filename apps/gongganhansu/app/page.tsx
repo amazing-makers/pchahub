@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
@@ -33,13 +33,13 @@ const TRUST = [
 export default function HomePage() {
   const orgJsonLd = buildOrganizationJsonLd({
     name: '공간의한수',
-    url: 'https://gongganhansu.kr',
+    url: 'https://gongganhansu.amakers.co.kr',
     description: 'F&B 매장 시공 전문 플랫폼. 검증된 시공사 매칭, 실제 시공 갤러리, 평당 단가 인사이트까지.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '공간의한수',
-    url: 'https://gongganhansu.kr',
-    searchUrlTemplate: 'https://gongganhansu.kr/search?q={search_term_string}',
+    url: 'https://gongganhansu.amakers.co.kr',
+    searchUrlTemplate: 'https://gongganhansu.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main>

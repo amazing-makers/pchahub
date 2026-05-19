@@ -50,15 +50,15 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
 
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '어워드', url: 'https://bestplace.kr/awards' },
-      { name: `${year} 어워드`, url: `https://bestplace.kr/awards/${year}` },
+      { name: '어워드', url: 'https://bestplace.amakers.co.kr/awards' },
+      { name: `${year} 어워드`, url: `https://bestplace.amakers.co.kr/awards/${year}` },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
-    url: `https://bestplace.kr/awards/${year}`,
+    url: `https://bestplace.amakers.co.kr/awards/${year}`,
     items: filteredAwards.slice(0, 20).map((a) => {
       const store = a.representativeStoreId ? storeById(a.representativeStoreId) : undefined
-      return { name: store?.name ?? a.citation, url: store ? `https://bestplace.kr/stores/${store.id}` : `https://bestplace.kr/awards/${year}` }
+      return { name: store?.name ?? a.citation, url: store ? `https://bestplace.amakers.co.kr/stores/${store.id}` : `https://bestplace.amakers.co.kr/awards/${year}` }
     }),
   })
 

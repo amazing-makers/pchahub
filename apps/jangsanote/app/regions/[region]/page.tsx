@@ -43,16 +43,16 @@ export default function RegionPage({ params, searchParams }: RegionPageProps) {
       )
     : allPosts
 
-  const regionUrl = `https://jangsanote.kr/regions/${channel.key}`
+  const regionUrl = `https://jangsanote.amakers.co.kr/regions/${channel.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '지역방', url: 'https://jangsanote.kr/regions' },
+      { name: '지역방', url: 'https://jangsanote.amakers.co.kr/regions' },
       { name: channel.label, url: regionUrl },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
     url: regionUrl,
-    items: posts.slice(0, 20).map((p) => ({ name: p.title, url: `https://jangsanote.kr/posts/${p.id}` })),
+    items: posts.slice(0, 20).map((p) => ({ name: p.title, url: `https://jangsanote.amakers.co.kr/posts/${p.id}` })),
   })
 
   return (

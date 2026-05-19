@@ -38,7 +38,7 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
   if (!c) notFound()
   const related = PORTFOLIO.filter((x) => x.id !== c.id && x.service === c.service).slice(0, 3)
 
-  const caseUrl = `https://openrun.kr/portfolio/${c.id}`
+  const caseUrl = `https://openrun.amakers.co.kr/portfolio/${c.id}`
   const workJsonLd = buildArticleJsonLd({
     headline: c.title,
     description: c.hook,
@@ -47,12 +47,12 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
     publishedAt: c.startedAt,
     authorName: c.client,
     authorRole: c.industry,
-    publisher: { name: '오픈런', url: 'https://openrun.kr' },
+    publisher: { name: '오픈런', url: 'https://openrun.amakers.co.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '사례', url: 'https://openrun.kr/portfolio' },
-      { name: c.serviceLabel, url: `https://openrun.kr/services/${c.service}` },
+      { name: '사례', url: 'https://openrun.amakers.co.kr/portfolio' },
+      { name: c.serviceLabel, url: `https://openrun.amakers.co.kr/services/${c.service}` },
       { name: c.title, url: caseUrl },
     ],
   })
@@ -163,19 +163,19 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
             </p>
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
               <a
-                href={`https://pchahub.kr/brands?q=${encodeURIComponent(c.client)}`}
+                href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(c.client)}`}
                 className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
               >
                 → 가맹 정보 (프차허브)
               </a>
               <a
-                href={`https://bestplace.kr/stores?q=${encodeURIComponent(c.client)}`}
+                href={`https://bestplace.amakers.co.kr/stores?q=${encodeURIComponent(c.client)}`}
                 className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
               >
                 → 매장 보기 (베스트플레이스)
               </a>
               <a
-                href={`https://changupdocu.kr/episodes?brand=${encodeURIComponent(c.client)}`}
+                href={`https://changupdocu.amakers.co.kr/episodes?brand=${encodeURIComponent(c.client)}`}
                 className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
               >
                 → 브랜드 다큐 (창업다큐)

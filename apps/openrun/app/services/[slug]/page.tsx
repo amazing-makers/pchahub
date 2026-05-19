@@ -29,18 +29,18 @@ export default function ServiceDetailPage({ params }: ServiceDetailProps) {
   if (!service) notFound()
   const cases = service.portfolioIds.map((id) => caseById(id)).filter((c): c is NonNullable<typeof c> => Boolean(c))
 
-  const serviceUrl = `https://openrun.kr/services/${service.slug}`
+  const serviceUrl = `https://openrun.amakers.co.kr/services/${service.slug}`
   const workJsonLd = buildServiceJsonLd({
     name: service.title,
     description: service.description,
     url: serviceUrl,
-    provider: { name: '오픈런', url: 'https://openrun.kr' },
+    provider: { name: '오픈런', url: 'https://openrun.amakers.co.kr' },
     serviceType: SERVICE_LABEL[service.slug],
     priceLabel: service.priceLabel,
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '서비스', url: 'https://openrun.kr/services' },
+      { name: '서비스', url: 'https://openrun.amakers.co.kr/services' },
       { name: service.title, url: serviceUrl },
     ],
   })

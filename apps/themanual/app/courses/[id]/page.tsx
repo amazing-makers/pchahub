@@ -71,7 +71,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
     0,
   )
 
-  const courseUrl = `https://themanual.kr/courses/${course.id}`
+  const courseUrl = `https://themanual.amakers.co.kr/courses/${course.id}`
   const courseJsonLd = buildCourseJsonLd({
     name: course.title,
     description: course.description,
@@ -86,12 +86,12 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '강의', url: 'https://themanual.kr/courses' },
+      { name: '강의', url: 'https://themanual.amakers.co.kr/courses' },
       ...(category
         ? [
             {
               name: category.label,
-              url: `https://themanual.kr/courses?category=${category.key}`,
+              url: `https://themanual.amakers.co.kr/courses?category=${category.key}`,
             },
           ]
         : []),

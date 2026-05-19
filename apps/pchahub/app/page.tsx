@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -58,13 +58,13 @@ export default async function HomePage() {
     .slice(0, 6)
   const orgJsonLd = buildOrganizationJsonLd({
     name: '프차허브',
-    url: 'https://pchahub.kr',
+    url: 'https://pchahub.amakers.co.kr',
     description: '공정거래위원회 가맹정보 기반 브랜드 비교 플랫폼. 창업비·매출·성장률·가맹비를 한눈에 비교하고 나에게 맞는 브랜드를 찾으세요.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '프차허브',
-    url: 'https://pchahub.kr',
-    searchUrlTemplate: 'https://pchahub.kr/search?q={search_term_string}',
+    url: 'https://pchahub.amakers.co.kr',
+    searchUrlTemplate: 'https://pchahub.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main>

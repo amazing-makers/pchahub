@@ -96,8 +96,8 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const hasActiveFilters = !!(type || region || fitCategory || q || source)
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://themyungdang.kr/listings',
-    items: paginatedResults.map((l) => ({ name: l.title, url: `https://themyungdang.kr/listings/${l.id}` })),
+    url: 'https://themyungdang.amakers.co.kr/listings',
+    items: paginatedResults.map((l) => ({ name: l.title, url: `https://themyungdang.amakers.co.kr/listings/${l.id}` })),
   })
 
   return (

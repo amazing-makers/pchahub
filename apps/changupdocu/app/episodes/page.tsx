@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { PlayCircle, Search } from 'lucide-react'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
@@ -43,8 +43,8 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
   const categories: Array<EpisodeCategory | ''> = ['', 'success', 'failure', 'brand', 'trend', 'interview']
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://changupdocu.kr/episodes',
-    items: results.slice(0, 20).map((e) => ({ name: e.title, url: `https://changupdocu.kr/episodes/${e.id}` })),
+    url: 'https://changupdocu.amakers.co.kr/episodes',
+    items: results.slice(0, 20).map((e) => ({ name: e.title, url: `https://changupdocu.amakers.co.kr/episodes/${e.id}` })),
   })
 
   return (

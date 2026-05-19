@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -95,8 +95,8 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
     : null
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://pchahub.kr/brands',
-    items: pagedResults.map((b) => ({ name: b.name, url: `https://pchahub.kr/brands/${b.id}` })),
+    url: 'https://pchahub.amakers.co.kr/brands',
+    items: pagedResults.map((b) => ({ name: b.name, url: `https://pchahub.amakers.co.kr/brands/${b.id}` })),
   })
 
   return (

@@ -45,8 +45,8 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
   results.sort((a, b) => a.date.localeCompare(b.date))
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://jangsanote.kr/meetings',
-    items: results.slice(0, 20).map((m) => ({ name: m.title, url: `https://jangsanote.kr/meetings/${m.id}` })),
+    url: 'https://jangsanote.amakers.co.kr/meetings',
+    items: results.slice(0, 20).map((m) => ({ name: m.title, url: `https://jangsanote.amakers.co.kr/meetings/${m.id}` })),
   })
 
   return (

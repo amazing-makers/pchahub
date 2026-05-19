@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
@@ -35,13 +35,13 @@ export default function HomePage() {
 
   const orgJsonLd = buildOrganizationJsonLd({
     name: '장사노트',
-    url: 'https://jangsanote.kr',
+    url: 'https://jangsanote.amakers.co.kr',
     description: '전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티. 상권 정보, 창업 팁, 업종별 채널, 오프라인 모임까지.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '장사노트',
-    url: 'https://jangsanote.kr',
-    searchUrlTemplate: 'https://jangsanote.kr/search?q={search_term_string}',
+    url: 'https://jangsanote.amakers.co.kr',
+    searchUrlTemplate: 'https://jangsanote.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main className="bg-gray-50">
@@ -173,7 +173,7 @@ export default function HomePage() {
                   프차허브에서 협회 등록 정보공개서를 한눈에 비교할 수 있어요.
                 </p>
                 <a
-                  href="https://pchahub.kr"
+                  href="https://pchahub.amakers.co.kr"
                   className="mt-3 inline-flex items-center gap-1 text-xs text-white hover:underline"
                 >
                   프차허브로 이동 <ArrowRight className="h-3 w-3" />

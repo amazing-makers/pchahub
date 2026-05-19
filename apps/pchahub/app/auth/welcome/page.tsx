@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
@@ -23,7 +23,7 @@ const ROLE_META: Record<string, { label: string; icon: typeof Search; welcome: s
     icon: Building2,
     welcome: '운영 정보와 커뮤니티가 준비되어 있어요',
     cta: '커뮤니티 바로가기',
-    ctaHref: 'https://jangsanote.kr',
+    ctaHref: 'https://jangsanote.amakers.co.kr',
     tips: [
       '내 브랜드 정보를 즐겨찾기로 바로 접근하세요',
       '장사노트에서 같은 브랜드 점주와 소통할 수 있어요',
@@ -47,7 +47,7 @@ const ROLE_META: Record<string, { label: string; icon: typeof Search; welcome: s
     icon: Hammer,
     welcome: '포트폴리오로 가맹점 시공 수주를 늘리세요',
     cta: '포트폴리오 등록하기',
-    ctaHref: 'https://gongganhansu.kr/contractors',
+    ctaHref: 'https://gongganhansu.amakers.co.kr/contractors',
     tips: [
       '공간한수에 시공 포트폴리오를 등록해 두세요',
       '더명당 신규 임대 매물에 시공 견적을 제안할 수 있어요',

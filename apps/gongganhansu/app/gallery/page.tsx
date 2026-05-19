@@ -31,8 +31,8 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
   }
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://gongganhansu.kr/gallery',
-    items: items.slice(0, 20).map((p) => ({ name: p.title, url: `https://gongganhansu.kr/gallery/${p.id}` })),
+    url: 'https://gongganhansu.amakers.co.kr/gallery',
+    items: items.slice(0, 20).map((p) => ({ name: p.title, url: `https://gongganhansu.amakers.co.kr/gallery/${p.id}` })),
   })
 
   return (

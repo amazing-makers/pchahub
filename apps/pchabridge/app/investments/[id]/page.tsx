@@ -58,7 +58,7 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
   const related = ROUNDS.filter((r) => r.id !== round.id && r.status === 'open').slice(0, 3)
   const maxUseShare = Math.max(...round.useOfFunds.map((u) => u.share), 1)
 
-  const roundUrl = `https://pchabridge.kr/investments/${round.id}`
+  const roundUrl = `https://pchabridge.amakers.co.kr/investments/${round.id}`
   const investmentJsonLd = buildInvestmentJsonLd({
     name: `${brand?.name ?? '브랜드'} ${ROUND_TYPE_LABEL[round.type]}`,
     description: round.hook,
@@ -69,8 +69,8 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '투자 라운드', url: 'https://pchabridge.kr/investments' },
-      { name: ROUND_TYPE_LABEL[round.type], url: `https://pchabridge.kr/investments?type=${round.type}` },
+      { name: '투자 라운드', url: 'https://pchabridge.amakers.co.kr/investments' },
+      { name: ROUND_TYPE_LABEL[round.type], url: `https://pchabridge.amakers.co.kr/investments?type=${round.type}` },
       { name: brand?.name ?? '라운드', url: roundUrl },
     ],
   })

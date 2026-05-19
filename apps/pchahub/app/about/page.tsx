@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -41,7 +41,7 @@ const PRINCIPLES = [
 export default function AboutPage() {
   const orgJsonLd = buildOrganizationJsonLd({
     name: '프차허브',
-    url: 'https://pchahub.kr',
+    url: 'https://pchahub.amakers.co.kr',
     description: '공정거래위원회 가맹정보 기반 프랜차이즈 브랜드 비교·창업 수익 계산·가맹 매물·커뮤니티. 한국 프랜차이즈 통합 플랫폼.',
   })
 
@@ -192,7 +192,7 @@ export default function AboutPage() {
             <div>
               <span className="text-gray-500">사이트</span>
               <a
-                href="https://pchahub.kr"
+                href="https://pchahub.amakers.co.kr"
                 className="ml-3 font-medium text-gray-900 hover:underline"
               >
                 pchahub.kr

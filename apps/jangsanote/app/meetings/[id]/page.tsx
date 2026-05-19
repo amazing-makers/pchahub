@@ -52,7 +52,7 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
   const full = meeting.currentParticipants >= meeting.maxParticipants
   const closed = meeting.status === 'closed'
 
-  const meetingUrl = `https://jangsanote.kr/meetings/${meeting.id}`
+  const meetingUrl = `https://jangsanote.amakers.co.kr/meetings/${meeting.id}`
   const eventStatus = meeting.status === 'closed' ? 'sold-out' : 'scheduled'
   const meetingJsonLd = buildEventJsonLd({
     name: meeting.title,
@@ -66,11 +66,11 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
     locationName: meeting.location,
     priceWon: meeting.isFree ? 0 : meeting.feeWon,
     status: eventStatus,
-    organizer: { name: host?.handle ?? '장사노트', url: 'https://jangsanote.kr' },
+    organizer: { name: host?.handle ?? '장사노트', url: 'https://jangsanote.amakers.co.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '모임', url: 'https://jangsanote.kr/meetings' },
+      { name: '모임', url: 'https://jangsanote.amakers.co.kr/meetings' },
       { name: meeting.title, url: meetingUrl },
     ],
   })

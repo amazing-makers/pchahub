@@ -48,8 +48,8 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const newCount = LISTINGS.filter((l) => l.listingType === '신규임대').length
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://pchahub.kr/listings',
-    items: filtered.slice(0, 20).map((l) => ({ name: l.title, url: `https://pchahub.kr/listings/${l.id}` })),
+    url: 'https://pchahub.amakers.co.kr/listings',
+    items: filtered.slice(0, 20).map((l) => ({ name: l.title, url: `https://pchahub.amakers.co.kr/listings/${l.id}` })),
   })
 
   return (

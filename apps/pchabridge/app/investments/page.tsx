@@ -34,8 +34,8 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
   const TYPES: Array<RoundType | ''> = ['', 'seed', 'series-a', 'series-b', 'crowd', 'store-fund']
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://pchabridge.kr/investments',
-    items: rounds.slice(0, 20).map((r) => ({ name: r.hook, url: `https://pchabridge.kr/investments/${r.id}` })),
+    url: 'https://pchabridge.amakers.co.kr/investments',
+    items: rounds.slice(0, 20).map((r) => ({ name: r.hook, url: `https://pchabridge.amakers.co.kr/investments/${r.id}` })),
   })
 
   return (

@@ -48,16 +48,16 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
       )
     : allEpisodes
 
-  const catUrl = `https://changupdocu.kr/categories/${cat}`
+  const catUrl = `https://changupdocu.amakers.co.kr/categories/${cat}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '에피소드', url: 'https://changupdocu.kr/episodes' },
+      { name: '에피소드', url: 'https://changupdocu.amakers.co.kr/episodes' },
       { name: CATEGORY_LABEL[cat], url: catUrl },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
     url: catUrl,
-    items: episodes.slice(0, 20).map((e) => ({ name: e.title, url: `https://changupdocu.kr/episodes/${e.id}` })),
+    items: episodes.slice(0, 20).map((e) => ({ name: e.title, url: `https://changupdocu.amakers.co.kr/episodes/${e.id}` })),
   })
 
   return (

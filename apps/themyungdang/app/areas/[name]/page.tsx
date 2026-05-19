@@ -58,17 +58,17 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
   ).slice(0, 3)
   const otherAreas = AREAS.filter((a) => a.key !== area.key && a.region !== area.region).slice(0, 4)
 
-  const areaUrl = `https://themyungdang.kr/areas/${area.key}`
+  const areaUrl = `https://themyungdang.amakers.co.kr/areas/${area.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '상권 분석', url: 'https://themyungdang.kr/areas' },
-      { name: area.region, url: `https://themyungdang.kr/areas?region=${encodeURIComponent(area.region)}` },
+      { name: '상권 분석', url: 'https://themyungdang.amakers.co.kr/areas' },
+      { name: area.region, url: `https://themyungdang.amakers.co.kr/areas?region=${encodeURIComponent(area.region)}` },
       { name: area.name, url: areaUrl },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
     url: areaUrl,
-    items: listings.slice(0, 20).map((l) => ({ name: l.title, url: `https://themyungdang.kr/listings/${l.id}` })),
+    items: listings.slice(0, 20).map((l) => ({ name: l.title, url: `https://themyungdang.amakers.co.kr/listings/${l.id}` })),
   })
 
   const maxShare = Math.max(...area.topCategories.map((c) => c.share))

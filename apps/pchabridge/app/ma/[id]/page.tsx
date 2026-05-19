@@ -35,10 +35,10 @@ export default function MADetailPage({ params }: MADetailProps) {
   const others = MA_LISTINGS.filter((m) => m.id !== listing.id).slice(0, 2)
   const pe = (listing.askingPrice / listing.annualProfit).toFixed(1)
 
-  const maUrl = `https://pchabridge.kr/ma/${listing.id}`
+  const maUrl = `https://pchabridge.amakers.co.kr/ma/${listing.id}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: 'M&A 매물', url: 'https://pchabridge.kr/ma' },
+      { name: 'M&A 매물', url: 'https://pchabridge.amakers.co.kr/ma' },
       { name: brand?.name ?? '본사', url: maUrl },
     ],
   })

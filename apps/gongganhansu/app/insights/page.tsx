@@ -36,8 +36,8 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
   const tags = Array.from(new Set(INSIGHTS.map((i) => i.category)))
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://gongganhansu.kr/insights',
-    items: filtered.slice(0, 20).map((i) => ({ name: i.title, url: `https://gongganhansu.kr/insights/${i.id}` })),
+    url: 'https://gongganhansu.amakers.co.kr/insights',
+    items: filtered.slice(0, 20).map((i) => ({ name: i.title, url: `https://gongganhansu.amakers.co.kr/insights/${i.id}` })),
   })
 
   return (

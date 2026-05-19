@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildHowToJsonLd, buildOrganizationJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -97,14 +97,14 @@ const FEATURES = [
 
 const orgJsonLd = buildOrganizationJsonLd({
   name: '프차허브',
-  url: 'https://pchahub.kr',
+  url: 'https://pchahub.amakers.co.kr',
   description: '프랜차이즈 본사를 위한 예비 점주 매칭 + 정보공개서 자동 연동 + 광고 플랫폼.',
 })
 
 const processHowToJsonLd = buildHowToJsonLd({
   name: '프차허브 본사 파트너십 시작 4단계',
   description: '본사 등록부터 광고 운영·가맹 문의 응답까지 프차허브에서 파트너십을 시작하는 방법.',
-  url: 'https://pchahub.kr/for-brands',
+  url: 'https://pchahub.amakers.co.kr/for-brands',
   steps: PROCESS_STEPS.map((s) => ({ name: s.title, text: s.body })),
   price: 0,
 })

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themyungdang', {
@@ -11,8 +11,8 @@ import { AREAS } from '@/lib/mock-data'
 import AreasPageClient from '@/components/areas-page-client'
 
 const listJsonLd = buildItemListJsonLd({
-  url: 'https://themyungdang.kr/areas',
-  items: AREAS.map((a) => ({ name: `${a.region} ${a.name}`, url: `https://themyungdang.kr/areas/${a.key}` })),
+  url: 'https://themyungdang.amakers.co.kr/areas',
+  items: AREAS.map((a) => ({ name: `${a.region} ${a.name}`, url: `https://themyungdang.amakers.co.kr/areas/${a.key}` })),
 })
 
 export default function AreasPage() {

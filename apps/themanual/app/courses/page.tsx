@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
@@ -59,8 +59,8 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
     : null
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://themanual.kr/courses',
-    items: results.slice(0, 20).map((c) => ({ name: c.title, url: `https://themanual.kr/courses/${c.id}` })),
+    url: 'https://themanual.amakers.co.kr/courses',
+    items: results.slice(0, 20).map((c) => ({ name: c.title, url: `https://themanual.amakers.co.kr/courses/${c.id}` })),
   })
 
   return (

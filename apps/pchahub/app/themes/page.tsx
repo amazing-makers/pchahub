@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -13,8 +13,8 @@ import { ThemeIcon } from '@/components/theme-icon'
 import { THEMES, THEME_COUNTS } from '@/lib/themes'
 
 const listJsonLd = buildItemListJsonLd({
-  url: 'https://pchahub.kr/themes',
-  items: THEMES.map((t) => ({ name: t.label, url: `https://pchahub.kr/themes/${t.key}` })),
+  url: 'https://pchahub.amakers.co.kr/themes',
+  items: THEMES.map((t) => ({ name: t.label, url: `https://pchahub.amakers.co.kr/themes/${t.key}` })),
 })
 
 export default function ThemesPage() {

@@ -31,11 +31,11 @@ export default function DiscussionDetailPage({ params }: DiscussionDetailProps) 
   const brand = d.brandId ? BRANDS.find((b) => b.id === d.brandId) : undefined
   const related = DISCUSSIONS.filter((item) => item.id !== d.id && item.category === d.category).slice(0, 3)
 
-  const postUrl = `https://pchahub.kr/community/${d.id}`
+  const postUrl = `https://pchahub.amakers.co.kr/community/${d.id}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '커뮤니티', url: 'https://pchahub.kr/community' },
-      { name: d.categoryLabel, url: `https://pchahub.kr/community?tab=discussions` },
+      { name: '커뮤니티', url: 'https://pchahub.amakers.co.kr/community' },
+      { name: d.categoryLabel, url: `https://pchahub.amakers.co.kr/community?tab=discussions` },
       { name: d.title, url: postUrl },
     ],
   })

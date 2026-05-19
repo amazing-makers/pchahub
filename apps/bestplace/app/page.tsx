@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
@@ -36,13 +36,13 @@ export default function HomePage() {
 
   const orgJsonLd = buildOrganizationJsonLd({
     name: '베스트플레이스',
-    url: 'https://bestplace.kr',
+    url: 'https://bestplace.amakers.co.kr',
     description: '매년 amakers가 선정하는 프랜차이즈 베스트 어워드와 전국 매장 실시간 랭킹.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '베스트플레이스',
-    url: 'https://bestplace.kr',
-    searchUrlTemplate: 'https://bestplace.kr/search?q={search_term_string}',
+    url: 'https://bestplace.amakers.co.kr',
+    searchUrlTemplate: 'https://bestplace.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main>

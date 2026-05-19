@@ -33,16 +33,16 @@ export default function ThemePage({ params }: ThemePageProps) {
   const brands = brandsForTheme(theme.key)
   const otherThemes = THEMES.filter((t) => t.key !== theme.key).slice(0, 4)
 
-  const themeUrl = `https://pchahub.kr/themes/${theme.key}`
+  const themeUrl = `https://pchahub.amakers.co.kr/themes/${theme.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '테마별', url: 'https://pchahub.kr/themes' },
+      { name: '테마별', url: 'https://pchahub.amakers.co.kr/themes' },
       { name: theme.label, url: themeUrl },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
     url: themeUrl,
-    items: brands.slice(0, 20).map((b) => ({ name: b.name, url: `https://pchahub.kr/brands/${b.id}` })),
+    items: brands.slice(0, 20).map((b) => ({ name: b.name, url: `https://pchahub.amakers.co.kr/brands/${b.id}` })),
   })
 
   return (

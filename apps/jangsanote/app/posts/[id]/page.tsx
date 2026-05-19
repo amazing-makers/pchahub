@@ -66,7 +66,7 @@ export default function PostPage({ params }: PostPageProps) {
     .filter((p) => p.id !== post.id)
     .slice(0, 3)
 
-  const postUrl = `https://jangsanote.kr/posts/${post.id}`
+  const postUrl = `https://jangsanote.amakers.co.kr/posts/${post.id}`
   const postJsonLd = buildDiscussionJsonLd({
     headline: post.title,
     url: postUrl,
@@ -75,8 +75,8 @@ export default function PostPage({ params }: PostPageProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '장사노트', url: 'https://jangsanote.kr' },
-      { name: channelName, url: `https://jangsanote.kr${channelHref}` },
+      { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
+      { name: channelName, url: `https://jangsanote.amakers.co.kr${channelHref}` },
       { name: post.title, url: postUrl },
     ],
   })
@@ -257,25 +257,25 @@ export default function PostPage({ params }: PostPageProps) {
                   </div>
                   <div className="mt-3 space-y-2 text-sm">
                     <a
-                      href={`https://pchahub.kr/categories/${post.channelKey}`}
+                      href={`https://pchahub.amakers.co.kr/categories/${post.channelKey}`}
                       className="block text-gray-700 hover:text-gray-900"
                     >
                       → 가맹 브랜드 (프차허브)
                     </a>
                     <a
-                      href={`https://themyungdang.kr/listings?category=${post.channelKey}`}
+                      href={`https://themyungdang.amakers.co.kr/listings?category=${post.channelKey}`}
                       className="block text-gray-700 hover:text-gray-900"
                     >
                       → 입점 매물 (더명당)
                     </a>
                     <a
-                      href={`https://themanual.kr/courses?category=${post.channelKey}`}
+                      href={`https://themanual.amakers.co.kr/courses?category=${post.channelKey}`}
                       className="block text-gray-700 hover:text-gray-900"
                     >
                       → 운영 강의 (더메뉴얼)
                     </a>
                     <a
-                      href={`https://bestplace.kr/stores?category=${post.channelKey}`}
+                      href={`https://bestplace.amakers.co.kr/stores?category=${post.channelKey}`}
                       className="block text-gray-700 hover:text-gray-900"
                     >
                       → 매장 보기 (베스트플레이스)

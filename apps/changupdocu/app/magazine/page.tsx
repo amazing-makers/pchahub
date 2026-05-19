@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Search } from 'lucide-react'
 import { ArticleCard } from '@/components/article-card'
 import { ARTICLES } from '@/lib/mock-data'
@@ -37,8 +37,8 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
   const rest = filtered.filter((a) => !a.featured)
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://changupdocu.kr/magazine',
-    items: filtered.slice(0, 20).map((a) => ({ name: a.title, url: `https://changupdocu.kr/magazine/${a.id}` })),
+    url: 'https://changupdocu.amakers.co.kr/magazine',
+    items: filtered.slice(0, 20).map((a) => ({ name: a.title, url: `https://changupdocu.amakers.co.kr/magazine/${a.id}` })),
   })
 
   return (

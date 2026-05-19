@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -48,8 +48,8 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
     : QUESTIONS
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://pchahub.kr/community',
-    items: filteredDiscussions.slice(0, 20).map((d) => ({ name: d.title, url: `https://pchahub.kr/community/${d.id}` })),
+    url: 'https://pchahub.amakers.co.kr/community',
+    items: filteredDiscussions.slice(0, 20).map((d) => ({ name: d.title, url: `https://pchahub.amakers.co.kr/community/${d.id}` })),
   })
 
   return (

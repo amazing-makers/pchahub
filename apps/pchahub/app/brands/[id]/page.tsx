@@ -94,7 +94,7 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
   const avgRating =
     detail.reviews.reduce((sum, r) => sum + r.rating, 0) / Math.max(detail.reviews.length, 1)
 
-  const brandUrl = `https://pchahub.kr/brands/${brand.id}`
+  const brandUrl = `https://pchahub.amakers.co.kr/brands/${brand.id}`
   const brandJsonLd = buildBrandJsonLd({
     name: brand.name,
     description: brand.description,
@@ -109,8 +109,8 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
   })
   const breadcrumbsJsonLd = buildBreadcrumbsJsonLd({
     items: [
-      { name: '브랜드 검색', url: 'https://pchahub.kr/brands' },
-      { name: brand.categoryLabel, url: `https://pchahub.kr/categories/${brand.category}` },
+      { name: '브랜드 검색', url: 'https://pchahub.amakers.co.kr/brands' },
+      { name: brand.categoryLabel, url: `https://pchahub.amakers.co.kr/categories/${brand.category}` },
       { name: brand.name, url: brandUrl },
     ],
   })
@@ -753,7 +753,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
   }> = [
     {
       site: 'bestplace',
-      href: `https://bestplace.kr/stores?brand=${brand.name}`,
+      href: `https://bestplace.amakers.co.kr/stores?brand=${brand.name}`,
       icon: Store,
       title: '이 브랜드 매장 보러가기',
       sub: '전국 인증 매장 + 어워드 수상 매장 (베스트플레이스)',
@@ -761,7 +761,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'themanual',
-      href: `https://themanual.kr/courses?category=${brand.category}`,
+      href: `https://themanual.amakers.co.kr/courses?category=${brand.category}`,
       icon: GraduationCap,
       title: `${brand.categoryLabel} 운영 강의`,
       sub: '점주 양성 코스 · 본사 운영 매뉴얼 (더메뉴얼)',
@@ -769,7 +769,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'gongganhansu',
-      href: `https://gongganhansu.kr/contractors?specialty=${brand.category}`,
+      href: `https://gongganhansu.amakers.co.kr/contractors?specialty=${brand.category}`,
       icon: Hammer,
       title: `${brand.categoryLabel} 시공사`,
       sub: '본사 가이드라인 통과 검증된 인테리어 시공사 (공간의한수)',
@@ -777,7 +777,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'themyungdang',
-      href: `https://themyungdang.kr/listings?category=${brand.category}`,
+      href: `https://themyungdang.amakers.co.kr/listings?category=${brand.category}`,
       icon: MapPin,
       title: `${brand.categoryLabel} 입점 매물`,
       sub: '양도·신규임대 매물 + 상권 분석 (더명당)',
@@ -785,7 +785,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'jangsanote',
-      href: `https://jangsanote.kr/categories/${brand.category}`,
+      href: `https://jangsanote.amakers.co.kr/categories/${brand.category}`,
       icon: Heart,
       title: '점주 커뮤니티',
       sub: `${brand.categoryLabel}방 · 점주 후기 + 모임 + 노하우 (장사노트)`,
@@ -793,7 +793,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'changupdocu',
-      href: `https://changupdocu.kr/episodes?brand=${encodeURIComponent(brand.name)}`,
+      href: `https://changupdocu.amakers.co.kr/episodes?brand=${encodeURIComponent(brand.name)}`,
       icon: Newspaper,
       title: '미디어 · 매거진',
       sub: '브랜드 다큐멘터리 + 시장 분석 기사 (창업다큐)',
@@ -801,7 +801,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'openrun',
-      href: 'https://openrun.kr/services/grand-open',
+      href: 'https://openrun.amakers.co.kr/services/grand-open',
       icon: Megaphone,
       title: '오픈 마케팅 캠페인',
       sub: '신규 오픈 30일 패키지 + SNS·인플루언서 (오픈런)',
@@ -809,7 +809,7 @@ function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
     },
     {
       site: 'pchabridge',
-      href: 'https://pchabridge.kr',
+      href: 'https://pchabridge.amakers.co.kr',
       icon: TrendingUp,
       title: '투자 라운드 · M&A',
       sub: '본사 투자 라운드 + 매각 매물 (프차브릿지)',

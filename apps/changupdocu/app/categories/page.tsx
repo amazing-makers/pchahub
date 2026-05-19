@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
@@ -21,8 +21,8 @@ export default function CategoriesPage() {
   }))
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://changupdocu.kr/categories',
-    items: summaries.map((s) => ({ name: s.label, url: `https://changupdocu.kr/categories/${s.key}` })),
+    url: 'https://changupdocu.amakers.co.kr/categories',
+    items: summaries.map((s) => ({ name: s.label, url: `https://changupdocu.amakers.co.kr/categories/${s.key}` })),
   })
 
   return (

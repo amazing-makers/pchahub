@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildFaqPageJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
@@ -144,7 +144,7 @@ const FAQS = [
 ]
 
 const faqJsonLd = buildFaqPageJsonLd({
-  url: 'https://pchahub.kr/for-brands/ads',
+  url: 'https://pchahub.amakers.co.kr/for-brands/ads',
   items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
 })
 

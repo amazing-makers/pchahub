@@ -46,7 +46,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
   const cat = CATEGORIES.find((c) => c.key === item.category)
   const related = PORTFOLIO.filter((p) => p.id !== item.id && p.category === item.category).slice(0, 3)
 
-  const itemUrl = `https://gongganhansu.kr/gallery/${item.id}`
+  const itemUrl = `https://gongganhansu.amakers.co.kr/gallery/${item.id}`
   const workJsonLd = buildArticleJsonLd({
     headline: item.title,
     description: item.excerpt,
@@ -55,13 +55,13 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
     publishedAt: item.completedAt,
     authorName: contractor?.name ?? '공간의한수',
     authorRole: '시공사',
-    publisher: { name: '공간의한수', url: 'https://gongganhansu.kr' },
+    publisher: { name: '공간의한수', url: 'https://gongganhansu.amakers.co.kr' },
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '갤러리', url: 'https://gongganhansu.kr/gallery' },
+      { name: '갤러리', url: 'https://gongganhansu.amakers.co.kr/gallery' },
       ...(cat
-        ? [{ name: cat.label, url: `https://gongganhansu.kr/gallery?category=${cat.key}` }]
+        ? [{ name: cat.label, url: `https://gongganhansu.amakers.co.kr/gallery?category=${cat.key}` }]
         : []),
       { name: item.title, url: itemUrl },
     ],
@@ -154,7 +154,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                         amakers에서 더 보기
                       </div>
                       <a
-                        href={`https://pchahub.kr/brands?q=${encodeURIComponent(item.title.split(' ')[0] ?? item.title)}`}
+                        href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(item.title.split(' ')[0] ?? item.title)}`}
                         className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
                       >
                         <span className="inline-flex items-center gap-1.5">
@@ -164,7 +164,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                         <ArrowRight className="h-3 w-3 text-gray-400" />
                       </a>
                       <a
-                        href={`https://bestplace.kr/stores?q=${encodeURIComponent(item.title)}`}
+                        href={`https://bestplace.amakers.co.kr/stores?q=${encodeURIComponent(item.title)}`}
                         className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
                       >
                         <span className="inline-flex items-center gap-1.5">
@@ -174,7 +174,7 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
                         <ArrowRight className="h-3 w-3 text-gray-400" />
                       </a>
                       <a
-                        href={`https://themyungdang.kr/listings?region=${encodeURIComponent(item.region)}`}
+                        href={`https://themyungdang.amakers.co.kr/listings?region=${encodeURIComponent(item.region)}`}
                         className="flex items-center justify-between text-sm text-gray-700 hover:text-gray-900"
                       >
                         <span className="inline-flex items-center gap-1.5">

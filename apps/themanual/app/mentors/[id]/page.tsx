@@ -38,7 +38,7 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
   const courses = coursesByInstructor(mentor.id)
   const otherMentors = MENTORS.filter((m) => m.id !== mentor.id).slice(0, 3)
 
-  const mentorUrl = `https://themanual.kr/mentors/${mentor.id}`
+  const mentorUrl = `https://themanual.amakers.co.kr/mentors/${mentor.id}`
   const personJsonLd = buildPersonJsonLd({
     name: mentor.name,
     jobTitle: mentor.role,
@@ -57,7 +57,7 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '멘토', url: 'https://themanual.kr/mentors' },
+      { name: '멘토', url: 'https://themanual.amakers.co.kr/mentors' },
       { name: mentor.name, url: mentorUrl },
     ],
   })

@@ -51,7 +51,7 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
   if (!ep) notFound()
   const related = episodesByCategory(ep.category).filter((e) => e.id !== ep.id).slice(0, 3)
 
-  const epUrl = `https://changupdocu.kr/episodes/${ep.id}`
+  const epUrl = `https://changupdocu.amakers.co.kr/episodes/${ep.id}`
   // duration "12:34" → "PT12M34S"
   const durationISO = (() => {
     const m = ep.duration.match(/^(\d+):(\d+)$/)
@@ -68,8 +68,8 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '에피소드', url: 'https://changupdocu.kr/episodes' },
-      { name: CATEGORY_LABEL[ep.category], url: `https://changupdocu.kr/categories/${ep.category}` },
+      { name: '에피소드', url: 'https://changupdocu.amakers.co.kr/episodes' },
+      { name: CATEGORY_LABEL[ep.category], url: `https://changupdocu.amakers.co.kr/categories/${ep.category}` },
       { name: ep.title, url: epUrl },
     ],
   })
@@ -79,20 +79,35 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
       <EpisodeViewTracker episodeId={ep.id} />
       <JsonLd data={videoJsonLd} />
       <JsonLd data={breadcrumbs} />
-      {/* Video player placeholder */}
+      {/* Video player */}
       <section className="bg-black">
         <div className="relative aspect-video w-full overflow-hidden bg-gray-900">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ep.thumbnailImage} alt={ep.title} className="h-full w-full object-cover opacity-90" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="rounded-full bg-white/95 p-5 shadow-2xl transition-transform hover:scale-105 cursor-pointer">
-              <PlayCircle className="h-12 w-12 text-gray-900" />
-            </div>
-          </div>
-          <div className="absolute bottom-4 right-4 rounded bg-black/80 px-3 py-1 text-sm font-medium text-white">
-            {ep.duration}
-          </div>
+          {ep.youtubeUrl ? (() => {
+            const videoId = ep.youtubeUrl.match(/[?&]v=([^&]+)/)?.[1] ?? ep.youtubeUrl.split('/').pop()
+            return (
+              <iframe
+                className="h-full w-full"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={ep.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )
+          })() : (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ep.thumbnailImage} alt={ep.title} className="h-full w-full object-cover opacity-90" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/60" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="rounded-full bg-white/95 p-5 shadow-2xl transition-transform hover:scale-105 cursor-pointer">
+                  <PlayCircle className="h-12 w-12 text-gray-900" />
+                </div>
+              </div>
+              <div className="absolute bottom-4 right-4 rounded bg-black/80 px-3 py-1 text-sm font-medium text-white">
+                {ep.duration}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -202,19 +217,19 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
               </div>
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <a
-                  href={`https://pchahub.kr/brands?q=${encodeURIComponent(ep.brand)}`}
+                  href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(ep.brand)}`}
                   className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
                 >
                   → 가맹 정보 (프차허브)
                 </a>
                 <a
-                  href={`https://bestplace.kr/stores?q=${encodeURIComponent(ep.brand)}`}
+                  href={`https://bestplace.amakers.co.kr/stores?q=${encodeURIComponent(ep.brand)}`}
                   className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
                 >
                   → 매장 보기 (베스트플레이스)
                 </a>
                 <a
-                  href="https://jangsanote.kr"
+                  href="https://jangsanote.amakers.co.kr"
                   className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
                 >
                   → 점주 후기 (장사노트)

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
@@ -14,8 +14,8 @@ export default function CategoriesPage() {
   const categories = CHANNELS.filter((c) => c.type === 'category')
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://jangsanote.kr/categories',
-    items: categories.map((c) => ({ name: c.label, url: `https://jangsanote.kr/categories/${c.key}` })),
+    url: 'https://jangsanote.amakers.co.kr/categories',
+    items: categories.map((c) => ({ name: c.label, url: `https://jangsanote.amakers.co.kr/categories/${c.key}` })),
   })
 
   return (

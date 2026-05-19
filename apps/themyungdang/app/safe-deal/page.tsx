@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildFaqPageJsonLd, buildHowToJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themyungdang', {
@@ -117,14 +117,14 @@ const STATS = [
 ]
 
 const faqJsonLd = buildFaqPageJsonLd({
-  url: 'https://themyungdang.kr/safe-deal',
+  url: 'https://themyungdang.amakers.co.kr/safe-deal',
   items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
 })
 
 const howToJsonLd = buildHowToJsonLd({
   name: '더명당 안전 거래 4단계',
   description: '매물 실사부터 에스크로 결제·분쟁 보호까지 권리금 분쟁 없이 거래하는 방법.',
-  url: 'https://themyungdang.kr/safe-deal',
+  url: 'https://themyungdang.amakers.co.kr/safe-deal',
   totalTime: 'P3D',
   steps: STEPS.map((s) => ({ name: s.title, text: s.body })),
 })

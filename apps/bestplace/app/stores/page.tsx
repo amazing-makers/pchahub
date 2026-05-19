@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { MapPin, Plus, Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
@@ -51,8 +51,8 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
   })
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://bestplace.kr/stores',
-    items: results.slice(0, 20).map((s) => ({ name: s.name, url: `https://bestplace.kr/stores/${s.id}` })),
+    url: 'https://bestplace.amakers.co.kr/stores',
+    items: results.slice(0, 20).map((s) => ({ name: s.name, url: `https://bestplace.amakers.co.kr/stores/${s.id}` })),
   })
 
   return (

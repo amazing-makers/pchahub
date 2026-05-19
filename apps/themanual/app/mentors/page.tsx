@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
@@ -76,8 +76,8 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
   const featuredCount = MENTORS.filter((m) => m.featured).length
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://themanual.kr/mentors',
-    items: results.slice(0, 20).map((m) => ({ name: m.name, url: `https://themanual.kr/mentors/${m.id}` })),
+    url: 'https://themanual.amakers.co.kr/mentors',
+    items: results.slice(0, 20).map((m) => ({ name: m.name, url: `https://themanual.amakers.co.kr/mentors/${m.id}` })),
   })
 
   return (

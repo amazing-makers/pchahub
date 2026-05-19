@@ -77,7 +77,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
     .map((k) => LISTING_CATEGORIES.find((c) => c.key === k)?.label)
     .filter(Boolean)
 
-  const listingUrl = `https://themyungdang.kr/listings/${listing.id}`
+  const listingUrl = `https://themyungdang.amakers.co.kr/listings/${listing.id}`
   const listingTypeKo =
     listing.type === 'transfer' ? '양도' : listing.type === 'new' ? '신규임대' : '매각'
   const priceWon = listing.type === 'sale' ? listing.salePrice : listing.deposit
@@ -96,8 +96,8 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '매물', url: 'https://themyungdang.kr/listings' },
-      { name: `${listing.region} ${listing.district}`, url: `https://themyungdang.kr/listings?region=${listing.region}` },
+      { name: '매물', url: 'https://themyungdang.amakers.co.kr/listings' },
+      { name: `${listing.region} ${listing.district}`, url: `https://themyungdang.amakers.co.kr/listings?region=${listing.region}` },
       { name: listing.title, url: listingUrl },
     ],
   })
@@ -237,7 +237,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                 </div>
                 <div className="mt-4 inline-flex items-center gap-1 text-xs text-gray-500">
                   <a
-                    href={`https://pchahub.kr/categories/${listing.fitCategories[0] ?? ''}`}
+                    href={`https://pchahub.amakers.co.kr/categories/${listing.fitCategories[0] ?? ''}`}
                     className="text-gray-700 hover:text-gray-900"
                   >
                     적합 가맹 브랜드 보러가기 (프차허브) →

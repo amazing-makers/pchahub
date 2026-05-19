@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
@@ -37,8 +37,8 @@ export default function PostsPage({
   const paged = searched.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   const listJsonLd = buildItemListJsonLd({
-    url: 'https://jangsanote.kr/posts',
-    items: paged.map((p) => ({ name: p.title, url: `https://jangsanote.kr/posts/${p.id}` })),
+    url: 'https://jangsanote.amakers.co.kr/posts',
+    items: paged.map((p) => ({ name: p.title, url: `https://jangsanote.amakers.co.kr/posts/${p.id}` })),
   })
 
   return (

@@ -43,16 +43,16 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
       )
     : allPosts
 
-  const channelUrl = `https://jangsanote.kr/categories/${channel.key}`
+  const channelUrl = `https://jangsanote.amakers.co.kr/categories/${channel.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '커뮤니티', url: 'https://jangsanote.kr/categories' },
+      { name: '커뮤니티', url: 'https://jangsanote.amakers.co.kr/categories' },
       { name: channel.label, url: channelUrl },
     ],
   })
   const listJsonLd = buildItemListJsonLd({
     url: channelUrl,
-    items: posts.slice(0, 20).map((p) => ({ name: p.title, url: `https://jangsanote.kr/posts/${p.id}` })),
+    items: posts.slice(0, 20).map((p) => ({ name: p.title, url: `https://jangsanote.amakers.co.kr/posts/${p.id}` })),
   })
 
   return (

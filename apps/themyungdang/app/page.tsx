@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themyungdang', {
@@ -69,13 +69,13 @@ export default function HomePage() {
 
   const orgJsonLd = buildOrganizationJsonLd({
     name: '더명당',
-    url: 'https://themyungdang.kr',
+    url: 'https://themyungdang.amakers.co.kr',
     description: '전국 프랜차이즈 가맹 입점 매물 플랫폼. 권리금 양도·신규임대·상권 분석. amakers 안전 거래로 권리금 분쟁 위험을 줄이세요.',
   })
   const siteJsonLd = buildWebSiteJsonLd({
     name: '더명당',
-    url: 'https://themyungdang.kr',
-    searchUrlTemplate: 'https://themyungdang.kr/search?q={search_term_string}',
+    url: 'https://themyungdang.amakers.co.kr',
+    searchUrlTemplate: 'https://themyungdang.amakers.co.kr/search?q={search_term_string}',
   })
   return (
     <main>

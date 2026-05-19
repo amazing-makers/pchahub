@@ -42,7 +42,7 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
   const portfolio = portfolioByContractor(c.id)
   const others = CONTRACTORS.filter((x) => x.id !== c.id).slice(0, 3)
 
-  const contractorUrl = `https://gongganhansu.kr/contractors/${c.id}`
+  const contractorUrl = `https://gongganhansu.amakers.co.kr/contractors/${c.id}`
   const businessJsonLd = buildLocalBusinessJsonLd({
     name: c.name,
     description: c.tagline,
@@ -56,7 +56,7 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
   })
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
-      { name: '시공사', url: 'https://gongganhansu.kr/contractors' },
+      { name: '시공사', url: 'https://gongganhansu.amakers.co.kr/contractors' },
       { name: c.name, url: contractorUrl },
     ],
   })
