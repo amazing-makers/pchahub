@@ -17,6 +17,7 @@ import {
   TYPE_LABEL,
   type ListingType,
 } from '@/lib/mock-data'
+import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
 const REGIONS = [
   '서울',
@@ -215,9 +216,117 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
+        <div className="mb-4">
+          <MobileFilterToggle>
+            <div className="space-y-5">
+              <FilterGroup title="거래 유형">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { type: undefined })} active={!type}>
+                    전체 ({LISTINGS.length})
+                  </FilterLink>
+                  {(['transfer', 'new', 'sale'] as ListingType[]).map((t) => {
+                    const count = LISTINGS.filter((l) => l.type === t).length
+                    return (
+                      <FilterLink
+                        key={t}
+                        href={makeHref(searchParams, { type: t })}
+                        active={type === t}
+                      >
+                        {TYPE_LABEL[t]} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="지역">
+                <div className="space-y-1">
+                  <FilterLink
+                    href={makeHref(searchParams, { region: undefined })}
+                    active={!region}
+                  >
+                    전국
+                  </FilterLink>
+                  {REGIONS.map((r) => {
+                    const count = LISTINGS.filter((l) => l.region === r).length
+                    if (count === 0) return null
+                    return (
+                      <FilterLink
+                        key={r}
+                        href={makeHref(searchParams, { region: r })}
+                        active={region === r}
+                      >
+                        {r} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="업종">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { fitCategory: undefined })} active={!fitCategory}>
+                    전체
+                  </FilterLink>
+                  {LISTING_CATEGORIES.map((c) => {
+                    const count = LISTINGS.filter((l) => l.fitCategories.includes(c.key)).length
+                    if (count === 0) return null
+                    return (
+                      <FilterLink
+                        key={c.key}
+                        href={makeHref(searchParams, { fitCategory: c.key })}
+                        active={fitCategory === c.key}
+                      >
+                        {c.label} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="출처">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { source: undefined })} active={!source}>
+                    전체 ({LISTINGS.length})
+                  </FilterLink>
+                  {SOURCE_OPTIONS.map((s) => {
+                    const count = s.key === 'own'
+                      ? LISTINGS.filter((l) => !l.externalSource).length
+                      : LISTINGS.filter((l) => l.externalSource?.name === s.key).length
+                    if (count === 0) return null
+                    return (
+                      <FilterLink
+                        key={s.key}
+                        href={makeHref(searchParams, { source: s.key })}
+                        active={source === s.key}
+                      >
+                        {s.label} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="정렬">
+                <div className="space-y-1">
+                  {SORT_OPTIONS.map((s) => (
+                    <FilterLink
+                      key={s.key}
+                      href={makeHref(searchParams, { sort: s.key })}
+                      active={sort === s.key}
+                    >
+                      {s.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+            </div>
+          </MobileFilterToggle>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
           {/* Sidebar */}
-          <aside className="space-y-5">
+          <aside className="hidden space-y-5 lg:block">
             {hasActiveFilters && (
               <a
                 href="/listings"

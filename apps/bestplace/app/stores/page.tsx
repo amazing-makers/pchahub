@@ -4,6 +4,7 @@ import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
   title: '매장 디렉토리',
@@ -94,8 +95,66 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
+        <div className="mb-4">
+          <MobileFilterToggle>
+            <div className="space-y-5">
+              <FilterGroup title="카테고리">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { category: undefined })} active={!category}>
+                    전체
+                  </FilterLink>
+                  {CATEGORIES.map((c) => (
+                    <FilterLink
+                      key={c.key}
+                      href={makeHref(searchParams, { category: c.key })}
+                      active={category === c.key}
+                    >
+                      {c.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="지역">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { region: undefined })} active={!region}>
+                    전국
+                  </FilterLink>
+                  {REGIONS.map((r) => {
+                    const count = STORES.filter((s) => s.region === r).length
+                    if (count === 0) return null
+                    return (
+                      <FilterLink
+                        key={r}
+                        href={makeHref(searchParams, { region: r })}
+                        active={region === r}
+                      >
+                        {r} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="정렬">
+                <div className="space-y-1">
+                  {SORT_OPTIONS.map((s) => (
+                    <FilterLink
+                      key={s.key}
+                      href={makeHref(searchParams, { sort: s.key })}
+                      active={sort === s.key}
+                    >
+                      {s.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+            </div>
+          </MobileFilterToggle>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
+          <aside className="hidden space-y-5 lg:block lg:sticky lg:top-20 lg:self-start">
             <FilterGroup title="카테고리">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { category: undefined })} active={!category}>

@@ -5,6 +5,7 @@ import { CourseCard } from '@/components/course-card'
 import { CourseCardWithSave } from '@/components/course-card-with-save'
 import { COURSE_CATEGORIES, COURSES, LEVEL_LABEL, type CourseLevel } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '강의 목록',
@@ -99,8 +100,83 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
+        <div className="mb-4">
+          <MobileFilterToggle>
+            <div className="space-y-5">
+              <FilterGroup title="카테고리">
+                <div className="space-y-1">
+                  <FilterLink
+                    href={makeHref(searchParams, { category: undefined })}
+                    active={!category}
+                  >
+                    전체
+                  </FilterLink>
+                  {COURSE_CATEGORIES.map((c) => {
+                    const count = COURSES.filter((x) => x.category === c.key).length
+                    if (count === 0) return null
+                    return (
+                      <FilterLink
+                        key={c.key}
+                        href={makeHref(searchParams, { category: c.key })}
+                        active={category === c.key}
+                      >
+                        {c.label} ({count})
+                      </FilterLink>
+                    )
+                  })}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="수준">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { level: undefined })} active={!level}>
+                    전체
+                  </FilterLink>
+                  {(['beginner', 'intermediate', 'advanced'] as CourseLevel[]).map((l) => (
+                    <FilterLink
+                      key={l}
+                      href={makeHref(searchParams, { level: l })}
+                      active={level === l}
+                    >
+                      {LEVEL_LABEL[l]}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="가격">
+                <div className="space-y-1">
+                  <FilterLink href={makeHref(searchParams, { free: undefined })} active={!free}>
+                    전체
+                  </FilterLink>
+                  <FilterLink
+                    href={makeHref(searchParams, { free: '1' })}
+                    active={free === '1'}
+                  >
+                    무료만
+                  </FilterLink>
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="정렬">
+                <div className="space-y-1">
+                  {SORT_OPTIONS.map((s) => (
+                    <FilterLink
+                      key={s.key}
+                      href={makeHref(searchParams, { sort: s.key })}
+                      active={sort === s.key}
+                    >
+                      {s.label}
+                    </FilterLink>
+                  ))}
+                </div>
+              </FilterGroup>
+            </div>
+          </MobileFilterToggle>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <aside className="space-y-5">
+          <aside className="hidden space-y-5 lg:block">
             <FilterGroup title="카테고리">
               <div className="space-y-1">
                 <FilterLink
