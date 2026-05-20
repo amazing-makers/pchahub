@@ -6,11 +6,13 @@ import {
   AlertCircle,
   ArrowLeft,
   ArrowRight,
+  BookOpen,
   Building2,
   CheckCircle2,
   ChevronRight,
   MapPin,
   Sparkles,
+  Store,
   TrendingUp,
   Users,
 } from 'lucide-react'
@@ -273,6 +275,50 @@ export default function AreaDetailPage({ params }: AreaDetailPageProps) {
             </div>
           )}
         </section>
+
+        {/* amakers 생태계 크로스링크 */}
+        <Card className="border-gray-200 bg-gray-50">
+          <CardContent className="p-6">
+            <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              amakers에서 더 알아보기
+            </div>
+            <p className="mt-1 text-sm text-gray-600">
+              {area.name} 상권 분석과 함께 확인하면 좋은 브랜드·강의·커뮤니티 정보입니다.
+            </p>
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <a
+                href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(area.region)}`}
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <Store className="h-3.5 w-3.5 text-indigo-500" />
+                  {area.region} 가맹 브랜드
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+              <a
+                href="https://themanual.amakers.co.kr/courses"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5 text-amber-500" />
+                  창업 운영 강의
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+              <a
+                href={`https://gongganhansu.amakers.co.kr/quote`}
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-emerald-500" />
+                  인테리어 견적 받기
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Other areas */}
         {sameRegion.length > 0 && (

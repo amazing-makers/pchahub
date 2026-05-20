@@ -5,6 +5,7 @@ import { Badge, Card, CardContent } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildDiscussionJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { DISCUSSIONS, type MockDiscussion } from '@/lib/mock-community'
 import { BRANDS } from '@/lib/mock-data'
+import { ShareDiscussionButton } from './share-discussion-button'
 
 export function generateStaticParams() {
   return DISCUSSIONS.map((d) => ({ id: d.id }))
@@ -103,14 +104,17 @@ export default function DiscussionDetailPage({ params }: DiscussionDetailProps) 
               </CardContent>
             </Card>
 
-            <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+            <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
               <div className="text-sm text-gray-500">
                 이 글이 도움이 됐나요?
               </div>
-              <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                <ThumbsUp className="h-4 w-4" />
-                도움됨
-              </button>
+              <div className="flex items-center gap-2">
+                <ShareDiscussionButton title={d.title} />
+                <button className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                  <ThumbsUp className="h-4 w-4" />
+                  도움됨
+                </button>
+              </div>
             </div>
 
             <div className="rounded-xl border border-dashed border-gray-200 bg-white p-6 text-center">

@@ -8,6 +8,7 @@ import { brandById, MA_LISTINGS, maListingById } from '@/lib/mock-data'
 import { MACard } from '@/components/ma-card'
 import { NdaForm } from './nda-form'
 import { MaConsultButton } from './ma-consult-button'
+import { ShareMAButton } from './share-ma-button'
 
 export function generateStaticParams() {
   return MA_LISTINGS.map((m) => ({ id: m.id }))
@@ -107,6 +108,7 @@ export default function MADetailPage({ params }: MADetailProps) {
                     listingId={listing.id}
                     brandName={brand?.name ?? '매물'}
                   />
+                  <ShareMAButton brandName={brand?.name ?? '매물'} />
 
                   <div className="text-center text-xs text-gray-500">
                     문의 {listing.inquiryCount}건 · 등록 {listing.listedAt}
