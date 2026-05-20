@@ -34,6 +34,7 @@ import { WatchButton } from '../watch-button'
 import { InvestForm } from './invest-form'
 import { IrRequestButton } from './ir-request-button'
 import { ShareRoundButton } from './share-round-button'
+import { RoundViewTracker } from './round-view-tracker'
 
 export function generateStaticParams() {
   return ROUNDS.map((r) => ({ id: r.id }))
@@ -82,6 +83,7 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <RoundViewTracker roundId={round.id} />
       <JsonLd data={investmentJsonLd} />
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">

@@ -15,6 +15,7 @@ import { ServiceCard } from '@/components/service-card'
 import { CaseCard } from '@/components/case-card'
 import { Testimonials } from '@/components/testimonials'
 import { SavedCasesSection } from '@/components/saved-cases-section'
+import { RecentlyViewedCases } from '@/components/recently-viewed-cases'
 import { FEATURED_PORTFOLIO, SERVICES, STATS, TESTIMONIALS } from '@/lib/mock-data'
 
 const otherPlatforms = (
@@ -105,6 +106,7 @@ export default function HomePage() {
       </section>
 
       <SavedCasesSection />
+      <RecentlyViewedCases />
 
       <section className="container mx-auto py-section">
         <div className="mx-auto max-w-2xl text-center">

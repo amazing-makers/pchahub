@@ -12,6 +12,7 @@ import { CaseCard } from '@/components/case-card'
 import { caseById, PORTFOLIO } from '@/lib/mock-data'
 import { SaveCaseButton } from './save-case-button'
 import { ShareCaseButton } from './share-case-button'
+import { CaseViewTracker } from './case-view-tracker'
 
 export function generateStaticParams() {
   return PORTFOLIO.map((c) => ({ id: c.id }))
@@ -60,6 +61,7 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <CaseViewTracker caseId={c.id} />
       <JsonLd data={workJsonLd} />
       <JsonLd data={breadcrumbs} />
       {/* Hero image */}
