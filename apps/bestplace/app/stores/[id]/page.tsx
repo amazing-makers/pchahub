@@ -10,7 +10,7 @@ import {
   Star,
   Users,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, BrandLogo, Button, Card, CardContent } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildLocalBusinessJsonLd,
@@ -127,11 +127,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
               <h1 className="mt-3 text-h2 font-bold text-gray-900">{store.name}</h1>
               {brand && (
                 <div className="mt-1 flex items-center gap-2">
-                  <span
-                    className="h-5 w-5 rounded-md"
-                    style={{ background: brand.logoColor }}
-                    aria-hidden
-                  />
+                  <BrandLogo brand={brand} size="sm" />
                   <a
                     href={`https://pchahub.amakers.co.kr/brands/${brand.id}`}
                     className="inline-flex items-center gap-1 text-sm text-gray-700 hover:underline"
@@ -340,6 +336,12 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                 <a href={`https://themanual.amakers.co.kr/courses?category=${brand?.category}`} className="block">
                   <Button size="md" variant="outline" className="w-full justify-between gap-1">
                     <span>{brand?.categoryLabel} 운영 강의</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                </a>
+                <a href={`https://gongganhansu.amakers.co.kr/contractors?specialty=${brand?.category ?? ''}`} className="block">
+                  <Button size="md" variant="outline" className="w-full justify-between gap-1">
+                    <span>매장 시공사 찾기 (공간의한수)</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
                 </a>

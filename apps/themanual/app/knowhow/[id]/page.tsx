@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Clock, Eye, Lock, BookOpen, CheckCircle, ShoppingCart } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle, Clock, Eye, Lock, ShoppingCart, Store, Users } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   KNOWHOW_ITEMS,
@@ -9,6 +9,7 @@ import {
   knowhowById,
 } from '@/lib/knowhow'
 import { buildPageMetadata } from '@amakers/design-system'
+import { SaveKnowhowButton } from './save-knowhow-button'
 
 interface KnowhowPageProps {
   params: { id: string }
@@ -76,7 +77,7 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
           {/* Main content */}
           <div className="space-y-8">
             {/* Meta chips */}
-            <div className="flex flex-wrap gap-4 rounded-xl border border-gray-200 bg-white p-5">
+            <div className="flex flex-wrap items-center gap-4 rounded-xl border border-gray-200 bg-white p-5">
               <MetaChip icon={<Clock className="h-4 w-4 text-[var(--brand-primary)]" />} label="읽기 시간" value={`${item.readTime}분`} />
               <MetaChip icon={<Eye className="h-4 w-4 text-[var(--brand-primary)]" />} label="조회수" value={item.viewCount.toLocaleString()} />
               <MetaChip
@@ -89,6 +90,9 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
                 value={item.premium ? `₩${item.price.toLocaleString()}` : '무료'}
               />
               <MetaChip icon={<CheckCircle className="h-4 w-4 text-[var(--brand-primary)]" />} label="섹션 수" value={`${item.sections.length}개`} />
+              <div className="ml-auto">
+                <SaveKnowhowButton itemId={item.id} />
+              </div>
             </div>
 
             {/* Excerpt */}
@@ -213,6 +217,50 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
                 </a>
               ))}
             </div>
+
+            {/* amakers 생태계 크로스링크 */}
+            <Card className="border-gray-200 bg-gray-50">
+              <CardContent className="p-5">
+                <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  amakers에서 더 알아보기
+                </div>
+                <p className="mt-1 text-sm text-gray-600">
+                  이 노하우와 관련된 브랜드·강의·커뮤니티를 확인하세요.
+                </p>
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <a
+                    href={`https://pchahub.amakers.co.kr/brands?category=${item.category}`}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Store className="h-3.5 w-3.5 text-indigo-500" />
+                      관련 가맹 브랜드
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href={`/courses?category=${item.category}`}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="h-3.5 w-3.5 text-amber-500" />
+                      관련 강의 보기
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://jangsanote.amakers.co.kr"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5 text-emerald-500" />
+                      점주 커뮤니티
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Source */}
             <div className="text-xs text-gray-400">
