@@ -11,15 +11,22 @@ import { Search } from 'lucide-react'
 import { InsightCard } from '@/components/insight-card'
 import { INSIGHTS } from '@/lib/mock-data'
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'featured', label: '추천 순' },
+  { key: 'read-short', label: '읽기 짧은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface InsightsPageProps {
-  searchParams: { tag?: string; q?: string }
+  searchParams: { tag?: string; q?: string; sort?: string }
 }
 
 export default function InsightsPage({ searchParams }: InsightsPageProps) {
-  const { tag, q } = searchParams
+  const { tag, q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
-  const sorted = [...INSIGHTS].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-  let filtered = tag ? sorted.filter((i) => i.category === tag || i.tags?.includes(tag)) : sorted
+  let filtered = tag ? INSIGHTS.filter((i) => i.category === tag || i.tags?.includes(tag)) : [...INSIGHTS]
   if (needle) {
     filtered = filtered.filter(
       (i) =>
@@ -31,6 +38,13 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
         i.category.toLowerCase().includes(needle),
     )
   }
+  filtered = [...filtered].sort((a, b) => {
+    switch (activeSort) {
+      case 'featured': return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+      case 'read-short': return a.readTime - b.readTime
+      default: return b.publishedAt.localeCompare(a.publishedAt)
+    }
+  })
 
   // Derive unique categories from INSIGHTS (preserving order of first appearance)
   const tags = Array.from(new Set(INSIGHTS.map((i) => i.category)))
@@ -53,6 +67,7 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
           {/* Search bar */}
           <form method="GET" action="/insights" className="mt-5 flex max-w-md gap-2">
             {tag && <input type="hidden" name="tag" value={tag} />}
+            {activeSort !== 'recent' && <input type="hidden" name="sort" value={activeSort} />}
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -83,7 +98,7 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
           {/* 태그 필터 */}
           <div className="mt-4 flex flex-wrap gap-2">
             <a
-              href={q ? `/insights?q=${encodeURIComponent(q)}` : '/insights'}
+              href={`/insights?${new URLSearchParams({ ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}` || '/insights'}
               className={
                 'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                 (!tag ? 'bg-gray-900 text-white' : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
@@ -96,7 +111,7 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
               return (
                 <a
                   key={t}
-                  href={`/insights?tag=${encodeURIComponent(t)}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                  href={`/insights?${new URLSearchParams({ tag: t, ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}`}
                   className={
                     'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                     (tag === t ? 'bg-gray-900 text-white' : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
@@ -106,6 +121,23 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
                 </a>
               )
             })}
+          </div>
+          {/* 정렬 칩 */}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/insights?${new URLSearchParams({ ...(tag ? { tag } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>

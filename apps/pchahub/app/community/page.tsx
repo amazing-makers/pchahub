@@ -20,23 +20,38 @@ const CATEGORY_LABELS: Record<string, string> = {
   news: '시장 동향',
 }
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'views', label: '조회 많은 순' },
+  { key: 'comments', label: '댓글 많은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface CommunityPageProps {
-  searchParams: { tab?: string; q?: string }
+  searchParams: { tab?: string; q?: string; sort?: string }
 }
 
 export default function CommunityPage({ searchParams }: CommunityPageProps) {
   const tab = searchParams.tab ?? 'discussions'
-  const { q } = searchParams
+  const { q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
 
-  const filteredDiscussions = needle
+  let filteredDiscussions = needle
     ? DISCUSSIONS.filter(
         (d) =>
           d.title.toLowerCase().includes(needle) ||
           d.excerpt.toLowerCase().includes(needle) ||
           d.author.toLowerCase().includes(needle),
       )
-    : DISCUSSIONS
+    : [...DISCUSSIONS]
+  filteredDiscussions = [...filteredDiscussions].sort((a, b) => {
+    switch (activeSort) {
+      case 'views': return b.views - a.views
+      case 'comments': return b.comments - a.comments
+      default: return b.createdAt.localeCompare(a.createdAt)
+    }
+  })
 
   const filteredQuestions = needle
     ? QUESTIONS.filter(
@@ -63,6 +78,7 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
           </p>
           <form method="GET" action="/community" className="mt-5 flex max-w-lg gap-2">
             {tab !== 'discussions' && <input type="hidden" name="tab" value={tab} />}
+            {activeSort !== 'recent' && tab === 'discussions' && <input type="hidden" name="sort" value={activeSort} />}
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -93,14 +109,32 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
-        <div className="mb-6 flex gap-1 border-b border-gray-200">
-          <TabLink href={`/community?tab=discussions${q ? `&q=${encodeURIComponent(q)}` : ''}`} active={tab === 'discussions'}>
+        <div className="mb-4 flex gap-1 border-b border-gray-200">
+          <TabLink href={`/community?${new URLSearchParams({ tab: 'discussions', ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}`} active={tab === 'discussions'}>
             토론 / 후기 ({filteredDiscussions.length})
           </TabLink>
-          <TabLink href={`/community?tab=questions${q ? `&q=${encodeURIComponent(q)}` : ''}`} active={tab === 'questions'}>
+          <TabLink href={`/community?${new URLSearchParams({ tab: 'questions', ...(q ? { q } : {}) }).toString()}`} active={tab === 'questions'}>
             전문가 Q&A ({filteredQuestions.length})
           </TabLink>
         </div>
+        {tab === 'discussions' && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/community?${new URLSearchParams({ tab: 'discussions', sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
+          </div>
+        )}
 
         {tab === 'questions' ? (
           <div className="space-y-3">
