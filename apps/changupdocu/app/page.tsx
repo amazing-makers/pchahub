@@ -13,6 +13,7 @@ import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { ArticleCard } from '@/components/article-card'
 import { SavedEpisodesSection } from '@/components/saved-episodes-section'
+import { SavedArticlesSection } from '@/components/saved-articles-section'
 import {
   CATEGORY_COLOR,
   CATEGORY_LABEL,
@@ -105,6 +106,7 @@ export default function HomePage() {
       </section>
 
       <SavedEpisodesSection />
+      <SavedArticlesSection />
 
       {/* Other featured */}
       {otherFeatured.length > 0 && (

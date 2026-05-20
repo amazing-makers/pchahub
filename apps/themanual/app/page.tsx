@@ -16,6 +16,8 @@ import { MentorCard } from '@/components/mentor-card'
 import { SavedCoursesSection } from '@/components/saved-courses-section'
 import { RecentlyViewedCourses } from '@/components/recently-viewed-courses'
 import { SavedRecipesSection } from '@/components/saved-recipes-section'
+import { SavedKnowhowSection } from '@/components/saved-knowhow-section'
+import { SavedMentorsSection } from '@/components/saved-mentors-section'
 import {
   COURSE_CATEGORIES,
   FEATURED_COURSES,
@@ -91,6 +93,8 @@ export default function HomePage() {
       <RecentlyViewedCourses />
 
       <SavedRecipesSection />
+      <SavedKnowhowSection />
+      <SavedMentorsSection />
 
       {/* Featured courses */}
       {FEATURED_COURSES.length > 0 && (
