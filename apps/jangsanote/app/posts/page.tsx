@@ -15,15 +15,32 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
   path: '/posts',
 })
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'likes', label: '인기 순' },
+  { key: 'comments', label: '댓글 많은 순' },
+  { key: 'views', label: '조회 많은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 export default function PostsPage({
   searchParams,
 }: {
-  searchParams: { page?: string; q?: string }
+  searchParams: { page?: string; q?: string; sort?: string }
 }) {
-  const { q } = searchParams
+  const { q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   const pageNum = Math.max(1, parseInt(searchParams.page ?? '1', 10) || 1)
-  const sorted = [...POSTS].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  const all = [...POSTS].sort((a, b) => {
+    switch (activeSort) {
+      case 'likes': return b.likes - a.likes
+      case 'comments': return b.commentCount - a.commentCount
+      case 'views': return b.views - a.views
+      default: return b.createdAt.localeCompare(a.createdAt)
+    }
+  })
+  const sorted = all
   const searched = needle
     ? sorted.filter(
         (p) =>
@@ -48,9 +65,27 @@ export default function PostsPage({
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">전체 글</h1>
           <p className="mt-1 text-sm text-gray-500">
-            장사노트 커뮤니티에 등록된 모든 게시글 — 최신 순. 총 {formatNumber(sorted.length)}건
+            장사노트 커뮤니티에 등록된 모든 게시글. 총 {formatNumber(sorted.length)}건
           </p>
-          <form method="GET" action="/posts" className="mt-5 flex max-w-md gap-2">
+          {/* Sort chips */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/posts?sort=${o.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
+          </div>
+          <form method="GET" action="/posts" className="mt-4 flex max-w-md gap-2">
+            {activeSort !== 'recent' && <input type="hidden" name="sort" value={activeSort} />}
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -70,7 +105,7 @@ export default function PostsPage({
             </button>
             {q && (
               <a
-                href="/posts"
+                href={activeSort !== 'recent' ? `/posts?sort=${activeSort}` : '/posts'}
                 className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
                 초기화
@@ -105,11 +140,14 @@ export default function PostsPage({
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <a
                 key={p}
-                href={
-                  p === 1
-                    ? q ? `/posts?q=${encodeURIComponent(q)}` : '/posts'
-                    : q ? `/posts?q=${encodeURIComponent(q)}&page=${p}` : `/posts?page=${p}`
-                }
+                href={(() => {
+                  const params = new URLSearchParams()
+                  if (activeSort !== 'recent') params.set('sort', activeSort)
+                  if (q) params.set('q', q)
+                  if (p > 1) params.set('page', String(p))
+                  const qs = params.toString()
+                  return qs ? `/posts?${qs}` : '/posts'
+                })()}
                 aria-current={p === currentPage ? 'page' : undefined}
                 className={
                   'flex h-8 w-8 items-center justify-center rounded-md border text-sm ' +

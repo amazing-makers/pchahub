@@ -10,13 +10,20 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
   path: '/portfolio',
 })
 
+const SORT_OPTIONS = [
+  { key: 'featured', label: '추천 순' },
+  { key: 'recent', label: '최신 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface PortfolioPageProps {
-  searchParams: { service?: string; q?: string }
+  searchParams: { service?: string; q?: string; sort?: string }
 }
 
 export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
   const service = searchParams.service as ServiceSlug | undefined
-  const { q } = searchParams
+  const { q, sort = 'featured' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'featured') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let cases = service ? PORTFOLIO.filter((c) => c.service === service) : PORTFOLIO
   if (needle) {
@@ -28,6 +35,10 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
         c.tags.some((t) => t.toLowerCase().includes(needle)),
     )
   }
+  cases = [...cases].sort((a, b) => {
+    if (activeSort === 'recent') return b.startedAt.localeCompare(a.startedAt)
+    return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+  })
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://openrun.amakers.co.kr/portfolio',
@@ -79,7 +90,7 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
           {/* Service filter chips */}
           <div className="mt-4 flex flex-wrap gap-2">
             <a
-              href={q ? `/portfolio?q=${encodeURIComponent(q)}` : '/portfolio'}
+              href={`/portfolio?${new URLSearchParams({ ...(activeSort !== 'featured' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}` || '/portfolio'}
               className={
                 'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                 (!service
@@ -95,7 +106,7 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
               return (
                 <a
                   key={s.slug}
-                  href={`/portfolio?service=${s.slug}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                  href={`/portfolio?${new URLSearchParams({ service: s.slug, ...(activeSort !== 'featured' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}`}
                   className={
                     'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                     (service === s.slug
@@ -107,6 +118,23 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
                 </a>
               )
             })}
+          </div>
+          {/* Sort chips */}
+          <div className="mt-2 flex gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/portfolio?${new URLSearchParams({ ...(service ? { service } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>
