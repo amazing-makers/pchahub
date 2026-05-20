@@ -1,10 +1,27 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
+import { ArrowRight, Eye, PlayCircle } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CATEGORY_COLOR, CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
 
 const VALID_CATEGORIES: EpisodeCategory[] = ['success', 'failure', 'brand', 'trend', 'interview']
+
+const CATEGORY_EMOJI: Record<EpisodeCategory, string> = {
+  success:   '📈',
+  failure:   '📉',
+  brand:     '🏢',
+  trend:     '🔥',
+  interview: '🎙️',
+}
+
+const CATEGORY_DESC: Record<EpisodeCategory, string> = {
+  success:   '실제 매출 성장의 변곡점을 따라가는 다큐. 어떤 결정이 매출을 바꿨나.',
+  failure:   '실패의 원인을 데이터로 풀어내는 분석. 같은 실수를 반복하지 않도록.',
+  brand:     '본사가 직접 풀어주는 성장 비결. 브랜드 탄생부터 확장 전략까지.',
+  trend:     '지금 자영업·가맹 시장에서 무슨 일이 벌어지고 있나. 숫자로 본 트렌드.',
+  interview: '현직 점주·창업자·전문가의 현장 이야기. 이론이 아닌 경험.',
+}
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '카테고리',
@@ -13,12 +30,20 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
 })
 
 export default function CategoriesPage() {
-  const summaries = VALID_CATEGORIES.map((cat) => ({
-    key: cat,
-    label: CATEGORY_LABEL[cat],
-    color: CATEGORY_COLOR[cat],
-    count: EPISODES.filter((e) => e.category === cat).length,
-  }))
+  const summaries = VALID_CATEGORIES.map((cat) => {
+    const catEpisodes = EPISODES.filter((e) => e.category === cat)
+    const totalViews = catEpisodes.reduce((s, e) => s + e.views, 0)
+    // 가장 조회수 높은 에피소드
+    const topEpisode = [...catEpisodes].sort((a, b) => b.views - a.views)[0]
+    return {
+      key: cat,
+      label: CATEGORY_LABEL[cat],
+      color: CATEGORY_COLOR[cat],
+      count: catEpisodes.length,
+      totalViews,
+      topEpisode,
+    }
+  })
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://changupdocu.amakers.co.kr/categories',
@@ -40,19 +65,66 @@ export default function CategoriesPage() {
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {summaries.map((s) => (
-            <a key={s.key} href={`/categories/${s.key}`} className="group block">
+            <a key={s.key} href={`/categories/${s.key}`} className="group block h-full">
               <Card className="h-full overflow-hidden border-gray-200 transition-shadow hover:shadow-md">
+                {/* Color bar */}
                 <div
-                  className="h-2"
-                  style={{ background: `linear-gradient(135deg, ${s.color}, ${s.color}AA)` }}
+                  className="h-1.5"
+                  style={{ background: `linear-gradient(90deg, ${s.color}, ${s.color}88)` }}
                 />
                 <CardContent className="p-5">
-                  <h2 className="text-h4 font-bold text-gray-900 group-hover:text-gray-700">
-                    {s.label}
-                  </h2>
-                  <p className="mt-3 text-xs text-gray-500">
-                    에피소드 {formatNumber(s.count)}편
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-2xl"
+                        style={{ background: `${s.color}18` }}
+                        aria-hidden
+                      >
+                        {CATEGORY_EMOJI[s.key as EpisodeCategory]}
+                      </span>
+                      <div>
+                        <h2 className="text-base font-bold text-gray-900 group-hover:text-gray-700">
+                          {s.label}
+                        </h2>
+                        <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+                          <span className="inline-flex items-center gap-0.5">
+                            <PlayCircle className="h-3 w-3" />
+                            {formatNumber(s.count)}편
+                          </span>
+                          <span>·</span>
+                          <span className="inline-flex items-center gap-0.5">
+                            <Eye className="h-3 w-3" />
+                            {formatNumber(s.totalViews)}회
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="mt-3 text-sm text-gray-600 line-clamp-2">
+                    {CATEGORY_DESC[s.key as EpisodeCategory]}
                   </p>
+
+                  {s.topEpisode && (
+                    <div className="mt-4 rounded-lg border border-gray-100 bg-gray-50 p-3">
+                      <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                        인기 에피소드
+                      </div>
+                      <div className="mt-1 line-clamp-1 text-xs font-medium text-gray-800">
+                        {s.topEpisode.title}
+                      </div>
+                      <div className="mt-0.5 text-[10px] text-gray-400">
+                        {formatNumber(s.topEpisode.views)}회 · {s.topEpisode.duration}
+                      </div>
+                    </div>
+                  )}
+
+                  <div
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-medium transition-opacity group-hover:opacity-80"
+                    style={{ color: s.color }}
+                  >
+                    전체 보기 <ArrowRight className="h-3.5 w-3.5" />
+                  </div>
                 </CardContent>
               </Card>
             </a>

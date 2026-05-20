@@ -14,6 +14,8 @@ import { ContractorCard } from '@/components/contractor-card'
 import { PortfolioCard } from '@/components/portfolio-card'
 import { InsightCard } from '@/components/insight-card'
 import {
+  CATEGORIES,
+  CONTRACTORS,
   FEATURED_CONTRACTORS,
   FEATURED_INSIGHTS,
   FEATURED_PORTFOLIO,
@@ -31,6 +33,21 @@ const TRUST = [
 ]
 
 export default function HomePage() {
+  // 핵심 지표 계산
+  const uniqueRegions = Array.from(new Set(PORTFOLIO.map((p) => p.region))).length
+  const avgBudgetPerPyeong = PORTFOLIO.length
+    ? Math.round(
+        PORTFOLIO.reduce((s, p) => s + Math.round(p.budget / Math.max(p.area, 1)), 0) /
+          PORTFOLIO.length,
+      )
+    : 0
+  const STATS_ITEMS = [
+    { label: '시공 사례', value: `${PORTFOLIO.length}건`, sub: '전체 포트폴리오' },
+    { label: '검증 시공사', value: `${CONTRACTORS.length}곳`, sub: '등록 시공사' },
+    { label: '커버 지역', value: `${uniqueRegions}개 지역`, sub: '서비스 가능' },
+    { label: '평균 평당 단가', value: `${avgBudgetPerPyeong}만원`, sub: '전체 사례 평균' },
+  ]
+
   const orgJsonLd = buildOrganizationJsonLd({
     name: '공간의한수',
     url: 'https://gongganhansu.amakers.co.kr',
@@ -83,6 +100,21 @@ export default function HomePage() {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 핵심 지표 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-5">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {STATS_ITEMS.map((s) => (
+              <div key={s.label} className="flex flex-col items-center gap-0.5 px-4 py-3 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{s.value}</span>
+                <span className="text-[11px] font-semibold text-gray-700">{s.label}</span>
+                <span className="text-[10px] text-gray-400">{s.sub}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

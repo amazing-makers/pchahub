@@ -12,6 +12,7 @@ import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { RoundCard } from '@/components/round-card'
 import { MACard } from '@/components/ma-card'
+import { WatchedRoundsSection } from '@/components/watched-rounds-section'
 import { FEATURED_ROUNDS, MA_LISTINGS, ROUNDS, STATS } from '@/lib/mock-data'
 
 const otherPlatforms = (
@@ -91,6 +92,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <WatchedRoundsSection />
 
       {/* Featured rounds */}
       <section className="container mx-auto pt-section">

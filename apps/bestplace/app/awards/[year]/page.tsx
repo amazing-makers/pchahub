@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ChevronRight, Trophy } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import {
@@ -37,6 +37,10 @@ export function generateMetadata({ params }: YearPageProps): Metadata {
 export default function AwardsYearPage({ params, searchParams }: YearPageProps) {
   const year = Number(params.year)
   if (!AVAILABLE_YEARS.includes(year)) notFound()
+
+  const yearIndex = AVAILABLE_YEARS.indexOf(year)
+  const prevYear = yearIndex > 0 ? AVAILABLE_YEARS[yearIndex - 1] : null
+  const nextYear = yearIndex < AVAILABLE_YEARS.length - 1 ? AVAILABLE_YEARS[yearIndex + 1] : null
 
   const allYearAwards = awardsByYear(year)
   const categoriesWithAwards = Array.from(new Set(allYearAwards.map((a) => a.category)))
@@ -81,8 +85,21 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
             한 해 동안 매장 운영·점주 만족도·매출 안정성을 평가해 카테고리별 베스트를 선정합니다.
           </p>
 
-          {/* Year tabs */}
-          <div className="mt-6 flex flex-wrap gap-2">
+          {/* Year navigation + tabs */}
+          <div className="mt-6 flex flex-wrap items-center gap-2">
+            {prevYear ? (
+              <a
+                href={`/awards/${prevYear}`}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50"
+                aria-label={`${prevYear}년 어워드`}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </a>
+            ) : (
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-300" aria-hidden>
+                <ChevronLeft className="h-4 w-4" />
+              </span>
+            )}
             {AVAILABLE_YEARS.map((y) => (
               <a
                 key={y}
@@ -97,6 +114,19 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
                 {y}
               </a>
             ))}
+            {nextYear ? (
+              <a
+                href={`/awards/${nextYear}`}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50"
+                aria-label={`${nextYear}년 어워드`}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </a>
+            ) : (
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-300" aria-hidden>
+                <ChevronRight className="h-4 w-4" />
+              </span>
+            )}
           </div>
         </div>
       </section>
