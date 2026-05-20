@@ -11,12 +11,21 @@ import { Search } from 'lucide-react'
 import { PortfolioCardWithSave } from '@/components/portfolio-card-with-save'
 import { CATEGORIES, PORTFOLIO } from '@/lib/mock-data'
 
+const SORT_OPTIONS = [
+  { key: 'featured', label: '추천 순' },
+  { key: 'recent', label: '최신 순' },
+  { key: 'budget-asc', label: '예산 적은 순' },
+  { key: 'budget-desc', label: '예산 많은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface GalleryPageProps {
-  searchParams: { category?: string; q?: string }
+  searchParams: { category?: string; q?: string; sort?: string }
 }
 
 export default function GalleryPage({ searchParams }: GalleryPageProps) {
-  const { category, q } = searchParams
+  const { category, q, sort = 'featured' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'featured') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let items = category ? PORTFOLIO.filter((p) => p.category === category) : PORTFOLIO
   if (needle) {
@@ -29,6 +38,14 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
         p.tags.some((t) => t.toLowerCase().includes(needle)),
     )
   }
+  items = [...items].sort((a, b) => {
+    switch (activeSort) {
+      case 'recent': return b.completedAt.localeCompare(a.completedAt)
+      case 'budget-asc': return a.budget - b.budget
+      case 'budget-desc': return b.budget - a.budget
+      default: return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+    }
+  })
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://gongganhansu.amakers.co.kr/gallery',
@@ -93,7 +110,7 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
               return (
                 <a
                   key={c.key}
-                  href={`/gallery?category=${c.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                  href={`/gallery?category=${c.key}${activeSort !== 'featured' ? `&sort=${activeSort}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
                   className={
                     'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                     (category === c.key
@@ -105,6 +122,23 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
                 </a>
               )
             })}
+          </div>
+          {/* Sort chips */}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/gallery?${new URLSearchParams({ ...(category ? { category } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>
