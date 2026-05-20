@@ -12,9 +12,10 @@ export const metadata: Metadata = {
 
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
-import { CONTRACTORS, PORTFOLIO } from '@/lib/mock-data'
+import { CONTRACTORS, PORTFOLIO, INSIGHTS } from '@/lib/mock-data'
 import { ContractorCard } from '@/components/contractor-card'
 import { PortfolioCard } from '@/components/portfolio-card'
+import { InsightCard } from '@/components/insight-card'
 
 interface SearchPageProps {
   searchParams: { q?: string }
@@ -47,7 +48,19 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       )
     : []
 
-  const total = contractors.length + portfolios.length
+  const insights = q
+    ? INSIGHTS.filter(
+        (i) =>
+          i.title.toLowerCase().includes(needle) ||
+          i.subtitle.toLowerCase().includes(needle) ||
+          i.excerpt.toLowerCase().includes(needle) ||
+          i.category.toLowerCase().includes(needle) ||
+          i.tags.some((t) => t.toLowerCase().includes(needle)) ||
+          i.authorName.toLowerCase().includes(needle),
+      )
+    : []
+
+  const total = contractors.length + portfolios.length + insights.length
 
   return (
     <main className="bg-gray-50 min-h-screen">
@@ -143,6 +156,27 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
             {contractors.length > 6 && (
               <a href="/contractors" className="mt-3 inline-flex text-sm text-[var(--brand-primary)] hover:underline">
                 시공사 {contractors.length}개 전체보기 →
+              </a>
+            )}
+          </section>
+        )}
+
+        {insights.length > 0 && (
+          <section>
+            <h2 className="mb-4 text-h4 font-semibold text-gray-900">
+              인사이트 <span className="text-sm font-normal text-gray-400">({insights.length})</span>
+            </h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {insights.slice(0, 6).map((i) => (
+                <InsightCard key={i.id} insight={i} />
+              ))}
+            </div>
+            {insights.length > 6 && (
+              <a
+                href={`/insights?q=${encodeURIComponent(q)}`}
+                className="mt-3 inline-flex text-sm text-[var(--brand-primary)] hover:underline"
+              >
+                인사이트 {insights.length}개 전체보기 →
               </a>
             )}
           </section>

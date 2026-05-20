@@ -10,9 +10,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-import { Search } from 'lucide-react'
+import { BookOpen, Search } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { COURSES, MENTORS, LEVEL_LABEL } from '@/lib/mock-data'
+import { KNOWHOW_ITEMS, KNOWHOW_CATEGORY_LABEL } from '@/lib/knowhow'
 import { CourseCard } from '@/components/course-card'
 
 interface SearchPageProps {
@@ -44,7 +45,19 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
       )
     : []
 
-  const total = courses.length + mentors.length
+  const knowhow = q
+    ? KNOWHOW_ITEMS.filter(
+        (k) =>
+          k.title.toLowerCase().includes(needle) ||
+          k.subtitle.toLowerCase().includes(needle) ||
+          k.excerpt.toLowerCase().includes(needle) ||
+          k.tags.some((t) => t.toLowerCase().includes(needle)) ||
+          k.author.toLowerCase().includes(needle) ||
+          KNOWHOW_CATEGORY_LABEL[k.category].toLowerCase().includes(needle),
+      )
+    : []
+
+  const total = courses.length + mentors.length + knowhow.length
 
   return (
     <main className="bg-gray-50 min-h-screen">
@@ -152,6 +165,42 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
                 </a>
               ))}
             </div>
+          </section>
+        )}
+
+        {knowhow.length > 0 && (
+          <section>
+            <h2 className="mb-4 text-h4 font-semibold text-gray-900">
+              노하우 <span className="text-sm font-normal text-gray-400">({knowhow.length})</span>
+            </h2>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {knowhow.slice(0, 6).map((k) => (
+                <a
+                  key={k.id}
+                  href={`/knowhow/${k.id}`}
+                  className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 hover:border-gray-300 hover:shadow-sm transition-shadow"
+                >
+                  <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50">
+                    <BookOpen className="h-4 w-4 text-amber-500" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-gray-900 line-clamp-2">{k.title}</div>
+                    <div className="mt-1 text-xs text-gray-500">{KNOWHOW_CATEGORY_LABEL[k.category]} · {k.readTime}분</div>
+                    {k.premium && (
+                      <Badge variant="default" className="mt-1 text-[10px]">프리미엄</Badge>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+            {knowhow.length > 6 && (
+              <a
+                href={`/knowhow?q=${encodeURIComponent(q)}`}
+                className="mt-3 inline-flex text-sm text-[var(--brand-primary)] hover:underline"
+              >
+                노하우 {knowhow.length}개 전체보기 →
+              </a>
+            )}
           </section>
         )}
       </div>
