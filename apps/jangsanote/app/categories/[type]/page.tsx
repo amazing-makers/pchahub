@@ -13,9 +13,16 @@ export function generateStaticParams() {
   return CHANNELS.filter((c) => c.type === 'category').map((c) => ({ type: c.key }))
 }
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'likes', label: '인기 순' },
+  { key: 'comments', label: '댓글 많은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface CategoryPageProps {
   params: { type: string }
-  searchParams: { q?: string }
+  searchParams: { q?: string; sort?: string }
 }
 
 export function generateMetadata({ params }: CategoryPageProps): Metadata {
@@ -31,17 +38,25 @@ export function generateMetadata({ params }: CategoryPageProps): Metadata {
 export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const channel = CHANNELS.find((c) => c.type === 'category' && c.key === params.type)
   if (!channel) notFound()
-  const { q } = searchParams
+  const { q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
-  const allPosts = postsByChannel('category', channel.key)
-  const posts = needle
-    ? allPosts.filter(
-        (p) =>
-          p.title.toLowerCase().includes(needle) ||
-          p.excerpt.toLowerCase().includes(needle) ||
-          p.tags.some((t) => t.toLowerCase().includes(needle)),
-      )
-    : allPosts
+  let allPosts = postsByChannel('category', channel.key)
+  if (needle) {
+    allPosts = allPosts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(needle) ||
+        p.excerpt.toLowerCase().includes(needle) ||
+        p.tags.some((t) => t.toLowerCase().includes(needle)),
+    )
+  }
+  const posts = [...allPosts].sort((a, b) => {
+    switch (activeSort) {
+      case 'likes': return b.likes - a.likes
+      case 'comments': return b.commentCount - a.commentCount
+      default: return b.createdAt.localeCompare(a.createdAt)
+    }
+  })
 
   const channelUrl = `https://jangsanote.amakers.co.kr/categories/${channel.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
@@ -66,7 +81,24 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
           <div className="mt-2 text-xs text-gray-500">
             회원 {formatNumber(channel.memberCount)}명 · 글 {formatNumber(channel.postCount)}개
           </div>
-          <form method="GET" className="mt-4 flex max-w-md gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/categories/${params.type}?sort=${o.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
+          </div>
+          <form method="GET" className="mt-3 flex max-w-md gap-2">
+            {activeSort !== 'recent' && <input type="hidden" name="sort" value={activeSort} />}
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -86,7 +118,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
             </button>
             {q && (
               <a
-                href={`/categories/${params.type}`}
+                href={activeSort !== 'recent' ? `/categories/${params.type}?sort=${activeSort}` : `/categories/${params.type}`}
                 className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
                 초기화

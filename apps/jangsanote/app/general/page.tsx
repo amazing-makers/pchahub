@@ -14,24 +14,39 @@ import { PostCard } from '@/components/post-card'
 import { POSTS } from '@/lib/mock-data'
 import { LocalPostsFeed } from '@/app/local-posts-feed'
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'likes', label: '인기 순' },
+  { key: 'comments', label: '댓글 많은 순' },
+  { key: 'views', label: '조회 많은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface GeneralPageProps {
-  searchParams: { q?: string }
+  searchParams: { q?: string; sort?: string }
 }
 
 export default function GeneralPage({ searchParams }: GeneralPageProps) {
-  const { q } = searchParams
+  const { q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
-  const allPosts = POSTS.filter((p) => p.channelType === 'general').sort((a, b) =>
-    b.createdAt.localeCompare(a.createdAt),
-  )
-  const posts = needle
-    ? allPosts.filter(
-        (p) =>
-          p.title.toLowerCase().includes(needle) ||
-          p.excerpt.toLowerCase().includes(needle) ||
-          p.tags.some((t) => t.toLowerCase().includes(needle)),
-      )
-    : allPosts
+  let allPosts = POSTS.filter((p) => p.channelType === 'general')
+  if (needle) {
+    allPosts = allPosts.filter(
+      (p) =>
+        p.title.toLowerCase().includes(needle) ||
+        p.excerpt.toLowerCase().includes(needle) ||
+        p.tags.some((t) => t.toLowerCase().includes(needle)),
+    )
+  }
+  const posts = [...allPosts].sort((a, b) => {
+    switch (activeSort) {
+      case 'likes': return b.likes - a.likes
+      case 'comments': return b.commentCount - a.commentCount
+      case 'views': return b.views - a.views
+      default: return b.createdAt.localeCompare(a.createdAt)
+    }
+  })
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://jangsanote.amakers.co.kr/general',
@@ -45,7 +60,24 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">자유게시판</h1>
           <p className="mt-1 text-sm text-gray-500">업종·지역 구분 없이 자유롭게 이야기하는 곳</p>
-          <form method="GET" className="mt-4 flex max-w-md gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/general?sort=${o.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
+          </div>
+          <form method="GET" className="mt-3 flex max-w-md gap-2">
+            {activeSort !== 'recent' && <input type="hidden" name="sort" value={activeSort} />}
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -65,7 +97,7 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
             </button>
             {q && (
               <a
-                href="/general"
+                href={activeSort !== 'recent' ? `/general?sort=${activeSort}` : '/general'}
                 className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
                 초기화
