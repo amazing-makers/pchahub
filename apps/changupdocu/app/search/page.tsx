@@ -74,12 +74,28 @@ export default function SearchPage({ searchParams }: SearchPageProps) {
 
       <div className="container mx-auto py-8 space-y-8">
         {!q && (
-          <Card>
-            <CardContent className="py-16 text-center">
-              <Search className="mx-auto h-8 w-8 text-gray-300" />
-              <p className="mt-3 text-sm text-gray-500">에피소드나 매거진 키워드를 검색하세요.</p>
-            </CardContent>
-          </Card>
+          <>
+            <Card>
+              <CardContent className="py-12 text-center">
+                <Search className="mx-auto h-8 w-8 text-gray-300" />
+                <p className="mt-3 text-sm text-gray-500">에피소드나 매거진 키워드를 검색하세요.</p>
+              </CardContent>
+            </Card>
+            <div>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">인기 검색어</p>
+              <div className="flex flex-wrap gap-2">
+                {['치킨', '카페', '분식', '실패 사례', '성공 비결', '가맹비', '브랜드 스토리'].map((keyword) => (
+                  <a
+                    key={keyword}
+                    href={`/search?q=${encodeURIComponent(keyword)}`}
+                    className="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    {keyword}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
         {q && total === 0 && (
