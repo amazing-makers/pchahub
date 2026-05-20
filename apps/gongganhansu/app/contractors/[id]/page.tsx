@@ -17,6 +17,8 @@ import {
 } from '@/lib/mock-data'
 import { PortfolioCard } from '@/components/portfolio-card'
 import { SaveContractorButton } from './save-contractor-button'
+import { ContractorViewTracker } from './contractor-view-tracker'
+import { ShareContractorButton } from './share-contractor-button'
 
 export function generateStaticParams() {
   return CONTRACTORS.map((c) => ({ id: c.id }))
@@ -63,6 +65,7 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
 
   return (
     <main className="bg-gray-50">
+      <ContractorViewTracker contractorId={c.id} />
       <JsonLd data={businessJsonLd} />
       <JsonLd data={breadcrumbs} />
       <div className="relative h-56 w-full overflow-hidden bg-gray-100 sm:h-72">
@@ -154,6 +157,7 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
                   <div className="flex justify-center">
                     <SaveContractorButton contractorId={c.id} />
                   </div>
+                  <ShareContractorButton contractorName={c.name} />
                 </CardContent>
               </Card>
             </aside>

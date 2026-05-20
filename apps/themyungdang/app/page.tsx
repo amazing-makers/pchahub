@@ -24,6 +24,7 @@ import {
 } from '@/lib/mock-data'
 
 import { ListingSectionSkeleton } from '@/components/skeletons'
+import { SavedListingsSection } from '@/components/saved-listings-section'
 
 const RecentlyViewedSection = dynamic(
   () => import('@/components/recently-viewed').then((m) => m.RecentlyViewedSection),
@@ -241,6 +242,9 @@ export default function HomePage() {
 
       {/* Recently viewed — client island, no-ops on SSR */}
       <RecentlyViewedSection />
+
+      {/* Saved listings — client island */}
+      <SavedListingsSection />
 
       {/* Safe deal */}
       <section className="container mx-auto pt-section">

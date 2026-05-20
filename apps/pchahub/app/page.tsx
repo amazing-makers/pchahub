@@ -119,6 +119,30 @@ export default async function HomePage() {
       {/* 저장한 브랜드 — 클라이언트 전용, localStorage 기반 */}
       <SavedBrandsSection />
 
+      {/* 지금 뜨는 검색어 */}
+      <section className="border-y border-gray-100 bg-gray-50">
+        <div className="container mx-auto py-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700">
+              <Flame className="h-4 w-4 text-orange-500" />
+              지금 뜨는 검색어
+            </span>
+            {[
+              '치킨 창업', '카페 가맹', '한식 브랜드', '저비용 창업', '1인 창업',
+              '분식 가맹', '편의점 창업', '수익률 높은', '서울 상권', '초보 창업자',
+            ].map((kw) => (
+              <a
+                key={kw}
+                href={`/brands?q=${encodeURIComponent(kw)}`}
+                className="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-100"
+              >
+                {kw}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured (paid) placements */}
       {FEATURED_BRANDS.length > 0 && (
         <section className="container mx-auto pt-section">
@@ -395,6 +419,35 @@ export default async function HomePage() {
           <p className="mt-3 text-xs text-gray-500">
             협회·기관과의 데이터 협력 및 산업 동향 공유 협의 중 — 협회 회원사 우대 혜택 준비
           </p>
+        </div>
+      </section>
+
+      {/* 뉴스레터 */}
+      <section className="border-t border-gray-100 bg-gray-50">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              Newsletter
+            </p>
+            <h2 className="mt-3 text-h3 font-bold text-gray-900">창업 인사이트 뉴스레터</h2>
+            <p className="mt-2 text-sm text-gray-500">매주 브랜드 동향·창업 팁·가맹 정보를 받아보세요.</p>
+            <form action="#" className="mt-6 flex gap-2">
+              <input
+                type="email"
+                placeholder="이메일 주소"
+                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
+                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                구독하기
+              </button>
+            </form>
+            <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
+          </div>
         </div>
       </section>
 
