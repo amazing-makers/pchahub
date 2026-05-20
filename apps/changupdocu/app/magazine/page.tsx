@@ -10,20 +10,26 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
   path: '/magazine',
 })
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'featured', label: '추천 순' },
+  { key: 'read-short', label: '읽기 짧은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface MagazinePageProps {
-  searchParams: { category?: string; q?: string }
+  searchParams: { category?: string; q?: string; sort?: string }
 }
 
 export default function MagazinePage({ searchParams }: MagazinePageProps) {
-  const { category, q } = searchParams
+  const { category, q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
 
-  const allArticles = [...ARTICLES].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-
   // 고유 카테고리 목록 추출
-  const categories = Array.from(new Set(allArticles.map((a) => a.category))).sort()
+  const categories = Array.from(new Set(ARTICLES.map((a) => a.category))).sort()
 
-  let filtered = category ? allArticles.filter((a) => a.category === category) : allArticles
+  let filtered = category ? ARTICLES.filter((a) => a.category === category) : [...ARTICLES]
   if (needle) {
     filtered = filtered.filter(
       (a) =>
@@ -33,8 +39,15 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
         a.category.toLowerCase().includes(needle),
     )
   }
-  const featured = filtered.filter((a) => a.featured)
-  const rest = filtered.filter((a) => !a.featured)
+  filtered = [...filtered].sort((a, b) => {
+    switch (activeSort) {
+      case 'featured': return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+      case 'read-short': return a.readTime - b.readTime
+      default: return b.publishedAt.localeCompare(a.publishedAt)
+    }
+  })
+  const featured = activeSort === 'recent' ? filtered.filter((a) => a.featured) : []
+  const rest = activeSort === 'recent' ? filtered.filter((a) => !a.featured) : filtered
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://changupdocu.amakers.co.kr/magazine',
@@ -86,7 +99,7 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
           {/* 카테고리 필터 칩 */}
           <div className="mt-4 flex flex-wrap gap-2">
             <a
-              href={q ? `/magazine?q=${encodeURIComponent(q)}` : '/magazine'}
+              href={`/magazine?${new URLSearchParams({ ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}` || '/magazine'}
               className={
                 'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                 (!category
@@ -94,14 +107,14 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
                   : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
               }
             >
-              전체 ({allArticles.length})
+              전체 ({ARTICLES.length})
             </a>
             {categories.map((c) => {
-              const count = allArticles.filter((a) => a.category === c).length
+              const count = ARTICLES.filter((a) => a.category === c).length
               return (
                 <a
                   key={c}
-                  href={`/magazine?category=${encodeURIComponent(c)}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                  href={`/magazine?${new URLSearchParams({ category: c, ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}`}
                   className={
                     'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                     (category === c
@@ -113,6 +126,23 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
                 </a>
               )
             })}
+          </div>
+          {/* 정렬 칩 */}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/magazine?${new URLSearchParams({ ...(category ? { category } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
           </div>
         </div>
       </section>

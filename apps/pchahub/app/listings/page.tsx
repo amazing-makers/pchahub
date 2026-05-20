@@ -13,8 +13,16 @@ import { CATEGORIES } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'deposit-asc', label: '보증금 적은 순' },
+  { key: 'rent-asc', label: '월세 적은 순' },
+  { key: 'area-desc', label: '면적 넓은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface ListingsPageProps {
-  searchParams: { category?: string; type?: string; region?: string; q?: string }
+  searchParams: { category?: string; type?: string; region?: string; q?: string; sort?: string }
 }
 
 const REGION_OPTIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산']
@@ -23,7 +31,8 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const active = searchParams.category
   const activeType = searchParams.type
   const activeRegion = searchParams.region
-  const { q } = searchParams
+  const { q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let filtered = LISTINGS
   if (active) filtered = filtered.filter((l) => l.fitCategories.includes(active))
@@ -43,6 +52,14 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
         l.tags.some((t) => t.toLowerCase().includes(needle)),
     )
   }
+  filtered = [...filtered].sort((a, b) => {
+    switch (activeSort) {
+      case 'deposit-asc': return a.deposit - b.deposit
+      case 'rent-asc': return a.monthlyRent - b.monthlyRent
+      case 'area-desc': return b.area - a.area
+      default: return b.listedAt.localeCompare(a.listedAt)
+    }
+  })
 
   const transferCount = LISTINGS.filter((l) => l.listingType === '양도').length
   const newCount = LISTINGS.filter((l) => l.listingType === '신규임대').length
@@ -146,7 +163,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           })}
         </div>
 
-        <div className="mb-5 flex flex-wrap gap-2 text-sm">
+        <div className="mb-3 flex flex-wrap gap-2 text-sm">
           <FilterChip href={pathFor({ ...searchParams, type: undefined })} active={!activeType}>
             전체 유형
           </FilterChip>
@@ -159,6 +176,23 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           >
             신규임대 ({newCount})
           </FilterChip>
+        </div>
+        {/* 정렬 칩 */}
+        <div className="mb-5 flex flex-wrap gap-2">
+          {SORT_OPTIONS.map((o) => (
+            <a
+              key={o.key}
+              href={pathFor({ ...searchParams, sort: o.key })}
+              className={
+                'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                (activeSort === o.key
+                  ? 'bg-gray-900 text-white'
+                  : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+              }
+            >
+              {o.label}
+            </a>
+          ))}
         </div>
 
         {filtered.length === 0 ? (
@@ -234,12 +268,13 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   )
 }
 
-function pathFor(params: { category?: string; type?: string; region?: string; q?: string }): string {
+function pathFor(params: { category?: string; type?: string; region?: string; q?: string; sort?: string }): string {
   const usp = new URLSearchParams()
   if (params.category) usp.set('category', params.category)
   if (params.type) usp.set('type', params.type)
   if (params.region) usp.set('region', params.region)
   if (params.q) usp.set('q', params.q)
+  if (params.sort && params.sort !== 'recent') usp.set('sort', params.sort)
   const qs = usp.toString()
   return qs ? `/listings?${qs}` : '/listings'
 }
