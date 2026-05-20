@@ -33,6 +33,7 @@ import { RoundCard } from '@/components/round-card'
 import { WatchButton } from '../watch-button'
 import { InvestForm } from './invest-form'
 import { IrRequestButton } from './ir-request-button'
+import { ShareRoundButton } from './share-round-button'
 
 export function generateStaticParams() {
   return ROUNDS.map((r) => ({ id: r.id }))
@@ -114,8 +115,9 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
                     {brand?.foundedYear}년 설립
                   </div>
                 </div>
-                <div className="shrink-0">
+                <div className="flex shrink-0 items-center gap-2">
                   <WatchButton roundId={round.id} />
+                  <ShareRoundButton roundLabel={`${brand?.name ?? '브랜드'} ${ROUND_TYPE_LABEL[round.type]}`} />
                 </div>
               </div>
 

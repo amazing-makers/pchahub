@@ -34,6 +34,7 @@ import { CourseViewTracker } from './course-view-tracker'
 import { LessonCompleteButton } from './lesson-complete-button'
 import { CourseProgress } from './course-progress'
 import { CertificateButton } from './certificate-button'
+import { ShareCourseButton } from './share-course-button'
 
 export function generateStaticParams() {
   return COURSES.map((c) => ({ id: c.id }))
@@ -182,6 +183,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
                     price={course.price}
                   />
                   <SaveCourseButton courseId={course.id} />
+                  <ShareCourseButton courseTitle={course.title} />
                   <p className="text-center text-xs text-gray-500">
                     구매 후 무제한 시청 · 모바일 지원
                   </p>

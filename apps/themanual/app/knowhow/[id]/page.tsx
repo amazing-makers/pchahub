@@ -10,6 +10,7 @@ import {
 } from '@/lib/knowhow'
 import { buildPageMetadata } from '@amakers/design-system'
 import { SaveKnowhowButton } from './save-knowhow-button'
+import { ShareKnowhowButton } from './share-knowhow-button'
 
 interface KnowhowPageProps {
   params: { id: string }
@@ -90,7 +91,8 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
                 value={item.premium ? `₩${item.price.toLocaleString()}` : '무료'}
               />
               <MetaChip icon={<CheckCircle className="h-4 w-4 text-[var(--brand-primary)]" />} label="섹션 수" value={`${item.sections.length}개`} />
-              <div className="ml-auto">
+              <div className="ml-auto flex items-center gap-2">
+                <ShareKnowhowButton itemTitle={item.title} />
                 <SaveKnowhowButton itemId={item.id} />
               </div>
             </div>
@@ -261,6 +263,44 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Related knowhow */}
+            {(() => {
+              const related = KNOWHOW_ITEMS.filter(
+                (k) => k.id !== item.id && k.category === item.category,
+              ).slice(0, 3)
+              if (related.length === 0) return null
+              return (
+                <Card className="border-gray-200 shadow-sm">
+                  <CardContent className="p-5">
+                    <h2 className="mb-4 text-h4 font-semibold text-gray-900">같은 카테고리 노하우</h2>
+                    <div className="space-y-3">
+                      {related.map((r) => (
+                        <a
+                          key={r.id}
+                          href={`/knowhow/${r.id}`}
+                          className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 p-3 transition-colors hover:border-gray-200 hover:bg-white"
+                        >
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-primary)]/10 text-lg">
+                            {KNOWHOW_CATEGORY_EMOJI[r.category]}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="line-clamp-2 text-sm font-semibold text-gray-900">{r.title}</div>
+                            <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                              <span>{KNOWHOW_CATEGORY_LABEL[r.category]}</span>
+                              <span>·</span>
+                              <span>{r.readTime}분</span>
+                              {r.premium && <span className="rounded-full bg-[var(--brand-primary)]/10 px-1.5 py-0.5 text-[10px] font-medium text-[var(--brand-primary)]">프리미엄</span>}
+                            </div>
+                          </div>
+                          <ArrowRight className="mt-1 h-3 w-3 shrink-0 text-gray-400" />
+                        </a>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })()}
 
             {/* Source */}
             <div className="text-xs text-gray-400">

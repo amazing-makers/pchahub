@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
+  ArrowRight,
   ChevronRight,
   Clock,
   Eye,
+  MapPin,
   PlayCircle,
+  Store,
   ThumbsUp,
 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
@@ -220,26 +223,68 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
               <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <a
                   href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(ep.brand)}`}
-                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                  className="flex items-center justify-between rounded-lg border border-indigo-100 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-indigo-200 hover:text-gray-900"
                 >
-                  → 가맹 정보 (프차허브)
+                  <span className="inline-flex items-center gap-1.5">
+                    <Store className="h-3.5 w-3.5 text-indigo-500" />
+                    가맹 정보 (프차허브)
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
                 </a>
                 <a
                   href={`https://bestplace.amakers.co.kr/stores?q=${encodeURIComponent(ep.brand)}`}
-                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                  className="flex items-center justify-between rounded-lg border border-indigo-100 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-indigo-200 hover:text-gray-900"
                 >
-                  → 매장 보기 (베스트플레이스)
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-amber-500" />
+                    매장 보기 (베스트플레이스)
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
                 </a>
                 <a
                   href="https://jangsanote.amakers.co.kr"
-                  className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                  className="flex items-center justify-between rounded-lg border border-indigo-100 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-indigo-200 hover:text-gray-900"
                 >
-                  → 점주 후기 (장사노트)
+                  <span className="inline-flex items-center gap-1.5">
+                    <Store className="h-3.5 w-3.5 text-emerald-500" />
+                    점주 후기 (장사노트)
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
                 </a>
               </div>
             </CardContent>
           </Card>
         )}
+
+        {/* 뉴스레터 CTA */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 text-center">
+          <p
+            className="text-sm font-semibold uppercase tracking-wider"
+            style={{ color: 'var(--brand-primary)' }}
+          >
+            Newsletter
+          </p>
+          <h2 className="mt-2 text-h4 font-bold text-gray-900">창업다큐 뉴스레터</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            매주 창업 현장 이야기·실패 사례·트렌드 분석을 받아보세요.
+          </p>
+          <form action="#" className="mx-auto mt-4 flex max-w-sm gap-2">
+            <input
+              type="email"
+              placeholder="이메일 주소"
+              className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
+              style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
+            />
+            <button
+              type="submit"
+              className="shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              구독
+            </button>
+          </form>
+          <p className="mt-2 text-xs text-gray-400">언제든 구독 해제 가능</p>
+        </section>
 
         {related.length > 0 && (
           <div>
