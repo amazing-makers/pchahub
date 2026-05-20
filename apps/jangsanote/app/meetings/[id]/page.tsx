@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
+  ArrowRight,
+  BookOpen,
   Calendar,
   CheckCircle2,
   ChevronRight,
   Clock,
   MapPin,
+  Store,
   Users,
   Video,
 } from 'lucide-react'
@@ -284,6 +287,47 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
                 <p className="text-center text-xs text-gray-500">
                   신청 내역은 마이페이지에서 확인할 수 있습니다.
                 </p>
+              </CardContent>
+            </Card>
+
+            {/* amakers crosslinks */}
+            <Card className="mt-4 border-gray-200 bg-gray-50">
+              <CardContent className="p-4">
+                <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  amakers에서 더 알아보기
+                </div>
+                <div className="space-y-2">
+                  <a
+                    href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(meeting.tags?.[0] ?? '')}`}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Store className="h-3.5 w-3.5 text-indigo-500" />
+                      가맹 브랜드 정보
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://themanual.amakers.co.kr/courses"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="h-3.5 w-3.5 text-amber-500" />
+                      가맹 운영 강의
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href={`/posts?region=${encodeURIComponent(meeting.region)}`}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-emerald-500" />
+                      {meeting.region} 지역 글
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                </div>
               </CardContent>
             </Card>
           </aside>
