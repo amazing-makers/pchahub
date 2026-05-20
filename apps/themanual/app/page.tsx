@@ -15,6 +15,7 @@ import { CourseCard } from '@/components/course-card'
 import { MentorCard } from '@/components/mentor-card'
 import { SavedCoursesSection } from '@/components/saved-courses-section'
 import { RecentlyViewedCourses } from '@/components/recently-viewed-courses'
+import { SavedRecipesSection } from '@/components/saved-recipes-section'
 import {
   COURSE_CATEGORIES,
   FEATURED_COURSES,
@@ -88,6 +89,8 @@ export default function HomePage() {
 
       {/* 최근 본 강의 — 클라이언트 전용 */}
       <RecentlyViewedCourses />
+
+      <SavedRecipesSection />
 
       {/* Featured courses */}
       {FEATURED_COURSES.length > 0 && (

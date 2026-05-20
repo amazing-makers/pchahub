@@ -11,6 +11,7 @@ import {
 } from '@/lib/recipes'
 import { buildPageMetadata } from '@amakers/design-system'
 import { ShareRecipeButton } from './share-recipe-button'
+import { SaveRecipeButton } from './save-recipe-button'
 
 interface RecipePageProps {
   params: { id: string }
@@ -300,6 +301,9 @@ export default function RecipePage({ params }: RecipePageProps) {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Save button */}
+            <SaveRecipeButton recipeId={recipe.id} />
 
             {/* Back CTA */}
             <a
