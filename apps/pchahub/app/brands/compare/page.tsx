@@ -60,6 +60,21 @@ export default function ComparePage({ searchParams }: ComparePageProps) {
             최대 {MAX_COMPARE}개 브랜드를 한 화면에 놓고 비교합니다. 각 항목에서 가장 좋은 값에는
             상단에 표시가 붙습니다.
           </p>
+
+          {/* 핵심 지표 설명 */}
+          <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {[
+              { label: '창업비', desc: '인테리어·기자재·가맹비 포함 총 초기 투자액 (단위: 만원)' },
+              { label: '평균 매출', desc: '가맹점 월 평균 추정 매출액 — 공정위 가맹정보 기준 (만원)' },
+              { label: '성장률', desc: '최근 1년 매장 수 증감률 (%) — 확장 속도 참고 지표' },
+              { label: '가맹비', desc: '브랜드 사용권 초기 납부액. 0은 무가맹비 브랜드를 의미' },
+            ].map((m) => (
+              <div key={m.label} className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5">
+                <div className="text-xs font-bold text-gray-900">{m.label}</div>
+                <div className="mt-0.5 text-[11px] leading-snug text-gray-500">{m.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -11,6 +11,7 @@ import {
 import { INSIGHTS, insightById } from '@/lib/mock-data'
 import { InsightCard } from '@/components/insight-card'
 import { SaveInsightButton } from './save-insight-button'
+import { ShareInsightButton } from './share-insight-button'
 
 export function generateStaticParams() {
   return INSIGHTS.map((i) => ({ id: i.id }))
@@ -98,7 +99,8 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
                 <Clock className="h-3 w-3" />
                 {ins.readTime}분 · {ins.publishedAt}
               </span>
-              <div className="ml-auto">
+              <div className="ml-auto flex items-center gap-2">
+                <ShareInsightButton insightTitle={ins.title} />
                 <SaveInsightButton insightId={ins.id} />
               </div>
             </div>
@@ -183,6 +185,34 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
           </Card>
         </div>
       </article>
+
+      {/* 뉴스레터 CTA */}
+      <section className="border-t border-gray-100 bg-gray-50">
+        <div className="container mx-auto py-10">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              Newsletter
+            </p>
+            <h2 className="mt-2 text-h4 font-bold text-gray-900">시공 인사이트 뉴스레터</h2>
+            <p className="mt-1 text-sm text-gray-500">인테리어 트렌드·비용 절감 팁·공간 전략을 매주 받아보세요.</p>
+            <form action="#" className="mt-5 flex gap-2">
+              <input
+                type="email"
+                placeholder="이메일 주소"
+                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
+                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                구독
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
 
       {related.length > 0 && (
         <section className="bg-gray-50 py-12">

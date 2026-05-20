@@ -168,8 +168,66 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
             <ArticleActions articleId={article.id} title={article.title} />
             <SaveArticleButton articleId={article.id} />
           </div>
+
+          {/* Author bio */}
+          <div className="mt-10 rounded-2xl border border-gray-200 bg-gray-50 p-6">
+            <div className="flex items-start gap-4">
+              {article.authorAvatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={article.authorAvatar}
+                  alt={article.authorName}
+                  className="h-14 w-14 shrink-0 rounded-2xl object-cover"
+                />
+              ) : (
+                <div
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-bold text-white"
+                  style={{ background: 'var(--brand-primary)' }}
+                >
+                  {article.authorName.slice(0, 1)}
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold uppercase tracking-wider text-gray-400">글쓴이</div>
+                <div className="mt-1 text-base font-bold text-gray-900">{article.authorName}</div>
+                <div className="text-sm text-gray-500">{article.authorRole}</div>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  창업다큐 에디터로 자영업·프랜차이즈 현장을 취재하고 있습니다. 성공과 실패의 교차점에서 실제 이야기를 전합니다.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </article>
+
+      {/* 뉴스레터 CTA */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-10">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              Newsletter
+            </p>
+            <h2 className="mt-2 text-h4 font-bold text-gray-900">창업다큐 뉴스레터</h2>
+            <p className="mt-1 text-sm text-gray-500">매주 창업 현장 이야기·트렌드 분석을 받아보세요.</p>
+            <form action="#" className="mt-5 flex gap-2">
+              <input
+                type="email"
+                placeholder="이메일 주소"
+                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
+                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                구독
+              </button>
+            </form>
+            <p className="mt-2 text-xs text-gray-400">언제든 구독 해제 가능</p>
+          </div>
+        </div>
+      </section>
 
       {related.length > 0 && (
         <section className="bg-gray-50 py-12">

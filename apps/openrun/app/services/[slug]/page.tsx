@@ -216,6 +216,35 @@ export default function ServiceDetailPage({ params }: ServiceDetailProps) {
           </CardContent>
         </Card>
 
+        {/* FAQ */}
+        <SectionCard title="자주 묻는 질문">
+          <dl className="space-y-4">
+            {[
+              {
+                q: '최소 계약 기간이 있나요?',
+                a: '서비스 유형에 따라 다릅니다. 오픈 30일 캠페인은 단기 계약, 가맹 모집·본사 통합 마케팅은 3~12개월 단위로 운영합니다. 첫 상담에서 상세 일정을 조율합니다.',
+              },
+              {
+                q: '캠페인 시작까지 얼마나 걸리나요?',
+                a: '의뢰서 수령 후 영업일 기준 24시간 이내에 기획안 초안을 전달드립니다. 확정 후 셋업까지 평균 7일이 소요됩니다.',
+              },
+              {
+                q: 'ROI 보장이 가능한가요?',
+                a: '결과를 보장하지는 않지만, 월간 ROI 리포트를 투명하게 공유하고 목표 달성률이 낮을 경우 추가 지원 방안을 함께 논의합니다.',
+              },
+              {
+                q: '여러 서비스를 동시에 진행할 수 있나요?',
+                a: '네, 가능합니다. 그랜드 오픈과 가맹 모집을 동시에 진행하는 경우 패키지 할인을 적용해 드립니다. 상담 시 말씀해 주세요.',
+              },
+            ].map((item) => (
+              <div key={item.q} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <dt className="text-sm font-semibold text-gray-900">Q. {item.q}</dt>
+                <dd className="mt-2 text-sm leading-relaxed text-gray-600">{item.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </SectionCard>
+
         <Card className="border-gray-200 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
           <CardContent className="p-8 text-center">
             <h2 className="text-h3 font-bold">이 서비스로 캠페인 시작하기</h2>

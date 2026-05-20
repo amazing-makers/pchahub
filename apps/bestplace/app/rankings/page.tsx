@@ -12,6 +12,8 @@ import { Card, CardContent } from '@amakers/ui'
 import { RankingList } from '@/components/ranking-list'
 import { AwardCard } from '@/components/award-card'
 import {
+  BRANDS,
+  CATEGORIES,
   newestStores,
   STORES,
   topStoresByRating,
@@ -20,14 +22,31 @@ import {
   awardsByYear,
 } from '@/lib/mock-data'
 
-export default function RankingsPage() {
+interface RankingsPageProps {
+  searchParams: { category?: string }
+}
+
+export default function RankingsPage({ searchParams }: RankingsPageProps) {
+  const selectedCategory = searchParams.category ?? ''
   const currentYear = new Date().getFullYear()
-  const topRated = topStoresByRating(10)
-  const topVisitors = topStoresByVisitors(10)
-  const newOpen = newestStores(10)
-  const topReviewed = [...STORES].sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 10)
-  // Show rank-1 winners from the current year as award highlights
-  const topAwards = awardsByYear(currentYear).filter((a) => a.rank === 1)
+
+  // Category-filtered stores base
+  const filteredBase = selectedCategory
+    ? STORES.filter((s) => {
+        const brand = BRANDS.find((b) => b.id === s.brandId)
+        return brand?.category === selectedCategory
+      })
+    : STORES
+
+  const topRated = [...filteredBase].sort((a, b) => b.rating - a.rating).slice(0, 10)
+  const topVisitors = [...filteredBase].sort((a, b) => b.monthlyVisitors - a.monthlyVisitors).slice(0, 10)
+  const newOpen = [...filteredBase].sort((a, b) => b.openedYear - a.openedYear).slice(0, 10)
+  const topReviewed = [...filteredBase].sort((a, b) => b.reviewCount - a.reviewCount).slice(0, 10)
+  // Show rank-1 winners from the current year as award highlights (filtered by category if set)
+  const allAwards = awardsByYear(currentYear).filter((a) => a.rank === 1)
+  const topAwards = selectedCategory
+    ? allAwards.filter((a) => a.category === selectedCategory)
+    : allAwards
 
   // #1 store by rating for Hall of Fame callout
   const hallOfFameStore = topRated[0]
@@ -47,6 +66,34 @@ export default function RankingsPage() {
           <p className="mt-1 text-sm text-gray-500">
             평점·방문객·리뷰·신규 오픈 4가지 축으로 매주 업데이트되는 랭킹.
           </p>
+          {/* Category filter tabs */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            <a
+              href="/rankings"
+              className={
+                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
+                (!selectedCategory
+                  ? 'bg-gray-900 text-white'
+                  : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
+              }
+            >
+              전체 업종
+            </a>
+            {CATEGORIES.map((cat) => (
+              <a
+                key={cat.key}
+                href={`/rankings?category=${cat.key}`}
+                className={
+                  'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
+                  (selectedCategory === cat.key
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
+                }
+              >
+                {cat.label}
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 

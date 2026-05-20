@@ -13,6 +13,7 @@ import { CourseCard } from '@/components/course-card'
 import { coursesByInstructor, MENTORS } from '@/lib/mock-data'
 import { ConsultForm } from './consult-form'
 import { SaveMentorButton } from './save-mentor-button'
+import { ShareMentorButton } from './share-mentor-button'
 
 export function generateStaticParams() {
   return MENTORS.map((m) => ({ id: m.id }))
@@ -113,8 +114,9 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
                   </span>
                 ))}
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
                 <SaveMentorButton mentorId={mentor.id} />
+                <ShareMentorButton mentorName={mentor.name} />
               </div>
             </div>
           </div>
@@ -143,6 +145,34 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
                 </CardContent>
               </Card>
             )}
+
+            {/* FAQ */}
+            <Card className="border-gray-200 shadow-sm">
+              <CardContent className="p-6">
+                <h2 className="text-h4 font-semibold text-gray-900">자주 묻는 질문</h2>
+                <dl className="mt-4 space-y-4">
+                  {[
+                    {
+                      q: '첫 상담에서 무엇을 준비해야 하나요?',
+                      a: '현재 매장 혹은 창업 계획의 기본 정보(업종·지역·예산)와 가장 궁금한 사항을 간략히 정리해 오시면 상담 시간을 더 효율적으로 활용할 수 있습니다.',
+                    },
+                    {
+                      q: '상담 취소·환불 정책은 어떻게 되나요?',
+                      a: '예약 후 24시간 이내 취소 시 전액 환불됩니다. 이후 취소는 상담일 2일 전까지 50% 환불이 가능합니다.',
+                    },
+                    {
+                      q: '상담 언어나 방식에 제한이 있나요?',
+                      a: '모든 상담은 한국어로 진행되며, 화상(Zoom·Meet) 또는 음성 통화 중 원하는 방식을 선택할 수 있습니다.',
+                    },
+                  ].map((item) => (
+                    <div key={item.q} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                      <dt className="text-sm font-semibold text-gray-900">Q. {item.q}</dt>
+                      <dd className="mt-2 text-sm leading-relaxed text-gray-600">{item.a}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </CardContent>
+            </Card>
 
             <Card className="border-gray-200 shadow-sm">
               <CardContent className="p-6">

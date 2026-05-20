@@ -22,6 +22,7 @@ import { MeetingCard } from '@/components/meeting-card'
 import { UserChip } from '@/components/user-chip'
 import { RsvpButton } from './rsvp-button'
 import { MeetingContactButton } from './meeting-contact-button'
+import { ShareMeetingButton } from './share-meeting-button'
 
 export function generateStaticParams() {
   return MEETINGS.map((m) => ({ id: m.id }))
@@ -241,11 +242,28 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
                       {meeting.location}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">정원</span>
-                    <span className="font-medium text-gray-900">
-                      {meeting.currentParticipants} / {meeting.maxParticipants}명
-                    </span>
+                  <div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">정원</span>
+                      <span className="font-medium text-gray-900">
+                        {meeting.currentParticipants} / {meeting.maxParticipants}명
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+                      <div
+                        className={
+                          'h-full rounded-full transition-all ' +
+                          (meeting.currentParticipants >= meeting.maxParticipants
+                            ? 'bg-red-500'
+                            : meeting.currentParticipants / meeting.maxParticipants >= 0.8
+                              ? 'bg-amber-500'
+                              : 'bg-emerald-500')
+                        }
+                        style={{
+                          width: `${Math.min(100, (meeting.currentParticipants / meeting.maxParticipants) * 100)}%`,
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -262,6 +280,7 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
                   meetingTitle={meeting.title}
                   hostHandle={host?.handle ?? '주최자'}
                 />
+                <ShareMeetingButton meetingTitle={meeting.title} />
                 <p className="text-center text-xs text-gray-500">
                   신청 내역은 마이페이지에서 확인할 수 있습니다.
                 </p>

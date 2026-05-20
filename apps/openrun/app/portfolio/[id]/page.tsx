@@ -11,6 +11,7 @@ import {
 import { CaseCard } from '@/components/case-card'
 import { caseById, PORTFOLIO } from '@/lib/mock-data'
 import { SaveCaseButton } from './save-case-button'
+import { ShareCaseButton } from './share-case-button'
 
 export function generateStaticParams() {
   return PORTFOLIO.map((c) => ({ id: c.id }))
@@ -212,6 +213,7 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
                 <Button size="lg">캠페인 의뢰</Button>
               </a>
               <SaveCaseButton caseId={c.id} />
+              <ShareCaseButton caseTitle={c.title} />
             </div>
           </CardContent>
         </Card>
