@@ -18,9 +18,16 @@ export function generateStaticParams() {
   return VALID_CATEGORIES.map((type) => ({ type }))
 }
 
+const SORT_OPTIONS = [
+  { key: 'recent', label: '최신 순' },
+  { key: 'views', label: '조회 많은 순' },
+  { key: 'duration-short', label: '짧은 영상 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface CategoryPageProps {
   params: { type: string }
-  searchParams: { q?: string }
+  searchParams: { q?: string; sort?: string }
 }
 
 export function generateMetadata({ params }: CategoryPageProps): Metadata {
@@ -34,16 +41,24 @@ export function generateMetadata({ params }: CategoryPageProps): Metadata {
   })
 }
 
+function parseDuration(duration: string): number {
+  const parts = duration.split(':').map(Number)
+  if (parts.length === 2) return (parts[0] ?? 0) * 60 + (parts[1] ?? 0)
+  if (parts.length === 3) return (parts[0] ?? 0) * 3600 + (parts[1] ?? 0) * 60 + (parts[2] ?? 0)
+  return 0
+}
+
 export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const cat = params.type as EpisodeCategory
   if (!VALID_CATEGORIES.includes(cat)) notFound()
-  const { q } = searchParams
+  const { q, sort = 'recent' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   const allEpisodes = episodesByCategory(cat)
   const totalViews = allEpisodes.reduce((s, e) => s + (e.views ?? 0), 0)
   const avgViews = allEpisodes.length ? Math.round(totalViews / allEpisodes.length) : 0
   const mostRecent = [...allEpisodes].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))[0]
-  const episodes = needle
+  let filtered = needle
     ? allEpisodes.filter(
         (e) =>
           e.title.toLowerCase().includes(needle) ||
@@ -51,7 +66,14 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
           (e.brand ?? '').toLowerCase().includes(needle) ||
           e.tags.some((t) => t.toLowerCase().includes(needle)),
       )
-    : allEpisodes
+    : [...allEpisodes]
+  const episodes = [...filtered].sort((a, b) => {
+    switch (activeSort) {
+      case 'views': return (b.views ?? 0) - (a.views ?? 0)
+      case 'duration-short': return parseDuration(a.duration) - parseDuration(b.duration)
+      default: return b.publishedAt.localeCompare(a.publishedAt)
+    }
+  })
 
   const catUrl = `https://changupdocu.amakers.co.kr/categories/${cat}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
@@ -110,13 +132,29 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
             </button>
             {q && (
               <a
-                href={`/categories/${cat}`}
+                href={activeSort !== 'recent' ? `/categories/${cat}?sort=${activeSort}` : `/categories/${cat}`}
                 className="rounded-lg border border-white/30 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20"
               >
                 초기화
               </a>
             )}
           </form>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => (
+              <a
+                key={o.key}
+                href={`/categories/${cat}?sort=${o.key}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (activeSort === o.key
+                    ? 'bg-white text-gray-900'
+                    : 'border border-white/30 bg-white/10 text-white hover:bg-white/20')
+                }
+              >
+                {o.label}
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
