@@ -284,6 +284,35 @@ export default function HomePage() {
         </Card>
       </section>
 
+      {/* 뉴스레터 */}
+      <section className="border-t border-gray-100 bg-gray-50">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              Newsletter
+            </p>
+            <h2 className="mt-3 text-h3 font-bold text-gray-900">새 매물 알림을 받아보세요</h2>
+            <p className="mt-2 text-sm text-gray-500">관심 지역 신규 매물·상권 리포트·가격 동향을 메일로 알려드립니다.</p>
+            <form action="#" className="mt-6 flex gap-2">
+              <input
+                type="email"
+                placeholder="이메일 주소"
+                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
+                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                구독하기
+              </button>
+            </form>
+            <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
+          </div>
+        </div>
+      </section>
+
       {/* Other platforms */}
       <section className="container mx-auto py-section">
         <div className="mb-4">

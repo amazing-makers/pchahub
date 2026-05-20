@@ -12,6 +12,7 @@ import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SavedContractorsSection } from '@/components/saved-contractors-section'
 import { RecentlyViewedContractors } from '@/components/recently-viewed-contractors'
+import { SavedPortfolioSection } from '@/components/saved-portfolio-section'
 import { ContractorCard } from '@/components/contractor-card'
 import { PortfolioCard } from '@/components/portfolio-card'
 import { InsightCard } from '@/components/insight-card'
@@ -126,6 +127,8 @@ export default function HomePage() {
 
       {/* 최근 본 시공사 — 클라이언트 전용 */}
       <RecentlyViewedContractors />
+
+      <SavedPortfolioSection />
 
       {/* Featured portfolio */}
       <section className="container mx-auto pt-section">
