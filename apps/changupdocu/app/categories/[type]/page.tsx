@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Search } from 'lucide-react'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 import { EpisodeCard } from '@/components/episode-card'
 import {
   CATEGORY_COLOR,
@@ -38,6 +39,9 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
   const { q } = searchParams
   const needle = q?.toLowerCase().trim() ?? ''
   const allEpisodes = episodesByCategory(cat)
+  const totalViews = allEpisodes.reduce((s, e) => s + (e.views ?? 0), 0)
+  const avgViews = allEpisodes.length ? Math.round(totalViews / allEpisodes.length) : 0
+  const mostRecent = [...allEpisodes].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))[0]
   const episodes = needle
     ? allEpisodes.filter(
         (e) =>
@@ -112,6 +116,30 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
               </a>
             )}
           </form>
+        </div>
+      </section>
+
+      {/* 카테고리 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{allEpisodes.length}편</span>
+              <span className="text-[11px] font-semibold text-gray-700">총 에피소드</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalViews)}</span>
+              <span className="text-[11px] font-semibold text-gray-700">누적 조회</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(avgViews)}</span>
+              <span className="text-[11px] font-semibold text-gray-700">평균 조회</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{mostRecent?.publishedAt ?? '-'}</span>
+              <span className="text-[11px] font-semibold text-gray-700">최신 업로드</span>
+            </div>
+          </div>
         </div>
       </section>
 

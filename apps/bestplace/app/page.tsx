@@ -14,6 +14,7 @@ import { AwardCard } from '@/components/award-card'
 import { StoreCard } from '@/components/store-card'
 import { RankingList } from '@/components/ranking-list'
 import { RecentlyViewedStores } from '@/components/recently-viewed-stores'
+import { SavedStoresSection } from '@/components/saved-stores-section'
 import {
   awardsByYear,
   newestStores,
@@ -90,6 +91,9 @@ export default function HomePage() {
 
       {/* 최근 본 매장 — localStorage 기반, hydration 후 렌더 */}
       <RecentlyViewedStores />
+
+      {/* 저장한 매장 — 클라이언트 전용, localStorage 기반 */}
+      <SavedStoresSection />
 
       {/* Awards — 카테고리별 1위 4개 */}
       <section className="container mx-auto pt-section">

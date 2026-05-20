@@ -8,7 +8,7 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
 })
 
 import { ArrowRight, BarChart3, Target, Zap } from 'lucide-react'
-import { Button, Card } from '@amakers/ui'
+import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { ServiceCard } from '@/components/service-card'
@@ -148,8 +148,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className=”container mx-auto py-section”>
-        <h2 className=”mb-8 text-h2 font-bold text-gray-900”>고객 후기</h2>
+      <section className="container mx-auto py-section">
+        <h2 className="mb-8 text-h2 font-bold text-gray-900">고객 후기</h2>
         <Testimonials testimonials={TESTIMONIALS} />
       </section>
 

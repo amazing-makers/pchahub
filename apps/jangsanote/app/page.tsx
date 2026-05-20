@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
   path: '/',
 })
 
-import { ArrowRight, Calendar, Flame } from 'lucide-react'
+import { ArrowRight, BookOpen, Building2, Calendar, Flame, MapPin, TrendingUp } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { ChannelList } from '@/components/channel-list'
@@ -169,24 +169,69 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-gray-200 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-              <CardContent className="p-5">
+            <Card className="border-gray-200">
+              <CardContent className="p-4">
                 <div
                   className="text-xs font-semibold uppercase tracking-wider"
                   style={{ color: 'var(--brand-primary)' }}
                 >
-                  amakers
+                  amakers 생태계
                 </div>
-                <h3 className="mt-2 text-sm font-semibold">브랜드 정보가 궁금하면</h3>
-                <p className="mt-1 text-xs text-gray-300">
-                  프차허브에서 협회 등록 정보공개서를 한눈에 비교할 수 있어요.
+                <p className="mt-1 text-xs text-gray-500">
+                  창업·운영 단계별 전문 플랫폼
                 </p>
-                <a
-                  href="https://pchahub.amakers.co.kr"
-                  className="mt-3 inline-flex items-center gap-1 text-xs text-white hover:underline"
-                >
-                  프차허브로 이동 <ArrowRight className="h-3 w-3" />
-                </a>
+                <div className="mt-3 space-y-1.5">
+                  <a
+                    href="https://pchahub.amakers.co.kr"
+                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Building2 className="h-3 w-3 text-indigo-500" />
+                      브랜드 가맹 정보 (프차허브)
+                    </span>
+                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://themyungdang.amakers.co.kr/listings"
+                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-3 w-3 text-rose-500" />
+                      입지 매물 (더명당)
+                    </span>
+                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://themanual.amakers.co.kr/courses"
+                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="h-3 w-3 text-amber-500" />
+                      운영 강의 (더메뉴얼)
+                    </span>
+                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://bestplace.amakers.co.kr"
+                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <TrendingUp className="h-3 w-3 text-emerald-500" />
+                      베스트 매장 (베스트플레이스)
+                    </span>
+                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://pchabridge.amakers.co.kr/investments"
+                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <TrendingUp className="h-3 w-3 text-violet-500" />
+                      투자 라운드 (프차브릿지)
+                    </span>
+                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
+                  </a>
+                </div>
               </CardContent>
             </Card>
           </aside>

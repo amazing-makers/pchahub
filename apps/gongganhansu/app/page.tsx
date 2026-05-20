@@ -10,6 +10,7 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
 import { ArrowRight, CheckCircle2, Sparkles, Wrench } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
+import { SavedContractorsSection } from '@/components/saved-contractors-section'
 import { ContractorCard } from '@/components/contractor-card'
 import { PortfolioCard } from '@/components/portfolio-card'
 import { InsightCard } from '@/components/insight-card'
@@ -118,6 +119,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 저장한 시공사 — 클라이언트 전용, localStorage 기반 */}
+      <SavedContractorsSection />
 
       {/* Featured portfolio */}
       <section className="container mx-auto pt-section">
