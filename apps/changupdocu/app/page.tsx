@@ -14,6 +14,7 @@ import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { ArticleCard } from '@/components/article-card'
 import { SavedEpisodesSection } from '@/components/saved-episodes-section'
 import { SavedArticlesSection } from '@/components/saved-articles-section'
+import { RecentlyViewedEpisodes } from '@/components/recently-viewed-episodes'
 import {
   CATEGORY_COLOR,
   CATEGORY_LABEL,
@@ -107,6 +108,7 @@ export default function HomePage() {
 
       <SavedEpisodesSection />
       <SavedArticlesSection />
+      <RecentlyViewedEpisodes />
 
       {/* Other featured */}
       {otherFeatured.length > 0 && (
