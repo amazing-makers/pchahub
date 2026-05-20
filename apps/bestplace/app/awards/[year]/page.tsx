@@ -85,6 +85,24 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
             한 해 동안 매장 운영·점주 만족도·매출 안정성을 평가해 카테고리별 베스트를 선정합니다.
           </p>
 
+          {/* Stats summary row */}
+          <div className="mt-5 grid grid-cols-3 gap-3 sm:grid-cols-3 max-w-lg">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center">
+              <div className="text-xl font-bold text-amber-900">{allYearAwards.length}</div>
+              <div className="mt-0.5 text-xs text-amber-700">총 시상 수</div>
+            </div>
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center">
+              <div className="text-xl font-bold text-amber-900">{categoriesWithAwards.length}</div>
+              <div className="mt-0.5 text-xs text-amber-700">참여 업종</div>
+            </div>
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center">
+              <div className="text-xl font-bold text-amber-900">
+                {allYearAwards.filter((a) => a.rank === 1).length}
+              </div>
+              <div className="mt-0.5 text-xs text-amber-700">대상 수상</div>
+            </div>
+          </div>
+
           {/* Year navigation + tabs */}
           <div className="mt-6 flex flex-wrap items-center gap-2">
             {prevYear ? (

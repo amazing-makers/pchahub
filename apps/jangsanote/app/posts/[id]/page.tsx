@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
+  ArrowRight,
+  BookOpen,
   ChevronRight,
   Eye,
+  MapPin,
   MessageSquare,
+  Store,
+  Trophy,
 } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import {
@@ -283,35 +288,51 @@ export default function PostPage({ params }: PostPageProps) {
 
             {/* amakers ecosystem — category 채널이면 관련 브랜드/매물/강의 link */}
             {post.channelType === 'category' && (
-              <Card className="mt-4 border-gray-200 bg-amber-50">
+              <Card className="mt-4 border-amber-200 bg-amber-50">
                 <CardContent className="p-5">
                   <div className="text-xs font-semibold uppercase tracking-wider text-amber-900">
                     {channelName} 더 알아보기
                   </div>
-                  <div className="mt-3 space-y-2 text-sm">
+                  <div className="mt-3 space-y-2">
                     <a
                       href={`https://pchahub.amakers.co.kr/categories/${post.channelKey}`}
-                      className="block text-gray-700 hover:text-gray-900"
+                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
                     >
-                      → 가맹 브랜드 (프차허브)
+                      <span className="inline-flex items-center gap-1.5">
+                        <Store className="h-3.5 w-3.5 text-indigo-500" />
+                        가맹 브랜드 (프차허브)
+                      </span>
+                      <ArrowRight className="h-3 w-3 text-gray-400" />
                     </a>
                     <a
                       href={`https://themyungdang.amakers.co.kr/listings?category=${post.channelKey}`}
-                      className="block text-gray-700 hover:text-gray-900"
+                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
                     >
-                      → 입점 매물 (더명당)
+                      <span className="inline-flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-emerald-500" />
+                        입점 매물 (더명당)
+                      </span>
+                      <ArrowRight className="h-3 w-3 text-gray-400" />
                     </a>
                     <a
                       href={`https://themanual.amakers.co.kr/courses?category=${post.channelKey}`}
-                      className="block text-gray-700 hover:text-gray-900"
+                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
                     >
-                      → 운영 강의 (더메뉴얼)
+                      <span className="inline-flex items-center gap-1.5">
+                        <BookOpen className="h-3.5 w-3.5 text-amber-600" />
+                        운영 강의 (더메뉴얼)
+                      </span>
+                      <ArrowRight className="h-3 w-3 text-gray-400" />
                     </a>
                     <a
                       href={`https://bestplace.amakers.co.kr/stores?category=${post.channelKey}`}
-                      className="block text-gray-700 hover:text-gray-900"
+                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
                     >
-                      → 매장 보기 (베스트플레이스)
+                      <span className="inline-flex items-center gap-1.5">
+                        <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                        매장 보기 (베스트플레이스)
+                      </span>
+                      <ArrowRight className="h-3 w-3 text-gray-400" />
                     </a>
                   </div>
                 </CardContent>

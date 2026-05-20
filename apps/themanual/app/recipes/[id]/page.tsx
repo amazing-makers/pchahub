@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ChefHat, Clock, Eye, Flame, UtensilsCrossed } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, ChefHat, Clock, Eye, Flame, Store, UtensilsCrossed } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   DIFFICULTY_LABEL,
@@ -10,6 +10,7 @@ import {
   type RecipeDifficulty,
 } from '@/lib/recipes'
 import { buildPageMetadata } from '@amakers/design-system'
+import { ShareRecipeButton } from './share-recipe-button'
 
 interface RecipePageProps {
   params: { id: string }
@@ -80,11 +81,12 @@ export default function RecipePage({ params }: RecipePageProps) {
           {/* Main */}
           <div className="space-y-8">
             {/* Summary chips */}
-            <div className="flex flex-wrap gap-4 rounded-xl border border-gray-200 bg-white p-5">
+            <div className="flex flex-wrap items-center gap-4 rounded-xl border border-gray-200 bg-white p-5">
               <InfoChip icon={<Clock className="h-4 w-4 text-[var(--brand-primary)]" />} label="조리 시간" value={`${recipe.cookingTime}분`} />
               <InfoChip icon={<UtensilsCrossed className="h-4 w-4 text-[var(--brand-primary)]" />} label="인분" value={`${recipe.servings}인분`} />
               <InfoChip icon={<Flame className="h-4 w-4 text-[var(--brand-primary)]" />} label="단계" value={`${recipe.steps.length}단계`} />
               <InfoChip icon={<Eye className="h-4 w-4 text-[var(--brand-primary)]" />} label="조회수" value={recipe.viewCount.toLocaleString()} />
+              <ShareRecipeButton recipeTitle={recipe.title} />
             </div>
 
             {/* Excerpt */}
@@ -153,6 +155,92 @@ export default function RecipePage({ params }: RecipePageProps) {
                 </a>
               ))}
             </div>
+
+            {/* Related recipes */}
+            {(() => {
+              const related = RECIPES.filter(
+                (r) => r.id !== recipe.id && r.category === recipe.category,
+              ).slice(0, 3)
+              if (related.length === 0) return null
+              return (
+                <section>
+                  <h2 className="mb-3 text-h4 font-semibold text-gray-900">
+                    같은 카테고리 레시피
+                  </h2>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    {related.map((r) => (
+                      <a
+                        key={r.id}
+                        href={`/recipes/${r.id}`}
+                        className="flex flex-col gap-2 overflow-hidden rounded-xl border border-gray-200 bg-white transition-colors hover:border-gray-300"
+                      >
+                        <div className="relative h-28 w-full overflow-hidden bg-gray-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={r.heroImage}
+                            alt={r.title}
+                            className="h-full w-full object-cover transition-transform hover:scale-105"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="px-3 pb-3">
+                          <div className="line-clamp-2 text-sm font-semibold text-gray-900">{r.title}</div>
+                          <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                            <span>{r.cookingTime}분</span>
+                            <span>·</span>
+                            <span>{r.servings}인분</span>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )
+            })()}
+
+            {/* amakers 생태계 크로스링크 */}
+            <Card className="border-gray-200 bg-gray-50">
+              <CardContent className="p-5">
+                <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  amakers에서 더 알아보기
+                </div>
+                <p className="mt-1 text-sm text-gray-600">
+                  이 레시피와 관련된 브랜드·강의·커뮤니티를 확인하세요.
+                </p>
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <a
+                    href={`https://pchahub.amakers.co.kr/brands?category=${recipe.category}`}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Store className="h-3.5 w-3.5 text-indigo-500" />
+                      관련 가맹 브랜드
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href={`/courses?category=${recipe.category}`}
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="h-3.5 w-3.5 text-amber-500" />
+                      운영·메뉴 강의
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://jangsanote.amakers.co.kr"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Store className="h-3.5 w-3.5 text-emerald-500" />
+                      점주 커뮤니티
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Source */}
             <div className="text-xs text-gray-400">
