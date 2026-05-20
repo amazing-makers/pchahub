@@ -3,6 +3,7 @@ import { Megaphone, Search } from 'lucide-react'
 import { CaseCardWithSave } from '@/components/case-card-with-save'
 import { PORTFOLIO, SERVICES, SERVICE_LABEL, type ServiceSlug } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('openrun', {
   title: '캠페인 사례',
@@ -40,6 +41,9 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
     return (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
   })
 
+  const totalClients = new Set(PORTFOLIO.map((c) => c.client)).size
+  const industryCount = new Set(PORTFOLIO.map((c) => c.industry)).size
+
   const listJsonLd = buildItemListJsonLd({
     url: 'https://openrun.amakers.co.kr/portfolio',
     items: cases.slice(0, 20).map((c) => ({ name: c.hook, url: `https://openrun.amakers.co.kr/portfolio/${c.id}` })),
@@ -56,6 +60,15 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
             실제 진행한 캠페인과 측정된 결과를 모두 공개합니다.
           </p>
+          <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
+            <span><span className="font-semibold text-gray-900">{PORTFOLIO.length}건</span> 캠페인</span>
+            <span className="text-gray-300">|</span>
+            <span><span className="font-semibold text-gray-900">{totalClients}</span>개 브랜드</span>
+            <span className="text-gray-300">|</span>
+            <span><span className="font-semibold text-gray-900">{industryCount}</span>개 업종</span>
+            <span className="text-gray-300">|</span>
+            <span><span className="font-semibold text-gray-900">{SERVICES.length}</span>가지 서비스</span>
+          </div>
 
           {/* Search bar */}
           <form method="GET" action="/portfolio" className="mt-5 flex max-w-md gap-2">

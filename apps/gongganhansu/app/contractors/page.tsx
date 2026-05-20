@@ -4,6 +4,7 @@ import { ContractorCard } from '@/components/contractor-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '시공사 디렉토리',
@@ -56,6 +57,12 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
     results = results.sort((a, b) => b.projectCount - a.projectCount)
   }
 
+  const totalProjects = CONTRACTORS.reduce((s, c) => s + c.projectCount, 0)
+  const avgRating = CONTRACTORS.length
+    ? (CONTRACTORS.reduce((s, c) => s + c.rating, 0) / CONTRACTORS.length).toFixed(1)
+    : '-'
+  const regionCount = new Set(CONTRACTORS.map((c) => c.region)).size
+
   const listJsonLd = buildItemListJsonLd({
     url: 'https://gongganhansu.amakers.co.kr/contractors',
     items: results.slice(0, 20).map((c) => ({ name: c.name, url: `https://gongganhansu.amakers.co.kr/contractors/${c.id}` })),
@@ -80,6 +87,30 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
               <Plus className="h-4 w-4" />
               시공사 등록
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{CONTRACTORS.length}곳</span>
+              <span className="text-[11px] font-semibold text-gray-700">등록 시공사</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalProjects)}</span>
+              <span className="text-[11px] font-semibold text-gray-700">누적 시공</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">★ {avgRating}</span>
+              <span className="text-[11px] font-semibold text-gray-700">평균 평점</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{regionCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">지역 커버</span>
+            </div>
           </div>
         </div>
       </section>
