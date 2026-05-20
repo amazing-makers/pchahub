@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ChevronRight, MapPin } from 'lucide-react'
+import { ArrowRight, ChevronRight, MapPin, Newspaper, Star, Store } from 'lucide-react'
 import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import {
   buildArticleJsonLd,
@@ -171,32 +171,44 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
         )}
 
         {/* amakers ecosystem — 캠페인 클라이언트 브랜드 cross-link */}
-        <Card className="border-gray-200 bg-indigo-50">
+        <Card className="border-gray-200 bg-gray-50">
           <CardContent className="p-6">
-            <h2 className="text-base font-semibold text-gray-900">
-              이 캠페인의 클라이언트 — {c.client}
-            </h2>
-            <p className="mt-1 text-sm text-gray-700">
-              {c.client}에 대해 amakers 다른 플랫폼에서 더 알아보세요.
+            <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              amakers에서 더 알아보기
+            </div>
+            <p className="mt-1 text-sm text-gray-600">
+              {c.client}에 대한 추가 정보를 amakers 다른 플랫폼에서 확인하세요.
             </p>
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
               <a
                 href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(c.client)}`}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
-                → 가맹 정보 (프차허브)
+                <span className="inline-flex items-center gap-1.5">
+                  <Store className="h-3.5 w-3.5 text-indigo-500" />
+                  가맹 정보 (프차허브)
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>
               <a
                 href={`https://bestplace.amakers.co.kr/stores?q=${encodeURIComponent(c.client)}`}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
-                → 매장 보기 (베스트플레이스)
+                <span className="inline-flex items-center gap-1.5">
+                  <Star className="h-3.5 w-3.5 text-amber-500" />
+                  매장 보기 (베스트플레이스)
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>
               <a
                 href={`https://changupdocu.amakers.co.kr/episodes?brand=${encodeURIComponent(c.client)}`}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-gray-300"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
-                → 브랜드 다큐 (창업다큐)
+                <span className="inline-flex items-center gap-1.5">
+                  <Newspaper className="h-3.5 w-3.5 text-rose-500" />
+                  브랜드 다큐 (창업다큐)
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>
             </div>
           </CardContent>
