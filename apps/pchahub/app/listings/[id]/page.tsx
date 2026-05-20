@@ -15,6 +15,7 @@ import { ListingCard } from '@/components/listing-card'
 import { BrandCard } from '@/components/brand-card'
 import { BRANDS, CATEGORIES } from '@/lib/mock-data'
 import { ListingContactPanel } from './listing-contact-panel'
+import { ShareListingButton } from './share-listing-button'
 
 interface ListingDetailProps {
   params: { id: string }
@@ -261,6 +262,8 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
                   listingId={listing.id}
                   listingTitle={listing.title}
                 />
+
+                <ShareListingButton listingTitle={listing.title} />
 
                 <div className="border-t border-gray-100 pt-3 text-center text-xs text-gray-500">
                   문의 {listing.inquiryCount}건 · {listing.listedAt} 등록

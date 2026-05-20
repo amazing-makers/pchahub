@@ -31,6 +31,7 @@ import { StoreCard } from '@/components/store-card'
 import { SaveStoreButton } from './save-store-button'
 import { StoreViewTracker } from './store-view-tracker'
 import { StoreReviewForm } from './store-review-form'
+import { ShareStoreButton } from './share-store-button'
 
 export function generateStaticParams() {
   return STORES.map((s) => ({ id: s.id }))
@@ -142,8 +143,9 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                 {store.address}
               </div>
             </div>
-            <div className="shrink-0">
+            <div className="flex shrink-0 items-center gap-2">
               <SaveStoreButton storeId={store.id} />
+              <ShareStoreButton storeName={store.name} />
             </div>
           </div>
 

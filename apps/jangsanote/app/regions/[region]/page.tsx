@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ArrowRight, MapPin, Search, Star } from 'lucide-react'
+import { ArrowRight, BookOpen, MapPin, Search, Star, Wrench } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
@@ -124,6 +124,26 @@ export default function RegionPage({ params, searchParams }: RegionPageProps) {
                     <span className="inline-flex items-center gap-1.5">
                       <Star className="h-3.5 w-3.5 text-amber-500" />
                       {channel.label} 우수 매장
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://themanual.amakers.co.kr/courses"
+                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-200 hover:bg-white"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <BookOpen className="h-3.5 w-3.5 text-indigo-500" />
+                      가맹 운영 강의
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
+                  <a
+                    href="https://gongganhansu.amakers.co.kr/quote"
+                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-200 hover:bg-white"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Wrench className="h-3.5 w-3.5 text-rose-500" />
+                      매장 시공 견적
                     </span>
                     <ArrowRight className="h-3 w-3 text-gray-400" />
                   </a>
