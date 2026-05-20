@@ -16,6 +16,7 @@ import { BrandCard } from '@/components/brand-card'
 import { BRANDS, CATEGORIES } from '@/lib/mock-data'
 import { ListingContactPanel } from './listing-contact-panel'
 import { ShareListingButton } from './share-listing-button'
+import { ListingViewTracker } from './listing-view-tracker'
 
 interface ListingDetailProps {
   params: { id: string }
@@ -80,6 +81,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <ListingViewTracker listingId={listing.id} listingTitle={listing.title} listingRegion={listing.region} listingType={listing.listingType} />
       <JsonLd data={listingJsonLd} />
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">

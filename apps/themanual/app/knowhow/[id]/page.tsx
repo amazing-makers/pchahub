@@ -11,6 +11,7 @@ import {
 import { buildPageMetadata } from '@amakers/design-system'
 import { SaveKnowhowButton } from './save-knowhow-button'
 import { ShareKnowhowButton } from './share-knowhow-button'
+import { KnowhowViewTracker } from './knowhow-view-tracker'
 
 interface KnowhowPageProps {
   params: { id: string }
@@ -42,6 +43,7 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
 
   return (
     <main className="bg-gray-50">
+      <KnowhowViewTracker knowhowId={item.id} knowhowTitle={item.title} knowhowCategory={item.category} />
       {/* Hero */}
       <div className="relative h-64 w-full overflow-hidden bg-gray-200 sm:h-80">
         {/* eslint-disable-next-line @next/next/no-img-element */}

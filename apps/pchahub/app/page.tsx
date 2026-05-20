@@ -12,6 +12,7 @@ import { Badge, Button, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { SearchBar } from '@/components/search-bar'
 import { RecentlyViewedBrands } from '@/components/recently-viewed-brands'
+import { RecentlyViewedListings } from '@/components/recently-viewed-listings'
 import { SavedBrandsSection } from '@/components/saved-brands-section'
 import { BrandCard } from '@/components/brand-card'
 import { CategoryChip } from '@/components/category-chip'
@@ -115,6 +116,9 @@ export default async function HomePage() {
 
       {/* 최근 본 브랜드 — 클라이언트 전용, localStorage 기반 */}
       <RecentlyViewedBrands />
+
+      {/* 최근 본 매물 — 클라이언트 전용, localStorage 기반 */}
+      <RecentlyViewedListings />
 
       {/* 저장한 브랜드 — 클라이언트 전용, localStorage 기반 */}
       <SavedBrandsSection />

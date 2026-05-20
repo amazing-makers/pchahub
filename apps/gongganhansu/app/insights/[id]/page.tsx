@@ -12,6 +12,7 @@ import { INSIGHTS, insightById } from '@/lib/mock-data'
 import { InsightCard } from '@/components/insight-card'
 import { SaveInsightButton } from './save-insight-button'
 import { ShareInsightButton } from './share-insight-button'
+import { InsightViewTracker } from './insight-view-tracker'
 
 export function generateStaticParams() {
   return INSIGHTS.map((i) => ({ id: i.id }))
@@ -58,6 +59,7 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
 
   return (
     <main className="bg-white">
+      <InsightViewTracker insightId={ins.id} insightTitle={ins.title} insightCategory={ins.category} insightCoverColors={ins.coverColors} />
       <JsonLd data={articleJsonLd} />
       <JsonLd data={breadcrumbs} />
       <div
