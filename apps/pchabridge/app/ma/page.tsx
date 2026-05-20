@@ -7,8 +7,9 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
   path: '/ma',
 })
 
+import { Search } from 'lucide-react'
 import { MACard } from '@/components/ma-card'
-import { MA_LISTINGS } from '@/lib/mock-data'
+import { BRANDS, MA_LISTINGS } from '@/lib/mock-data'
 import { MaWatchButton } from './ma-watch-button'
 
 /** Deal-type label derived from each listing's includes / rationale */
@@ -22,15 +23,29 @@ const DEAL_TYPE_MAP: Record<string, string> = {
 const DEAL_TYPES = Array.from(new Set(Object.values(DEAL_TYPE_MAP)))
 
 interface MAPageProps {
-  searchParams: { dealType?: string }
+  searchParams: { dealType?: string; q?: string }
 }
 
 export default function MAPage({ searchParams }: MAPageProps) {
-  const { dealType } = searchParams
+  const { dealType, q } = searchParams
+  const needle = q?.toLowerCase().trim() ?? ''
 
-  const filtered = dealType
+  let filtered = dealType
     ? MA_LISTINGS.filter((m) => DEAL_TYPE_MAP[m.id] === dealType)
     : MA_LISTINGS
+
+  if (needle) {
+    filtered = filtered.filter((m) => {
+      const brand = BRANDS.find((b) => b.id === m.brandId)
+      return (
+        m.rationale.toLowerCase().includes(needle) ||
+        (brand?.name.toLowerCase().includes(needle) ?? false) ||
+        (brand?.categoryLabel.toLowerCase().includes(needle) ?? false) ||
+        (DEAL_TYPE_MAP[m.id] ?? '').toLowerCase().includes(needle) ||
+        m.includes.some((s) => s.toLowerCase().includes(needle))
+      )
+    })
+  }
 
   const open = filtered.filter((m) => m.status === 'open')
   const underNeg = filtered.filter((m) => m.status === 'under-negotiation')
@@ -50,10 +65,40 @@ export default function MAPage({ searchParams }: MAPageProps) {
             매각 진행 중인 본사 매물. 상세 자료는 NDA 후 공개됩니다.
           </p>
 
+          {/* Search bar */}
+          <form method="GET" action="/ma" className="mt-5 flex max-w-md gap-2">
+            {dealType && <input type="hidden" name="dealType" value={dealType} />}
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                name="q"
+                type="search"
+                defaultValue={q ?? ''}
+                placeholder="브랜드명, 업종, 거래 유형 검색…"
+                className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+            {q && (
+              <a
+                href={dealType ? `/ma?dealType=${encodeURIComponent(dealType)}` : '/ma'}
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                초기화
+              </a>
+            )}
+          </form>
+
           {/* Deal-type filter chips */}
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <a
-              href="/ma"
+              href={q ? `/ma?q=${encodeURIComponent(q)}` : '/ma'}
               className={
                 'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                 (!dealType
@@ -68,7 +113,7 @@ export default function MAPage({ searchParams }: MAPageProps) {
               return (
                 <a
                   key={t}
-                  href={`/ma?dealType=${encodeURIComponent(t)}`}
+                  href={`/ma?dealType=${encodeURIComponent(t)}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
                   className={
                     'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
                     (dealType === t
@@ -85,6 +130,12 @@ export default function MAPage({ searchParams }: MAPageProps) {
       </section>
 
       <div className="container mx-auto py-8 space-y-8">
+        {q && (
+          <div className="text-sm text-gray-700">
+            <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
+            {filtered.length}건
+          </div>
+        )}
         {open.length > 0 && (
           <section>
             <h2 className="mb-4 text-h4 font-semibold text-gray-900">공개 매물</h2>
@@ -119,7 +170,9 @@ export default function MAPage({ searchParams }: MAPageProps) {
 
         {open.length === 0 && underNeg.length === 0 && (
           <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center">
-            <p className="text-sm font-medium text-gray-500">해당 거래 유형의 매물이 없습니다.</p>
+            <p className="text-sm font-medium text-gray-500">
+            {q ? `"${q}" 검색 결과가 없습니다` : '해당 거래 유형의 매물이 없습니다.'}
+          </p>
             <a
               href="/ma"
               className="mt-4 inline-flex rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
