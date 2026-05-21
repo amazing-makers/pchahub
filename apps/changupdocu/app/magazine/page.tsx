@@ -3,6 +3,7 @@ import { Search } from 'lucide-react'
 import { ArticleCard } from '@/components/article-card'
 import { ARTICLES } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '매거진',
@@ -48,6 +49,9 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
   })
   const featured = activeSort === 'recent' ? filtered.filter((a) => a.featured) : []
   const rest = activeSort === 'recent' ? filtered.filter((a) => !a.featured) : filtered
+  const totalReadTime = ARTICLES.reduce((s, a) => s + a.readTime, 0)
+  const authorCount = new Set(ARTICLES.map((a) => a.authorName)).size
+  const categoryCount = new Set(ARTICLES.map((a) => a.category)).size
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://changupdocu.amakers.co.kr/magazine',
@@ -143,6 +147,30 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
                 {o.label}
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{ARTICLES.length}편</span>
+              <span className="text-[11px] font-semibold text-gray-700">전체 아티클</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{authorCount}명</span>
+              <span className="text-[11px] font-semibold text-gray-700">기고 저자</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{categoryCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">카테고리</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalReadTime)}분</span>
+              <span className="text-[11px] font-semibold text-gray-700">총 읽기 시간</span>
+            </div>
           </div>
         </div>
       </section>

@@ -10,6 +10,7 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 import { Calendar, Plus, Search } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { MEETINGS, MEETING_TYPE_LABEL, type MeetingType } from '@/lib/mock-data'
+import { formatNumber } from '@amakers/utils'
 import { MeetingCard } from '@/components/meeting-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
@@ -50,6 +51,11 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
     items: results.slice(0, 20).map((m) => ({ name: m.title, url: `https://jangsanote.amakers.co.kr/meetings/${m.id}` })),
   })
 
+  const upcomingCount = MEETINGS.filter((m) => m.status === 'upcoming').length
+  const totalParticipants = MEETINGS.reduce((s, m) => s + m.currentParticipants, 0)
+  const freeCount = MEETINGS.filter((m) => m.isFree).length
+  const regionCount = new Set(MEETINGS.map((m) => m.region)).size
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -71,6 +77,30 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
                 모임 만들기
               </Button>
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{upcomingCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">모집 중</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalParticipants)}명</span>
+              <span className="text-[11px] font-semibold text-gray-700">누적 참여자</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{freeCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">무료 모임</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{regionCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">지역 커버</span>
+            </div>
           </div>
         </div>
       </section>

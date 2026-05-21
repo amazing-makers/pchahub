@@ -10,6 +10,7 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
 import { Search } from 'lucide-react'
 import { MACard } from '@/components/ma-card'
 import { BRANDS, MA_LISTINGS } from '@/lib/mock-data'
+import { formatNumber } from '@amakers/utils'
 import { MaWatchButton } from './ma-watch-button'
 
 /** Deal-type label derived from each listing's includes / rationale */
@@ -49,6 +50,10 @@ export default function MAPage({ searchParams }: MAPageProps) {
 
   const open = filtered.filter((m) => m.status === 'open')
   const underNeg = filtered.filter((m) => m.status === 'under-negotiation')
+  const totalStores = MA_LISTINGS.reduce((s, m) => s + m.storeCount, 0)
+  const avgPrice = MA_LISTINGS.length
+    ? Math.round(MA_LISTINGS.reduce((s, m) => s + m.askingPrice, 0) / MA_LISTINGS.length)
+    : 0
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://pchabridge.amakers.co.kr/ma',
@@ -64,6 +69,24 @@ export default function MAPage({ searchParams }: MAPageProps) {
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
             매각 진행 중인 본사 매물. 상세 자료는 NDA 후 공개됩니다.
           </p>
+          <div className="mt-4 flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-xs text-gray-500">공개 매물</span>
+              <div className="font-bold text-gray-900">{MA_LISTINGS.length}건</div>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">모집 중</span>
+              <div className="font-bold text-gray-900">{open.length}건</div>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">총 매장 수</span>
+              <div className="font-bold text-gray-900">{formatNumber(totalStores)}개</div>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">평균 매각가</span>
+              <div className="font-bold text-gray-900">{formatNumber(avgPrice)}만원</div>
+            </div>
+          </div>
 
           {/* Search bar */}
           <form method="GET" action="/ma" className="mt-5 flex max-w-md gap-2">
