@@ -9,7 +9,7 @@ import {
   recipeById,
   type RecipeDifficulty,
 } from '@/lib/recipes'
-import { buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildCreativeWorkJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { ShareRecipeButton } from './share-recipe-button'
 import { SaveRecipeButton } from './save-recipe-button'
 import { RecipeViewTracker } from './recipe-view-tracker'
@@ -46,6 +46,16 @@ export default function RecipePage({ params }: RecipePageProps) {
   const mainIngredients = recipe.ingredients.filter((i) => !i.note)
   const sauceIngredients = recipe.ingredients.filter((i) => !!i.note)
 
+  const creativeWorkJsonLd = buildCreativeWorkJsonLd({
+    name: recipe.title,
+    description: recipe.excerpt,
+    url: `https://themanual.amakers.co.kr/recipes/${recipe.id}`,
+    image: recipe.heroImage,
+    authorName: recipe.chef,
+    publishedAt: recipe.publishedAt,
+    publisher: { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
+  })
+
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
       { name: '레시피', url: 'https://themanual.amakers.co.kr/recipes' },
@@ -55,6 +65,7 @@ export default function RecipePage({ params }: RecipePageProps) {
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={creativeWorkJsonLd} />
       <JsonLd data={breadcrumbs} />
       <RecipeViewTracker
         recipeId={recipe.id}

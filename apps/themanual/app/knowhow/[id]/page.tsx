@@ -8,7 +8,7 @@ import {
   KNOWHOW_CATEGORY_LABEL,
   knowhowById,
 } from '@/lib/knowhow'
-import { buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildArticleJsonLd, buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { SaveKnowhowButton } from './save-knowhow-button'
 import { ShareKnowhowButton } from './share-knowhow-button'
 import { KnowhowViewTracker } from './knowhow-view-tracker'
@@ -41,6 +41,16 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
   const lockedSections  = item.premium ? item.sections.slice(FREE_SECTION_COUNT)    : []
   const hasLockedContent = lockedSections.length > 0
 
+  const articleJsonLd = buildArticleJsonLd({
+    headline: item.title,
+    description: item.excerpt,
+    url: `https://themanual.amakers.co.kr/knowhow/${item.id}`,
+    image: item.heroImage,
+    authorName: item.author,
+    publishedAt: item.publishedAt,
+    publisher: { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
+  })
+
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
       { name: '노하우', url: 'https://themanual.amakers.co.kr/knowhow' },
@@ -50,6 +60,7 @@ export default function KnowhowDetailPage({ params }: KnowhowPageProps) {
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={articleJsonLd} />
       <JsonLd data={breadcrumbs} />
       <KnowhowViewTracker knowhowId={item.id} knowhowTitle={item.title} knowhowCategory={item.category} />
       {/* Hero */}
