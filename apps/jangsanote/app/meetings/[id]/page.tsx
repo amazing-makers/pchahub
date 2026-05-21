@@ -334,6 +334,16 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
                     </span>
                     <ArrowRight className="h-3 w-3 text-gray-400" />
                   </a>
+                  <a
+                    href="https://bestplace.amakers.co.kr/stores"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Store className="h-3.5 w-3.5 text-amber-500" />
+                      우수 매장 보기
+                    </span>
+                    <ArrowRight className="h-3 w-3 text-gray-400" />
+                  </a>
                 </div>
               </CardContent>
             </Card>
