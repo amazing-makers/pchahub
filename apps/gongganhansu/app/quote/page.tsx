@@ -1,5 +1,12 @@
 import type { Metadata } from 'next'
-import { buildPageMetadata, buildServiceJsonLd, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, buildServiceJsonLd, JsonLd } from '@amakers/design-system'
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '공간한수', url: 'https://gongganhansu.amakers.co.kr' },
+    { name: '무료 견적 신청', url: 'https://gongganhansu.amakers.co.kr/quote' },
+  ],
+})
 
 const quoteJsonLd = buildServiceJsonLd({
   name: '공간한수 매장 인테리어 무료 견적',
@@ -24,6 +31,7 @@ export default function QuotePage({ searchParams }: QuotePageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={quoteJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">무료 견적 요청</h1>

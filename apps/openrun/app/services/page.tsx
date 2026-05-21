@@ -2,13 +2,20 @@
 import { ArrowRight } from 'lucide-react'
 import { ServiceCard } from '@/components/service-card'
 import { PORTFOLIO, SERVICES, STATS } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('openrun', {
   title: '서비스',
   description: '점주·본사·브랜드 각자의 시점에 맞는 3가지 통합 마케팅 캠페인.',
   path: '/services',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '오픈런', url: 'https://openrun.amakers.co.kr' },
+    { name: '서비스', url: 'https://openrun.amakers.co.kr/services' },
+  ],
 })
 
 const serviceListJsonLd = buildItemListJsonLd({
@@ -22,6 +29,7 @@ export default function ServicesPage() {
   return (
     <main className="bg-gray-50">
       <JsonLd data={serviceListJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">서비스</h1>

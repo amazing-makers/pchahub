@@ -2,7 +2,7 @@
 import { Megaphone, Search } from 'lucide-react'
 import { CaseCardWithSave } from '@/components/case-card-with-save'
 import { PORTFOLIO, SERVICES, SERVICE_LABEL, type ServiceSlug } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('openrun', {
@@ -49,9 +49,17 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
     items: cases.slice(0, 20).map((c) => ({ name: c.hook, url: `https://openrun.amakers.co.kr/portfolio/${c.id}` })),
   })
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '오픈런', url: 'https://openrun.amakers.co.kr' },
+      { name: '캠페인 사례', url: 'https://openrun.amakers.co.kr/portfolio' },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">
