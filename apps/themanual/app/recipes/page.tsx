@@ -11,6 +11,7 @@ import {
   type RecipeDifficulty,
 } from '@/lib/recipes'
 import { buildPageMetadata } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '업소용 레시피',
@@ -100,6 +101,11 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
     ? RECIPE_CATEGORY_LABEL[category as RecipeCategory]
     : null
 
+  const totalViews = RECIPES.reduce((s, r) => s + r.viewCount, 0)
+  const easyCount = RECIPES.filter((r) => r.difficulty === 'easy').length
+  const avgCookTime = Math.round(RECIPES.reduce((s, r) => s + r.cookingTime, 0) / RECIPES.length)
+  const recipeCategoryCount = Object.keys(RECIPE_CATEGORY_LABEL).length
+
   return (
     <main className="bg-gray-50">
       {/* Header */}
@@ -137,6 +143,32 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
           </form>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!isFiltered && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto py-4">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{RECIPES.length}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">업소용 레시피</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalViews)}</span>
+                <span className="text-[11px] font-semibold text-gray-700">누적 조회</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{easyCount}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">초보도 가능</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{avgCookTime}분</span>
+                <span className="text-[11px] font-semibold text-gray-700">평균 조리 시간</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         {/* Featured section (only on unfiltered first page) */}

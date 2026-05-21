@@ -10,6 +10,7 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
 import { Search } from 'lucide-react'
 import { InsightCard } from '@/components/insight-card'
 import { INSIGHTS } from '@/lib/mock-data'
+import { formatNumber } from '@amakers/utils'
 
 const SORT_OPTIONS = [
   { key: 'recent', label: '최신 순' },
@@ -53,6 +54,9 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
     url: 'https://gongganhansu.amakers.co.kr/insights',
     items: filtered.slice(0, 20).map((i) => ({ name: i.title, url: `https://gongganhansu.amakers.co.kr/insights/${i.id}` })),
   })
+
+  const totalReadTime = INSIGHTS.reduce((s, i) => s + i.readTime, 0)
+  const categoryCount = new Set(INSIGHTS.map((i) => i.category)).size
 
   return (
     <main className="bg-gray-50">
@@ -138,6 +142,30 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
                 {o.label}
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{INSIGHTS.length}편</span>
+              <span className="text-[11px] font-semibold text-gray-700">전체 인사이트</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{categoryCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">카테고리</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{INSIGHTS.filter((i) => i.featured).length}편</span>
+              <span className="text-[11px] font-semibold text-gray-700">추천 콘텐츠</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalReadTime)}분</span>
+              <span className="text-[11px] font-semibold text-gray-700">총 읽기 시간</span>
+            </div>
           </div>
         </div>
       </section>
