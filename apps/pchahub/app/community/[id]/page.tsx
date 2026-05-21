@@ -6,6 +6,7 @@ import { buildBreadcrumbsJsonLd, buildDiscussionJsonLd, buildPageMetadata, JsonL
 import { DISCUSSIONS, type MockDiscussion } from '@/lib/mock-community'
 import { BRANDS } from '@/lib/mock-data'
 import { ShareDiscussionButton } from './share-discussion-button'
+import { DiscussionViewTracker } from './discussion-view-tracker'
 
 export function generateStaticParams() {
   return DISCUSSIONS.map((d) => ({ id: d.id }))
@@ -55,6 +56,11 @@ export default function DiscussionDetailPage({ params }: DiscussionDetailProps) 
 
   return (
     <main className="bg-gray-50">
+      <DiscussionViewTracker
+        discussionId={d.id}
+        discussionTitle={d.title}
+        discussionCategory={d.categoryLabel}
+      />
       <JsonLd data={breadcrumbs} />
       <JsonLd data={discussionJsonLd} />
       <section className="border-b border-gray-200 bg-white">

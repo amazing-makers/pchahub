@@ -25,6 +25,7 @@ import {
 import { LocalPostsFeed } from './local-posts-feed'
 import { SavedPostsSection } from '@/components/saved-posts-section'
 import { RecentlyViewedPosts } from '@/components/recently-viewed-posts'
+import { RecentlyViewedMeetings } from '@/components/recently-viewed-meetings'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -79,6 +80,7 @@ export default function HomePage() {
 
       <SavedPostsSection />
       <RecentlyViewedPosts />
+      <RecentlyViewedMeetings />
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)_280px]">

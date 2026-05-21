@@ -17,6 +17,7 @@ import { coursesByInstructor, MENTORS } from '@/lib/mock-data'
 import { ConsultForm } from './consult-form'
 import { SaveMentorButton } from './save-mentor-button'
 import { ShareMentorButton } from './share-mentor-button'
+import { MentorViewTracker } from './mentor-view-tracker'
 
 export function generateStaticParams() {
   return MENTORS.map((m) => ({ id: m.id }))
@@ -68,6 +69,12 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <MentorViewTracker
+        mentorId={mentor.id}
+        mentorName={mentor.name}
+        mentorRole={mentor.role}
+        mentorAvatarColor={mentor.avatarColor}
+      />
       <JsonLd data={personJsonLd} />
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">

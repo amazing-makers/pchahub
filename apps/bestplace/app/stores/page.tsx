@@ -5,6 +5,7 @@ import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
   title: '매장 디렉토리',
@@ -56,6 +57,12 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
     items: results.slice(0, 20).map((s) => ({ name: s.name, url: `https://bestplace.amakers.co.kr/stores/${s.id}` })),
   })
 
+  const avgRating = STORES.length
+    ? (STORES.reduce((s, st) => s + st.rating, 0) / STORES.length).toFixed(1)
+    : '-'
+  const totalReviews = STORES.reduce((s, st) => s + st.reviewCount, 0)
+  const regionCount = new Set(STORES.map((s) => s.region)).size
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -76,6 +83,26 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
               매장 등록
             </a>
           </div>
+          {/* 통계 요약 */}
+          <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-1 sm:flex sm:gap-8 text-sm">
+            <div>
+              <span className="text-xs text-gray-500">인증 매장</span>
+              <div className="font-bold text-gray-900">{STORES.length}곳</div>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">평균 평점</span>
+              <div className="font-bold text-gray-900">★ {avgRating}</div>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">누적 리뷰</span>
+              <div className="font-bold text-gray-900">{formatNumber(totalReviews)}건</div>
+            </div>
+            <div>
+              <span className="text-xs text-gray-500">지역 커버</span>
+              <div className="font-bold text-gray-900">{regionCount}개 지역</div>
+            </div>
+          </div>
+
           {/* 검색 폼 */}
           <form method="get" action="/stores" className="mt-5">
             {category && <input type="hidden" name="category" value={category} />}

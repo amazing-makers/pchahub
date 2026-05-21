@@ -16,6 +16,8 @@ import { MentorCard } from '@/components/mentor-card'
 import { SavedCoursesSection } from '@/components/saved-courses-section'
 import { RecentlyViewedCourses } from '@/components/recently-viewed-courses'
 import { RecentlyViewedKnowhow } from '@/components/recently-viewed-knowhow'
+import { RecentlyViewedMentors } from '@/components/recently-viewed-mentors'
+import { RecentlyViewedRecipes } from '@/components/recently-viewed-recipes'
 import { SavedRecipesSection } from '@/components/saved-recipes-section'
 import { SavedKnowhowSection } from '@/components/saved-knowhow-section'
 import { SavedMentorsSection } from '@/components/saved-mentors-section'
@@ -95,6 +97,12 @@ export default function HomePage() {
 
       {/* 최근 본 노하우 — 클라이언트 전용 */}
       <RecentlyViewedKnowhow />
+
+      {/* 최근 본 멘토 — 클라이언트 전용 */}
+      <RecentlyViewedMentors />
+
+      {/* 최근 본 레시피 — 클라이언트 전용 */}
+      <RecentlyViewedRecipes />
 
       <SavedRecipesSection />
       <SavedKnowhowSection />

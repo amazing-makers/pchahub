@@ -9,6 +9,7 @@ import { MACard } from '@/components/ma-card'
 import { NdaForm } from './nda-form'
 import { MaConsultButton } from './ma-consult-button'
 import { ShareMAButton } from './share-ma-button'
+import { MAViewTracker } from './ma-view-tracker'
 
 export function generateStaticParams() {
   return MA_LISTINGS.map((m) => ({ id: m.id }))
@@ -55,6 +56,12 @@ export default function MADetailPage({ params }: MADetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <MAViewTracker
+        maId={listing.id}
+        brandName={brand?.name ?? ''}
+        storeCount={listing.storeCount}
+        askingPrice={listing.askingPrice}
+      />
       <JsonLd data={breadcrumbs} />
       {brandJsonLd && <JsonLd data={brandJsonLd} />}
       <section className="border-b border-gray-200 bg-white">

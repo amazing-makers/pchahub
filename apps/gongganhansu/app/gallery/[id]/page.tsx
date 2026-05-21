@@ -18,6 +18,7 @@ import {
 import { PortfolioCard } from '@/components/portfolio-card'
 import { SavePortfolioButton } from './save-portfolio-button'
 import { SharePortfolioButton } from './share-portfolio-button'
+import { GalleryViewTracker } from './gallery-view-tracker'
 
 export function generateStaticParams() {
   return PORTFOLIO.map((p) => ({ id: p.id }))
@@ -70,6 +71,12 @@ export default function GalleryDetailPage({ params }: GalleryDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <GalleryViewTracker
+        portfolioId={item.id}
+        portfolioTitle={item.title}
+        portfolioCategory={item.category}
+        portfolioRegion={item.region}
+      />
       <JsonLd data={workJsonLd} />
       <JsonLd data={breadcrumbs} />
       {/* Hero image */}

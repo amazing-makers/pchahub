@@ -26,6 +26,7 @@ import { UserChip } from '@/components/user-chip'
 import { RsvpButton } from './rsvp-button'
 import { MeetingContactButton } from './meeting-contact-button'
 import { ShareMeetingButton } from './share-meeting-button'
+import { MeetingViewTracker } from './meeting-view-tracker'
 
 export function generateStaticParams() {
   return MEETINGS.map((m) => ({ id: m.id }))
@@ -91,6 +92,12 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
 
   return (
     <main className="bg-gray-50">
+      <MeetingViewTracker
+        meetingId={meeting.id}
+        meetingTitle={meeting.title}
+        meetingType={meeting.type}
+        meetingDate={meeting.date}
+      />
       <JsonLd data={meetingJsonLd} />
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">

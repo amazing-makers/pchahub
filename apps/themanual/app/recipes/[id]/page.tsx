@@ -12,6 +12,7 @@ import {
 import { buildPageMetadata } from '@amakers/design-system'
 import { ShareRecipeButton } from './share-recipe-button'
 import { SaveRecipeButton } from './save-recipe-button'
+import { RecipeViewTracker } from './recipe-view-tracker'
 
 interface RecipePageProps {
   params: { id: string }
@@ -47,6 +48,11 @@ export default function RecipePage({ params }: RecipePageProps) {
 
   return (
     <main className="bg-gray-50">
+      <RecipeViewTracker
+        recipeId={recipe.id}
+        recipeTitle={recipe.title}
+        recipeCategory={recipe.category}
+      />
       {/* Hero */}
       <div className="relative h-72 w-full overflow-hidden bg-gray-200 sm:h-96">
         {/* eslint-disable-next-line @next/next/no-img-element */}

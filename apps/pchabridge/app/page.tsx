@@ -14,6 +14,7 @@ import { RoundCard } from '@/components/round-card'
 import { MACard } from '@/components/ma-card'
 import { WatchedRoundsSection } from '@/components/watched-rounds-section'
 import { RecentlyViewedRounds } from '@/components/recently-viewed-rounds'
+import { RecentlyViewedMA } from '@/components/recently-viewed-ma'
 import { FEATURED_ROUNDS, MA_LISTINGS, ROUNDS, STATS } from '@/lib/mock-data'
 
 const otherPlatforms = (
@@ -96,6 +97,7 @@ export default function HomePage() {
 
       <WatchedRoundsSection />
       <RecentlyViewedRounds />
+      <RecentlyViewedMA />
 
       {/* Featured rounds */}
       <section className="container mx-auto pt-section">

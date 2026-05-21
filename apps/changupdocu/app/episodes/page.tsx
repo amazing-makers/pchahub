@@ -3,6 +3,7 @@ import { PlayCircle, Search } from 'lucide-react'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '에피소드',
@@ -46,6 +47,11 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
     url: 'https://changupdocu.amakers.co.kr/episodes',
     items: results.slice(0, 20).map((e) => ({ name: e.title, url: `https://changupdocu.amakers.co.kr/episodes/${e.id}` })),
   })
+
+  const totalViews = EPISODES.reduce((s, e) => s + e.views, 0)
+  const totalLikes = EPISODES.reduce((s, e) => s + e.likes, 0)
+  const brandCount = new Set(EPISODES.map((e) => e.brand).filter(Boolean)).size
+  const categoryCount = Object.keys(CATEGORY_LABEL).length
 
   return (
     <main className="bg-gray-50">
@@ -106,6 +112,30 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
                 {c === '' ? '전체' : CATEGORY_LABEL[c]}
               </a>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{EPISODES.length}편</span>
+              <span className="text-[11px] font-semibold text-gray-700">전체 에피소드</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalViews)}</span>
+              <span className="text-[11px] font-semibold text-gray-700">누적 조회수</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{brandCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">취재 브랜드</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{categoryCount}개</span>
+              <span className="text-[11px] font-semibold text-gray-700">콘텐츠 카테고리</span>
+            </div>
           </div>
         </div>
       </section>

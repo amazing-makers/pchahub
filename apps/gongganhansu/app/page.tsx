@@ -13,6 +13,7 @@ import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SavedContractorsSection } from '@/components/saved-contractors-section'
 import { RecentlyViewedContractors } from '@/components/recently-viewed-contractors'
 import { RecentlyViewedInsights } from '@/components/recently-viewed-insights'
+import { RecentlyViewedPortfolio } from '@/components/recently-viewed-portfolio'
 import { SavedPortfolioSection } from '@/components/saved-portfolio-section'
 import { ContractorCard } from '@/components/contractor-card'
 import { PortfolioCard } from '@/components/portfolio-card'
@@ -131,6 +132,9 @@ export default function HomePage() {
 
       {/* 최근 본 인사이트 — 클라이언트 전용 */}
       <RecentlyViewedInsights />
+
+      {/* 최근 본 포트폴리오 — 클라이언트 전용 */}
+      <RecentlyViewedPortfolio />
 
       <SavedPortfolioSection />
 
