@@ -309,14 +309,14 @@ function makeHref(
   return qs ? `/mentors?${qs}` : '/mentors'
 }
 
-function FilterGroup({ title, children }: { title: string;
-
 const breadcrumbs = buildBreadcrumbsJsonLd({
   items: [
     { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
     { name: '전문 멘토', url: 'https://themanual.amakers.co.kr/mentors' },
   ],
-}) children: React.ReactNode }) {
+})
+
+function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
       <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</div>

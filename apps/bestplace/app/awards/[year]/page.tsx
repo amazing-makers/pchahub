@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ChevronLeft, ChevronRight, Trophy } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, Megaphone, Store, Trophy, Wrench } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import {
@@ -198,6 +198,64 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
               })
             )}
           </div>
+        </div>
+      </div>
+
+      {/* amakers 생태계 크로스링크 */}
+      <div className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-8">
+          <Card className="border-gray-200 bg-gray-50">
+            <CardContent className="p-6">
+              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                amakers에서 더 알아보기
+              </div>
+              <p className="mt-1 text-sm text-gray-600">
+                수상 매장을 운영하는 브랜드 정보, 인테리어·마케팅·운영 노하우를 함께 확인하세요.
+              </p>
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                <a
+                  href="https://pchahub.amakers.co.kr/brands"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <Store className="h-3.5 w-3.5 text-indigo-500" />
+                    가맹 브랜드 비교
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
+                </a>
+                <a
+                  href="https://gongganhansu.amakers.co.kr/quote"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <Wrench className="h-3.5 w-3.5 text-slate-500" />
+                    매장 인테리어 견적
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
+                </a>
+                <a
+                  href="https://openrun.amakers.co.kr/services"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <Megaphone className="h-3.5 w-3.5 text-rose-500" />
+                    오픈런 마케팅 캠페인
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
+                </a>
+                <a
+                  href="https://themanual.amakers.co.kr/knowhow"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <BookOpen className="h-3.5 w-3.5 text-amber-600" />
+                    매장 운영 노하우
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
+                </a>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

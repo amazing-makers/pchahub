@@ -48,14 +48,14 @@ function makeHref(
   return qs ? `/knowhow?${qs}` : '/knowhow'
 }
 
-function FilterLink({ href, active, children }: { href: string;
-
 const breadcrumbs = buildBreadcrumbsJsonLd({
   items: [
     { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
     { name: '운영 노하우', url: 'https://themanual.amakers.co.kr/knowhow' },
   ],
-}) active: boolean; children: React.ReactNode }) {
+})
+
+function FilterLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (
     <a
       href={href}

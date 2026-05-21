@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ArrowRight, ChevronRight, Clock, MapPin, Store, Wrench } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronRight, Clock, MapPin, Store, Wrench } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import {
   buildArticleJsonLd,
@@ -151,7 +151,7 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
               <p className="mt-1 text-sm text-gray-600">
                 이 인사이트와 관련된 브랜드·매물·커뮤니티 정보를 확인하세요.
               </p>
-              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
                 <a
                   href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(ins.tags[0] ?? '')}`}
                   className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
@@ -179,6 +179,16 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
                   <span className="inline-flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5 text-emerald-500" />
                     입점 매물 찾기
+                  </span>
+                  <ArrowRight className="h-3 w-3 text-gray-400" />
+                </a>
+                <a
+                  href="https://themanual.amakers.co.kr/knowhow"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <BookOpen className="h-3.5 w-3.5 text-amber-600" />
+                    운영 노하우 보기
                   </span>
                   <ArrowRight className="h-3 w-3 text-gray-400" />
                 </a>

@@ -14,14 +14,14 @@ import { formatNumber } from '@amakers/utils'
 import { MeetingCard } from '@/components/meeting-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
-const TYPES: Array<{ value: '' | MeetingType;
-
 const breadcrumbs = buildBreadcrumbsJsonLd({
   items: [
     { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
     { name: '오프라인 모임', url: 'https://jangsanote.amakers.co.kr/meetings' },
   ],
-}) label: string }> = [
+})
+
+const TYPES: Array<{ value: '' | MeetingType; label: string }> = [
   { value: '', label: '전체' },
   { value: 'offline', label: '오프라인' },
   { value: 'online', label: '온라인' },
