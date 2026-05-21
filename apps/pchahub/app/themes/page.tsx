@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { ThemeIcon } from '@/components/theme-icon'
 import { THEMES, THEME_COUNTS } from '@/lib/themes'
+import { formatNumber } from '@amakers/utils'
 
 const listJsonLd = buildItemListJsonLd({
   url: 'https://pchahub.amakers.co.kr/themes',
@@ -18,6 +19,9 @@ const listJsonLd = buildItemListJsonLd({
 })
 
 export default function ThemesPage() {
+  const totalBrands = Object.values(THEME_COUNTS).reduce((s, c) => s + c, 0)
+  const maxTheme = THEMES.slice().sort((a, b) => (THEME_COUNTS[b.key] ?? 0) - (THEME_COUNTS[a.key] ?? 0))[0]
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -30,6 +34,23 @@ export default function ThemesPage() {
           </p>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${THEMES.length}개`, label: '테마 유형' },
+            { value: formatNumber(totalBrands), label: '전체 브랜드 수' },
+            { value: maxTheme?.label ?? '-', label: '가장 많은 테마' },
+            { value: `${formatNumber(THEME_COUNTS[maxTheme?.key ?? ''] ?? 0)}개`, label: '해당 테마 브랜드' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

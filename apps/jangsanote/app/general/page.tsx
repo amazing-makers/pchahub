@@ -13,6 +13,7 @@ import { ChannelList } from '@/components/channel-list'
 import { PostCard } from '@/components/post-card'
 import { POSTS } from '@/lib/mock-data'
 import { LocalPostsFeed } from '@/app/local-posts-feed'
+import { formatNumber } from '@amakers/utils'
 
 const SORT_OPTIONS = [
   { key: 'recent', label: '최신 순' },
@@ -31,6 +32,9 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
   const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let allPosts = POSTS.filter((p) => p.channelType === 'general')
+  const totalViews = allPosts.reduce((s, p) => s + p.views, 0)
+  const totalLikes = allPosts.reduce((s, p) => s + p.likes, 0)
+  const totalComments = allPosts.reduce((s, p) => s + p.commentCount, 0)
   if (needle) {
     allPosts = allPosts.filter(
       (p) =>
@@ -106,6 +110,25 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
           </form>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!q && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${allPosts.length}개`, label: '전체 게시글' },
+              { value: formatNumber(totalViews), label: '누적 조회' },
+              { value: formatNumber(totalLikes), label: '누적 좋아요' },
+              { value: formatNumber(totalComments), label: '댓글 수' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">

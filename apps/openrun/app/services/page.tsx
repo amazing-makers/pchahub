@@ -1,8 +1,9 @@
 ﻿import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
 import { ServiceCard } from '@/components/service-card'
-import { SERVICES } from '@/lib/mock-data'
+import { PORTFOLIO, SERVICES, STATS } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('openrun', {
   title: '서비스',
@@ -16,6 +17,8 @@ const serviceListJsonLd = buildItemListJsonLd({
 })
 
 export default function ServicesPage() {
+  const totalCases = PORTFOLIO.length
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={serviceListJsonLd} />
@@ -27,6 +30,23 @@ export default function ServicesPage() {
           </p>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${SERVICES.length}가지`, label: '서비스 유형' },
+            { value: `${formatNumber(STATS.campaigns)}건`, label: '누적 캠페인' },
+            { value: `+${STATS.averageROI}%`, label: '평균 ROI' },
+            { value: `${totalCases}건`, label: '공개 사례' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
