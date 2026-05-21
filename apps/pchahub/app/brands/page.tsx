@@ -8,6 +8,7 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
 })
 
 import { Search } from 'lucide-react'
+import { formatNumber } from '@amakers/utils'
 import { Card, CardContent } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
 import { BrandSaveButton } from '@/components/brand-save-button'
@@ -53,6 +54,8 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
 
   // 검색어·카테고리 필터 시 featured 포함 전체 대상, 조건 없는 기본 목록만 광고섹션과 중복 방지로 featured 제외
   const isFiltered = Boolean(q || activeCategory || activeRegion)
+  const hqRegionCount = new Set(allBrands.map((b) => b.hqRegion).filter(Boolean)).size
+  const totalStores = allBrands.reduce((acc, b) => acc + (b.storeCount ?? 0), 0)
   let results = isFiltered ? [...allBrands] : allBrands.filter((b) => !b.featured)
   if (activeCategory) {
     results = results.filter((b) => b.category === activeCategory)
@@ -242,6 +245,25 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
           )}
         </div>
       </section>
+
+      {/* ── 통계 스트립 ── */}
+      {!isFiltered && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: formatNumber(allBrands.length), label: '전체 가맹 브랜드' },
+              { value: String(CATEGORIES.length), label: '업종 카테고리' },
+              { value: formatNumber(totalStores), label: '전국 총 매장 수' },
+              { value: String(hqRegionCount), label: '본사 소재 지역' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
