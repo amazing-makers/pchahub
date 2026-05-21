@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { MENTORS } from '@/lib/mock-data'
 import { BookClient } from './book-client'
 
@@ -33,8 +33,17 @@ export default async function MentorBookPage({ params }: BookPageProps) {
   const mentor = MENTORS.find((m) => m.id === params.id)
   if (!mentor) notFound()
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '멘토', url: 'https://themanual.amakers.co.kr/mentors' },
+      { name: mentor.name, url: `https://themanual.amakers.co.kr/mentors/${mentor.id}` },
+      { name: '예약', url: `https://themanual.amakers.co.kr/mentors/${mentor.id}/book` },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-6">
           {/* 브레드크럼 */}

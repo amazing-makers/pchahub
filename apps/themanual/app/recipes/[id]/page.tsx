@@ -9,7 +9,7 @@ import {
   recipeById,
   type RecipeDifficulty,
 } from '@/lib/recipes'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { ShareRecipeButton } from './share-recipe-button'
 import { SaveRecipeButton } from './save-recipe-button'
 import { RecipeViewTracker } from './recipe-view-tracker'
@@ -46,8 +46,16 @@ export default function RecipePage({ params }: RecipePageProps) {
   const mainIngredients = recipe.ingredients.filter((i) => !i.note)
   const sauceIngredients = recipe.ingredients.filter((i) => !!i.note)
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '레시피', url: 'https://themanual.amakers.co.kr/recipes' },
+      { name: recipe.title, url: `https://themanual.amakers.co.kr/recipes/${recipe.id}` },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
+      <JsonLd data={breadcrumbs} />
       <RecipeViewTracker
         recipeId={recipe.id}
         recipeTitle={recipe.title}
