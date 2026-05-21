@@ -10,7 +10,7 @@ import {
   type RecipeCategory,
   type RecipeDifficulty,
 } from '@/lib/recipes'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
@@ -101,6 +101,14 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
     ? RECIPE_CATEGORY_LABEL[category as RecipeCategory]
     : null
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://themanual.amakers.co.kr/recipes',
+    items: RECIPES.slice(0, 20).map((r) => ({
+      name: r.title,
+      url: `https://themanual.amakers.co.kr/recipes/${r.id}`,
+    })),
+  })
+
   const totalViews = RECIPES.reduce((s, r) => s + r.viewCount, 0)
   const easyCount = RECIPES.filter((r) => r.difficulty === 'easy').length
   const avgCookTime = Math.round(RECIPES.reduce((s, r) => s + r.cookingTime, 0) / RECIPES.length)
@@ -108,6 +116,7 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       {/* Header */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

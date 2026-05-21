@@ -10,7 +10,7 @@ import {
   KNOWHOW_ITEMS,
   type KnowhowCategory,
 } from '@/lib/knowhow'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
@@ -99,6 +99,14 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
 
   const isFiltered = !!(category || filter || q)
 
+  const listJsonLd = buildItemListJsonLd({
+    url: 'https://themanual.amakers.co.kr/knowhow',
+    items: KNOWHOW_ITEMS.slice(0, 20).map((k) => ({
+      name: k.title,
+      url: `https://themanual.amakers.co.kr/knowhow/${k.id}`,
+    })),
+  })
+
   // Stats
   const totalCount = KNOWHOW_ITEMS.length
   const freeCount  = FREE_KNOWHOW.length
@@ -108,6 +116,7 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
 
   return (
     <main className="bg-gray-50">
+      <JsonLd data={listJsonLd} />
       {/* Header */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
