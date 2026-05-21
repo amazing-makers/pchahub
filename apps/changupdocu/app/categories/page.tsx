@@ -50,6 +50,9 @@ export default function CategoriesPage() {
     items: summaries.map((s) => ({ name: s.label, url: `https://changupdocu.amakers.co.kr/categories/${s.key}` })),
   })
 
+  const totalViews = summaries.reduce((s, c) => s + c.totalViews, 0)
+  const topCategory = [...summaries].sort((a, b) => b.totalViews - a.totalViews)[0]
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -61,6 +64,23 @@ export default function CategoriesPage() {
           </p>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${VALID_CATEGORIES.length}개`, label: '카테고리' },
+            { value: `${formatNumber(EPISODES.length)}편`, label: '전체 에피소드' },
+            { value: formatNumber(totalViews), label: '누적 조회' },
+            { value: topCategory?.label ?? '-', label: '인기 카테고리' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

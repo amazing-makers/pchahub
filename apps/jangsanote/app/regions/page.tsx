@@ -12,6 +12,8 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 
 export default function RegionsPage() {
   const regions = CHANNELS.filter((c) => c.type === 'region')
+  const totalMembers = regions.reduce((s, c) => s + c.memberCount, 0)
+  const totalPosts = regions.reduce((s, c) => s + c.postCount, 0)
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://jangsanote.amakers.co.kr/regions',
@@ -29,6 +31,23 @@ export default function RegionsPage() {
           </p>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${regions.length}개`, label: '지역 채널' },
+            { value: formatNumber(totalMembers), label: '전체 회원' },
+            { value: `${formatNumber(totalPosts)}개`, label: '전체 게시글' },
+            { value: `${regions.length}개 시·도`, label: '지역 커버리지' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

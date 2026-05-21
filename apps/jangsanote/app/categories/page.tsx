@@ -38,6 +38,12 @@ function isTrending(postCount: number, allCounts: number[]) {
 export default function CategoriesPage() {
   const categories = CHANNELS.filter((c) => c.type === 'category')
   const allPostCounts = categories.map((c) => c.postCount)
+  const totalMembers = categories.reduce((s, c) => s + c.memberCount, 0)
+  const totalPosts = categories.reduce((s, c) => s + c.postCount, 0)
+  const hotCount = allPostCounts.filter((n) => {
+    const sorted = [...allPostCounts].sort((a, b) => b - a)
+    return n >= (sorted[2] ?? 0)
+  }).length
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://jangsanote.amakers.co.kr/categories',
@@ -55,6 +61,23 @@ export default function CategoriesPage() {
           </p>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${categories.length}개`, label: '업종 채널' },
+            { value: formatNumber(totalMembers), label: '전체 회원' },
+            { value: `${formatNumber(totalPosts)}개`, label: '전체 게시글' },
+            { value: `${hotCount}개`, label: 'HOT 채널' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

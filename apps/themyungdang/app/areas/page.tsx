@@ -7,6 +7,7 @@ export const metadata: Metadata = buildPageMetadata('themyungdang', {
   path: '/areas',
 })
 
+import { formatNumber } from '@amakers/utils'
 import { AREAS } from '@/lib/mock-data'
 import AreasPageClient from '@/components/areas-page-client'
 
@@ -16,6 +17,12 @@ const listJsonLd = buildItemListJsonLd({
 })
 
 export default function AreasPage() {
+  const uniqueRegions = Array.from(new Set(AREAS.map((a) => a.region))).length
+  const avgFootTraffic = AREAS.length
+    ? Math.round(AREAS.reduce((s, a) => s + a.footTraffic, 0) / AREAS.length)
+    : 0
+  const maxArea = [...AREAS].sort((a, b) => b.footTraffic - a.footTraffic)[0]
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -29,6 +36,23 @@ export default function AreasPage() {
           </p>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${AREAS.length}개`, label: '분석 상권' },
+            { value: `${uniqueRegions}개`, label: '커버 지역' },
+            { value: formatNumber(avgFootTraffic), label: '평균 유동인구' },
+            { value: maxArea?.name ?? '-', label: '최대 유동인구 상권' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* ── 필터 + 지도 + 카드 그리드 (client) ─────────────────── */}
       <AreasPageClient />
