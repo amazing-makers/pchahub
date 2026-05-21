@@ -88,15 +88,15 @@ export default function AwardsYearPage({ params, searchParams }: YearPageProps) 
           {/* Stats summary row */}
           <div className="mt-5 grid grid-cols-3 gap-3 sm:grid-cols-3 max-w-lg">
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center">
-              <div className="text-xl font-bold text-amber-900">{allYearAwards.length}</div>
+              <div className="text-xl font-black tracking-tight text-amber-900">{allYearAwards.length}</div>
               <div className="mt-0.5 text-xs text-amber-700">총 시상 수</div>
             </div>
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center">
-              <div className="text-xl font-bold text-amber-900">{categoriesWithAwards.length}</div>
+              <div className="text-xl font-black tracking-tight text-amber-900">{categoriesWithAwards.length}</div>
               <div className="mt-0.5 text-xs text-amber-700">참여 업종</div>
             </div>
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center">
-              <div className="text-xl font-bold text-amber-900">
+              <div className="text-xl font-black tracking-tight text-amber-900">
                 {allYearAwards.filter((a) => a.rank === 1).length}
               </div>
               <div className="mt-0.5 text-xs text-amber-700">대상 수상</div>

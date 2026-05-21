@@ -23,11 +23,16 @@ import { SavedKnowhowSection } from '@/components/saved-knowhow-section'
 import { SavedMentorsSection } from '@/components/saved-mentors-section'
 import {
   COURSE_CATEGORIES,
+  COURSES,
   FEATURED_COURSES,
   FEATURED_MENTORS,
   FREE_COURSES,
+  MENTORS,
   popularCourses,
 } from '@/lib/mock-data'
+import { KNOWHOW_ITEMS } from '@/lib/knowhow'
+import { RECIPES } from '@/lib/recipes'
+import { formatNumber } from '@amakers/utils'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -86,6 +91,25 @@ export default function HomePage() {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats strip */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${COURSES.length}개`, label: '운영 강의' },
+              { value: `${MENTORS.length}명`, label: '전문 멘토' },
+              { value: `${KNOWHOW_ITEMS.length}개`, label: '운영 노하우' },
+              { value: `${RECIPES.length}개`, label: '업소용 레시피' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

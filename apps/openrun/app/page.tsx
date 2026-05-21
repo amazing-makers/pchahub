@@ -84,7 +84,7 @@ export default function HomePage() {
           <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {STAT_BLOCKS.map((s) => (
               <div key={s.label}>
-                <div className="text-2xl font-bold">{s.value}</div>
+                <div className="text-2xl font-black tracking-tight">{s.value}</div>
                 <div className="mt-0.5 text-xs text-gray-400">{s.label}</div>
               </div>
             ))}

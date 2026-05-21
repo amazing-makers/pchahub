@@ -115,6 +115,25 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Stats strip */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: formatNumber(allBrands.length), label: '등록 브랜드' },
+              { value: `${CATEGORIES.length}개`, label: '업종 카테고리' },
+              { value: `${LISTINGS.length}개`, label: '창업 매물' },
+              { value: formatNumber(allBrands.reduce((s, b) => s + (b.storeCount ?? 0), 0)), label: '총 가맹점 수' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 최근 본 브랜드 — 클라이언트 전용, localStorage 기반 */}
       <RecentlyViewedBrands />
 

@@ -67,13 +67,25 @@ export default function HomePage() {
                 전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
-              <span>채널 {totalChannels}개</span>
-              <span>·</span>
-              <span>누적 게시글 {formatNumber(totalPosts)}개</span>
-              <span>·</span>
-              <span>모임 {totalMeetings}건</span>
             </div>
+        </div>
+      </section>
+
+      {/* Stats strip */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${totalChannels}개`, label: '커뮤니티 채널' },
+              { value: formatNumber(totalPosts), label: '누적 게시글' },
+              { value: `${totalMeetings}건`, label: '오프라인 모임' },
+              { value: `${CHANNELS.reduce((s, c) => s + c.memberCount, 0).toLocaleString()}명`, label: '전체 회원' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

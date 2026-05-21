@@ -9,6 +9,7 @@ export const metadata: Metadata = buildPageMetadata('bestplace', {
 
 import { ArrowRight, Award, Flame, Trophy } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
+import { formatNumber } from '@amakers/utils'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { AwardCard } from '@/components/award-card'
 import { StoreCard } from '@/components/store-card'
@@ -85,6 +86,25 @@ export default function HomePage() {
                 전국 매장 둘러보기
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats strip */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: formatNumber(STORES.length), label: '등록 매장' },
+              { value: `${firstPlaceAwards.length}개`, label: '올해 대상' },
+              { value: formatNumber(STORES.reduce((s, st) => s + st.reviewCount, 0)), label: '누적 리뷰' },
+              { value: (STORES.reduce((s, st) => s + st.rating, 0) / STORES.length).toFixed(1), label: '평균 별점' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

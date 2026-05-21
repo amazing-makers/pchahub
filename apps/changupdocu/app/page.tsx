@@ -17,15 +17,18 @@ import { SavedArticlesSection } from '@/components/saved-articles-section'
 import { RecentlyViewedEpisodes } from '@/components/recently-viewed-episodes'
 import { RecentlyViewedArticles } from '@/components/recently-viewed-articles'
 import {
+  ARTICLES,
   CATEGORY_COLOR,
   CATEGORY_LABEL,
-  FEATURED_EPISODES,
+  EPISODES,
   FEATURED_ARTICLES,
+  FEATURED_EPISODES,
   recentArticles,
   recentEpisodes,
   TRENDING_EPISODES,
   type EpisodeCategory,
 } from '@/lib/mock-data'
+import { formatNumber } from '@amakers/utils'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -103,6 +106,25 @@ export default function HomePage() {
                 </a>
               ))}
             </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats strip */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${EPISODES.length}개`, label: '창업 에피소드' },
+              { value: `${ARTICLES.length}개`, label: '매거진 아티클' },
+              { value: `${Object.keys(CATEGORY_LABEL).length}개`, label: '카테고리' },
+              { value: formatNumber(EPISODES.reduce((s, e) => s + e.views, 0)), label: '누적 조회' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

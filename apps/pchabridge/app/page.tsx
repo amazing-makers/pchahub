@@ -16,6 +16,7 @@ import { WatchedRoundsSection } from '@/components/watched-rounds-section'
 import { RecentlyViewedRounds } from '@/components/recently-viewed-rounds'
 import { RecentlyViewedMA } from '@/components/recently-viewed-ma'
 import { FEATURED_ROUNDS, MA_LISTINGS, ROUNDS, STATS } from '@/lib/mock-data'
+import { formatNumber } from '@amakers/utils'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -90,6 +91,25 @@ export default function HomePage() {
                 <t.icon className={`h-4 w-4 ${t.color}`} />
                 {t.label}
               </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats strip */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${ROUNDS.length}개`, label: '투자 라운드' },
+              { value: `${MA_LISTINGS.length}개`, label: 'M&A 매물' },
+              { value: `${ROUNDS.filter(r => r.status === 'open').length}개`, label: '현재 모집 중' },
+              { value: STATS.totalRaised, label: '누적 모집 자금' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
             ))}
           </div>
         </div>
