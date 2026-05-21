@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '테마별 브랜드',
@@ -13,6 +13,13 @@ import { ThemeIcon } from '@/components/theme-icon'
 import { THEMES, THEME_COUNTS } from '@/lib/themes'
 import { formatNumber } from '@amakers/utils'
 
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '테마별 브랜드', url: 'https://pchahub.amakers.co.kr/themes' },
+  ],
+})
+
 const listJsonLd = buildItemListJsonLd({
   url: 'https://pchahub.amakers.co.kr/themes',
   items: THEMES.map((t) => ({ name: t.label, url: `https://pchahub.amakers.co.kr/themes/${t.key}` })),
@@ -25,6 +32,7 @@ export default function ThemesPage() {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">테마별 보기</h1>

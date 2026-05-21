@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from 'next'
 import { Card, CardContent } from '@amakers/ui'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CHANNELS } from '@/lib/mock-data'
 
@@ -20,9 +20,17 @@ export default function RegionsPage() {
     items: regions.map((c) => ({ name: c.label, url: `https://jangsanote.amakers.co.kr/regions/${c.key}` })),
   })
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
+      { name: '지역 채널', url: 'https://jangsanote.amakers.co.kr/regions' },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">지역</h1>

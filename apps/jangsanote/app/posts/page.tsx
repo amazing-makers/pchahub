@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next'
 import { Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CHANNELS, POSTS } from '@/lib/mock-data'
 import { PostCard } from '@/components/post-card'
@@ -58,6 +58,13 @@ export default function PostsPage({
     items: paged.map((p) => ({ name: p.title, url: `https://jangsanote.amakers.co.kr/posts/${p.id}` })),
   })
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
+      { name: '전체 글', url: 'https://jangsanote.amakers.co.kr/posts' },
+    ],
+  })
+
   const totalViews = POSTS.reduce((s, p) => s + p.views, 0)
   const totalLikes = POSTS.reduce((s, p) => s + p.likes, 0)
   const channelCount = CHANNELS.length
@@ -65,6 +72,7 @@ export default function PostsPage({
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">전체 글</h1>
