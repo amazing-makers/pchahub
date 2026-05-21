@@ -107,26 +107,26 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
         </div>
       </section>
 
-      <div className="container mx-auto py-8">
-        {/* 펀딩 현황 */}
-        <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-700">전체 펀딩 현황</h2>
-          <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-xl font-black text-gray-900">{allFund.length}건</div>
-              <div className="text-xs text-gray-500">모집 중 라운드</div>
-            </div>
-            <div>
-              <div className="text-xl font-black text-gray-900">{totalStr}</div>
-              <div className="text-xs text-gray-500">총 목표 모집액</div>
-            </div>
-            <div>
-              <div className="text-xl font-black text-gray-900">{minInvestStr}</div>
-              <div className="text-xs text-gray-500">최소 참여 금액</div>
-            </div>
+      {/* 통계 스트립 */}
+      {!q && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${allFund.length}건`, label: '모집 중 라운드' },
+              { value: totalStr, label: '총 목표 모집액' },
+              { value: minInvestStr, label: '최소 참여 금액' },
+              { value: `${allFund.filter((r) => r.type === 'crowd').length}건`, label: '크라우드 펀딩' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
+      <div className="container mx-auto py-8">
         {/* 정렬 */}
         <div className="mb-4 flex items-center justify-between">
           <div className="text-sm text-gray-700">

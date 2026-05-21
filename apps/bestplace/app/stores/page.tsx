@@ -83,26 +83,6 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
               매장 등록
             </a>
           </div>
-          {/* 통계 요약 */}
-          <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-1 sm:flex sm:gap-8 text-sm">
-            <div>
-              <span className="text-xs text-gray-500">인증 매장</span>
-              <div className="font-bold text-gray-900">{STORES.length}곳</div>
-            </div>
-            <div>
-              <span className="text-xs text-gray-500">평균 평점</span>
-              <div className="font-bold text-gray-900">★ {avgRating}</div>
-            </div>
-            <div>
-              <span className="text-xs text-gray-500">누적 리뷰</span>
-              <div className="font-bold text-gray-900">{formatNumber(totalReviews)}건</div>
-            </div>
-            <div>
-              <span className="text-xs text-gray-500">지역 커버</span>
-              <div className="font-bold text-gray-900">{regionCount}개 지역</div>
-            </div>
-          </div>
-
           {/* 검색 폼 */}
           <form method="get" action="/stores" className="mt-5">
             {category && <input type="hidden" name="category" value={category} />}
@@ -120,6 +100,25 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
           </form>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!category && !region && !q && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${STORES.length}곳`, label: '인증 매장' },
+              { value: `⭐ ${avgRating}`, label: '평균 평점' },
+              { value: `${formatNumber(totalReviews)}건`, label: '누적 리뷰' },
+              { value: `${regionCount}개`, label: '지역 커버' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="mb-4">

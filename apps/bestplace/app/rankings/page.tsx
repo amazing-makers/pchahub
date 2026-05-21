@@ -9,6 +9,7 @@ export const metadata: Metadata = buildPageMetadata('bestplace', {
 
 import { Trophy } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
+import { formatNumber } from '@amakers/utils'
 import { RankingList } from '@/components/ranking-list'
 import { AwardCard } from '@/components/award-card'
 import {
@@ -29,6 +30,12 @@ interface RankingsPageProps {
 export default function RankingsPage({ searchParams }: RankingsPageProps) {
   const selectedCategory = searchParams.category ?? ''
   const currentYear = new Date().getFullYear()
+
+  // Global stats (always over full STORES set)
+  const avgRating = (STORES.reduce((s, st) => s + st.rating, 0) / STORES.length).toFixed(1)
+  const totalReviews = STORES.reduce((s, st) => s + st.reviewCount, 0)
+  const totalVisitors = STORES.reduce((s, st) => s + st.monthlyVisitors, 0)
+  const regionCount = new Set(STORES.map((s) => s.region)).size
 
   // Category-filtered stores base
   const filteredBase = selectedCategory
@@ -96,6 +103,24 @@ export default function RankingsPage({ searchParams }: RankingsPageProps) {
           </div>
         </div>
       </section>
+
+      {!selectedCategory && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: formatNumber(STORES.length), label: '전체 매장 수' },
+              { value: `⭐ ${avgRating}`, label: '평균 평점' },
+              { value: formatNumber(totalVisitors), label: '월 방문객 합계' },
+              { value: formatNumber(totalReviews), label: '누적 리뷰 수' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto py-8">
         {hallOfFameStore && (

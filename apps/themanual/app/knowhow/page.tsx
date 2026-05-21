@@ -11,6 +11,7 @@ import {
   type KnowhowCategory,
 } from '@/lib/knowhow'
 import { buildPageMetadata } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '업소 운영 노하우',
@@ -102,6 +103,8 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
   const totalCount = KNOWHOW_ITEMS.length
   const freeCount  = FREE_KNOWHOW.length
   const paidCount  = KNOWHOW_ITEMS.filter((k) => k.premium).length
+  const totalViews = KNOWHOW_ITEMS.reduce((s, k) => s + k.viewCount, 0)
+  const categoryCount = Object.keys(KNOWHOW_CATEGORY_LABEL).length
 
   return (
     <main className="bg-gray-50">
@@ -154,6 +157,27 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
           </form>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!isFiltered && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              {[
+                { value: `${totalCount}개`, label: '전체 노하우' },
+                { value: `${freeCount}개`, label: '무료 콘텐츠' },
+                { value: `${paidCount}개`, label: '프리미엄' },
+                { value: formatNumber(totalViews), label: '누적 조회' },
+              ].map(({ value, label }) => (
+                <div key={label} className="px-6 py-4">
+                  <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                  <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         {/* Featured — only on unfiltered view */}

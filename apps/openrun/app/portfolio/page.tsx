@@ -60,16 +60,6 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
             실제 진행한 캠페인과 측정된 결과를 모두 공개합니다.
           </p>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
-            <span><span className="font-semibold text-gray-900">{PORTFOLIO.length}건</span> 캠페인</span>
-            <span className="text-gray-300">|</span>
-            <span><span className="font-semibold text-gray-900">{totalClients}</span>개 브랜드</span>
-            <span className="text-gray-300">|</span>
-            <span><span className="font-semibold text-gray-900">{industryCount}</span>개 업종</span>
-            <span className="text-gray-300">|</span>
-            <span><span className="font-semibold text-gray-900">{SERVICES.length}</span>가지 서비스</span>
-          </div>
-
           {/* Search bar */}
           <form method="GET" action="/portfolio" className="mt-5 flex max-w-md gap-2">
             {service && <input type="hidden" name="service" value={service} />}
@@ -151,6 +141,25 @@ export default function PortfolioPage({ searchParams }: PortfolioPageProps) {
           </div>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!service && !q && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: `${PORTFOLIO.length}건`, label: '캠페인 사례' },
+              { value: `${totalClients}개`, label: '참여 브랜드' },
+              { value: `${industryCount}개`, label: '업종 범위' },
+              { value: `${SERVICES.length}개`, label: '서비스 유형' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto py-8">
         {q && (

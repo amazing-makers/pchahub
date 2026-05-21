@@ -92,19 +92,29 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
             현직 점주·세무사·변호사·마케터가 1:1로 상담합니다.
             강의로 해결 안 되는 구체적인 고민에 답을 받으세요.
           </p>
-          <div className="mt-5 flex flex-wrap gap-6 text-sm">
-            <Stat label="총 멘토" value={`${MENTORS.length}명`} />
-            <Stat
-              label="누적 상담"
-              value={`${formatNumber(MENTORS.reduce((s, m) => s + m.totalConsultations, 0))}회`}
-            />
-            <Stat
-              label="평균 평점"
-              value={(MENTORS.reduce((s, m) => s + m.rating, 0) / MENTORS.length).toFixed(1)}
-            />
-          </div>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!q && !specialty && !featured && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              {[
+                { value: `${MENTORS.length}명`, label: '전체 멘토' },
+                { value: `${formatNumber(MENTORS.reduce((s, m) => s + m.totalConsultations, 0))}회`, label: '누적 상담' },
+                { value: `⭐ ${(MENTORS.reduce((s, m) => s + m.rating, 0) / MENTORS.length).toFixed(1)}`, label: '평균 평점' },
+                { value: `${ALL_SPECIALTIES.length}개`, label: '전문 분야' },
+              ].map(({ value, label }) => (
+                <div key={label} className="px-6 py-4">
+                  <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                  <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
@@ -329,11 +339,3 @@ function FilterLink({
   )
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <div className="text-xs text-gray-500">{label}</div>
-      <div className="mt-0.5 text-base font-bold text-gray-900">{value}</div>
-    </div>
-  )
-}
