@@ -8,6 +8,13 @@ const inquiryJsonLd = buildServiceJsonLd({
   provider: { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
 })
 
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '가맹 상담 신청', url: 'https://pchahub.amakers.co.kr/inquiry' },
+  ],
+})
+
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '가맹 상담 신청',
   description: '관심 브랜드의 가맹 상담을 신청하세요. 영업일 1일 이내 담당자가 연락드립니다.',
@@ -21,6 +28,7 @@ export default function InquiryPage() {
   return (
     <main className="bg-gray-50">
       <JsonLd data={inquiryJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">가맹 상담 신청</h1>

@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildFaqPageJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildFaqPageJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '광고 상품',
@@ -143,6 +143,14 @@ const FAQS = [
   },
 ]
 
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '본사 파트너십', url: 'https://pchahub.amakers.co.kr/for-brands' },
+    { name: '광고 상품', url: 'https://pchahub.amakers.co.kr/for-brands/ads' },
+  ],
+})
+
 const faqJsonLd = buildFaqPageJsonLd({
   url: 'https://pchahub.amakers.co.kr/for-brands/ads',
   items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
@@ -152,6 +160,7 @@ export default function AdsPage() {
   return (
     <main className="bg-gray-50">
       <JsonLd data={faqJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-section">
           <a
