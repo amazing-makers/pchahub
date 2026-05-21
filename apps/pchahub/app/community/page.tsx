@@ -67,6 +67,10 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
     items: filteredDiscussions.slice(0, 20).map((d) => ({ name: d.title, url: `https://pchahub.amakers.co.kr/community/${d.id}` })),
   })
 
+  const totalViews = DISCUSSIONS.reduce((s, d) => s + d.views, 0)
+  const totalComments = DISCUSSIONS.reduce((s, d) => s + d.comments, 0)
+  const categoryCount = new Set(DISCUSSIONS.map((d) => d.category)).size
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -105,6 +109,30 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
               </a>
             )}
           </form>
+        </div>
+      </section>
+
+      {/* 통계 스트립 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-4">
+          <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{DISCUSSIONS.length}건</span>
+              <span className="text-[11px] font-semibold text-gray-700">커뮤니티 글</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalViews)}</span>
+              <span className="text-[11px] font-semibold text-gray-700">누적 조회</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{totalComments}</span>
+              <span className="text-[11px] font-semibold text-gray-700">전체 댓글</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+              <span className="text-xl font-black tracking-tight text-gray-900">{QUESTIONS.length}건</span>
+              <span className="text-[11px] font-semibold text-gray-700">전문가 Q&A</span>
+            </div>
+          </div>
         </div>
       </section>
 
