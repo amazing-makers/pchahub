@@ -12,6 +12,7 @@ import { Card, CardContent } from '@amakers/ui'
 import { CATEGORIES } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
+import { formatNumber } from '@amakers/utils'
 
 const SORT_OPTIONS = [
   { key: 'recent', label: '최신 순' },
@@ -63,6 +64,8 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
 
   const transferCount = LISTINGS.filter((l) => l.listingType === '양도').length
   const newCount = LISTINGS.filter((l) => l.listingType === '신규임대').length
+  const regionCount = new Set(LISTINGS.map((l) => l.region)).size
+  const isFiltered = !!(active || activeType || activeRegion || q)
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://pchahub.amakers.co.kr/listings',
@@ -91,6 +94,32 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           </div>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!isFiltered && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto py-4">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{LISTINGS.length}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">전체 매물</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{transferCount}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">양도 매물</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{newCount}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">신규임대 매물</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{regionCount}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">지역 커버</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         {/* Search bar */}

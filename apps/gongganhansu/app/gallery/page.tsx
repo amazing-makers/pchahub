@@ -10,6 +10,7 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
 import { Search } from 'lucide-react'
 import { PortfolioCardWithSave } from '@/components/portfolio-card-with-save'
 import { CATEGORIES, PORTFOLIO } from '@/lib/mock-data'
+import { formatNumber } from '@amakers/utils'
 
 const SORT_OPTIONS = [
   { key: 'featured', label: '추천 순' },
@@ -51,6 +52,10 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
     url: 'https://gongganhansu.amakers.co.kr/gallery',
     items: items.slice(0, 20).map((p) => ({ name: p.title, url: `https://gongganhansu.amakers.co.kr/gallery/${p.id}` })),
   })
+
+  const featuredCount = PORTFOLIO.filter((p) => p.featured).length
+  const categoryCount = new Set(PORTFOLIO.map((p) => p.category)).size
+  const regionCount = new Set(PORTFOLIO.map((p) => p.region)).size
 
   return (
     <main className="bg-gray-50">
@@ -142,6 +147,32 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
           </div>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!category && !q && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto py-4">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{PORTFOLIO.length}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">전체 포트폴리오</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{categoryCount}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">업종 카테고리</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{featuredCount}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">추천 시공 사례</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{regionCount}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">지역 커버</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         {q && (

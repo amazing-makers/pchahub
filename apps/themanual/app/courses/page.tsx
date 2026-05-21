@@ -6,6 +6,7 @@ import { CourseCardWithSave } from '@/components/course-card-with-save'
 import { COURSE_CATEGORIES, COURSES, LEVEL_LABEL, type CourseLevel } from '@/lib/mock-data'
 import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
+import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '강의 목록',
@@ -64,6 +65,11 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
     items: results.slice(0, 20).map((c) => ({ name: c.title, url: `https://themanual.amakers.co.kr/courses/${c.id}` })),
   })
 
+  const isFiltered = !!(category || level || free || q)
+  const freeCount = COURSES.filter((c) => c.price === 0).length
+  const totalEnrollment = COURSES.reduce((s, c) => s + c.enrollment, 0)
+  const avgRating = (COURSES.reduce((s, c) => s + c.rating, 0) / COURSES.length).toFixed(1)
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
@@ -98,6 +104,32 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
           </form>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!isFiltered && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto py-4">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{COURSES.length}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">전체 강의</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{formatNumber(totalEnrollment)}</span>
+                <span className="text-[11px] font-semibold text-gray-700">누적 수강</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{freeCount}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">무료 강의</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">★ {avgRating}</span>
+                <span className="text-[11px] font-semibold text-gray-700">평균 평점</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="mb-4">
