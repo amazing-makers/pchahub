@@ -181,7 +181,7 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
             <p className="mt-1 text-sm text-gray-600">
               {c.client}에 대한 추가 정보를 amakers 다른 플랫폼에서 확인하세요.
             </p>
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               <a
                 href={`https://pchahub.amakers.co.kr/brands?q=${encodeURIComponent(c.client)}`}
                 className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
@@ -209,6 +209,16 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
                 <span className="inline-flex items-center gap-1.5">
                   <Newspaper className="h-3.5 w-3.5 text-rose-500" />
                   브랜드 다큐 (창업다큐)
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+              <a
+                href="https://gongganhansu.amakers.co.kr/quote"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-slate-500" />
+                  매장 인테리어 견적
                 </span>
                 <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>

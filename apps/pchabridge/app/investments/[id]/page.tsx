@@ -7,6 +7,7 @@ import {
   Calendar,
   CheckCircle2,
   ChevronRight,
+  MapPin,
   MessageSquare,
   Store,
   TrendingUp,
@@ -323,6 +324,16 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
                 <span className="inline-flex items-center gap-1.5">
                   <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
                   점주 커뮤니티 (장사노트)
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+              <a
+                href="https://themyungdang.amakers.co.kr/listings"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                  가맹 매물 (더명당)
                 </span>
                 <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>
