@@ -58,6 +58,9 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
     }
   })
 
+  const totalViews = allPosts.reduce((s, p) => s + p.views, 0)
+  const totalLikes = allPosts.reduce((s, p) => s + p.likes, 0)
+
   const channelUrl = `https://jangsanote.amakers.co.kr/categories/${channel.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
@@ -78,9 +81,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">{channel.label}</h1>
           <p className="mt-1 text-sm text-gray-500">{channel.description}</p>
-          <div className="mt-2 text-xs text-gray-500">
-            회원 {formatNumber(channel.memberCount)}명 · 글 {formatNumber(channel.postCount)}개
-          </div>
+
           <div className="mt-4 flex flex-wrap gap-2">
             {SORT_OPTIONS.map((o) => (
               <a
@@ -127,6 +128,24 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
           </form>
         </div>
       </section>
+
+      {!q && (
+        <div className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+            {[
+              { value: formatNumber(channel.memberCount), label: '채널 회원' },
+              { value: `${formatNumber(channel.postCount)}개`, label: '전체 게시글' },
+              { value: formatNumber(totalViews), label: '누적 조회' },
+              { value: formatNumber(totalLikes), label: '누적 좋아요' },
+            ].map(({ value, label }) => (
+              <div key={label} className="px-6 py-4">
+                <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+                <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">

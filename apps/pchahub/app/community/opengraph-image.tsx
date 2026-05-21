@@ -8,7 +8,7 @@ export const contentType = 'image/png'
 
 export default function Image() {
   const totalPosts = DISCUSSIONS.length + QUESTIONS.length
-  const totalLikes = [...DISCUSSIONS, ...QUESTIONS].reduce((s, p) => s + p.likes, 0)
+  const totalViews = DISCUSSIONS.reduce((s, d) => s + d.views, 0)
 
   return new ImageResponse(
     buildPageOgImageJsx('pchahub', {
@@ -19,7 +19,7 @@ export default function Image() {
         `게시글 ${totalPosts}개`,
         `토론 ${DISCUSSIONS.length}개`,
         `Q&A ${QUESTIONS.length}개`,
-        `좋아요 ${totalLikes.toLocaleString()}개`,
+        `조회 ${totalViews.toLocaleString()}회`,
       ],
     }),
     { ...OG_IMAGE_SIZE },

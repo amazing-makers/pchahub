@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { AlertCircle, ArrowRight, BookOpen, ChevronRight, MapPin, MessageSquare, Store } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { formatNumber } from '@amakers/utils'
 import { BrandCard } from '@/components/brand-card'
 import { ThemeIcon } from '@/components/theme-icon'
 import { THEMES, THEME_COUNTS, brandsForTheme } from '@/lib/themes'
@@ -32,6 +33,8 @@ export default function ThemePage({ params }: ThemePageProps) {
 
   const brands = brandsForTheme(theme.key)
   const otherThemes = THEMES.filter((t) => t.key !== theme.key).slice(0, 4)
+  const totalStores = brands.reduce((s, b) => s + (b.storeCount ?? 0), 0)
+  const recruitingCount = brands.filter((b) => b.recruiting).length
 
   const themeUrl = `https://pchahub.amakers.co.kr/themes/${theme.key}`
   const breadcrumbs = buildBreadcrumbsJsonLd({
@@ -75,6 +78,22 @@ export default function ThemePage({ params }: ThemePageProps) {
           <p className="mt-6 max-w-3xl text-base leading-relaxed text-gray-700">{theme.guide}</p>
         </div>
       </section>
+
+      <div className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+          {[
+            { value: `${brands.length}개`, label: '이 테마 브랜드' },
+            { value: formatNumber(totalStores), label: '총 가맹점 수' },
+            { value: `${recruitingCount}개`, label: '모집 중 브랜드' },
+            { value: `${THEMES.length}개`, label: '전체 테마' },
+          ].map(({ value, label }) => (
+            <div key={label} className="px-6 py-4">
+              <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>
+              <p className="mt-0.5 text-[11px] font-semibold text-gray-700">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="container mx-auto py-8 space-y-8">
         {/* Considerations */}
