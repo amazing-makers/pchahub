@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
   title: '실시간 랭킹',
@@ -64,9 +64,17 @@ export default function RankingsPage({ searchParams }: RankingsPageProps) {
     items: topRated.map((s) => ({ name: s.name, url: `https://bestplace.amakers.co.kr/stores/${s.id}` })),
   })
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '베스트플레이스', url: 'https://bestplace.amakers.co.kr' },
+      { name: '실시간 랭킹', url: 'https://bestplace.amakers.co.kr/rankings' },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">실시간 매장 랭킹</h1>

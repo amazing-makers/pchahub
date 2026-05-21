@@ -3,7 +3,7 @@ import { MapPin, Plus, Search } from 'lucide-react'
 import { Card, CardContent } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { formatNumber } from '@amakers/utils'
 
@@ -57,6 +57,13 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
     items: results.slice(0, 20).map((s) => ({ name: s.name, url: `https://bestplace.amakers.co.kr/stores/${s.id}` })),
   })
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '베스트플레이스', url: 'https://bestplace.amakers.co.kr' },
+      { name: '매장 디렉토리', url: 'https://bestplace.amakers.co.kr/stores' },
+    ],
+  })
+
   const avgRating = STORES.length
     ? (STORES.reduce((s, st) => s + st.rating, 0) / STORES.length).toFixed(1)
     : '-'
@@ -66,6 +73,7 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex items-start justify-between gap-4">
