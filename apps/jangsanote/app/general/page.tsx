@@ -70,8 +70,19 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
       <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h3 font-bold text-gray-900">자유게시판</h1>
-          <p className="mt-1 text-sm text-gray-500">업종·지역 구분 없이 자유롭게 이야기하는 곳</p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">자유게시판</h1>
+              <p className="mt-1 text-sm text-gray-500">업종·지역 구분 없이 자유롭게 이야기하는 곳</p>
+            </div>
+            <a
+              href="/write"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            >
+              <span className="text-base leading-none">+</span>
+              글 작성
+            </a>
+          </div>
           <div className="mt-4 flex flex-wrap gap-2">
             {SORT_OPTIONS.map((o) => (
               <a
