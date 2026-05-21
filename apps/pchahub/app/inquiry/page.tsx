@@ -1,5 +1,12 @@
 import type { Metadata } from 'next'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildPageMetadata, buildServiceJsonLd, JsonLd } from '@amakers/design-system'
+
+const inquiryJsonLd = buildServiceJsonLd({
+  name: '프차허브 가맹 상담 신청',
+  description: '관심 브랜드의 가맹 상담을 신청하세요. 영업일 1일 이내 담당자가 연락드립니다.',
+  url: 'https://pchahub.amakers.co.kr/inquiry',
+  provider: { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+})
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '가맹 상담 신청',
@@ -13,6 +20,7 @@ import { InquiryPageContent } from './inquiry-form'
 export default function InquiryPage() {
   return (
     <main className="bg-gray-50">
+      <JsonLd data={inquiryJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">가맹 상담 신청</h1>

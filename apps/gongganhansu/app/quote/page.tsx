@@ -1,5 +1,12 @@
 import type { Metadata } from 'next'
-import { buildPageMetadata } from '@amakers/design-system'
+import { buildPageMetadata, buildServiceJsonLd, JsonLd } from '@amakers/design-system'
+
+const quoteJsonLd = buildServiceJsonLd({
+  name: '공간한수 매장 인테리어 무료 견적',
+  description: '매장 카테고리·면적·지역·예산을 입력하면 적합한 시공사 3~5곳의 견적을 영업일 기준 48시간 내에 받아보실 수 있습니다.',
+  url: 'https://gongganhansu.amakers.co.kr/quote',
+  provider: { name: '공간한수', url: 'https://gongganhansu.amakers.co.kr' },
+})
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '무료 견적 신청',
@@ -16,6 +23,7 @@ interface QuotePageProps {
 export default function QuotePage({ searchParams }: QuotePageProps) {
   return (
     <main className="bg-gray-50">
+      <JsonLd data={quoteJsonLd} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">무료 견적 요청</h1>
