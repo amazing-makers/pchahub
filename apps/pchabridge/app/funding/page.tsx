@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
   title: '펀딩',
   description: '매장 운영 자금 및 크라우드 펀딩 라운드 목록.',
   path: '/funding',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차브릿지', url: 'https://pchabridge.amakers.co.kr' },
+    { name: '투자 라운드', url: 'https://pchabridge.amakers.co.kr/funding' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -69,6 +76,7 @@ export default function FundingPage({ searchParams }: FundingPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">다점포 펀딩 + 크라우드</h1>

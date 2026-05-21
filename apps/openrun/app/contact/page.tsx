@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { buildPageMetadata, buildServiceJsonLd, JsonLd } from '@amakers/design-system'
+import {  buildPageMetadata, buildServiceJsonLd, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 const contactJsonLd = buildServiceJsonLd({
   name: '오픈런 캠페인 의뢰',

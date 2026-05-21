@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildFaqPageJsonLd, buildHowToJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildFaqPageJsonLd, buildHowToJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themyungdang', {
   title: '안전 거래',
@@ -116,6 +116,13 @@ const STATS = [
   { label: '고객 만족도', value: '94%' },
 ]
 
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '더명당', url: 'https://themyungdang.amakers.co.kr' },
+    { name: '안전 거래', url: 'https://themyungdang.amakers.co.kr/safe-deal' },
+  ],
+})
+
 const faqJsonLd = buildFaqPageJsonLd({
   url: 'https://themyungdang.amakers.co.kr/safe-deal',
   items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
@@ -134,6 +141,7 @@ export default function SafeDealPage() {
     <main>
       <JsonLd data={faqJsonLd} />
       <JsonLd data={howToJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">

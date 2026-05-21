@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '창업 수익 계산기',
@@ -8,6 +8,13 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
 })
 
 import { CalculatorForm } from './form'
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '수익 계산기', url: 'https://pchahub.amakers.co.kr/calculator' },
+  ],
+})
 
 const calculatorJsonLd = buildSoftwareApplicationJsonLd({
   name: '프차허브 창업 수익 계산기',
@@ -25,6 +32,7 @@ export default function CalculatorPage({ searchParams }: CalculatorPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={calculatorJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">수익 계산기</h1>

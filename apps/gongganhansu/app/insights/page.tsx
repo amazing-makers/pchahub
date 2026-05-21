@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '인사이트',
   description: 'F&B 매장 인테리어·시공 관련 인사이트와 트렌드.',
   path: '/insights',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '공간한수', url: 'https://gongganhansu.amakers.co.kr' },
+    { name: '인테리어 인사이트', url: 'https://gongganhansu.amakers.co.kr/insights' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -61,6 +68,7 @@ export default function InsightsPage({ searchParams }: InsightsPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">한 수 인사이트</h1>

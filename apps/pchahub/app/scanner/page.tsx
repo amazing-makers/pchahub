@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '창업 스캐너',
@@ -8,6 +8,13 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
 })
 
 import { ScannerWizard } from './wizard'
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '창업 스캐너', url: 'https://pchahub.amakers.co.kr/scanner' },
+  ],
+})
 
 const scannerJsonLd = buildSoftwareApplicationJsonLd({
   name: '프차허브 창업 스캐너',
@@ -21,6 +28,7 @@ export default function ScannerPage() {
   return (
     <main className="bg-gray-50">
       <JsonLd data={scannerJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">창업 스캐너</h1>

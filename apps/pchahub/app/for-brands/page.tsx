@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildHowToJsonLd, buildOrganizationJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import { buildBreadcrumbsJsonLd, buildHowToJsonLd, buildOrganizationJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '본사 파트너십',
@@ -95,6 +95,13 @@ const FEATURES = [
   { icon: Megaphone, label: '광고 캠페인 운영' },
 ]
 
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '본사 파트너십', url: 'https://pchahub.amakers.co.kr/for-brands' },
+  ],
+})
+
 const orgJsonLd = buildOrganizationJsonLd({
   name: '프차허브',
   url: 'https://pchahub.amakers.co.kr',
@@ -114,6 +121,7 @@ export default function ForBrandsPage() {
     <main>
       <JsonLd data={orgJsonLd} />
       <JsonLd data={processHowToJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Hero — dark */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">

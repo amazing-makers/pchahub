@@ -3,13 +3,20 @@ import { ArrowRight, BookOpen, MapPin, MessageSquare, Search, Store } from 'luci
 import { Card, CardContent } from '@amakers/ui'
 import { ArticleCard } from '@/components/article-card'
 import { ARTICLES } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '매거진',
   description: '현장에서 길어 올린 분석과 인사이트. 회계사·변호사·컨설턴트·점주가 함께 쓰는 글.',
   path: '/magazine',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '창업다큐', url: 'https://changupdocu.amakers.co.kr' },
+    { name: '매거진', url: 'https://changupdocu.amakers.co.kr/magazine' },
+  ],
 })
 
 const SORT_OPTIONS = [
@@ -62,6 +69,7 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">

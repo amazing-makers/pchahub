@@ -10,7 +10,7 @@ import {
   KNOWHOW_ITEMS,
   type KnowhowCategory,
 } from '@/lib/knowhow'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
@@ -48,7 +48,14 @@ function makeHref(
   return qs ? `/knowhow?${qs}` : '/knowhow'
 }
 
-function FilterLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+function FilterLink({ href, active, children }: { href: string;
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
+    { name: '운영 노하우', url: 'https://themanual.amakers.co.kr/knowhow' },
+  ],
+}) active: boolean; children: React.ReactNode }) {
   return (
     <a
       href={href}
@@ -117,6 +124,7 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* Header */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
   title: '투자 라운드',
   description: '프랜차이즈 투자 라운드 목록. 투자 유형·모집 상태별로 찾아보세요.',
   path: '/investments',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차브릿지', url: 'https://pchabridge.amakers.co.kr' },
+    { name: '투자 현황', url: 'https://pchabridge.amakers.co.kr/investments' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -70,6 +77,7 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">투자 라운드</h1>

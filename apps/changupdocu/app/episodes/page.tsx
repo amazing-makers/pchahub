@@ -3,13 +3,20 @@ import { ArrowRight, BookOpen, MapPin, MessageSquare, PlayCircle, Search, Store 
 import { Card, CardContent } from '@amakers/ui'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { CATEGORY_LABEL, EPISODES, type EpisodeCategory } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '에피소드',
   description: '성공·실패·브랜드·트렌드·인터뷰. 자영업·가맹의 실제 데이터와 이야기를 영상으로 만나보세요.',
   path: '/episodes',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '창업다큐', url: 'https://changupdocu.amakers.co.kr' },
+    { name: '에피소드', url: 'https://changupdocu.amakers.co.kr/episodes' },
+  ],
 })
 
 interface EpisodesPageProps {
@@ -57,6 +64,7 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">

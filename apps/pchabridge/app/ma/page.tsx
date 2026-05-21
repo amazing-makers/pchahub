@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
   title: 'M&A 매물',
   description: '프랜차이즈 인수·합병 매물 목록. 브랜드·지역별로 찾아보세요.',
   path: '/ma',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차브릿지', url: 'https://pchabridge.amakers.co.kr' },
+    { name: 'M&A 매물', url: 'https://pchabridge.amakers.co.kr/ma' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -63,6 +70,7 @@ export default function MAPage({ searchParams }: MAPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">M&A 매물</h1>

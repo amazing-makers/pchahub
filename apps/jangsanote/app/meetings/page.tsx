@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '모임',
@@ -14,7 +14,14 @@ import { formatNumber } from '@amakers/utils'
 import { MeetingCard } from '@/components/meeting-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 
-const TYPES: Array<{ value: '' | MeetingType; label: string }> = [
+const TYPES: Array<{ value: '' | MeetingType;
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
+    { name: '오프라인 모임', url: 'https://jangsanote.amakers.co.kr/meetings' },
+  ],
+}) label: string }> = [
   { value: '', label: '전체' },
   { value: 'offline', label: '오프라인' },
   { value: 'online', label: '온라인' },
@@ -59,6 +66,7 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex flex-wrap items-end justify-between gap-3">

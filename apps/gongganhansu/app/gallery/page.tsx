@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '시공 갤러리',
   description: 'F&B 매장 시공 포트폴리오. 업종·카테고리별로 둘러보세요.',
   path: '/gallery',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '공간한수', url: 'https://gongganhansu.amakers.co.kr' },
+    { name: '시공 갤러리', url: 'https://gongganhansu.amakers.co.kr/gallery' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -60,6 +67,7 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">매장 갤러리</h1>

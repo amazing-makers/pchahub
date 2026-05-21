@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '멘토 목록',
@@ -84,6 +84,7 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* 헤더 */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
@@ -308,7 +309,14 @@ function makeHref(
   return qs ? `/mentors?${qs}` : '/mentors'
 }
 
-function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
+function FilterGroup({ title, children }: { title: string;
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
+    { name: '전문 멘토', url: 'https://themanual.amakers.co.kr/mentors' },
+  ],
+}) children: React.ReactNode }) {
   return (
     <div>
       <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</div>

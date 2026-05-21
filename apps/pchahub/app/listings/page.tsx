@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '가맹 입점 매물',
   description: '프랜차이즈 가맹 입점용 매물 목록. 카테고리·지역별로 찾아보세요.',
   path: '/listings',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '창업 매물', url: 'https://pchahub.amakers.co.kr/listings' },
+  ],
 })
 
 import { ArrowRight, Plus, Search } from 'lucide-react'
@@ -75,6 +82,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex items-start justify-between gap-4">

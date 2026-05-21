@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from 'next'
 import { ArrowRight, Flame } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { CHANNELS } from '@/lib/mock-data'
 
@@ -50,9 +50,17 @@ export default function CategoriesPage() {
     items: categories.map((c) => ({ name: c.label, url: `https://jangsanote.amakers.co.kr/categories/${c.key}` })),
   })
 
+  const breadcrumbs = buildBreadcrumbsJsonLd({
+    items: [
+      { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
+      { name: '커뮤니티 채널', url: 'https://jangsanote.amakers.co.kr/categories' },
+    ],
+  })
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">카테고리</h1>

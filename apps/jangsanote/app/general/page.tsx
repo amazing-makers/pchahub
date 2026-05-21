@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '자유게시판',
   description: '업종·지역 구분 없이 자유롭게 이야기하는 장사노트 자유게시판.',
   path: '/general',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '장사노트', url: 'https://jangsanote.amakers.co.kr' },
+    { name: '자유 게시판', url: 'https://jangsanote.amakers.co.kr/general' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -60,6 +67,7 @@ export default function GeneralPage({ searchParams }: GeneralPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">자유게시판</h1>

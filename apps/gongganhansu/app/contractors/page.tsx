@@ -3,13 +3,20 @@ import { Building2, Plus, Search } from 'lucide-react'
 import { ContractorCard } from '@/components/contractor-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '시공사 디렉토리',
   description: 'F&B 매장 시공 전문 시공사 목록. 평당 단가·예산 범위·시공 카테고리로 비교하세요.',
   path: '/contractors',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '공간한수', url: 'https://gongganhansu.amakers.co.kr' },
+    { name: '시공사 디렉토리', url: 'https://gongganhansu.amakers.co.kr/contractors' },
+  ],
 })
 
 const REGIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주']
@@ -71,6 +78,7 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <div className="flex items-start justify-between gap-4">

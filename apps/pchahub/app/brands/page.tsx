@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '브랜드 검색',
   description: '공정거래위원회 가맹정보 기준 프랜차이즈 브랜드 전체 목록. 창업비·성장률·가맹비·매장 수로 필터·정렬하여 나에게 맞는 브랜드를 찾으세요.',
   path: '/brands',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '브랜드 검색', url: 'https://pchahub.amakers.co.kr/brands' },
+  ],
 })
 
 import { Search } from 'lucide-react'
@@ -105,6 +112,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* ── 통합 검색 헤더 ── */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-6">

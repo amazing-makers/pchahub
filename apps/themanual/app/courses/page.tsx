@@ -4,7 +4,7 @@ import { Card, CardContent } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
 import { CourseCardWithSave } from '@/components/course-card-with-save'
 import { COURSE_CATEGORIES, COURSES, LEVEL_LABEL, type CourseLevel } from '@/lib/mock-data'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { formatNumber } from '@amakers/utils'
 
@@ -73,6 +73,7 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">
@@ -353,7 +354,14 @@ function makeHref(
   return qs ? `/courses?${qs}` : '/courses'
 }
 
-function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
+function FilterGroup({ title, children }: { title: string;
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '더매뉴얼', url: 'https://themanual.amakers.co.kr' },
+    { name: '운영 강의', url: 'https://themanual.amakers.co.kr/courses' },
+  ],
+}) children: React.ReactNode }) {
   return (
     <div>
       <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">{title}</div>

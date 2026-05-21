@@ -1,10 +1,17 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '커뮤니티',
   description: '프랜차이즈 창업 예비 점주 커뮤니티. 가맹비·수익·브랜드 질문과 토론을 자유롭게 나누세요.',
   path: '/community',
+})
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
+    { name: '커뮤니티', url: 'https://pchahub.amakers.co.kr/community' },
+  ],
 })
 
 import { ArrowRight, Eye, MessageSquare, Search, ThumbsUp } from 'lucide-react'
@@ -74,6 +81,7 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">프랜차이즈 커뮤니티</h1>

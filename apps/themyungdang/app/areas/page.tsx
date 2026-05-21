@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
+import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themyungdang', {
   title: '상권 분석',
@@ -10,6 +10,13 @@ export const metadata: Metadata = buildPageMetadata('themyungdang', {
 import { formatNumber } from '@amakers/utils'
 import { AREAS } from '@/lib/mock-data'
 import AreasPageClient from '@/components/areas-page-client'
+
+const breadcrumbs = buildBreadcrumbsJsonLd({
+  items: [
+    { name: '더명당', url: 'https://themyungdang.amakers.co.kr' },
+    { name: '상권 분석', url: 'https://themyungdang.amakers.co.kr/areas' },
+  ],
+})
 
 const listJsonLd = buildItemListJsonLd({
   url: 'https://themyungdang.amakers.co.kr/areas',
@@ -26,6 +33,7 @@ export default function AreasPage() {
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
+      <JsonLd data={breadcrumbs} />
       {/* ── 헤더 ────────────────────────────────────────────────── */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
