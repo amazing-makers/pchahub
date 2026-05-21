@@ -8,6 +8,7 @@ export const metadata: Metadata = buildPageMetadata('themyungdang', {
 })
 
 import { ChevronLeft, ChevronRight, Map, X } from 'lucide-react'
+import { formatNumber } from '@amakers/utils'
 import { Card, CardContent } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
 import { ListingCardWithSave } from '@/components/listing-card-with-save'
@@ -100,6 +101,10 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
     url: 'https://themyungdang.amakers.co.kr/listings',
     items: paginatedResults.map((l) => ({ name: l.title, url: `https://themyungdang.amakers.co.kr/listings/${l.id}` })),
   })
+
+  const transferCount = LISTINGS.filter((l) => l.type === 'transfer').length
+  const verifiedCount = LISTINGS.filter((l) => l.verified).length
+  const regionCount = new Set(LISTINGS.map((l) => l.region)).size
 
   return (
     <main className="bg-gray-50">
@@ -214,6 +219,32 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           </form>
         </div>
       </section>
+
+      {/* 통계 스트립 */}
+      {!hasActiveFilters && (
+        <section className="border-b border-gray-100 bg-white">
+          <div className="container mx-auto py-4">
+            <div className="grid grid-cols-2 divide-x divide-gray-100 sm:grid-cols-4">
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{LISTINGS.length}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">전체 매물</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{transferCount}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">양도 매물</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{verifiedCount}건</span>
+                <span className="text-[11px] font-semibold text-gray-700">본인 확인 매물</span>
+              </div>
+              <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
+                <span className="text-xl font-black tracking-tight text-gray-900">{regionCount}개</span>
+                <span className="text-[11px] font-semibold text-gray-700">지역 커버</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto py-8">
         <div className="mb-4">
