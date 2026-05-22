@@ -3,7 +3,7 @@ import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd 
 
 export const metadata: Metadata = buildPageMetadata('themyungdang', {
   title: '더명당 — 프랜차이즈 가맹 입점 매물·권리금 거래',
-  description: '전국 프랜차이즈 가맹 입점 매물 플랫폼. 권리금 양도·신규임대·상권 분석. amakers 안전 거래로 권리금 분쟁 위험을 줄이세요.',
+  description: '목 좋은 자리는 먼저 찾는 사람이 잡습니다. 전국 가맹 입점 매물·신규임대·상권 분석을 한눈에. amakers 안전 거래로 권리금 분쟁 걱정 없이 거래하세요.',
   path: '/',
 })
 
@@ -93,13 +93,13 @@ export default function HomePage() {
               더명당 · themyungdang.kr
             </p>
             <h1 className="mt-4 text-hero font-bold text-gray-900">
-              프랜차이즈 입점부터
+              목 좋은 자리,
               <br />
-              양도까지
+              남보다 먼저
             </h1>
             <p className="mt-6 text-lg text-gray-600">
-              검증된 매물만 모았습니다. 권리금·보증금·월세부터 상권 분석까지
-              <br className="hidden sm:inline" />한 페이지에서.
+              검증된 가맹 입점 매물만 모았습니다. 권리금·보증금·월세부터 상권 분석까지
+              <br className="hidden sm:inline" />확인하고 안전하게 거래하세요.
             </p>
             <div className="mt-10 space-y-3">
               <SearchBar />

@@ -3,7 +3,7 @@ import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWe
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '장사노트 — 자영업·가맹점주 커뮤니티',
-  description: '전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티. 상권 정보, 창업 팁, 업종별 채널, 오프라인 모임까지.',
+  description: '장사는 혼자 하는 게 아닙니다. 전국 자영업·가맹점주와 상권 정보·운영 노하우를 나누고, 업종별 채널과 오프라인 모임으로 연결되세요.',
   path: '/',
 })
 
@@ -88,7 +88,7 @@ export default function HomePage() {
             <div>
               <h1 className="text-h3 font-bold text-gray-900">장사노트</h1>
               <p className="mt-1 text-sm text-gray-500">
-                전국 자영업·가맹점주와 전문가가 함께 운영하는 커뮤니티.
+                장사, 혼자 고민하지 마세요 — 전국 점주들과 상권 정보·운영 노하우를 나누는 곳.
               </p>
             </div>
             </div>

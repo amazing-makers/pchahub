@@ -3,7 +3,7 @@ import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWe
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
   title: '프차브릿지 — 프랜차이즈 투자·M&A·다점포 펀딩',
-  description: '본사 투자 라운드, M&A 매물, 다점포 펀딩을 한 곳에서. 소액 투자부터 본사 인수까지 프랜차이즈 자본 시장을 연결합니다.',
+  description: '검증된 본사만 등록되는 투명한 프랜차이즈 자본 시장. 투자 라운드·다점포 펀딩·M&A 정보를 직접 확인하고 신중하게 검토하세요.',
   path: '/',
 })
 
@@ -82,13 +82,13 @@ export default function HomePage() {
             프차브릿지 · pchabridge.kr
           </p>
           <h1 className="mt-4 text-hero font-bold">
-            본사·매장·투자자를 잇는
+            프랜차이즈 투자,
             <br />
-            프랜차이즈 자본 거래소
+            이제 투명하게
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-gray-300">
-            Seed부터 Series B, 다점포 펀딩, M&A까지. amakers가 검증한 본사만 등록되는 투명한
-            프랜차이즈 투자 플랫폼.
+            Seed부터 Series B, 다점포 펀딩, M&A까지 — amakers가 검증한 본사만 등록됩니다.
+            사업·재무 자료를 직접 확인하고 신중하게 검토하세요.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">

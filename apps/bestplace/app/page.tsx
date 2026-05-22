@@ -3,7 +3,7 @@ import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWe
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
   title: '베스트플레이스 — 올해의 베스트 매장·브랜드 어워드',
-  description: '매년 amakers가 선정하는 프랜차이즈 베스트 어워드와 전국 매장 실시간 랭킹. 평점·방문객·리뷰 기준 Top 10을 확인하세요.',
+  description: '어디가 진짜 잘되는 매장일까? 평점·방문객·리뷰로 검증된 전국 매장 실시간 랭킹과 올해의 베스트 어워드, Top 10을 확인하세요.',
   path: '/',
 })
 
@@ -86,14 +86,14 @@ export default function HomePage() {
               베스트플레이스 · bestplace.kr
             </p>
             <h1 className="mt-4 text-hero font-bold text-gray-900">
-              올해의 베스트 매장
+              진짜 잘되는 매장은
               <br />
-              올해의 베스트 브랜드
+              따로 있습니다
             </h1>
             <p className="mt-6 text-lg text-gray-600">
-              매년 amakers가 선정하는 베스트 어워드와 전국 프랜차이즈 매장 디렉토리.
+              평점·방문객·리뷰로 검증된 전국 매장 랭킹과 올해의 베스트 어워드.
               <br className="hidden sm:inline" />
-              실시간 랭킹으로 지금 가장 잘하고 있는 매장을 확인하세요.
+              지금 가장 잘나가는 매장이 어디인지 확인하세요.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <a

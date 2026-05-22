@@ -3,7 +3,7 @@ import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd 
 
 export const metadata: Metadata = buildPageMetadata('openrun', {
   title: '오픈런 — 프랜차이즈 그랜드 오픈·가맹 모집 마케팅',
-  description: '오픈 30일·가맹 모집 6개월·본사 12개월 통합 마케팅. SNS·광고·PR을 통합 운영해 ROI를 책임지는 프랜차이즈 마케팅 파트너.',
+  description: '오픈발은 30일이면 식습니다. SNS·광고·PR 통합 운영으로 오픈부터 가맹 모집·본사 성장까지, ROI로 증명하는 프랜차이즈 마케팅 파트너.',
   path: '/',
 })
 
@@ -59,15 +59,13 @@ export default function HomePage() {
             오픈런 · openrun.kr
           </p>
           <h1 className="mt-4 text-hero font-bold">
-            오픈 30일,
+            오픈발은
             <br />
-            가맹 모집 6개월,
-            <br />
-            본사 12개월
+            30일이면 식습니다
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-gray-300">
-            프랜차이즈 본사와 매장의 매출을 시점별로 끌어올리는 마케팅 파트너. SNS + 광고 + PR을
-            통합 운영해 ROI를 책임집니다.
+            그 다음을 준비해야 매출이 이어집니다. SNS + 광고 + PR을 통합 운영해
+            오픈부터 가맹 모집, 본사 성장까지 ROI로 증명하는 마케팅 파트너.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">

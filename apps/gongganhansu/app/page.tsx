@@ -3,7 +3,7 @@ import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd 
 
 export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   title: '공간의한수 — F&B 매장 인테리어·시공사 매칭',
-  description: 'F&B 매장 시공 전문 플랫폼. 검증된 시공사 매칭, 실제 시공 갤러리, 평당 단가 인사이트까지. 무료 견적 비교로 시작하세요.',
+  description: '같은 평수인데 견적은 천차만별. 검증된 F&B 시공사 견적을 나란히 비교하고, 실제 시공 갤러리와 평당 단가까지 확인한 뒤 무료로 견적받으세요.',
   path: '/',
 })
 
@@ -78,14 +78,14 @@ export default function HomePage() {
               공간의한수 · gongganhansu.kr
             </p>
             <h1 className="mt-4 text-hero font-bold text-gray-900">
-              매장 인테리어의
+              같은 평수,
               <br />
-              한 수
+              견적은 천차만별
             </h1>
             <p className="mt-6 text-lg text-gray-600">
-              F&B 매장 시공 전문 시공사 + 매장 갤러리 + 단가 인사이트.
+              검증된 F&B 시공사 견적을 나란히 비교하고, 실제 시공 갤러리와 평당 단가까지
               <br className="hidden sm:inline" />
-              평당 단가가 비교 가능해지는 곳.
+              확인한 뒤 결정하세요.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <a href="/quote">

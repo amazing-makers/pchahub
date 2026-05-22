@@ -3,7 +3,7 @@ import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWe
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '창업다큐 — 자영업·가맹의 진짜 이야기',
-  description: '성공 다큐·실패 분석·브랜드 인사이드·점주 인터뷰. 실제 데이터와 현장 인터뷰로 풀어내는 프랜차이즈 창업 이야기.',
+  description: '남의 창업에서 내 답을 찾으세요. 실제 데이터와 현장 인터뷰로 풀어낸 성공 다큐·실패 분석·브랜드 인사이드·점주 인터뷰.',
   path: '/',
 })
 
@@ -90,10 +90,10 @@ export default function HomePage() {
             창업다큐 · changupdocu.kr
           </p>
           <h1 className="mt-4 text-h2 font-bold text-gray-900">
-            자영업·가맹의 진짜 이야기
+            성공도 실패도, 다 이유가 있습니다
           </h1>
           <p className="mt-3 max-w-2xl text-gray-600">
-            성공 다큐 · 실패 분석 · 브랜드 인사이드 · 점주 인터뷰까지.
+            실제 데이터와 현장 인터뷰로 풀어낸 성공 다큐·실패 분석·점주 인터뷰. 남의 경험에서 내 창업의 답을 찾으세요.
           </p>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">

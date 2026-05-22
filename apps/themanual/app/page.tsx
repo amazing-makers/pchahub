@@ -3,7 +3,7 @@ import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWe
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '더메뉴얼 — 가맹 운영 교육·멘토 상담',
-  description: '협회 정보공개서 해석·매장 운영·회계·법률·마케팅. 현직 점주와 전문가가 가르치는 프랜차이즈 가맹 사업 교육 플랫폼.',
+  description: '운영을 알아야 매장이 삽니다. 정보공개서 해석·매장 운영·회계·법률·마케팅까지, 현직 점주와 전문가에게 직접 배우고 1:1로 상담받으세요.',
   path: '/',
 })
 
@@ -95,14 +95,14 @@ export default function HomePage() {
               더메뉴얼 · themanual.kr
             </p>
             <h1 className="mt-4 text-hero font-bold text-gray-900">
-              가맹 운영의 모든 답을
+              운영을 알아야
               <br />
-              한 곳에서
+              매장이 삽니다
             </h1>
             <p className="mt-6 text-lg text-gray-600">
-              협회 정보공개서 해석·매장 운영·회계·법률·마케팅까지.
+              정보공개서 해석·매장 운영·회계·법률·마케팅까지,
               <br className="hidden sm:inline" />
-              현직 점주와 전문가가 가르치는 가맹 사업 교육.
+              현직 점주와 전문가에게 직접 배우고 1:1로 상담받으세요.
             </p>
             <div className="mt-10">
               <SearchBar />
