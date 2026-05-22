@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('changupdocu', {
   title: '창업다큐 — 자영업·가맹의 진짜 이야기',
@@ -36,6 +36,25 @@ const otherPlatforms = (
 
 const FEATURED_CATEGORIES: EpisodeCategory[] = ['success', 'failure', 'brand']
 
+const FAQS = [
+  {
+    q: '창업다큐의 콘텐츠는 어떻게 만들어지나요?',
+    a: '실제 매장 데이터와 점주·전문가 현장 인터뷰를 바탕으로 제작합니다. 성공 다큐, 실패 분석, 브랜드 인사이드 등 카테고리별로 검증된 사실에 근거해 창업의 진짜 이야기를 다룹니다.',
+  },
+  {
+    q: '에피소드는 무료로 볼 수 있나요?',
+    a: '모든 에피소드와 매거진 콘텐츠는 무료로 열람할 수 있습니다. 회원가입 시 관심 콘텐츠 저장과 최근 본 에피소드 이어보기 등 편의 기능을 추가로 이용할 수 있습니다.',
+  },
+  {
+    q: '새 에피소드는 얼마나 자주 올라오나요?',
+    a: '신규 에피소드와 현장 분석 리포트가 매주 업데이트됩니다. 뉴스레터를 구독하면 새 콘텐츠 소식을 메일로 가장 먼저 받아볼 수 있습니다.',
+  },
+  {
+    q: '제 창업 이야기나 매장을 제보하고 싶어요.',
+    a: '점주 인터뷰와 사례 제보를 상시 받고 있습니다. 성공·실패 경험 모두 다른 창업자에게 소중한 인사이트가 되며, 제보된 사례는 취재·검증을 거쳐 콘텐츠로 제작됩니다.',
+  },
+]
+
 export default function HomePage() {
   const heroEpisode = FEATURED_EPISODES[0]
   const otherFeatured = FEATURED_EPISODES.slice(1)
@@ -52,10 +71,15 @@ export default function HomePage() {
     url: 'https://changupdocu.amakers.co.kr',
     searchUrlTemplate: 'https://changupdocu.amakers.co.kr/search?q={search_term_string}',
   })
+  const faqJsonLd = buildFaqPageJsonLd({
+    url: 'https://changupdocu.amakers.co.kr',
+    items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+  })
   return (
     <main>
       <JsonLd data={orgJsonLd} />
       <JsonLd data={siteJsonLd} />
+      <JsonLd data={faqJsonLd} />
       {/* Hero — featured episode + sidebar */}
       <section className="border-b border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
@@ -211,6 +235,26 @@ export default function HomePage() {
           {recentMag.map((a) => (
             <ArticleCard key={a.id} article={a} />
           ))}
+        </div>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {FAQS.map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

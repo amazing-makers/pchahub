@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('bestplace', {
   title: '베스트플레이스 — 올해의 베스트 매장·브랜드 어워드',
@@ -28,6 +28,25 @@ const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
 ).filter(([key]) => key !== 'bestplace')
 
+const FAQS = [
+  {
+    q: '베스트 매장은 어떤 기준으로 선정되나요?',
+    a: '평점, 방문객 수, 리뷰 수와 신뢰도를 종합해 산정합니다. 어워드는 매년 카테고리별로 선정되며, 매장 랭킹은 실시간 지표를 반영해 지속적으로 업데이트됩니다.',
+  },
+  {
+    q: '랭킹은 얼마나 자주 갱신되나요?',
+    a: '매장 평점·방문객·리뷰 지표를 주기적으로 집계해 랭킹에 반영합니다. 카테고리별·지역별 Top 10을 언제든 최신 기준으로 확인할 수 있습니다.',
+  },
+  {
+    q: '우리 매장을 등록하거나 정보를 수정하려면 어떻게 하나요?',
+    a: '매장 등록 신청을 통해 매장 정보를 추가할 수 있으며, 등록 후에는 영업 정보·사진·메뉴 등을 직접 관리할 수 있습니다. 잘못된 정보는 매장 페이지에서 수정 요청이 가능합니다.',
+  },
+  {
+    q: '리뷰와 평점은 신뢰할 수 있나요?',
+    a: '실제 방문 기록을 기반으로 한 리뷰에 가중치를 두고, 어뷰징·허위 리뷰는 모니터링을 통해 걸러냅니다. 그래서 랭킹과 평점이 실제 매장 경험을 더 정확하게 반영합니다.',
+  },
+]
+
 export default function HomePage() {
   const currentYear = new Date().getFullYear()
   const yearAwards = awardsByYear(currentYear)
@@ -47,10 +66,15 @@ export default function HomePage() {
     url: 'https://bestplace.amakers.co.kr',
     searchUrlTemplate: 'https://bestplace.amakers.co.kr/search?q={search_term_string}',
   })
+  const faqJsonLd = buildFaqPageJsonLd({
+    url: 'https://bestplace.amakers.co.kr',
+    items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+  })
   return (
     <main>
       <JsonLd data={orgJsonLd} />
       <JsonLd data={siteJsonLd} />
+      <JsonLd data={faqJsonLd} />
       {/* Hero — gold gradient */}
       <section className="border-b border-gray-100 bg-gradient-to-br from-amber-50 to-white">
         <div className="container mx-auto py-section">
@@ -220,6 +244,26 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {FAQS.map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 뉴스레터 */}

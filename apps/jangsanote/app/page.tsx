@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
+import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '장사노트 — 자영업·가맹점주 커뮤니티',
@@ -31,6 +31,25 @@ const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
 ).filter(([key]) => key !== 'jangsanote')
 
+const FAQS = [
+  {
+    q: '장사노트는 어떤 커뮤니티인가요?',
+    a: '전국 자영업자·가맹점주와 분야별 전문가가 함께 만드는 커뮤니티입니다. 업종별·지역별 채널에서 상권 정보와 운영 노하우를 나누고, 오프라인 모임을 통해 직접 교류할 수 있습니다.',
+  },
+  {
+    q: '가입하면 무엇을 할 수 있나요?',
+    a: '관심 업종·지역 채널을 구독해 맞춤 글을 받아보고, 글 작성과 댓글로 점주들과 정보를 나눌 수 있습니다. 가까운 지역의 오프라인 모임 신청, 인기 글·상권 분석 열람도 가능합니다.',
+  },
+  {
+    q: '오프라인 모임은 어떻게 참여하나요?',
+    a: '모임 페이지에서 지역·업종·일정별로 진행 중인 모임을 확인하고 신청할 수 있습니다. 창업 준비 모임부터 업종별 점주 정모, 상권 답사까지 다양한 모임이 정기적으로 열립니다.',
+  },
+  {
+    q: '글을 쓰거나 정보를 나누는 데 비용이 드나요?',
+    a: '커뮤니티 가입과 글 작성·열람은 모두 무료입니다. 누구나 자유롭게 장사 경험과 지역 정보를 공유할 수 있으며, 광고성·허위 정보는 운영 정책에 따라 제한됩니다.',
+  },
+]
+
 export default function HomePage() {
   // 동적 통계 — mock 데이터 기반으로 계산
   const totalPosts    = POSTS.length + PINNED_POSTS.length
@@ -53,10 +72,15 @@ export default function HomePage() {
     url: 'https://jangsanote.amakers.co.kr',
     searchUrlTemplate: 'https://jangsanote.amakers.co.kr/search?q={search_term_string}',
   })
+  const faqJsonLd = buildFaqPageJsonLd({
+    url: 'https://jangsanote.amakers.co.kr',
+    items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+  })
   return (
     <main className="bg-gray-50">
       <JsonLd data={orgJsonLd} />
       <JsonLd data={siteJsonLd} />
+      <JsonLd data={faqJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
@@ -256,6 +280,26 @@ export default function HomePage() {
           </aside>
         </div>
       </div>
+      {/* 자주 묻는 질문 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {FAQS.map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 뉴스레터 */}
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">

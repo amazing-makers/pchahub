@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('themanual', {
   title: '더메뉴얼 — 가맹 운영 교육·멘토 상담',
@@ -38,6 +38,25 @@ const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
 ).filter(([key]) => key !== 'themanual')
 
+const FAQS = [
+  {
+    q: '강의는 어떻게 수강하나요?',
+    a: '회원가입 후 원하는 강의를 선택하면 PC·모바일 어디서나 바로 수강할 수 있습니다. 무료 강의는 가입 즉시, 유료 강의는 결제 후 시청 가능하며 수강 기간 내 무제한 반복 시청을 지원합니다.',
+  },
+  {
+    q: '강사진은 어떤 분들인가요?',
+    a: '현직 가맹점주, 프랜차이즈 본사 출신 전문가, 그리고 회계·법률·세무·마케팅 등 분야별 전문가로 구성되어 있습니다. 모든 강의는 협회 정보공개서 해석과 실제 매장 운영 경험을 바탕으로 제작됩니다.',
+  },
+  {
+    q: '멘토 1:1 상담은 어떻게 신청하나요?',
+    a: '멘토 페이지에서 분야와 멘토를 선택해 상담을 신청할 수 있습니다. 창업 준비부터 매장 운영, 폐업·양도까지 단계별로 현직 전문가의 맞춤 조언을 받을 수 있습니다.',
+  },
+  {
+    q: '수강 후 환불이 가능한가요?',
+    a: '결제 후 7일 이내이고 강의 수강 이력이 없는 경우 전액 환불됩니다. 일부 수강한 경우에는 관련 법령에 따라 수강 진도율을 기준으로 환불 금액이 산정됩니다.',
+  },
+]
+
 export default function HomePage() {
   const popular = popularCourses(6)
   const trustSignals = [
@@ -56,10 +75,15 @@ export default function HomePage() {
     url: 'https://themanual.amakers.co.kr',
     searchUrlTemplate: 'https://themanual.amakers.co.kr/search?q={search_term_string}',
   })
+  const faqJsonLd = buildFaqPageJsonLd({
+    url: 'https://themanual.amakers.co.kr',
+    items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+  })
   return (
     <main>
       <JsonLd data={orgJsonLd} />
       <JsonLd data={siteJsonLd} />
+      <JsonLd data={faqJsonLd} />
       {/* Hero */}
       <section className="border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto py-section">
@@ -269,6 +293,26 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {FAQS.map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 뉴스레터 */}

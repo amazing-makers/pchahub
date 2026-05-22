@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
+import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchabridge', {
   title: '프차브릿지 — 프랜차이즈 투자·M&A·다점포 펀딩',
@@ -28,6 +28,25 @@ const TRUST = [
   { icon: TrendingUp, label: 'ROI 추적 시스템', color: 'text-amber-400' },
 ]
 
+const FAQS = [
+  {
+    q: '프차브릿지는 어떤 서비스인가요?',
+    a: '프랜차이즈 본사 투자 라운드, M&A 매물, 다점포 펀딩 정보를 한 곳에서 연결하는 플랫폼입니다. 본사·투자자·인수 희망자가 서로를 찾을 수 있도록 검증된 정보와 절차를 제공합니다.',
+  },
+  {
+    q: '투자는 어떤 방식으로 진행되나요?',
+    a: '본사 투자 라운드 참여, 다점포 펀딩, M&A 매물 인수 등 세 가지 방식을 지원합니다. 각 건의 조건·모집 현황·관련 자료를 페이지에서 확인하고, 관심 건은 직접 문의·신청할 수 있습니다.',
+  },
+  {
+    q: '자금은 어떻게 관리되나요?',
+    a: '거래 자금은 에스크로를 통해 관리되며, 등록되는 본사는 협회 검증 절차를 거칩니다. 진행 현황과 성과 지표는 ROI 추적 시스템으로 투명하게 확인할 수 있습니다.',
+  },
+  {
+    q: '투자에 따르는 위험은 없나요?',
+    a: '모든 투자에는 원금 손실 가능성이 있으며, 프차브릿지는 정보와 거래 절차를 제공할 뿐 수익을 보장하지 않습니다. 각 건의 사업 계획·재무 자료·위험 고지를 충분히 검토하고 본인 판단으로 결정하시기 바랍니다.',
+  },
+]
+
 export default function HomePage() {
   const featuredMA = MA_LISTINGS.filter((m) => m.status === 'open').slice(0, 2)
   const recent = [...ROUNDS]
@@ -44,10 +63,15 @@ export default function HomePage() {
     url: 'https://pchabridge.amakers.co.kr',
     searchUrlTemplate: 'https://pchabridge.amakers.co.kr/search?q={search_term_string}',
   })
+  const faqJsonLd = buildFaqPageJsonLd({
+    url: 'https://pchabridge.amakers.co.kr',
+    items: FAQS.map((f) => ({ question: f.q, answer: f.a })),
+  })
   return (
     <main>
       <JsonLd data={orgJsonLd} />
       <JsonLd data={siteJsonLd} />
+      <JsonLd data={faqJsonLd} />
       {/* Hero — dark purple */}
       <section className="bg-gray-900 text-white">
         <div className="container mx-auto py-section">
@@ -257,6 +281,26 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {FAQS.map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 뉴스레터 */}
