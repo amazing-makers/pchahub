@@ -120,6 +120,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
                 name="q"
                 type="search"
                 defaultValue={q ?? ''}
+                aria-label="이 카테고리에서 검색…"
                 placeholder="이 카테고리에서 검색…"
                 className="w-full rounded-lg border border-white/30 bg-white/10 py-2 pl-9 pr-4 text-sm text-white placeholder:text-white/60 focus:border-white/60 focus:outline-none"
               />
@@ -269,6 +270,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
             <form action="#" className="mt-6 flex gap-2">
               <input
                 type="email"
+                aria-label="이메일 주소"
                 placeholder="이메일 주소"
                 className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
                 style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}

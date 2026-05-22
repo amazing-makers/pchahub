@@ -300,6 +300,7 @@ export default function EpisodeDetailPage({ params }: EpisodeDetailProps) {
           <form action="#" className="mx-auto mt-4 flex max-w-sm gap-2">
             <input
               type="email"
+              aria-label="이메일 주소"
               placeholder="이메일 주소"
               className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
               style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}

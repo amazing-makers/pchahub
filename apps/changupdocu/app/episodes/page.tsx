@@ -84,6 +84,7 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
                 name="q"
                 type="search"
                 defaultValue={q ?? ''}
+                aria-label="제목, 브랜드, 태그 검색…"
                 placeholder="제목, 브랜드, 태그 검색…"
                 className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
               />
@@ -239,6 +240,7 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
             <form action="#" className="mt-6 flex gap-2">
               <input
                 type="email"
+                aria-label="이메일 주소"
                 placeholder="이메일 주소"
                 className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
                 style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}

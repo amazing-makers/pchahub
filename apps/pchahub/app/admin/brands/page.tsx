@@ -160,6 +160,7 @@ export default function AdminBrandsPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="search"
+            aria-label="브랜드명 또는 이메일 검색"
             placeholder="브랜드명 또는 이메일 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
