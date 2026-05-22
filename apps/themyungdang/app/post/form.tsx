@@ -833,7 +833,7 @@ function PhotoUploadDnD({ files, onChange }: { files: File[]; onChange: (files: 
             return (
               <div key={idx} className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="" className="h-full w-full object-cover" onLoad={() => URL.revokeObjectURL(url)} />
+                <img src={url} alt={`첨부 사진 ${idx + 1} 미리보기`} className="h-full w-full object-cover" onLoad={() => URL.revokeObjectURL(url)} />
                 {idx === 0 && (
                   <span className="absolute left-1.5 top-1.5 rounded-full bg-gray-900/80 px-1.5 py-0.5 text-[10px] font-bold text-white">
                     대표

@@ -973,6 +973,7 @@ export default function MapSearchClient({ allListings }: Props) {
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <>
+      <h1 className="sr-only">지도로 매물 검색</h1>
       <style>{`
         .leaflet-control-zoom { border:none!important; border-radius:12px!important; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.06)!important; }
         .leaflet-control-zoom a { width:36px!important; height:36px!important; line-height:36px!important; font-size:18px!important; color:#374151!important; background:#fff!important; border-bottom:1px solid #f3f4f6!important; font-weight:300!important; }
