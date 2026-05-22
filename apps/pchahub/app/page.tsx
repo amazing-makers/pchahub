@@ -3,7 +3,7 @@ import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd,
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '프차허브 — 프랜차이즈 브랜드 정보 비교',
-  description: '공정거래위원회 가맹정보 기반 브랜드 비교 플랫폼. 창업비·매출·성장률·가맹비를 한눈에 비교하고 나에게 맞는 브랜드를 찾으세요.',
+  description: '감으로 고르는 창업은 이제 그만. 공정위 공식 가맹정보로 창업비·매출·성장률·가맹비를 한눈에 비교하고, 후회 없는 브랜드를 찾으세요.',
   path: '/',
 })
 
@@ -85,14 +85,14 @@ export default async function HomePage() {
               프차허브 · pchahub.kr
             </p>
             <h1 className="mt-4 text-hero font-bold text-gray-900">
-              한국 프랜차이즈 가맹의
+              창업, 감이 아니라
               <br />
-              새로운 기준
+              데이터로 결정하세요
             </h1>
             <p className="mt-6 text-lg text-gray-600">
-              협회 공식 정보공개서를 바탕으로 내게 맞는 브랜드를 찾고
+              공정위 공식 가맹정보로 창업비·매출·성장률을 한눈에 비교하고,
               <br className="hidden sm:inline" />
-              본사와 바로 연결되는 가맹 정보 플랫폼
+              나에게 꼭 맞는 브랜드를 본사와 바로 연결해 드립니다
             </p>
             <div className="mt-10">
               <SearchBar />
@@ -197,8 +197,8 @@ export default async function HomePage() {
       <section className="container mx-auto pt-section">
         <div className="mb-6 flex items-end justify-between">
           <div>
-            <h2 className="text-h3 font-semibold text-gray-900">업종별 브랜드 찾기</h2>
-            <p className="mt-1 text-sm text-gray-500">원하는 업종을 선택하면 해당 브랜드 목록과 창업 정보를 바로 볼 수 있습니다</p>
+            <h2 className="text-h3 font-semibold text-gray-900">관심 업종부터 골라보세요</h2>
+            <p className="mt-1 text-sm text-gray-500">업종을 선택하면 창업비·수익성·가맹 조건까지 한 번에 비교됩니다</p>
           </div>
           <a href="/brands" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
             전체 브랜드 보기 <ArrowRight className="h-3.5 w-3.5" />
@@ -241,8 +241,8 @@ export default async function HomePage() {
       <section className="container mx-auto pt-section">
         <div className="mb-6 flex items-end justify-between">
           <div>
-            <h2 className="text-h3 font-semibold text-gray-900">가맹 모집 중</h2>
-            <p className="mt-1 text-sm text-gray-500">지금 가맹 신청을 받고 있는 브랜드</p>
+            <h2 className="text-h3 font-semibold text-gray-900">지금 바로 시작할 수 있어요</h2>
+            <p className="mt-1 text-sm text-gray-500">현재 가맹점주를 모집 중인 브랜드 — 문의하면 본사가 직접 답해드립니다</p>
           </div>
           <a
             href="/brands"
@@ -261,9 +261,9 @@ export default async function HomePage() {
       {/* Tools — scanner + calculator + listings */}
       <section className="container mx-auto pt-section">
         <div className="mb-6">
-          <h2 className="text-h3 font-semibold text-gray-900">창업 의사결정 도구</h2>
+          <h2 className="text-h3 font-semibold text-gray-900">계약 전에 꼭 따져보세요</h2>
           <p className="mt-1 text-sm text-gray-500">
-            브랜드만 보지 마시고, 본인 조건에 맞춰 시뮬레이션해보세요.
+            브랜드 정보만으로는 부족합니다. 내 예산·상권·목표 수익으로 직접 시뮬레이션해보세요.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
