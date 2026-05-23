@@ -12,7 +12,7 @@ import {
   Store,
   Users,
 } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent, MobileCTA } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildCourseJsonLd,
@@ -149,7 +149,7 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
             </div>
 
             {/* Sticky purchase card */}
-            <aside className="lg:sticky lg:top-20 lg:self-start">
+            <aside id="cta" className="lg:sticky lg:top-20 lg:self-start">
               <Card className="border-gray-200 shadow-sm">
                 <CardContent className="space-y-4 p-5">
                   <div
@@ -399,6 +399,8 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="수강 신청하기" href="#cta" />
     </main>
   )
 }

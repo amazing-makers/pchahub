@@ -11,7 +11,7 @@ import {
   Store,
   Tag,
 } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent, MobileCTA } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { LISTINGS, listingById, type MockListing } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
@@ -239,7 +239,7 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
             )}
           </div>
 
-          <aside className="lg:sticky lg:top-20 lg:self-start">
+          <aside id="cta" className="lg:sticky lg:top-20 lg:self-start">
             <Card className="border-gray-200 shadow-sm">
               <CardContent className="space-y-4 p-5">
                 <div>
@@ -374,6 +374,8 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="이 매물 문의하기" href="#cta" />
     </main>
   )
 }

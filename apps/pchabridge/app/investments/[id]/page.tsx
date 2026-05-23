@@ -12,7 +12,7 @@ import {
   Store,
   TrendingUp,
 } from 'lucide-react'
-import { Badge, BrandLogo, Card, CardContent } from '@amakers/ui'
+import { Badge, BrandLogo, Card, CardContent, MobileCTA } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildInvestmentJsonLd,
@@ -127,7 +127,7 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
               <p className="mt-4 text-base text-gray-700">{round.hook}</p>
             </div>
 
-            <aside>
+            <aside id="cta">
               <Card className="border-gray-200 shadow-sm">
                 <CardContent className="space-y-4 p-5">
                   <div>
@@ -371,6 +371,8 @@ export default function RoundDetailPage({ params }: RoundDetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="투자 문의하기" href="#cta" />
     </main>
   )
 }

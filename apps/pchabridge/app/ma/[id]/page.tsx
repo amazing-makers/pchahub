@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, Lock, MessageSquare, Store, TrendingUp } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent, MobileCTA } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildBrandJsonLd, buildBreadcrumbsJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { brandById, MA_LISTINGS, maListingById } from '@/lib/mock-data'
@@ -94,7 +94,7 @@ export default function MADetailPage({ params }: MADetailProps) {
               </div>
             </div>
 
-            <aside>
+            <aside id="cta">
               <Card className="border-gray-200 shadow-sm">
                 <CardContent className="space-y-4 p-5">
                   <div>
@@ -265,6 +265,8 @@ export default function MADetailPage({ params }: MADetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="인수 상담 신청" href="#cta" />
     </main>
   )
 }

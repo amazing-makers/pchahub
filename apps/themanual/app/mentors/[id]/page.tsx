@@ -10,7 +10,7 @@ import {
   Star,
   Store,
 } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Button, Card, CardContent, MobileCTA } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildBreadcrumbsJsonLd, buildPageMetadata, buildPersonJsonLd, JsonLd } from '@amakers/design-system'
 import { CourseCard } from '@/components/course-card'
@@ -214,7 +214,7 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
             </Card>
           </div>
 
-          <aside className="lg:sticky lg:top-20 lg:self-start space-y-4">
+          <aside id="cta" className="lg:sticky lg:top-20 lg:self-start space-y-4">
             {/* 예약하기 CTA */}
             <Card className="border-[var(--brand-primary)]/30 bg-gradient-to-br from-[var(--brand-primary)]/5 to-white shadow-sm">
               <CardContent className="p-5">
@@ -323,6 +323,8 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="1:1 상담 신청하기" href="#cta" />
     </main>
   )
 }

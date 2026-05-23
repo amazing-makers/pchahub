@@ -12,7 +12,7 @@ import {
   Users,
   Video,
 } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent, MobileCTA } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildBreadcrumbsJsonLd, buildEventJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import {
@@ -222,7 +222,7 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
             )}
           </div>
 
-          <aside className="lg:sticky lg:top-20 lg:self-start">
+          <aside id="cta" className="lg:sticky lg:top-20 lg:self-start">
             <Card className="border-gray-200 shadow-sm">
               <CardContent className="space-y-4 p-5">
                 <div>
@@ -380,6 +380,8 @@ export default function MeetingDetailPage({ params }: MeetingDetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="참여 신청하기" href="#cta" />
     </main>
   )
 }
