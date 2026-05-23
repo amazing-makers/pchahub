@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, MessageSquare, Store, Target, Users } from 'lucide-react'
-import { Button, Card, CardContent } from '@amakers/ui'
+import { Button, Card, CardContent, MobileCTA } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildHowToJsonLd, buildServiceJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { CaseCard } from '@/components/case-card'
 import { caseById, SERVICE_LABEL, SERVICES, serviceBySlug } from '@/lib/mock-data'
@@ -287,6 +287,8 @@ export default function ServiceDetailPage({ params }: ServiceDetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label={`${service.title} 의뢰하기`} href="/contact" />
     </main>
   )
 }

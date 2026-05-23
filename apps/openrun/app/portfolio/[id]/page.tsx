@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowRight, ChevronRight, MapPin, Newspaper, Star, Store } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Button, Card, CardContent, MobileCTA } from '@amakers/ui'
 import {
   buildArticleJsonLd,
   buildBreadcrumbsJsonLd,
@@ -272,6 +272,8 @@ export default function CaseDetailPage({ params }: CaseDetailProps) {
           </div>
         </div>
       </section>
+
+      <MobileCTA label="이런 캠페인 의뢰하기" href="/contact" />
     </main>
   )
 }

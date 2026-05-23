@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowRight, CheckCircle2, ChevronRight, MapPin, MessageSquare, Star, Store } from 'lucide-react'
-import { Badge, Button, Card, CardContent } from '@amakers/ui'
+import { Badge, Button, Card, CardContent, MobileCTA } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import {
   buildBreadcrumbsJsonLd,
@@ -317,6 +317,8 @@ export default function ContractorDetailPage({ params }: ContractorDetailProps) 
           </div>
         </div>
       </section>
+
+      <MobileCTA label="이 시공사에 견적 요청" href="/quote" />
     </main>
   )
 }
