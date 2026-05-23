@@ -223,6 +223,16 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
           </div>
         </div>
       </section>
+
+      {/* 모바일 고정 CTA — 핵심 전환 액션을 항상 노출 (하단 탭바 위) */}
+      <div className="h-20 md:hidden" aria-hidden />
+      <div className="fixed inset-x-0 bottom-14 z-30 border-t border-gray-200 bg-white/95 px-4 py-3 shadow-[0_-2px_12px_rgba(0,0,0,0.06)] backdrop-blur md:hidden">
+        <a href={`/inquiry?brand=${brand.id}`} className="block">
+          <Button size="lg" className="w-full">
+            가맹 상담 신청
+          </Button>
+        </a>
+      </div>
     </main>
   )
 }
