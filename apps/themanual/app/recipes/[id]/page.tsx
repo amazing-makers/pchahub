@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowRight, BookOpen, ChefHat, Clock, Eye, Flame, MapPin, Store, UtensilsCrossed } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
   DIFFICULTY_LABEL,
   RECIPE_CATEGORY_LABEL,
@@ -360,22 +360,7 @@ export default function RecipePage({ params }: RecipePageProps) {
             </p>
             <h2 className="mt-3 text-h4 font-bold text-gray-900">레시피 & 메뉴 소식을 받아보세요</h2>
             <p className="mt-2 text-sm text-gray-500">신규 레시피·원가 계산 팁·메뉴 트렌드를 격주로 보내드립니다.</p>
-            <form action="#" className="mt-6 flex gap-2">
-              <input
-                type="email"
-                aria-label="이메일 주소"
-                placeholder="이메일 주소"
-                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                구독하기
-              </button>
-            </form>
+            <NewsletterForm />
             <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
           </div>
         </div>

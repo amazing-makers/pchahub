@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from 'next'
 import { ArrowRight, BookOpen, MapPin, Plus, Search, Store, Wrench } from 'lucide-react'
-import { Card, CardContent, MobileFilterDrawer } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer, NewsletterForm } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
@@ -299,22 +299,7 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
             </p>
             <h2 className="mt-3 text-h3 font-bold text-gray-900">우수 매장 리포트를 받아보세요</h2>
             <p className="mt-2 text-sm text-gray-500">신규 인증 매장·수상 매장·지역별 매장 트렌드를 격주로 보내드립니다.</p>
-            <form action="#" className="mt-6 flex gap-2">
-              <input
-                type="email"
-                aria-label="이메일 주소"
-                placeholder="이메일 주소"
-                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                구독하기
-              </button>
-            </form>
+            <NewsletterForm />
             <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowRight, BookOpen, ChevronRight, Clock, MapPin, Store, Wrench } from 'lucide-react'
-import { Badge, Card, CardContent } from '@amakers/ui'
+import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
   buildArticleJsonLd,
   buildBreadcrumbsJsonLd,
@@ -207,22 +207,7 @@ export default function InsightDetailPage({ params }: InsightDetailProps) {
             </p>
             <h2 className="mt-2 text-h4 font-bold text-gray-900">시공 인사이트 뉴스레터</h2>
             <p className="mt-1 text-sm text-gray-500">인테리어 트렌드·비용 절감 팁·공간 전략을 매주 받아보세요.</p>
-            <form action="#" className="mt-5 flex gap-2">
-              <input
-                type="email"
-                aria-label="이메일 주소"
-                placeholder="이메일 주소"
-                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                구독
-              </button>
-            </form>
+            <NewsletterForm cta="구독" />
           </div>
         </div>
       </section>

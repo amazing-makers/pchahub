@@ -8,7 +8,7 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
 })
 
 import { ArrowRight, Shield, ShieldCheck, TrendingUp, Users } from 'lucide-react'
-import { Button, Card, CardContent } from '@amakers/ui'
+import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { RoundCard } from '@/components/round-card'
 import { MACard } from '@/components/ma-card'
@@ -312,22 +312,7 @@ export default function HomePage() {
             </p>
             <h2 className="mt-3 text-h3 font-bold text-gray-900">투자 인사이트 뉴스레터</h2>
             <p className="mt-2 text-sm text-gray-500">프랜차이즈 투자 동향·ROI 분석·신규 라운드 소식을 받아보세요.</p>
-            <form action="#" className="mt-6 flex gap-2">
-              <input
-                type="email"
-                aria-label="이메일 주소"
-                placeholder="이메일 주소"
-                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                구독하기
-              </button>
-            </form>
+            <NewsletterForm />
             <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
           </div>
         </div>

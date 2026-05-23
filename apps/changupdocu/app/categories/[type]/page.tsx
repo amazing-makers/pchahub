@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ArrowRight, BookOpen, MapPin, Search, Store } from 'lucide-react'
-import { Card, CardContent } from '@amakers/ui'
+import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { EpisodeCard } from '@/components/episode-card'
@@ -267,22 +267,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
             </p>
             <h2 className="mt-3 text-h3 font-bold text-gray-900">창업다큐 에피소드를 받아보세요</h2>
             <p className="mt-2 text-sm text-gray-500">이 카테고리의 신규 에피소드·현장 취재·인터뷰를 격주로 보내드립니다.</p>
-            <form action="#" className="mt-6 flex gap-2">
-              <input
-                type="email"
-                aria-label="이메일 주소"
-                placeholder="이메일 주소"
-                className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-offset-1"
-                style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                구독하기
-              </button>
-            </form>
+            <NewsletterForm />
             <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
           </div>
         </div>
