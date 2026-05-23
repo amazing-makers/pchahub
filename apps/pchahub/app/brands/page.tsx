@@ -16,7 +16,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 
 import { ArrowRight, BookOpen, MapPin, Search, Star, Store } from 'lucide-react'
 import { formatNumber } from '@amakers/utils'
-import { Card, CardContent } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
 import { BrandSaveButton } from '@/components/brand-save-button'
 import { CompareButton } from '@/components/compare-button'
@@ -275,8 +275,8 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
 
       <div className="container mx-auto py-8">
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-          {/* Filter sidebar */}
-          <aside className="space-y-5">
+          {/* Filter sidebar — inline on desktop, bottom-sheet drawer on mobile */}
+          <MobileFilterDrawer>
             {/* 검색 결과 요약 */}
             <div className="rounded-xl border border-gray-200 bg-white p-4">
               <div className="text-xs font-semibold uppercase tracking-wider text-gray-400">검색 결과</div>
@@ -365,7 +365,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
                 </p>
               </CardContent>
             </Card>
-          </aside>
+          </MobileFilterDrawer>
 
           {/* Results */}
           <div className="space-y-6">
