@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from 'next'
 import { ArrowRight, BookOpen, MapPin, Plus, Search, Store, Wrench } from 'lucide-react'
-import { Card, CardContent, MobileFilterDrawer, NewsletterForm } from '@amakers/ui'
+import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { StoreCard } from '@/components/store-card'
 import { BRANDS, CATEGORIES, STORES } from '@/lib/mock-data'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
@@ -188,7 +188,7 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-          <MobileFilterDrawer asideClassName="space-y-5 lg:sticky lg:top-20 lg:self-start">
+          <aside className="hidden space-y-5 lg:block lg:sticky lg:top-20 lg:self-start">
             <FilterGroup title="카테고리">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { category: undefined })} active={!category}>
@@ -240,7 +240,7 @@ export default function StoresPage({ searchParams }: StoresPageProps) {
                 ))}
               </div>
             </FilterGroup>
-          </MobileFilterDrawer>
+          </aside>
 
           <div>
             <div className="mb-3 text-sm font-semibold text-gray-700">{results.length}곳</div>

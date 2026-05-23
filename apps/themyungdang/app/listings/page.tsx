@@ -16,7 +16,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 
 import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, Map, Star, Store, X } from 'lucide-react'
 import { formatNumber } from '@amakers/utils'
-import { Card, CardContent, MobileFilterDrawer, NewsletterForm } from '@amakers/ui'
+import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
 import { ListingCardWithSave } from '@/components/listing-card-with-save'
 import {
@@ -365,7 +365,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
 
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
           {/* Sidebar */}
-          <MobileFilterDrawer asideClassName="space-y-5">
+          <aside className="hidden space-y-5 lg:block">
             {hasActiveFilters && (
               <a
                 href="/listings"
@@ -476,7 +476,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
                 ))}
               </div>
             </FilterGroup>
-          </MobileFilterDrawer>
+          </aside>
 
           {/* Results */}
           <div>

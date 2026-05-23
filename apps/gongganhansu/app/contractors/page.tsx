@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from 'next'
 import { ArrowRight, BookOpen, Building2, MapPin, Plus, Search, Star, Store } from 'lucide-react'
-import { Card, CardContent, MobileFilterDrawer, NewsletterForm } from '@amakers/ui'
+import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { ContractorCard } from '@/components/contractor-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
@@ -189,7 +189,7 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
 
         <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
           {/* Desktop sidebar */}
-          <MobileFilterDrawer asideClassName="space-y-5 lg:sticky lg:top-20 lg:self-start">
+          <aside className="hidden space-y-5 lg:block lg:sticky lg:top-20 lg:self-start">
             <FilterGroup title="정렬">
               <div className="space-y-1">
                 {SORT_OPTIONS.map((o) => (
@@ -244,7 +244,7 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
                 ))}
               </div>
             </FilterGroup>
-          </MobileFilterDrawer>
+          </aside>
 
           <div>
             {/* Search bar */}
