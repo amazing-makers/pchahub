@@ -10,11 +10,11 @@ export const metadata = buildSiteMetadata('jangsanote')
 
 const navItems = [
   { href: '/', label: '피드' },
-  { href: '/categories', label: '업종방' },
-  { href: '/regions/seoul', label: '지역방' },
   { href: '/meetings', label: '모임' },
-  { href: '/general', label: '자유' },
-  { href: '/search', label: '검색' },
+  { href: '/recipes', label: '레시피' },
+  { href: '/festivals', label: '축제·박람회' },
+  { href: '/support', label: '지원·이벤트' },
+  { href: '/regions/seoul', label: '지역방' },
 ]
 
 const actions: HeaderAction[] = [

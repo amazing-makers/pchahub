@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { buildSitemap } from '@amakers/design-system'
 import { CHANNELS, MEETINGS, POSTS } from '@/lib/mock-data'
+import { RECIPES } from '@/lib/hub-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const categoryChannels = CHANNELS.filter((c) => c.type === 'category')
@@ -13,6 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/regions', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/posts', changeFrequency: 'hourly', priority: 0.8 },
     { path: '/meetings', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/recipes', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/festivals', changeFrequency: 'daily', priority: 0.8 },
+    { path: '/support', changeFrequency: 'daily', priority: 0.9 },
     ...categoryChannels.map((c) => ({
       path: `/categories/${c.key}`,
       changeFrequency: 'hourly' as const,

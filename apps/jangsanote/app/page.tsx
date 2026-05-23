@@ -7,12 +7,16 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
   path: '/',
 })
 
-import { ArrowRight, BookOpen, Building2, Calendar, Flame, MapPin, TrendingUp } from 'lucide-react'
+import { ArrowRight, BookOpen, Building2, Calendar, CalendarDays, ChefHat, Flame, HandCoins, MapPin, TrendingUp } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { ChannelList } from '@/components/channel-list'
 import { PostCard } from '@/components/post-card'
 import { MeetingCard } from '@/components/meeting-card'
+import { RecipeCard } from '@/components/recipe-card'
+import { FestivalCard } from '@/components/festival-card'
+import { SupportCard } from '@/components/support-card'
+import { RECIPES, festivalsByDate, supportsByDeadline } from '@/lib/hub-data'
 import {
   CHANNELS,
   HOT_POSTS,
@@ -280,6 +284,73 @@ export default function HomePage() {
           </aside>
         </div>
       </div>
+
+      {/* 정보 허브 — 레시피·축제·지원 */}
+      <section className="space-y-10 border-t border-gray-100 bg-white py-section">
+        <div className="container mx-auto">
+          {/* 레시피 */}
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-h4 font-bold text-gray-900">
+                <ChefHat className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+                점주 레시피
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">원가·조리법까지 공개된 매장 메뉴 레시피</p>
+            </div>
+            <a href="/recipes" className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+              전체보기 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[...RECIPES].sort((a, b) => b.likes - a.likes).slice(0, 3).map((r) => (
+              <RecipeCard key={r.id} recipe={r} />
+            ))}
+          </div>
+        </div>
+
+        <div className="container mx-auto">
+          {/* 축제·박람회 */}
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-h4 font-bold text-gray-900">
+                <CalendarDays className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+                축제·박람회
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">다가오는 창업·외식 박람회와 지역 축제</p>
+            </div>
+            <a href="/festivals" className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+              전체보기 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {festivalsByDate().slice(0, 3).map((f) => (
+              <FestivalCard key={f.id} festival={f} />
+            ))}
+          </div>
+        </div>
+
+        <div className="container mx-auto">
+          {/* 지원·이벤트 */}
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-h4 font-bold text-gray-900">
+                <HandCoins className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+                지원·이벤트
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">마감 임박 순 · 정부·지자체 지원사업과 보조금</p>
+            </div>
+            <a href="/support" className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+              전체보기 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {supportsByDeadline().slice(0, 3).map((s) => (
+              <SupportCard key={s.id} support={s} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 자주 묻는 질문 */}
       <section className="border-t border-gray-100 bg-white">
         <div className="container mx-auto py-section">
