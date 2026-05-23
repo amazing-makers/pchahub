@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ArrowRight, BookOpen, ChefHat, MapPin, Search, Star, Store } from 'lucide-react'
-import { Card, CardContent } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer } from '@amakers/ui'
 import { RecipeCard } from '@/components/recipe-card'
 import {
   FEATURED_RECIPES,
@@ -202,8 +202,8 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
 
         {/* Main content with sidebar */}
         <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
-          {/* Sidebar */}
-          <aside className="space-y-5">
+          {/* Sidebar — inline on desktop, bottom-sheet drawer on mobile */}
+          <MobileFilterDrawer>
             <FilterGroup title="카테고리">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { category: undefined })} active={!category}>
@@ -255,7 +255,7 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
                 ))}
               </div>
             </FilterGroup>
-          </aside>
+          </MobileFilterDrawer>
 
           {/* Grid */}
           <div>

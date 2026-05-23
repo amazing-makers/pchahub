@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ArrowRight, BookOpen, Lightbulb, Lock, MapPin, Search, Star, Store } from 'lucide-react'
-import { Card, CardContent } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer } from '@amakers/ui'
 import { KnowhowCard } from '@/components/knowhow-card'
 import {
   FEATURED_KNOWHOW,
@@ -210,8 +210,8 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
         )}
 
         <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
-          {/* Sidebar */}
-          <aside className="space-y-5">
+          {/* Sidebar — inline on desktop, bottom-sheet drawer on mobile */}
+          <MobileFilterDrawer>
             <FilterGroup title="카테고리">
               <div className="space-y-1">
                 <FilterLink href={makeHref(searchParams, { category: undefined })} active={!category}>
@@ -260,7 +260,7 @@ export default function KnowhowPage({ searchParams }: KnowhowPageProps) {
                 ))}
               </div>
             </FilterGroup>
-          </aside>
+          </MobileFilterDrawer>
 
           {/* Grid */}
           <div>
