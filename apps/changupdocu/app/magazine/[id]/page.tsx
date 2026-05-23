@@ -97,12 +97,6 @@ export default function ArticleDetailPage({ params }: ArticleDetailProps) {
                     src={article.authorAvatar}
                     alt={article.authorName}
                     className="h-12 w-12 shrink-0 rounded-full object-cover"
-                    onError={(e) => {
-                      const target = e.currentTarget
-                      target.style.display = 'none'
-                      const fallback = target.nextElementSibling as HTMLElement | null
-                      if (fallback) fallback.style.display = 'flex'
-                    }}
                   />
                 ) : null}
                 <div

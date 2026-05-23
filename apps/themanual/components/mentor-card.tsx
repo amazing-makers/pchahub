@@ -1,3 +1,5 @@
+'use client'
+
 import { MessageCircle, Star } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
