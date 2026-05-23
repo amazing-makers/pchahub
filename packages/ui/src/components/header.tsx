@@ -86,7 +86,7 @@ export function Header({
           {showSearch && (
             <button
               type="button"
-              className="rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              className="flex h-11 w-11 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               aria-label="검색"
             >
               <Search className="h-4 w-4" />

@@ -28,7 +28,7 @@ export function MobileMenu({ navItems, actions }: MobileMenuProps) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="-mr-2 rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 md:hidden"
+        className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-900 md:hidden"
         aria-label={open ? '메뉴 닫기' : '메뉴 열기'}
         aria-expanded={open}
       >
