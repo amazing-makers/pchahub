@@ -1,4 +1,4 @@
-import { Header, Footer, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"
         />
       </head>
-      <body className="flex min-h-screen flex-col">
+      <body className="flex min-h-screen flex-col pb-16 md:pb-0">
         <Providers>
           <Header
             platform="gongganhansu"
@@ -42,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="gongganhansu" />
           <BackToTop />
+          <MobileTabBar platform="gongganhansu" />
         </Providers>
       </body>
     </html>

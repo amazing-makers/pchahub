@@ -18,7 +18,7 @@ export function BackToTop() {
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      className="fixed bottom-24 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md text-gray-600 transition-all hover:bg-gray-50 hover:shadow-lg"
+      className="fixed bottom-36 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white shadow-md text-gray-600 transition-all hover:bg-gray-50 hover:shadow-lg md:bottom-6"
       aria-label="맨 위로"
     >
       <ArrowUp className="h-4 w-4" />
