@@ -123,7 +123,6 @@ export default function CategoriesPage() {
                       </div>
                       <a
                         href={`https://pchahub.amakers.co.kr/categories/${c.key}`}
-                        onClick={(e) => e.stopPropagation()}
                         className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-gray-600 hover:border-gray-300 hover:text-gray-900"
                       >
                         브랜드 <ArrowRight className="h-2.5 w-2.5" />
