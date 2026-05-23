@@ -8,7 +8,7 @@ export const metadata: Metadata = buildPageMetadata('themanual', {
 })
 
 import { ArrowRight, BookOpen, MapPin, Star, Store } from 'lucide-react'
-import { Card, CardContent } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer } from '@amakers/ui'
 import { MentorCard } from '@/components/mentor-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { MENTORS } from '@/lib/mock-data'
@@ -167,7 +167,7 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
           </div>
 
           {/* 사이드바 필터 (데스크톱) */}
-          <aside className="hidden space-y-6 lg:block">
+          <MobileFilterDrawer asideClassName="space-y-6">
             {/* 검색 */}
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
@@ -230,7 +230,7 @@ export default function MentorsPage({ searchParams }: MentorsPageProps) {
                 </FilterLink>
               ))}
             </FilterGroup>
-          </aside>
+          </MobileFilterDrawer>
 
           {/* 멘토 목록 */}
           <div>

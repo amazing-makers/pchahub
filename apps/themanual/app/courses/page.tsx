@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from 'next'
 import { ArrowRight, BookOpen, MapPin, Search, Star, Store } from 'lucide-react'
-import { Card, CardContent } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer } from '@amakers/ui'
 import { CourseCard } from '@/components/course-card'
 import { CourseCardWithSave } from '@/components/course-card-with-save'
 import { COURSE_CATEGORIES, COURSES, LEVEL_LABEL, type CourseLevel } from '@/lib/mock-data'
@@ -209,7 +209,7 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <aside className="hidden space-y-5 lg:block">
+          <MobileFilterDrawer asideClassName="space-y-5">
             <FilterGroup title="카테고리">
               <div className="space-y-1">
                 <FilterLink
@@ -278,7 +278,7 @@ export default function CoursesPage({ searchParams }: CoursesPageProps) {
                 ))}
               </div>
             </FilterGroup>
-          </aside>
+          </MobileFilterDrawer>
 
           <div>
             <div className="mb-3 text-sm font-semibold text-gray-700">{results.length}개</div>
