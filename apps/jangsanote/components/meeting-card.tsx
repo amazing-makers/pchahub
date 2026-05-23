@@ -2,6 +2,7 @@ import { Calendar, MapPin, Users, Video } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { MEETING_TYPE_LABEL, type MockMeeting, userById } from '@/lib/mock-data'
+import { userAvatarFor } from '@/lib/community-images'
 
 interface MeetingCardProps {
   meeting: MockMeeting
@@ -98,9 +99,25 @@ export function MeetingCard({ meeting, compact = false }: MeetingCardProps) {
               (compact ? '' : 'border-t border-gray-100 pt-3')
             }
           >
-            <div className="inline-flex items-center gap-1.5 text-xs text-gray-500">
-              <Users className="h-3 w-3" />
-              {meeting.currentParticipants} / {meeting.maxParticipants}명
+            <div className="inline-flex items-center gap-2 text-xs text-gray-500">
+              {meeting.currentParticipants > 0 && (
+                <div className="flex -space-x-1.5">
+                  {Array.from({ length: Math.min(3, meeting.currentParticipants) }).map((_, i) => (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      key={i}
+                      src={userAvatarFor(`${meeting.id}-p${i}`)}
+                      alt=""
+                      className="h-5 w-5 rounded-full border border-white object-cover"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+              )}
+              <span className="inline-flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                {meeting.currentParticipants}/{meeting.maxParticipants}명
+              </span>
             </div>
             <div className="text-xs font-semibold">
               {meeting.isFree ? (

@@ -9,7 +9,7 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 
 import { ArrowRight, BookOpen, Calendar, MapPin, Plus, Search, Star, Store } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
-import { MEETINGS, MEETING_TYPE_LABEL, type MeetingType } from '@/lib/mock-data'
+import { MEETINGS, MEETING_TYPE_LABEL, channelsByType, type MeetingType } from '@/lib/mock-data'
 import { formatNumber } from '@amakers/utils'
 import { MeetingCard } from '@/components/meeting-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
@@ -31,16 +31,18 @@ const TYPES: Array<{ value: '' | MeetingType; label: string }> = [
 const REGIONS = ['전국', '서울', '경기', '부산', '대구', '대전', '광주', '울산']
 
 interface MeetingsPageProps {
-  searchParams: { type?: string; region?: string; status?: string; q?: string }
+  searchParams: { type?: string; region?: string; status?: string; q?: string; category?: string }
 }
 
 export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
-  const { type = '', region = '전국', status = 'upcoming', q } = searchParams
+  const { type = '', region = '전국', status = 'upcoming', q, category } = searchParams
   const needle = q?.toLowerCase().trim() ?? ''
+  const categoryChannels = channelsByType('category')
 
   let results = MEETINGS.slice()
   if (status !== 'all') results = results.filter((m) => m.status === status)
   if (type) results = results.filter((m) => m.type === type)
+  if (category) results = results.filter((m) => m.channelType === 'category' && m.channelKey === category)
   if (region && region !== '전국') results = results.filter((m) => m.region === region)
   if (needle) {
     results = results.filter(
@@ -85,6 +87,36 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
                 모임 만들기
               </Button>
             </a>
+          </div>
+
+          {/* 관심사(업종) 카테고리 — 소모임 스타일 발견 */}
+          <div className="mt-5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <a
+              href="/meetings"
+              className={
+                'shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ' +
+                (!category ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+              }
+              style={!category ? { background: 'var(--brand-primary)' } : undefined}
+            >
+              전체
+            </a>
+            {categoryChannels.map((c) => {
+              const isActive = category === c.key
+              return (
+                <a
+                  key={c.key}
+                  href={`/meetings?category=${c.key}`}
+                  className={
+                    'shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ' +
+                    (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                  }
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {c.label.replace(/방$/, '')}
+                </a>
+              )
+            })}
           </div>
         </div>
       </section>
