@@ -1,6 +1,6 @@
 import { CalendarDays, ExternalLink, MapPin } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
-import { daysUntil, FESTIVAL_TYPE_LABEL, type MockFestival } from '@/lib/hub-data'
+import { daysUntil, FESTIVAL_TYPE_LABEL, SOURCE_LABEL, type MockFestival } from '@/lib/hub-data'
 import { ScrapButton } from './scrap-button'
 
 interface FestivalCardProps {
@@ -33,9 +33,12 @@ export function FestivalCard({ festival }: FestivalCardProps) {
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
-          <Badge variant="primary" className="absolute left-3 top-3">
-            {FESTIVAL_TYPE_LABEL[festival.type]}
-          </Badge>
+          <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+            <Badge variant="primary">{FESTIVAL_TYPE_LABEL[festival.type]}</Badge>
+            {festival.source && festival.source !== 'official' && (
+              <Badge variant="default" className="bg-white/90">{SOURCE_LABEL[festival.source]}</Badge>
+            )}
+          </div>
           {!ended && d >= 0 && d <= 14 && (
             <Badge variant="error" className="absolute right-3 top-3">
               {d === 0 ? '오늘 시작' : `D-${d}`}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, Plus } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
+import { CommunityFestivalFeed } from '@/components/community-festival-feed'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { FestivalCard } from '@/components/festival-card'
 import { FESTIVAL_TYPE_LABEL, type FestivalType } from '@/lib/hub-data'
@@ -46,13 +47,25 @@ export default async function FestivalsPage({ searchParams }: FestivalsPageProps
 
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="inline-flex items-center gap-2 text-h3 font-bold text-gray-900">
-            <CalendarDays className="h-6 w-6" style={{ color: 'var(--brand-primary)' }} />
-            축제·박람회
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            창업·외식·지역 박람회와 축제, 플리마켓 일정을 모았습니다. 부스 참가·트렌드 파악 기회를 챙기세요.
-          </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="inline-flex items-center gap-2 text-h3 font-bold text-gray-900">
+                <CalendarDays className="h-6 w-6" style={{ color: 'var(--brand-primary)' }} />
+                축제·박람회
+              </h1>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                창업·외식·지역 박람회와 축제, 플리마켓 일정을 모았습니다. 부스 참가·트렌드 파악 기회를 챙기세요.
+              </p>
+            </div>
+            <a
+              href="/festivals/new"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              <Plus className="h-4 w-4" />
+              행사 제보
+            </a>
+          </div>
           <div className="mt-4 flex flex-wrap gap-2">
             {TYPE_FILTERS.map((t) => {
               const isActive = t.key === active
@@ -75,18 +88,18 @@ export default async function FestivalsPage({ searchParams }: FestivalsPageProps
       </section>
 
       <div className="container mx-auto py-8">
-        {festivals.length === 0 ? (
-          <Card>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <CommunityFestivalFeed typeFilter={active} />
+          {festivals.map((f) => (
+            <FestivalCard key={f.id} festival={f} />
+          ))}
+        </div>
+        {festivals.length === 0 && (
+          <Card className="mt-4">
             <CardContent className="p-10 text-center text-sm text-gray-500">
-              해당 유형의 일정이 아직 없습니다.
+              해당 유형의 등록된 일정이 없습니다. 알고 있는 행사를 제보해보세요.
             </CardContent>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {festivals.map((f) => (
-              <FestivalCard key={f.id} festival={f} />
-            ))}
-          </div>
         )}
       </div>
 
