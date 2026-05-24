@@ -40,18 +40,12 @@ const CAPITAL_OPTIONS = [
 
 const REGION_OPTIONS = [
   '전국',
-  '서울',
-  '경기',
-  '인천',
-  '부산',
-  '대구',
-  '대전',
-  '광주',
-  '울산',
+  '서울', '경기', '인천',
+  '부산', '대구', '광주', '대전', '울산', '세종',
   '강원',
-  '충청',
-  '전라',
-  '경상',
+  '충북', '충남',
+  '전북', '전남',
+  '경북', '경남',
   '제주',
 ]
 
@@ -596,16 +590,16 @@ function OptionRow({
       className={
         'block w-full rounded-xl border-2 px-4 py-3 text-left transition-all ' +
         (selected
-          ? 'border-gray-900 bg-gray-50'
+          ? 'border-gray-900 bg-gray-900'
           : 'border-gray-200 bg-white hover:border-gray-400')
       }
       aria-pressed={selected}
     >
       <div className="flex items-center justify-between">
-        <div className="text-sm font-semibold text-gray-900">{title}</div>
-        {selected && <CheckCircle2 className="h-4 w-4 text-gray-900" />}
+        <div className={`text-sm font-semibold ${selected ? 'text-white' : 'text-gray-900'}`}>{title}</div>
+        {selected && <CheckCircle2 className="h-4 w-4 text-white" />}
       </div>
-      <div className="mt-0.5 text-xs text-gray-500">{helper}</div>
+      <div className={`mt-0.5 text-xs ${selected ? 'text-gray-300' : 'text-gray-500'}`}>{helper}</div>
     </button>
   )
 }

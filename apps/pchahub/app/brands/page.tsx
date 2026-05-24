@@ -22,6 +22,7 @@ import { BrandSaveButton } from '@/components/brand-save-button'
 import { CompareButton } from '@/components/compare-button'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
+import { KOREAN_REGIONS } from '@/lib/regions-data'
 
 // 카테고리별 이모지 아이콘
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -189,7 +190,7 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
               className={
                 'flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ' +
                 (!activeCategory
-                  ? 'border-gray-900 bg-gray-900 text-white'
+                  ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white'
                   : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
               }
             >
@@ -490,9 +491,7 @@ const SORT_OPTIONS = [
   { key: 'stores-desc', label: '매장 수 많은 순' },
 ]
 
-const REGION_OPTIONS = [
-  '서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산',
-]
+const REGION_OPTIONS = KOREAN_REGIONS.map((r) => r.key)
 
 function makeHref(
   current: BrandsPageProps['searchParams'],

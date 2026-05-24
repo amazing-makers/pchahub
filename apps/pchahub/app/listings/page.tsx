@@ -20,6 +20,7 @@ import { CATEGORIES } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
 import { formatNumber } from '@amakers/utils'
+import { KOREAN_REGIONS } from '@/lib/regions-data'
 
 const SORT_OPTIONS = [
   { key: 'recent', label: '최신 순' },
@@ -29,17 +30,18 @@ const SORT_OPTIONS = [
 ] as const
 type SortKey = (typeof SORT_OPTIONS)[number]['key']
 
-interface ListingsPageProps {
-  searchParams: { category?: string; type?: string; region?: string; q?: string; sort?: string }
-}
+const REGION_OPTIONS = KOREAN_REGIONS.map((r) => r.key)
+const PAGE_SIZE = 24
 
-const REGION_OPTIONS = ['서울', '경기', '인천', '부산', '대구', '대전', '광주', '울산']
+interface ListingsPageProps {
+  searchParams: { category?: string; type?: string; region?: string; q?: string; sort?: string; page?: string }
+}
 
 export default function ListingsPage({ searchParams }: ListingsPageProps) {
   const active = searchParams.category
   const activeType = searchParams.type
   const activeRegion = searchParams.region
-  const { q, sort = 'recent' } = searchParams
+  const { q, sort = 'recent', page } = searchParams
   const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let filtered = LISTINGS
@@ -68,6 +70,12 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
       default: return b.listedAt.localeCompare(a.listedAt)
     }
   })
+
+  const totalResults = filtered.length
+  const totalPages = Math.max(1, Math.ceil(totalResults / PAGE_SIZE))
+  const pageNum = Math.max(1, parseInt(page ?? '1', 10) || 1)
+  const currentPage = Math.min(pageNum, totalPages)
+  const pagedResults = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const transferCount = LISTINGS.filter((l) => l.listingType === '양도').length
   const newCount = LISTINGS.filter((l) => l.listingType === '신규임대').length
@@ -164,7 +172,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
         </form>
 
         <div className="mb-3 flex flex-wrap gap-2 text-sm">
-          <FilterChip href={pathFor({ ...searchParams, category: undefined })} active={!active}>
+          <FilterChip href={pathFor({ ...searchParams, category: undefined, page: undefined })} active={!active}>
             전체 업종 ({LISTINGS.length})
           </FilterChip>
           {CATEGORIES.map((c) => {
@@ -173,7 +181,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             return (
               <FilterChip
                 key={c.key}
-                href={pathFor({ ...searchParams, category: c.key })}
+                href={pathFor({ ...searchParams, category: c.key, page: undefined })}
                 active={active === c.key}
               >
                 {c.label} ({count})
@@ -183,7 +191,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
         </div>
 
         <div className="mb-3 flex flex-wrap gap-2 text-sm">
-          <FilterChip href={pathFor({ ...searchParams, region: undefined })} active={!activeRegion}>
+          <FilterChip href={pathFor({ ...searchParams, region: undefined, page: undefined })} active={!activeRegion}>
             전국
           </FilterChip>
           {REGION_OPTIONS.map((r) => {
@@ -192,7 +200,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
             return (
               <FilterChip
                 key={r}
-                href={pathFor({ ...searchParams, region: r })}
+                href={pathFor({ ...searchParams, region: r, page: undefined })}
                 active={activeRegion === r}
               >
                 {r} ({count})
@@ -202,14 +210,14 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
         </div>
 
         <div className="mb-3 flex flex-wrap gap-2 text-sm">
-          <FilterChip href={pathFor({ ...searchParams, type: undefined })} active={!activeType}>
+          <FilterChip href={pathFor({ ...searchParams, type: undefined, page: undefined })} active={!activeType}>
             전체 유형
           </FilterChip>
-          <FilterChip href={pathFor({ ...searchParams, type: '양도' })} active={activeType === '양도'}>
+          <FilterChip href={pathFor({ ...searchParams, type: '양도', page: undefined })} active={activeType === '양도'}>
             양도 ({transferCount})
           </FilterChip>
           <FilterChip
-            href={pathFor({ ...searchParams, type: '신규임대' })}
+            href={pathFor({ ...searchParams, type: '신규임대', page: undefined })}
             active={activeType === '신규임대'}
           >
             신규임대 ({newCount})
@@ -220,11 +228,11 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           {SORT_OPTIONS.map((o) => (
             <a
               key={o.key}
-              href={pathFor({ ...searchParams, sort: o.key })}
+              href={pathFor({ ...searchParams, sort: o.key, page: undefined })}
               className={
                 'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
                 (activeSort === o.key
-                  ? 'bg-gray-900 text-white'
+                  ? 'bg-[var(--brand-primary)] text-white'
                   : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
               }
             >
@@ -233,7 +241,7 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           ))}
         </div>
 
-        {filtered.length === 0 ? (
+        {totalResults === 0 ? (
           <Card>
             <CardContent className="p-10 text-center text-sm text-gray-500">
               조건에 맞는 매물이 없습니다. 필터를 변경해보세요.
@@ -241,21 +249,73 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
           </Card>
         ) : (
           <>
-            <div className="mb-3 text-sm text-gray-700">
-              {q ? (
-                <>
-                  <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
-                  {filtered.length}건
-                </>
-              ) : (
-                <>{filtered.length}건의 매물</>
+            <div className="mb-3 flex items-center justify-between text-sm text-gray-700">
+              <span>
+                {q ? (
+                  <>
+                    <span className="font-medium text-gray-900">&ldquo;{q}&rdquo;</span> 검색 결과{' '}
+                    {totalResults}건
+                  </>
+                ) : (
+                  <>{totalResults}건의 매물</>
+                )}
+              </span>
+              {totalPages > 1 && (
+                <span className="text-xs text-gray-400">{currentPage} / {totalPages} 페이지</span>
               )}
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((l) => (
+              {pagedResults.map((l) => (
                 <ListingCard key={l.id} listing={l} />
               ))}
             </div>
+            {totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-center gap-1">
+                {currentPage > 1 && (
+                  <a
+                    href={pathFor({ ...searchParams, page: String(currentPage - 1) })}
+                    className="flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 hover:bg-gray-50"
+                  >
+                    ← 이전
+                  </a>
+                )}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                  .reduce<(number | '…')[]>((acc, p, idx, arr) => {
+                    if (idx > 0 && typeof arr[idx - 1] === 'number' && (arr[idx - 1] as number) + 1 < p) {
+                      acc.push('…')
+                    }
+                    acc.push(p)
+                    return acc
+                  }, [])
+                  .map((p, idx) =>
+                    p === '…' ? (
+                      <span key={`ellipsis-${idx}`} className="flex h-9 w-9 items-center justify-center text-sm text-gray-400">…</span>
+                    ) : (
+                      <a
+                        key={p}
+                        href={pathFor({ ...searchParams, page: String(p) })}
+                        className={
+                          'flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-colors ' +
+                          (p === currentPage
+                            ? 'bg-[var(--brand-primary)] text-white'
+                            : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50')
+                        }
+                      >
+                        {p}
+                      </a>
+                    ),
+                  )}
+                {currentPage < totalPages && (
+                  <a
+                    href={pathFor({ ...searchParams, page: String(currentPage + 1) })}
+                    className="flex h-9 items-center rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-600 hover:bg-gray-50"
+                  >
+                    다음 →
+                  </a>
+                )}
+              </div>
+            )}
           </>
         )}
 
@@ -321,13 +381,14 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
   )
 }
 
-function pathFor(params: { category?: string; type?: string; region?: string; q?: string; sort?: string }): string {
+function pathFor(params: { category?: string; type?: string; region?: string; q?: string; sort?: string; page?: string }): string {
   const usp = new URLSearchParams()
   if (params.category) usp.set('category', params.category)
   if (params.type) usp.set('type', params.type)
   if (params.region) usp.set('region', params.region)
   if (params.q) usp.set('q', params.q)
   if (params.sort && params.sort !== 'recent') usp.set('sort', params.sort)
+  if (params.page && params.page !== '1') usp.set('page', params.page)
   const qs = usp.toString()
   return qs ? `/listings?${qs}` : '/listings'
 }

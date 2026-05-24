@@ -33,9 +33,17 @@ const listJsonLd = buildItemListJsonLd({
 
 const FEATURED_SLUGS = ['contract-checklist', 'startup-cost-breakdown', 'roi-calculation', 'franchise-vs-independent']
 
-export default function GuidePage() {
+interface GuidePageProps {
+  searchParams: { cat?: string }
+}
+
+export default function GuidePage({ searchParams }: GuidePageProps) {
+  const activeCat = searchParams.cat
   const featured = FEATURED_SLUGS.map((s) => GUIDE_ARTICLES.find((a) => a.slug === s)).filter(Boolean) as GuideArticle[]
   const totalMinutes = GUIDE_ARTICLES.reduce((s, a) => s + a.readMinutes, 0)
+  const filteredCategories = activeCat
+    ? GUIDE_CATEGORIES.filter((c) => c.key === activeCat)
+    : GUIDE_CATEGORIES
 
   return (
     <main className="bg-gray-50">
@@ -82,23 +90,66 @@ export default function GuidePage() {
         </div>
       </div>
 
-      <div className="container mx-auto py-10 space-y-12">
-
-        {/* 추천 가이드 */}
-        <section>
-          <div className="mb-5 flex items-center gap-2">
-            <Flame className="h-5 w-5 text-orange-500" />
-            <h2 className="text-h4 font-semibold text-gray-900">지금 꼭 읽어야 할 가이드</h2>
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featured.map((article) => (
-              <FeaturedCard key={article.slug} article={article} />
+      {/* 카테고리 퀵 필터 탭 */}
+      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white shadow-sm">
+        <div className="container mx-auto">
+          <div className="flex gap-1 overflow-x-auto py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <a
+              href="/guide"
+              className={
+                'flex shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ' +
+                (!activeCat
+                  ? 'bg-[var(--brand-primary)] text-white'
+                  : 'text-gray-600 hover:bg-gray-100')
+              }
+            >
+              전체
+            </a>
+            {GUIDE_CATEGORIES.map((cat) => (
+              <a
+                key={cat.key}
+                href={`/guide?cat=${cat.key}`}
+                className={
+                  'flex shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ' +
+                  (activeCat === cat.key
+                    ? 'bg-[var(--brand-primary)] text-white'
+                    : 'text-gray-600 hover:bg-gray-100')
+                }
+              >
+                <span aria-hidden>{cat.emoji}</span>
+                {cat.label}
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+                    activeCat === cat.key ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'
+                  }`}
+                >
+                  {GUIDE_CATEGORY_COUNTS[cat.key] ?? 0}
+                </span>
+              </a>
             ))}
           </div>
-        </section>
+        </div>
+      </div>
+
+      <div className="container mx-auto space-y-12 py-10">
+
+        {/* 추천 가이드 — 전체 탭일 때만 표시 */}
+        {!activeCat && (
+          <section>
+            <div className="mb-5 flex items-center gap-2">
+              <Flame className="h-5 w-5 text-orange-500" />
+              <h2 className="text-h4 font-semibold text-gray-900">지금 꼭 읽어야 할 가이드</h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {featured.map((article) => (
+                <FeaturedCard key={article.slug} article={article} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 카테고리별 */}
-        {GUIDE_CATEGORIES.map((cat) => {
+        {filteredCategories.map((cat) => {
           const articles = GUIDE_ARTICLES.filter((a) => a.category === cat.key)
           return (
             <section key={cat.key}>
