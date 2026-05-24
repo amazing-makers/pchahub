@@ -169,7 +169,7 @@ const RAW_RECIPES: RawRecipe[] = [
 
 export const RECIPES: MockRecipe[] = RAW_RECIPES.map((r) => ({
   ...r,
-  coverImage: recipeCoverFor(r.id),
+  coverImage: recipeCoverFor(r.id, r.category),
 }))
 
 export const RECIPE_CATEGORIES = ['전체', '카페', '분식', '한식', '양식', '치킨/주점']

@@ -99,10 +99,12 @@ const POST_POOL: Record<string, string[]> = {
 
 // ── Recipe (food) + Festival (expo/event) pools ─────────────────────────────
 
-const RECIPE_POOL: string[] = [
+const DRINK_POOL: string[] = [
   '1461023058943-07fcbe16d735', // coffee latte
   '1495474472287-4d71bcdd2085', // coffee cup
   '1509042239860-f550ce710b93', // latte art
+]
+const DISH_POOL: string[] = [
   '1513104890138-7c749659a591', // pizza/dish
   '1498654896293-37aacf113fd9', // burger/dish
   '1551183053-bf91a1d81141',    // pasta
@@ -112,8 +114,10 @@ const RECIPE_POOL: string[] = [
   '1565299624946-b28f40a0ae38', // food plate
 ]
 
-export function recipeCoverFor(recipeId: string): string {
-  return U + (pick(RECIPE_POOL, recipeId) ?? RECIPE_POOL[0]!) + QL
+/** 카페/음료 레시피는 음료 사진, 그 외(분식·한식·양식·치킨/주점)는 요리 사진. */
+export function recipeCoverFor(recipeId: string, category?: string): string {
+  const pool = category === '카페' || category === '음료' ? DRINK_POOL : DISH_POOL
+  return U + (pick(pool, recipeId) ?? pool[0]!) + QL
 }
 
 const FESTIVAL_POOL: string[] = [
