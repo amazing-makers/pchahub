@@ -148,12 +148,18 @@ export function BookClient({ mentorId, mentorName, mentorRole, hourlyRate }: Boo
                   className={
                     'flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ' +
                     (done
-                      ? 'bg-gray-900 text-white'
+                      ? 'text-white'
                       : active
                       ? 'ring-2 bg-white text-gray-900'
                       : 'bg-gray-100 text-gray-400')
                   }
-                  style={active ? { outline: '2px solid var(--brand-primary)', outlineOffset: '1px' } : undefined}
+                  style={
+                    done
+                      ? { background: 'var(--brand-primary)' }
+                      : active
+                      ? { outline: '2px solid var(--brand-primary)', outlineOffset: '1px' }
+                      : undefined
+                  }
                 >
                   {done ? <Check className="h-4 w-4" /> : i + 1}
                 </div>
@@ -207,7 +213,7 @@ export function BookClient({ mentorId, mentorName, mentorRole, hourlyRate }: Boo
                         className={
                           'flex flex-col items-center rounded-xl border py-3 text-xs transition-colors ' +
                           (sel
-                            ? 'border-gray-900 bg-gray-900 text-white'
+                            ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)] text-white'
                             : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
                         }
                       >
@@ -232,7 +238,7 @@ export function BookClient({ mentorId, mentorName, mentorRole, hourlyRate }: Boo
                         className={
                           'rounded-lg border py-2 text-sm font-medium transition-colors ' +
                           (sel
-                            ? 'border-gray-900 bg-gray-900 text-white'
+                            ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)] text-white'
                             : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
                         }
                       >
@@ -271,7 +277,7 @@ export function BookClient({ mentorId, mentorName, mentorRole, hourlyRate }: Boo
                       className={
                         'inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm transition-colors ' +
                         (topic === t.key
-                          ? 'border-gray-900 bg-gray-900 text-white'
+                          ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)] text-white'
                           : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400')
                       }
                     >

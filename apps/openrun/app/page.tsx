@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
   path: '/',
 })
 
-import { ArrowRight, BarChart3, Target, Zap } from 'lucide-react'
+import { ArrowRight, BarChart3, Search, Target, Zap } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
@@ -140,6 +140,23 @@ export default function HomePage() {
               전체 사례 <ArrowRight className="h-3.5 w-3.5" />
             </a>
           </div>
+          {/* 사례 검색 */}
+          <form action="/search" method="get" className="mb-6 flex max-w-md overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm focus-within:ring-2 focus-within:ring-[var(--brand-primary)]">
+            <Search className="m-3 h-4 w-4 shrink-0 text-gray-400" aria-hidden />
+            <input
+              name="q"
+              type="search"
+              placeholder="업종·서비스·캠페인 유형 검색"
+              className="flex-1 bg-transparent py-2.5 pr-2 text-sm text-gray-900 placeholder-gray-400 outline-none"
+            />
+            <button
+              type="submit"
+              className="m-1 rounded-lg px-3 py-1.5 text-xs font-semibold text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+          </form>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {FEATURED_PORTFOLIO.map((c) => (
               <CaseCard key={c.id} case={c} />

@@ -12,6 +12,7 @@ const navItems = [
   { href: '/brands', label: '브랜드 검색' },
   { href: '/listings', label: '매물' },
   { href: '/guide', label: '창업 가이드' },
+  { href: '/trends', label: '시장 트렌드' },
   { href: '/regions', label: '지역별 탐색' },
   { href: '/scanner', label: '창업 스캐너' },
   { href: '/calculator', label: '수익 계산기' },

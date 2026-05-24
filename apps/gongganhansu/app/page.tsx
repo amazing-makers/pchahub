@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   path: '/',
 })
 
-import { ArrowRight, CheckCircle2, Sparkles, Wrench } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Search, Sparkles, Wrench } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SavedContractorsSection } from '@/components/saved-contractors-section'
@@ -87,7 +87,25 @@ export default function HomePage() {
               <br className="hidden sm:inline" />
               확인한 뒤 결정하세요.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            {/* 검색창 */}
+            <form action="/search" method="get" className="mt-8 flex w-full max-w-xl mx-auto overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md focus-within:ring-2 focus-within:ring-[var(--brand-primary)]">
+              <Search className="m-3.5 h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+              <input
+                name="q"
+                type="search"
+                placeholder="업종·지역·시공사 검색 (예: 카페 서울 홍대)"
+                className="flex-1 bg-transparent py-3 pr-2 text-sm text-gray-900 placeholder-gray-400 outline-none"
+              />
+              <button
+                type="submit"
+                className="m-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-white"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                검색
+              </button>
+            </form>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
               <a href="/quote">
                 <Button size="lg">무료 견적 받기</Button>
               </a>
