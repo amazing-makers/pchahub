@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CalendarDays, ChefHat, PencilLine, Trash2 } from 'lucide-react'
+import { CalendarDays, ChefHat, HandCoins, PencilLine, Trash2 } from 'lucide-react'
 import { Badge } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { FESTIVAL_TYPE_LABEL, type FestivalType, type ReviewStatus } from '@/lib/hub-data'
+import { FESTIVAL_TYPE_LABEL, SUPPORT_TYPE_LABEL, type FestivalType, type ReviewStatus, type SupportType } from '@/lib/hub-data'
 
 function StatusBadge({ status }: { status?: ReviewStatus }) {
   if (status === 'pending') return <Badge variant="warning">검수중</Badge>
@@ -13,6 +13,7 @@ function StatusBadge({ status }: { status?: ReviewStatus }) {
 
 const FESTIVAL_KEY = 'jangsanote:community:festivals'
 const RECIPE_KEY = 'jangsanote:community:recipes'
+const SUPPORT_KEY = 'jangsanote:community:support'
 
 interface LocalFestival {
   id: string
@@ -32,6 +33,14 @@ interface LocalRecipe {
   coverImage: string
   status?: ReviewStatus
 }
+interface LocalSupport {
+  id: string
+  title: string
+  type: SupportType
+  agency: string
+  applyEnd: string
+  status?: ReviewStatus
+}
 
 function read<T>(key: string): T[] {
   try {
@@ -45,11 +54,13 @@ function read<T>(key: string): T[] {
 export function MySubmissions() {
   const [festivals, setFestivals] = useState<LocalFestival[]>([])
   const [recipes, setRecipes] = useState<LocalRecipe[]>([])
+  const [supports, setSupports] = useState<LocalSupport[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     setFestivals(read<LocalFestival>(FESTIVAL_KEY))
     setRecipes(read<LocalRecipe>(RECIPE_KEY))
+    setSupports(read<LocalSupport>(SUPPORT_KEY))
     setHydrated(true)
   }, [])
 
@@ -63,8 +74,13 @@ export function MySubmissions() {
     window.localStorage.setItem(RECIPE_KEY, JSON.stringify(next))
     setRecipes(next)
   }
+  function removeSupport(id: string) {
+    const next = read<LocalSupport>(SUPPORT_KEY).filter((s) => s.id !== id)
+    window.localStorage.setItem(SUPPORT_KEY, JSON.stringify(next))
+    setSupports(next)
+  }
 
-  const total = festivals.length + recipes.length
+  const total = festivals.length + recipes.length + supports.length
 
   if (!hydrated) {
     return <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
@@ -147,6 +163,41 @@ export function MySubmissions() {
                 <button
                   type="button"
                   onClick={() => removeRecipe(r.id)}
+                  aria-label="삭제"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-400 hover:bg-rose-50 hover:text-rose-500"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {supports.length > 0 && (
+        <section>
+          <h2 className="mb-3 inline-flex items-center gap-2 text-base font-bold text-gray-900">
+            <HandCoins className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+            지원·이벤트 <span className="text-sm font-normal text-gray-400">{supports.length}</span>
+          </h2>
+          <ul className="divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-100 bg-white">
+            {supports.map((s) => (
+              <li key={s.id} className="flex items-center gap-3 p-3">
+                <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
+                  <HandCoins className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-semibold text-gray-900">{s.title}</span>
+                    <StatusBadge status={s.status} />
+                  </div>
+                  <div className="mt-0.5 truncate text-xs text-gray-500">
+                    {SUPPORT_TYPE_LABEL[s.type]} · {s.agency} · 마감 {s.applyEnd}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeSupport(s.id)}
                   aria-label="삭제"
                   className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-400 hover:bg-rose-50 hover:text-rose-500"
                 >

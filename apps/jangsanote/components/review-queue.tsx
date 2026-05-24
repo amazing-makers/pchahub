@@ -1,26 +1,35 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, HandCoins, X } from 'lucide-react'
 import { Badge } from '@amakers/ui'
-import { FESTIVAL_TYPE_LABEL, type FestivalType, type ReviewStatus } from '@/lib/hub-data'
+import {
+  FESTIVAL_TYPE_LABEL,
+  SUPPORT_TYPE_LABEL,
+  type FestivalType,
+  type ReviewStatus,
+  type SupportType,
+} from '@/lib/hub-data'
 
 const FESTIVAL_KEY = 'jangsanote:community:festivals'
 const RECIPE_KEY = 'jangsanote:community:recipes'
+const SUPPORT_KEY = 'jangsanote:community:support'
 
 interface Stored {
   id: string
   title: string
-  coverImage: string
+  coverImage?: string
   status?: ReviewStatus
-  // festival
-  type?: FestivalType
+  // festival / support type
+  type?: string
   region?: string
   startDate?: string
   venue?: string
   // recipe
   category?: string
   summary?: string
+  // support
+  agency?: string
 }
 
 function read(key: string): Stored[] {
@@ -35,11 +44,13 @@ function read(key: string): Stored[] {
 export function ReviewQueue() {
   const [festivals, setFestivals] = useState<Stored[]>([])
   const [recipes, setRecipes] = useState<Stored[]>([])
+  const [supports, setSupports] = useState<Stored[]>([])
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
     setFestivals(read(FESTIVAL_KEY))
     setRecipes(read(RECIPE_KEY))
+    setSupports(read(SUPPORT_KEY))
     setHydrated(true)
   }, [])
 
@@ -57,7 +68,8 @@ export function ReviewQueue() {
 
   const pendingFestivals = festivals.filter((f) => f.status === 'pending')
   const pendingRecipes = recipes.filter((r) => r.status === 'pending')
-  const total = pendingFestivals.length + pendingRecipes.length
+  const pendingSupports = supports.filter((s) => s.status === 'pending')
+  const total = pendingFestivals.length + pendingRecipes.length + pendingSupports.length
 
   if (!hydrated) return <div className="h-40 animate-pulse rounded-xl bg-gray-100" />
 
@@ -84,8 +96,14 @@ export function ReviewQueue() {
   }) {
     return (
       <li className="flex items-center gap-3 p-3">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={it.coverImage} alt="" className="h-12 w-16 shrink-0 rounded-lg object-cover" loading="lazy" />
+        {it.coverImage ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={it.coverImage} alt="" className="h-12 w-16 shrink-0 rounded-lg object-cover" loading="lazy" />
+        ) : (
+          <div className="flex h-12 w-16 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
+            <HandCoins className="h-5 w-5" />
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold text-gray-900">{it.title}</div>
           <div className="mt-0.5 truncate text-xs text-gray-500">{metaText}</div>
@@ -124,9 +142,26 @@ export function ReviewQueue() {
               <Row
                 key={f.id}
                 it={f}
-                metaText={`${f.type ? FESTIVAL_TYPE_LABEL[f.type] : '행사'} · ${f.region ?? ''} · ${f.venue ?? ''}`}
+                metaText={`${f.type ? FESTIVAL_TYPE_LABEL[f.type as FestivalType] : '행사'} · ${f.region ?? ''} · ${f.venue ?? ''}`}
                 onApprove={() => approve(FESTIVAL_KEY, f.id, setFestivals)}
                 onReject={() => reject(FESTIVAL_KEY, f.id, setFestivals)}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {pendingSupports.length > 0 && (
+        <section>
+          <h2 className="mb-3 text-base font-bold text-gray-900">지원·이벤트 {pendingSupports.length}</h2>
+          <ul className="divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-100 bg-white">
+            {pendingSupports.map((s) => (
+              <Row
+                key={s.id}
+                it={s}
+                metaText={`${s.type ? SUPPORT_TYPE_LABEL[s.type as SupportType] : '지원'} · ${s.agency ?? ''}`}
+                onApprove={() => approve(SUPPORT_KEY, s.id, setSupports)}
+                onReject={() => reject(SUPPORT_KEY, s.id, setSupports)}
               />
             ))}
           </ul>
