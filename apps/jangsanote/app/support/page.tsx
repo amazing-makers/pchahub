@@ -3,7 +3,8 @@ import { HandCoins } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { SupportCard } from '@/components/support-card'
-import { supportsByDeadline, SUPPORT_TYPE_LABEL, type SupportType } from '@/lib/hub-data'
+import { SUPPORT_TYPE_LABEL, type SupportType } from '@/lib/hub-data'
+import { getSupports, getHubDataSource } from '@/lib/sources/hub-source'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '지원·이벤트 정보',
@@ -23,10 +24,17 @@ interface SupportPageProps {
   searchParams: { type?: string }
 }
 
-export default function SupportPage({ searchParams }: SupportPageProps) {
+export default async function SupportPage({ searchParams }: SupportPageProps) {
   const active = TYPE_FILTERS.some((t) => t.key === searchParams.type) ? searchParams.type! : 'all'
-  const all = supportsByDeadline()
+  const today = new Date().toISOString().slice(0, 10)
+  const all = (await getSupports()).sort((a, b) => {
+    const aOpen = a.applyEnd >= today
+    const bOpen = b.applyEnd >= today
+    if (aOpen !== bOpen) return aOpen ? -1 : 1
+    return a.applyEnd.localeCompare(b.applyEnd)
+  })
   const items = active === 'all' ? all : all.filter((s) => s.type === (active as SupportType))
+  const dataSource = getHubDataSource()
 
   const breadcrumbs = buildBreadcrumbsJsonLd({
     items: [
@@ -89,6 +97,8 @@ export default function SupportPage({ searchParams }: SupportPageProps) {
           </div>
         )}
         <p className="mt-6 text-center text-xs text-gray-400">
+          데이터 출처: {dataSource === 'api' ? '공공데이터포털(data.go.kr) + amakers 큐레이션 + 점주 제보' : 'amakers 큐레이션 + 점주 제보'}
+          <br />
           ※ 지원 내용·일정은 주관기관 사정에 따라 변경될 수 있으니 신청 전 공식 사이트에서 확인하세요.
         </p>
       </div>

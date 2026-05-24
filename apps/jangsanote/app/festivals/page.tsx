@@ -3,7 +3,8 @@ import { CalendarDays } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { FestivalCard } from '@/components/festival-card'
-import { festivalsByDate, FESTIVAL_TYPE_LABEL, type FestivalType } from '@/lib/hub-data'
+import { FESTIVAL_TYPE_LABEL, type FestivalType } from '@/lib/hub-data'
+import { getFestivals } from '@/lib/sources/hub-source'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '축제·박람회 정보',
@@ -22,9 +23,9 @@ interface FestivalsPageProps {
   searchParams: { type?: string }
 }
 
-export default function FestivalsPage({ searchParams }: FestivalsPageProps) {
+export default async function FestivalsPage({ searchParams }: FestivalsPageProps) {
   const active = TYPE_FILTERS.some((t) => t.key === searchParams.type) ? searchParams.type! : 'all'
-  const all = festivalsByDate()
+  const all = (await getFestivals()).sort((a, b) => a.startDate.localeCompare(b.startDate))
   const festivals = active === 'all' ? all : all.filter((f) => f.type === (active as FestivalType))
 
   const breadcrumbs = buildBreadcrumbsJsonLd({

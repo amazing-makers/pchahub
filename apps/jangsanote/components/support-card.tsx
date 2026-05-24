@@ -1,6 +1,6 @@
 import { Building2, CalendarClock, Coins, ExternalLink, Users } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
-import { daysUntil, SUPPORT_TYPE_LABEL, type MockSupport } from '@/lib/hub-data'
+import { daysUntil, SOURCE_LABEL, SUPPORT_TYPE_LABEL, type MockSupport } from '@/lib/hub-data'
 import { ScrapButton } from './scrap-button'
 
 interface SupportCardProps {
@@ -27,7 +27,12 @@ export function SupportCard({ support }: SupportCardProps) {
       <Card className="h-full transition-shadow hover:shadow-md">
         <CardContent className="p-5">
           <div className="flex items-center justify-between gap-2">
-            <Badge variant={TYPE_VARIANT[support.type]}>{SUPPORT_TYPE_LABEL[support.type]}</Badge>
+            <div className="flex items-center gap-1.5">
+              <Badge variant={TYPE_VARIANT[support.type]}>{SUPPORT_TYPE_LABEL[support.type]}</Badge>
+              {support.source && support.source !== 'official' && (
+                <Badge variant="default">{SOURCE_LABEL[support.source]}</Badge>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               {closed ? (
                 <Badge variant="default">마감</Badge>

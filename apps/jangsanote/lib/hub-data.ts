@@ -3,6 +3,20 @@
 import { festivalCoverFor, recipeCoverFor, userAvatarFor } from './community-images'
 import { userById } from './mock-data'
 
+/**
+ * 데이터 출처.
+ * - official : amakers 큐레이션(공식 확인) 시드 데이터
+ * - api      : 공공데이터포털(data.go.kr) 등 외부 공개 API 수집
+ * - community: 실제 점주·관계자가 직접 제보/작성 (UGC)
+ */
+export type ContentSource = 'official' | 'api' | 'community'
+
+export const SOURCE_LABEL: Record<ContentSource, string> = {
+  official: '공식',
+  api: '공공데이터',
+  community: '점주 제보',
+}
+
 // ── 레시피 ───────────────────────────────────────────────────────────────────
 
 export type RecipeDifficulty = '쉬움' | '보통' | '어려움'
@@ -28,6 +42,7 @@ export interface MockRecipe {
   saves: number
   coverImage: string
   createdAt: string
+  source?: ContentSource
 }
 
 type RawRecipe = Omit<MockRecipe, 'coverImage'>
@@ -199,6 +214,7 @@ export interface MockFestival {
   website: string
   tags: string[]
   coverImage: string
+  source?: ContentSource
 }
 
 type RawFestival = Omit<MockFestival, 'coverImage'>
@@ -328,6 +344,7 @@ export interface MockSupport {
   applyEnd: string
   link: string
   tags: string[]
+  source?: ContentSource
 }
 
 export const SUPPORTS: MockSupport[] = [
