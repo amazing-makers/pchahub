@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
   path: '/',
 })
 
-import { ArrowRight, Building2, Calculator, CheckCircle2, Flame, Handshake, MapPin, Sparkles, Users } from 'lucide-react'
+import { ArrowRight, BookOpen, Building2, Calculator, CheckCircle2, Flame, Handshake, MapPin, Sparkles, Users } from 'lucide-react'
 import { Badge, Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { SearchBar } from '@/components/search-bar'
@@ -317,6 +317,89 @@ export default async function HomePage() {
                 </div>
               </CardContent>
             </Card>
+          </a>
+        </div>
+      </section>
+
+      {/* 창업 가이드 허브 */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <BookOpen className="h-6 w-6" style={{ color: 'var(--brand-primary)' }} />
+              창업 가이드 허브
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              계약서 체크리스트, 수익 계산법, 정보공개서 읽는 법까지 — 실패를 줄이는 창업 지식
+            </p>
+          </div>
+          <a href="/guide" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
+            전체 가이드 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { href: '/guide/contract-checklist', title: '계약서 서명 전\n체크리스트 20', emoji: '📄', color: '#0891B2' },
+            { href: '/guide/startup-cost-breakdown', title: '창업비 항목별\n완전 분석', emoji: '💸', color: '#7C3AED' },
+            { href: '/guide/roi-calculation', title: '투자 회수 기간\n계산법', emoji: '💰', color: '#D97706' },
+            { href: '/guide/how-to-choose-brand', title: '정보공개서로\n브랜드 고르기', emoji: '🗂️', color: '#059669' },
+          ].map((g) => (
+            <a key={g.href} href={g.href} className="group">
+              <Card className="h-full transition-shadow hover:shadow-md">
+                <CardContent className="p-5">
+                  <span
+                    className="flex h-10 w-10 items-center justify-center rounded-xl text-xl"
+                    style={{ background: g.color + '18' }}
+                    aria-hidden
+                  >
+                    {g.emoji}
+                  </span>
+                  <h3 className="mt-3 whitespace-pre-line text-sm font-semibold leading-snug text-gray-900 group-hover:underline">
+                    {g.title}
+                  </h3>
+                </CardContent>
+              </Card>
+            </a>
+          ))}
+        </div>
+        <div className="mt-4 text-center sm:hidden">
+          <a href="/guide" className="text-sm text-gray-600 hover:text-gray-900">
+            전체 가이드 보기 →
+          </a>
+        </div>
+      </section>
+
+      {/* 지역별 탐색 */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <MapPin className="h-6 w-6 text-gray-600" />
+              지역별 브랜드 탐색
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              내가 창업할 지역의 브랜드 현황·평균 창업비·인기 업종을 한눈에
+            </p>
+          </div>
+          <a href="/regions" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
+            전국 지도 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map((region) => (
+            <a
+              key={region}
+              href={`/regions/${encodeURIComponent(region)}`}
+              className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50"
+            >
+              {region}
+            </a>
+          ))}
+          <a
+            href="/regions"
+            className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:border-gray-400"
+          >
+            전체 지도 →
           </a>
         </div>
       </section>
