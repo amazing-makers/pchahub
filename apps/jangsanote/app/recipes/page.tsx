@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { ChefHat } from 'lucide-react'
+import { ChefHat, Plus } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { RecipeCard } from '@/components/recipe-card'
+import { CommunityRecipeFeed } from '@/components/community-recipe-feed'
 import { RECIPE_CATEGORIES, RECIPES } from '@/lib/hub-data'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
@@ -40,13 +41,25 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
 
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="inline-flex items-center gap-2 text-h3 font-bold text-gray-900">
-            <ChefHat className="h-6 w-6" style={{ color: 'var(--brand-primary)' }} />
-            점주 레시피 공유
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            실제 점주들이 검증한 매장 메뉴 레시피. 원가·난이도·조리법을 보고 바로 적용해보세요.
-          </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="inline-flex items-center gap-2 text-h3 font-bold text-gray-900">
+                <ChefHat className="h-6 w-6" style={{ color: 'var(--brand-primary)' }} />
+                점주 레시피 공유
+              </h1>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                실제 점주들이 검증한 매장 메뉴 레시피. 원가·난이도·조리법을 보고 바로 적용해보세요.
+              </p>
+            </div>
+            <a
+              href="/recipes/new"
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              <Plus className="h-4 w-4" />
+              레시피 작성
+            </a>
+          </div>
           <div className="mt-4 flex flex-wrap gap-2">
             {RECIPE_CATEGORIES.map((c) => {
               const isActive = c === active
@@ -71,18 +84,18 @@ export default function RecipesPage({ searchParams }: RecipesPageProps) {
       </section>
 
       <div className="container mx-auto py-8">
-        {sorted.length === 0 ? (
-          <Card>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <CommunityRecipeFeed categoryFilter={active} />
+          {sorted.map((r) => (
+            <RecipeCard key={r.id} recipe={r} />
+          ))}
+        </div>
+        {sorted.length === 0 && (
+          <Card className="mt-4">
             <CardContent className="p-10 text-center text-sm text-gray-500">
-              해당 분류의 레시피가 아직 없습니다.
+              이 분류에 등록된 레시피가 없습니다. 매장 레시피를 직접 공유해보세요.
             </CardContent>
           </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sorted.map((r) => (
-              <RecipeCard key={r.id} recipe={r} />
-            ))}
-          </div>
         )}
       </div>
 
