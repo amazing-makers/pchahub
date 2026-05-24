@@ -50,6 +50,7 @@ export function FestivalSubmitForm() {
       tags: ['점주제보'],
       coverImage: festivalCoverFor(id),
       source: 'community' as const,
+      status: 'pending' as const,
     }
     try {
       const prev = JSON.parse(window.localStorage.getItem(KEY) || '[]')

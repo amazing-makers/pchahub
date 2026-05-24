@@ -17,6 +17,9 @@ export const SOURCE_LABEL: Record<ContentSource, string> = {
   community: '점주 제보',
 }
 
+/** UGC 검수 상태. 미설정(legacy)은 공개(approved)로 간주. */
+export type ReviewStatus = 'pending' | 'approved'
+
 // ── 레시피 ───────────────────────────────────────────────────────────────────
 
 export type RecipeDifficulty = '쉬움' | '보통' | '어려움'

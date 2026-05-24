@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { CalendarDays, ChefHat, PencilLine, Trash2 } from 'lucide-react'
+import { Badge } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { FESTIVAL_TYPE_LABEL, type FestivalType } from '@/lib/hub-data'
+import { FESTIVAL_TYPE_LABEL, type FestivalType, type ReviewStatus } from '@/lib/hub-data'
+
+function StatusBadge({ status }: { status?: ReviewStatus }) {
+  if (status === 'pending') return <Badge variant="warning">검수중</Badge>
+  return <Badge variant="default">공개</Badge>
+}
 
 const FESTIVAL_KEY = 'jangsanote:community:festivals'
 const RECIPE_KEY = 'jangsanote:community:recipes'
@@ -16,6 +22,7 @@ interface LocalFestival {
   region: string
   startDate: string
   coverImage: string
+  status?: ReviewStatus
 }
 interface LocalRecipe {
   id: string
@@ -23,6 +30,7 @@ interface LocalRecipe {
   category: string
   costPerWon: number
   coverImage: string
+  status?: ReviewStatus
 }
 
 function read<T>(key: string): T[] {
@@ -94,7 +102,10 @@ export function MySubmissions() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={f.coverImage} alt="" className="h-12 w-16 shrink-0 rounded-lg object-cover" loading="lazy" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-gray-900">{f.title}</div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-semibold text-gray-900">{f.title}</span>
+                    <StatusBadge status={f.status} />
+                  </div>
                   <div className="mt-0.5 truncate text-xs text-gray-500">
                     {FESTIVAL_TYPE_LABEL[f.type]} · {f.region} · {f.startDate}
                   </div>
@@ -125,7 +136,10 @@ export function MySubmissions() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={r.coverImage} alt="" className="h-12 w-16 shrink-0 rounded-lg object-cover" loading="lazy" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-gray-900">{r.title}</div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-semibold text-gray-900">{r.title}</span>
+                    <StatusBadge status={r.status} />
+                  </div>
                   <div className="mt-0.5 truncate text-xs text-gray-500">
                     {r.category} · 원가 {r.costPerWon === 0 ? '0원' : `${formatNumber(r.costPerWon)}원`}
                   </div>

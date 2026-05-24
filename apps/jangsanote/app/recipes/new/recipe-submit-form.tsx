@@ -51,6 +51,7 @@ export function RecipeSubmitForm() {
       coverImage: recipeCoverFor(id, f.category),
       createdAt: new Date().toISOString().slice(0, 10),
       source: 'community' as const,
+      status: 'pending' as const,
     }
     try {
       const prev = JSON.parse(window.localStorage.getItem(KEY) || '[]')
