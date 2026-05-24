@@ -7,13 +7,14 @@ export const metadata: Metadata = buildPageMetadata('bestplace', {
   path: '/',
 })
 
-import { ArrowRight, Award, Flame, Trophy } from 'lucide-react'
+import { ArrowRight, Award, CalendarDays, Flame, Sparkles, Trophy } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { AwardCard } from '@/components/award-card'
 import { StoreCard } from '@/components/store-card'
 import { RankingList } from '@/components/ranking-list'
+import { CampaignCard } from '@/components/campaign-card'
 import { RecentlyViewedStores } from '@/components/recently-viewed-stores'
 import { SavedStoresSection } from '@/components/saved-stores-section'
 import {
@@ -23,6 +24,8 @@ import {
   topStoresByRating,
   topStoresByVisitors,
 } from '@/lib/mock-data'
+import { openCampaigns } from '@/lib/mock-experiences'
+import { CURRENT_MONTHLY_BEST, MONTH_LABEL } from '@/lib/mock-monthly-best'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -50,11 +53,13 @@ const FAQS = [
 export default function HomePage() {
   const currentYear = new Date().getFullYear()
   const yearAwards = awardsByYear(currentYear)
-  // 카테고리별 1위만 추출
   const firstPlaceAwards = yearAwards.filter((a) => a.rank === 1).slice(0, 4)
   const topRated = topStoresByRating(5)
   const topVisitors = topStoresByVisitors(5)
   const newStores = newestStores(4)
+  const openCampaignList = openCampaigns(3)
+  const { month, entries: monthlyEntries } = CURRENT_MONTHLY_BEST
+  const monthlyTop = monthlyEntries.filter((e) => e.rank === 1).slice(0, 3)
 
   const orgJsonLd = buildOrganizationJsonLd({
     name: '베스트플레이스',
@@ -188,6 +193,63 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 이달의 베스트 */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <CalendarDays className="h-6 w-6 text-amber-500" />
+              {MONTH_LABEL[month]} 이달의 베스트
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">방문객 증가·신규 리뷰·SNS 버즈 종합 선정</p>
+          </div>
+          <a
+            href="/monthly-best"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          >
+            전체 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {monthlyTop.map((entry) => (
+            <a
+              key={entry.storeId}
+              href={`/stores/${entry.storeId}`}
+              className="group overflow-hidden rounded-2xl border border-gray-200 bg-white transition-shadow hover:shadow-md"
+            >
+              <div
+                className="flex h-16 items-end px-4 pb-3"
+                style={{
+                  background: `linear-gradient(135deg, ${entry.thumbnailColor}cc, ${entry.thumbnailColor}44)`,
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/25 text-[11px] font-bold text-white">
+                    1위
+                  </span>
+                  <span className="text-xs font-semibold text-white">{entry.categoryLabel}</span>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="text-[11px] text-gray-400">{entry.brandName}</div>
+                <div className="mt-0.5 text-sm font-bold text-gray-900 group-hover:text-[var(--brand-primary)] transition-colors">
+                  {entry.storeName}
+                </div>
+                <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-gray-500">{entry.reason}</p>
+                <div className="mt-2 flex gap-3">
+                  {entry.metrics.slice(0, 2).map((m) => (
+                    <div key={m.label}>
+                      <div className="text-xs font-bold text-gray-900">{m.value}</div>
+                      <div className="text-[10px] text-gray-400">{m.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
       {/* New stores */}
       <section className="container mx-auto pt-section">
         <div className="mb-6 flex items-end justify-between">
@@ -208,6 +270,32 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* 체험단·기자단 모집중 */}
+      {openCampaignList.length > 0 && (
+        <section className="container mx-auto pt-section">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+                <Sparkles className="h-6 w-6 text-violet-500" />
+                모집중인 체험단·기자단
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">베스트 매장 방문하고 혜택 받기</p>
+            </div>
+            <a
+              href="/experiences"
+              className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+            >
+              전체 캠페인 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {openCampaignList.map((c) => (
+              <CampaignCard key={c.id} campaign={c} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Past awards reference */}
       <section className="container mx-auto pt-section">

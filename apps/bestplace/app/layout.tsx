@@ -9,9 +9,10 @@ export const metadata = buildSiteMetadata('bestplace')
 
 const navItems = [
   { href: '/awards', label: '어워드' },
+  { href: '/monthly-best', label: '이달의 베스트' },
+  { href: '/experiences', label: '체험단·기자단' },
   { href: '/stores', label: '매장 디렉토리' },
-  { href: '/rankings', label: '실시간 랭킹' },
-  { href: '/search', label: '검색' },
+  { href: '/rankings', label: '랭킹' },
 ]
 
 const actions: HeaderAction[] = [
