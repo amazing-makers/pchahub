@@ -1,6 +1,7 @@
 import { Building2, CalendarClock, Coins, ExternalLink, Users } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { daysUntil, SUPPORT_TYPE_LABEL, type MockSupport } from '@/lib/hub-data'
+import { ScrapButton } from './scrap-button'
 
 interface SupportCardProps {
   support: MockSupport
@@ -27,19 +28,22 @@ export function SupportCard({ support }: SupportCardProps) {
         <CardContent className="p-5">
           <div className="flex items-center justify-between gap-2">
             <Badge variant={TYPE_VARIANT[support.type]}>{SUPPORT_TYPE_LABEL[support.type]}</Badge>
-            {closed ? (
-              <Badge variant="default">마감</Badge>
-            ) : (
-              <span
-                className={
-                  'inline-flex items-center gap-1 text-xs font-semibold ' +
-                  (d <= 7 ? 'text-rose-600' : 'text-gray-500')
-                }
-              >
-                <CalendarClock className="h-3.5 w-3.5" />
-                {d === 0 ? '오늘 마감' : `D-${d}`}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {closed ? (
+                <Badge variant="default">마감</Badge>
+              ) : (
+                <span
+                  className={
+                    'inline-flex items-center gap-1 text-xs font-semibold ' +
+                    (d <= 7 ? 'text-rose-600' : 'text-gray-500')
+                  }
+                >
+                  <CalendarClock className="h-3.5 w-3.5" />
+                  {d === 0 ? '오늘 마감' : `D-${d}`}
+                </span>
+              )}
+              <ScrapButton bucket="support" id={support.id} />
+            </div>
           </div>
 
           <h3 className="mt-3 line-clamp-2 inline-flex items-start gap-1 text-base font-semibold text-gray-900">

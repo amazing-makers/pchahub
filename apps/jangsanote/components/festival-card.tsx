@@ -1,6 +1,7 @@
 import { CalendarDays, ExternalLink, MapPin } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { daysUntil, FESTIVAL_TYPE_LABEL, type MockFestival } from '@/lib/hub-data'
+import { ScrapButton } from './scrap-button'
 
 interface FestivalCardProps {
   festival: MockFestival
@@ -45,6 +46,9 @@ export function FestivalCard({ festival }: FestivalCardProps) {
               종료
             </Badge>
           )}
+          <div className="absolute bottom-3 right-3 z-10">
+            <ScrapButton bucket="festivals" id={festival.id} />
+          </div>
         </div>
         <CardContent className="p-5">
           <h3 className="line-clamp-2 inline-flex items-start gap-1 text-base font-semibold text-gray-900">

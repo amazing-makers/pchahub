@@ -6,6 +6,7 @@ import { formatNumber } from '@amakers/utils'
 import { buildBreadcrumbsJsonLd, buildHowToJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { RecipeCard } from '@/components/recipe-card'
 import { RECIPES, recipeAuthor, recipeById } from '@/lib/hub-data'
+import { ScrapButton } from '@/components/scrap-button'
 
 export function generateStaticParams() {
   return RECIPES.map((r) => ({ id: r.id }))
@@ -75,9 +76,12 @@ export default function RecipeDetailPage({ params }: RecipeDetailProps) {
                   <div className="font-semibold text-gray-900">{author.handle}</div>
                   <div className="text-xs text-gray-500">{recipe.createdAt} 공유</div>
                 </div>
-                <span className="ml-auto inline-flex items-center gap-1 text-sm text-gray-500">
-                  <Heart className="h-4 w-4 text-rose-400" />{formatNumber(recipe.likes)}
-                </span>
+                <div className="ml-auto flex items-center gap-3">
+                  <span className="inline-flex items-center gap-1 text-sm text-gray-500">
+                    <Heart className="h-4 w-4 text-rose-400" />{formatNumber(recipe.likes)}
+                  </span>
+                  <ScrapButton bucket="recipes" id={recipe.id} variant="inline" />
+                </div>
               </div>
             </div>
             <div className="relative h-56 overflow-hidden rounded-2xl bg-gray-100 lg:h-full">

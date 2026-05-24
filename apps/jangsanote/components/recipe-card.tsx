@@ -2,6 +2,7 @@ import { Clock, Flame, Heart, Wallet } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { recipeAuthor, type MockRecipe } from '@/lib/hub-data'
+import { ScrapButton } from './scrap-button'
 
 interface RecipeCardProps {
   recipe: MockRecipe
@@ -23,6 +24,9 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           <Badge variant="default" className="absolute left-3 top-3 bg-white/90">
             {recipe.category}
           </Badge>
+          <div className="absolute right-3 top-3 z-10">
+            <ScrapButton bucket="recipes" id={recipe.id} />
+          </div>
         </div>
         <CardContent className="p-5">
           <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500">

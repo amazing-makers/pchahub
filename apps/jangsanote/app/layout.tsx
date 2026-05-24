@@ -14,7 +14,7 @@ const navItems = [
   { href: '/recipes', label: '레시피' },
   { href: '/festivals', label: '축제·박람회' },
   { href: '/support', label: '지원·이벤트' },
-  { href: '/regions/seoul', label: '지역방' },
+  { href: '/scrap', label: '내 스크랩' },
 ]
 
 const actions: HeaderAction[] = [
