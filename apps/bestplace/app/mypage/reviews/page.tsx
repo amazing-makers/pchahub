@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@amakers/auth'
 import { redirect } from 'next/navigation'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, PenLine } from 'lucide-react'
 import { ReviewsClient } from './reviews-client'
 
 export default async function ReviewsPage() {
@@ -17,10 +17,20 @@ export default async function ReviewsPage() {
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="text-gray-700">내 리뷰</span>
           </nav>
-          <h1 className="mt-3 text-h3 font-bold text-gray-900">내가 쓴 리뷰</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            작성한 매장 리뷰를 확인하고 관리하세요.
-          </p>
+          <div className="mt-3 flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-h3 font-bold text-gray-900">내가 쓴 리뷰</h1>
+              <p className="mt-1 text-sm text-gray-500">작성한 매장 리뷰를 확인하고 관리하세요.</p>
+            </div>
+            <a
+              href="/mypage/reviews/new"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              <PenLine className="h-4 w-4" />
+              리뷰 작성
+            </a>
+          </div>
         </div>
       </section>
 

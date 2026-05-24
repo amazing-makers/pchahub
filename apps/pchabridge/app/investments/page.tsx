@@ -14,7 +14,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
   ],
 })
 
-import { ArrowRight, BookOpen, MapPin, Search, Store } from 'lucide-react'
+import { ArrowRight, BookOpen, MapPin, Search, Store, TrendingUp } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { RoundCardWithWatch } from '@/components/round-card-with-watch'
 import { BRANDS, ROUND_TYPE_LABEL, ROUNDS, type RoundType } from '@/lib/mock-data'
@@ -28,12 +28,21 @@ const SORT_OPTIONS = [
 ] as const
 type SortKey = typeof SORT_OPTIONS[number]['key']
 
+const ROI_RANGES = [
+  { key: '', label: '전체 수익률' },
+  { key: 'low', label: '~8%', min: 0, max: 8 },
+  { key: 'mid', label: '8~12%', min: 8, max: 12 },
+  { key: 'high', label: '12%~', min: 12, max: Infinity },
+] as const
+type ROIRangeKey = '' | 'low' | 'mid' | 'high'
+
 interface InvestmentsPageProps {
-  searchParams: { type?: string; status?: string; q?: string; sort?: string }
+  searchParams: { type?: string; status?: string; q?: string; sort?: string; roi?: string }
 }
 
 export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) {
-  const { type, status = 'open', q, sort = 'featured' } = searchParams
+  const { type, status = 'open', q, sort = 'featured', roi } = searchParams
+  const activeRoi = (roi as ROIRangeKey) || ''
   const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'featured') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
   let rounds = ROUNDS.slice()
@@ -47,6 +56,14 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
         r.tags.some((t) => t.toLowerCase().includes(needle)) ||
         (BRANDS.find((b) => b.id === r.brandId)?.name ?? '').toLowerCase().includes(needle),
     )
+  }
+  if (activeRoi) {
+    const range = ROI_RANGES.find((r) => r.key === activeRoi)
+    if (range && range.key !== '') {
+      rounds = rounds.filter(
+        (r) => r.expectedAnnualROI >= range.min && r.expectedAnnualROI < range.max,
+      )
+    }
   }
 
   // 정렬 적용
@@ -118,21 +135,59 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
             )}
           </form>
 
+          {/* 투자 유형 필터 */}
           <div className="mt-4 flex flex-wrap gap-2">
-            {TYPES.map((t) => (
-              <a
-                key={t || 'all'}
-                href={t ? `/investments?type=${t}&status=${status}${q ? `&q=${encodeURIComponent(q)}` : ''}` : `/investments?status=${status}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
-                className={
-                  'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                  ((!t && !type) || type === t
-                    ? 'bg-gray-900 text-white'
-                    : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-                }
-              >
-                {t === '' ? '전체 유형' : ROUND_TYPE_LABEL[t]}
-              </a>
-            ))}
+            {TYPES.map((t) => {
+              const active = (!t && !type) || type === t
+              return (
+                <a
+                  key={t || 'all'}
+                  href={t
+                    ? `/investments?type=${t}&status=${status}${activeRoi ? `&roi=${activeRoi}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`
+                    : `/investments?status=${status}${activeRoi ? `&roi=${activeRoi}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
+                  className={
+                    'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
+                    (active
+                      ? 'text-white'
+                      : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
+                  }
+                  style={active ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {t === '' ? '전체 유형' : ROUND_TYPE_LABEL[t]}
+                </a>
+              )
+            })}
+          </div>
+
+          {/* ROI 범위 필터 */}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-500">
+              <TrendingUp className="h-3.5 w-3.5" /> 기대 수익률
+            </span>
+            {ROI_RANGES.map((r) => {
+              const active = activeRoi === r.key
+              return (
+                <a
+                  key={r.key || 'all-roi'}
+                  href={`/investments?${new URLSearchParams({
+                    ...(type ? { type } : {}),
+                    status,
+                    ...(r.key ? { roi: r.key } : {}),
+                    ...(sort !== 'featured' ? { sort } : {}),
+                    ...(q ? { q } : {}),
+                  }).toString()}`}
+                  className={
+                    'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                    (active
+                      ? 'text-white'
+                      : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50')
+                  }
+                  style={active ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {r.label}
+                </a>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -210,10 +265,9 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
                 }
                 className={
                   'rounded-md px-2 py-1 transition-colors ' +
-                  (status === s.key
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-600 hover:bg-gray-100')
+                  (status === s.key ? 'text-white' : 'text-gray-600 hover:bg-gray-100')
                 }
+                style={status === s.key ? { background: 'var(--brand-primary)' } : undefined}
               >
                 {s.label}
               </a>
@@ -233,9 +287,10 @@ export default function InvestmentsPage({ searchParams }: InvestmentsPageProps) 
                 className={
                   'rounded-full border px-3 py-1 text-xs font-medium transition-colors ' +
                   (activeSort === o.key
-                    ? 'border-gray-900 bg-gray-900 text-white'
+                    ? 'border-transparent text-white'
                     : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300')
                 }
+                style={activeSort === o.key ? { background: 'var(--brand-primary)' } : undefined}
               >
                 {o.label}
               </a>
