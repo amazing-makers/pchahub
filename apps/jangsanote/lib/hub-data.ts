@@ -1,6 +1,6 @@
 // 장사노트 정보 허브 — 레시피·축제/박람회·지원/이벤트 집계 데이터.
 // 커뮤니티(채널/게시글/모임)에 더해 점주에게 유용한 정보를 모아 보여준다.
-import { meetingCoverFor, userAvatarFor } from './community-images'
+import { festivalCoverFor, recipeCoverFor, userAvatarFor } from './community-images'
 import { userById } from './mock-data'
 
 // ── 레시피 ───────────────────────────────────────────────────────────────────
@@ -169,7 +169,7 @@ const RAW_RECIPES: RawRecipe[] = [
 
 export const RECIPES: MockRecipe[] = RAW_RECIPES.map((r) => ({
   ...r,
-  coverImage: meetingCoverFor(r.id, 'recipe'),
+  coverImage: recipeCoverFor(r.id),
 }))
 
 export const RECIPE_CATEGORIES = ['전체', '카페', '분식', '한식', '양식', '치킨/주점']
@@ -298,7 +298,7 @@ const RAW_FESTIVALS: RawFestival[] = [
 
 export const FESTIVALS: MockFestival[] = RAW_FESTIVALS.map((f) => ({
   ...f,
-  coverImage: meetingCoverFor(f.id, f.type),
+  coverImage: festivalCoverFor(f.id),
 }))
 
 // ── 지원 · 이벤트 ─────────────────────────────────────────────────────────────

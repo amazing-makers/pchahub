@@ -97,6 +97,42 @@ const POST_POOL: Record<string, string[]> = {
   ],
 }
 
+// ── Recipe (food) + Festival (expo/event) pools ─────────────────────────────
+
+const RECIPE_POOL: string[] = [
+  '1461023058943-07fcbe16d735', // coffee latte
+  '1495474472287-4d71bcdd2085', // coffee cup
+  '1509042239860-f550ce710b93', // latte art
+  '1513104890138-7c749659a591', // pizza/dish
+  '1498654896293-37aacf113fd9', // burger/dish
+  '1551183053-bf91a1d81141',    // pasta
+  '1504674900247-0877df9cc836', // plated food
+  '1540189549336-e6e99c3679fe', // burger meal
+  '1467003909585-2f8a72700288', // korean dish
+  '1565299624946-b28f40a0ae38', // food plate
+]
+
+export function recipeCoverFor(recipeId: string): string {
+  return U + (pick(RECIPE_POOL, recipeId) ?? RECIPE_POOL[0]!) + QL
+}
+
+const FESTIVAL_POOL: string[] = [
+  '1540575467063-178a50c2df87', // conference hall
+  '1505373877841-8d25f7d46678', // expo crowd
+  '1511578314322-379afb476865', // event audience
+  '1492684223066-81342ee5ff30', // festival crowd
+  '1559223607-a43c990c692c',    // booth / hall
+  '1556761175-5973dc0f32e7',    // business expo
+  '1515187029135-18ee286d815b', // trade show booth
+  '1531058020387-3be344556be6', // exhibition
+  '1475721027785-f74eccf877e2', // seminar
+  '1524178232363-1fb2b075b655', // co-working / meetup
+]
+
+export function festivalCoverFor(festivalId: string): string {
+  return U + (pick(FESTIVAL_POOL, festivalId) ?? FESTIVAL_POOL[0]!) + QL
+}
+
 /** Posts only get a hero image about ~60% of the time, based on id hash.
  *  Question/discussion posts have no hero (text-only). */
 export function postHeroFor(postId: string, category: string): string | undefined {
