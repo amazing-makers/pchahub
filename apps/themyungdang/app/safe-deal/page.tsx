@@ -201,7 +201,10 @@ export default function SafeDealPage() {
               <Card key={s.title} className="border-gray-200 shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-900 text-xs font-bold text-white">
+                    <span
+                      className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white"
+                      style={{ background: 'var(--brand-primary)' }}
+                    >
                       {i + 1}
                     </span>
                     <s.icon className="h-5 w-5 text-gray-400" />
@@ -212,6 +215,49 @@ export default function SafeDealPage() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 안전거래 vs 일반거래 비교 */}
+      <section className="container mx-auto py-section">
+        <div className="mx-auto max-w-3xl text-center">
+          <p
+            className="text-sm font-semibold uppercase tracking-wider"
+            style={{ color: 'var(--brand-primary)' }}
+          >
+            왜 안전 거래인가요?
+          </p>
+          <h2 className="mt-3 text-h2 font-bold text-gray-900">안전 거래 vs 일반 거래</h2>
+          <p className="mt-3 text-gray-600">
+            일반 권리금 거래에서 자주 발생하는 위험과 amakers 안전 거래의 차이를 한눈에.
+          </p>
+        </div>
+        <div className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+          <table className="w-full text-sm">
+            <thead>
+              <tr>
+                <th className="bg-gray-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">항목</th>
+                <th className="bg-gray-50 px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">일반 거래</th>
+                <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-white" style={{ background: 'var(--brand-primary)' }}>안전 거래</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 bg-white">
+              {[
+                { item: '매물 실사·권리 조회', normal: '없음 (직접 확인 필요)', safe: '전담팀 실사 보고서 제공' },
+                { item: '계약서 검토', normal: '없음 또는 중개인 임의 작성', safe: '표준 계약서 + 변호사 검토' },
+                { item: '권리금 보관', normal: '직접 현금 또는 계좌이체', safe: 'amakers 에스크로 보관' },
+                { item: '허위 매출 확인', normal: '불가 (구두 확인만)', safe: 'POS·카드 데이터 검증' },
+                { item: '입점 후 분쟁 보호', normal: '없음', safe: '30일 분쟁 보호 + 중재' },
+                { item: '권리금 환불 보장', normal: '불가', safe: '실사 결과 상이 시 전액 환불' },
+              ].map(({ item, normal, safe }) => (
+                <tr key={item} className="hover:bg-gray-50">
+                  <td className="px-5 py-3.5 font-medium text-gray-900">{item}</td>
+                  <td className="px-5 py-3.5 text-center text-gray-500">{normal}</td>
+                  <td className="px-5 py-3.5 text-center font-semibold" style={{ color: 'var(--brand-primary)' }}>{safe}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

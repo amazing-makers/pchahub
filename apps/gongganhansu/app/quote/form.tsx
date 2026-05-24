@@ -400,9 +400,10 @@ function Radio({
       className={
         'rounded-lg border-2 px-3 py-2 text-sm font-medium transition-colors ' +
         (active
-          ? 'border-gray-900 bg-gray-900 text-white'
+          ? 'text-white'
           : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300')
       }
+      style={active ? { background: 'var(--brand-primary)', borderColor: 'var(--brand-primary)' } : undefined}
     >
       {label}
     </button>
@@ -425,12 +426,13 @@ function RadioRow({
       className={
         'flex w-full items-center justify-between rounded-lg border-2 px-4 py-2.5 text-left text-sm transition-colors ' +
         (active
-          ? 'border-gray-900 bg-gray-50'
+          ? 'bg-gray-50'
           : 'border-gray-200 bg-white hover:border-gray-300')
       }
+      style={active ? { borderColor: 'var(--brand-primary)' } : undefined}
     >
       <span className="font-medium text-gray-900">{label}</span>
-      {active && <CheckCircle2 className="h-4 w-4 text-gray-900" />}
+      {active && <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--brand-primary)' }} />}
     </button>
   )
 }

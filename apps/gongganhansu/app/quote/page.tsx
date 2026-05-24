@@ -47,7 +47,10 @@ export default function QuotePage({ searchParams }: QuotePageProps) {
           {['공간 정보', '예산·일정', '연락처 확인'].map((step, i) => (
             <div key={i} className="flex flex-1 items-center">
               <div className="flex flex-col items-center gap-1">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-sm font-bold text-white">
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white"
+                  style={{ background: 'var(--brand-primary)' }}
+                >
                   {i + 1}
                 </div>
                 <span className="text-xs text-gray-600">{step}</span>

@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
   path: '/',
 })
 
-import { ArrowRight, Flame } from 'lucide-react'
+import { ArrowRight, Flame, Search } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
@@ -95,6 +95,27 @@ export default function HomePage() {
           <p className="mt-3 max-w-2xl text-gray-600">
             실제 데이터와 현장 인터뷰로 풀어낸 성공 다큐·실패 분석·점주 인터뷰. 남의 경험에서 내 창업의 답을 찾으세요.
           </p>
+
+          <form
+            action="/search"
+            method="get"
+            className="mt-6 flex max-w-xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md focus-within:ring-2 focus-within:ring-[var(--brand-primary)]"
+          >
+            <Search className="m-3.5 h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+            <input
+              name="q"
+              type="search"
+              placeholder="에피소드·매거진 검색 (예: 치킨 실패 사례, 카페 창업)"
+              className="flex-1 bg-transparent py-3 pr-2 text-sm text-gray-900 placeholder-gray-400 outline-none"
+            />
+            <button
+              type="submit"
+              className="m-1.5 rounded-xl px-4 py-2 text-sm font-semibold text-white"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              검색
+            </button>
+          </form>
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
             {heroEpisode && (
