@@ -7,11 +7,12 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
   path: '/',
 })
 
-import { ArrowRight, Flame, Search } from 'lucide-react'
+import { ArrowRight, Flame, Mic, PlayCircle, Search } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { ArticleCard } from '@/components/article-card'
+import { SeriesCard } from '@/components/series-card'
 import { SavedEpisodesSection } from '@/components/saved-episodes-section'
 import { SavedArticlesSection } from '@/components/saved-articles-section'
 import { RecentlyViewedEpisodes } from '@/components/recently-viewed-episodes'
@@ -28,6 +29,7 @@ import {
   TRENDING_EPISODES,
   type EpisodeCategory,
 } from '@/lib/mock-data'
+import { FEATURED_SERIES } from '@/lib/mock-series'
 import { formatNumber } from '@amakers/utils'
 
 const otherPlatforms = (
@@ -257,6 +259,63 @@ export default function HomePage() {
             <ArticleCard key={a.id} article={a} />
           ))}
         </div>
+      </section>
+
+      {/* 시리즈 */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <PlayCircle className="h-6 w-6 text-gray-400" />
+              이어 보는 시리즈
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">관련 에피소드를 주제별로 묶어 깊게</p>
+          </div>
+          <a
+            href="/series"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          >
+            전체 시리즈 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURED_SERIES.map((s) => (
+            <SeriesCard key={s.id} series={s} />
+          ))}
+        </div>
+      </section>
+
+      {/* 제보 CTA */}
+      <section className="container mx-auto pt-section">
+        <Card className="overflow-hidden border-gray-200">
+          <CardContent className="p-0">
+            <div className="flex flex-col items-start justify-between gap-6 p-8 sm:flex-row sm:items-center"
+              style={{ background: 'linear-gradient(135deg, var(--brand-primary)12, transparent)' }}
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
+                  style={{ background: 'var(--brand-primary)' }}
+                >
+                  <Mic className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-gray-900">당신의 이야기가 다음 다큐가 됩니다</h2>
+                  <p className="mt-0.5 text-sm text-gray-500">
+                    창업 성공·실패·브랜드 경험을 제보해 주세요. 취재 후 에피소드로 제작됩니다.
+                  </p>
+                </div>
+              </div>
+              <a
+                href="/submit-story"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                <Mic className="h-4 w-4" /> 사연 제보하기
+              </a>
+            </div>
+          </CardContent>
+        </Card>
       </section>
 
       {/* 자주 묻는 질문 */}

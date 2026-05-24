@@ -9,14 +9,16 @@ export const metadata = buildSiteMetadata('changupdocu')
 
 const navItems = [
   { href: '/episodes', label: '에피소드' },
+  { href: '/series', label: '시리즈' },
   { href: '/categories/success', label: '성공' },
   { href: '/categories/failure', label: '실패' },
   { href: '/categories/brand', label: '브랜드' },
   { href: '/magazine', label: '매거진' },
-  { href: '/search', label: '검색' },
 ]
 
-const actions: HeaderAction[] = []
+const actions: HeaderAction[] = [
+  { href: '/submit-story', label: '제보하기', variant: 'primary' },
+]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
