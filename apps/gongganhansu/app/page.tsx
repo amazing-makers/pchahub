@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('gongganhansu', {
   path: '/',
 })
 
-import { ArrowRight, CheckCircle2, Search, Sparkles, Wrench } from 'lucide-react'
+import { ArrowRight, Calculator, CheckCircle2, Search, Sparkles, Wrench } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SavedContractorsSection } from '@/components/saved-contractors-section'
@@ -216,6 +216,62 @@ export default function HomePage() {
           {FEATURED_INSIGHTS.map((i) => (
             <InsightCard key={i.id} insight={i} />
           ))}
+        </div>
+      </section>
+
+      {/* 단가 계산기 CTA */}
+      <section className="container mx-auto pt-section">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <div className="grid lg:grid-cols-[1fr_auto]">
+            <div className="p-8">
+              <div className="flex items-center gap-2">
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-xl text-white"
+                  style={{ background: 'var(--brand-primary)' }}
+                >
+                  <Calculator className="h-5 w-5" />
+                </div>
+                <span
+                  className="text-sm font-semibold uppercase tracking-wider"
+                  style={{ color: 'var(--brand-primary)' }}
+                >
+                  단가 계산기
+                </span>
+              </div>
+              <h2 className="mt-3 text-h3 font-bold text-gray-900">
+                내 매장, 얼마나 들까요?
+              </h2>
+              <p className="mt-2 max-w-lg text-sm text-gray-500">
+                업종·면적·시공 등급만 선택하면 예상 비용과 항목별 내역을 바로 확인할 수 있습니다.
+                견적 요청 전 미리 예산을 가늠해 보세요.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a
+                  href="/calculator"
+                  className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-semibold text-white"
+                  style={{ background: 'var(--brand-primary)' }}
+                >
+                  <Calculator className="h-4 w-4" /> 계산해보기
+                </a>
+                <a
+                  href="/quote"
+                  className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  무료 견적 받기 <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+            <div className="hidden items-center justify-center bg-gray-50 p-10 lg:flex">
+              <div className="text-center">
+                <div className="text-4xl font-black text-gray-200">20평</div>
+                <div className="mt-1 text-sm text-gray-400">카페 스탠다드</div>
+                <div className="mt-3 text-2xl font-black" style={{ color: 'var(--brand-primary)' }}>
+                  6,400만원
+                </div>
+                <div className="mt-0.5 text-xs text-gray-400">예상 견적 (±15%)</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

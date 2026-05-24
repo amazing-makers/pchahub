@@ -10,9 +10,9 @@ export const metadata = buildSiteMetadata('gongganhansu')
 const navItems = [
   { href: '/gallery', label: '갤러리' },
   { href: '/contractors', label: '시공사' },
+  { href: '/calculator', label: '단가 계산기' },
   { href: '/insights', label: '인사이트' },
   { href: '/quote', label: '견적 요청' },
-  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [

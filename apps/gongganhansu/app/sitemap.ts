@@ -8,7 +8,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/gallery', changeFrequency: 'daily', priority: 0.9 },
     { path: '/contractors', changeFrequency: 'daily', priority: 0.9 },
     { path: '/insights', changeFrequency: 'weekly', priority: 0.8 },
-    { path: '/quote', changeFrequency: 'monthly', priority: 0.7 },
+    { path: '/quote', changeFrequency: 'monthly', priority: 0.8 },
+    { path: '/calculator', changeFrequency: 'monthly', priority: 0.8 },
+    { path: '/compare', changeFrequency: 'monthly', priority: 0.6 },
     ...PORTFOLIO.map((p) => ({
       path: `/gallery/${p.id}`,
       lastModified: p.completedAt,

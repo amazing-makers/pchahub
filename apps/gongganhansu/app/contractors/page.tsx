@@ -2,6 +2,7 @@
 import { ArrowRight, BookOpen, Building2, MapPin, Plus, Search, Star, Store } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { ContractorCard } from '@/components/contractor-card'
+import { CompareBar } from '@/components/compare-bar'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
 import { CATEGORIES, CONTRACTORS } from '@/lib/mock-data'
 import {  buildItemListJsonLd, buildPageMetadata, JsonLd, buildBreadcrumbsJsonLd } from '@amakers/design-system'
@@ -303,13 +304,15 @@ export default function ContractorsPage({ searchParams }: ContractorsPageProps) 
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {results.map((c) => (
-                  <ContractorCard key={c.id} contractor={c} />
+                  <ContractorCard key={c.id} contractor={c} showCompare />
                 ))}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <CompareBar />
 
       {/* amakers 생태계 크로스링크 */}
       <div className="border-t border-gray-100 bg-white">

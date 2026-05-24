@@ -1,14 +1,17 @@
 import { CheckCircle2, Star } from 'lucide-react'
 import { Badge, Card, CardContent } from '@amakers/ui'
 import { CATEGORIES, type MockContractor } from '@/lib/mock-data'
+import { CompareToggleButton } from '@/components/compare-toggle-button'
 
 interface ContractorCardProps {
   contractor: MockContractor
+  showCompare?: boolean
 }
 
-export function ContractorCard({ contractor: c }: ContractorCardProps) {
+export function ContractorCard({ contractor: c, showCompare }: ContractorCardProps) {
   return (
-    <a href={`/contractors/${c.id}`} className="group block h-full">
+    <div className="group relative h-full">
+      <a href={`/contractors/${c.id}`} className="block h-full">
       <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
         <div className="relative h-32 w-full overflow-hidden bg-gray-100">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,6 +81,12 @@ export function ContractorCard({ contractor: c }: ContractorCardProps) {
           </div>
         </CardContent>
       </Card>
-    </a>
+      </a>
+      {showCompare && (
+        <div className="absolute bottom-3 right-3 z-10">
+          <CompareToggleButton contractorId={c.id} contractorName={c.name} />
+        </div>
+      )}
+    </div>
   )
 }
