@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
-import { ShieldCheck } from 'lucide-react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@amakers/auth'
+import { redirect } from 'next/navigation'
+import { Lock, ShieldCheck } from 'lucide-react'
+import { Card, CardContent } from '@amakers/ui'
 import { buildPageMetadata } from '@amakers/design-system'
 import { ReviewQueue } from '@/components/review-queue'
 
@@ -9,7 +13,15 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
   path: '/admin/review',
 })
 
-export default function AdminReviewPage() {
+const ADMIN_ROLES = ['admin', 'moderator']
+
+export default async function AdminReviewPage() {
+  const session = await getServerSession(authOptions)
+  if (!session) redirect('/auth/signin?callbackUrl=/admin/review')
+
+  const role = (session.user as { role?: string })?.role
+  const isAdmin = role ? ADMIN_ROLES.includes(role) : false
+
   return (
     <main className="bg-gray-50">
       <section className="border-b border-gray-200 bg-white">
@@ -26,7 +38,29 @@ export default function AdminReviewPage() {
       </section>
 
       <div className="container mx-auto max-w-3xl py-8">
-        <ReviewQueue />
+        {isAdmin ? (
+          <ReviewQueue />
+        ) : (
+          <Card className="border-gray-200">
+            <CardContent className="flex flex-col items-center p-12 text-center">
+              <Lock className="h-8 w-8 text-gray-300" />
+              <p className="mt-3 text-sm font-medium text-gray-700">관리자 전용 페이지입니다</p>
+              <p className="mt-1 text-sm text-gray-500">
+                제보 검수는 운영 관리자(admin·moderator)만 접근할 수 있습니다.
+                <br />
+                현재 역할: <span className="font-medium text-gray-700">{role ?? '없음'}</span>
+              </p>
+              <a
+                href="/auth/signin?callbackUrl=/admin/review"
+                className="mt-5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                관리자 계정으로 로그인
+              </a>
+              <p className="mt-3 text-xs text-gray-400">※ 개발용 로그인에서 역할을 ‘admin’으로 입력하면 접근됩니다.</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </main>
   )
