@@ -13,7 +13,7 @@ const navItems = [
   { href: '/mentors', label: '멘토' },
   { href: '/recipes', label: '레시피' },
   { href: '/knowhow', label: '노하우' },
-  { href: '/search', label: '검색' },
+  { href: '/events', label: '이벤트' },
 ]
 
 const actions: HeaderAction[] = [

@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('themanual', {
   path: '/',
 })
 
-import { ArrowRight, BookOpen, GraduationCap, MessageCircle, ShieldCheck } from 'lucide-react'
+import { ArrowRight, BookOpen, Calendar, GraduationCap, MessageCircle, ShieldCheck } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
@@ -32,6 +32,7 @@ import {
 } from '@/lib/mock-data'
 import { KNOWHOW_ITEMS } from '@/lib/knowhow'
 import { RECIPES } from '@/lib/recipes'
+import { FEATURED_EVENTS, EVENT_TYPE_LABEL, formatEventDate, type EventType } from '@/lib/mock-events'
 import { formatNumber } from '@amakers/utils'
 
 const otherPlatforms = (
@@ -264,6 +265,55 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Upcoming events */}
+      {FEATURED_EVENTS.length > 0 && (
+        <section className="container mx-auto pt-section">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+                <Calendar className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+                예정된 특강 · 이벤트
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">라이브 웨비나·워크샵·멘토 Q&A</p>
+            </div>
+            <a href="/events" className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+              전체 이벤트 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURED_EVENTS.map((event) => (
+              <a key={event.id} href={`/events/${event.id}`} className="block">
+                <Card className="group h-full overflow-hidden border-gray-200 transition-shadow hover:shadow-md">
+                  <div className="h-1 w-full" style={{ background: event.coverColor }} />
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="rounded-full px-2 py-0.5 text-[11px] font-bold text-white"
+                        style={{ background: event.coverColor }}
+                      >
+                        {EVENT_TYPE_LABEL[event.type as EventType]}
+                      </span>
+                      {event.price === 0 && (
+                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                          무료
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mt-2 text-sm font-bold text-gray-900 group-hover:underline">
+                      {event.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-gray-500">{formatEventDate(event.date)}</p>
+                    <p className="mt-1 text-xs font-semibold text-gray-700">
+                      {event.price === 0 ? '무료' : `${event.price.toLocaleString()}원`}
+                    </p>
+                  </CardContent>
+                </Card>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* pchahub bridge */}
       <section className="container mx-auto pt-section">
