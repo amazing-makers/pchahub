@@ -28,15 +28,30 @@ const SORT_OPTIONS = [
 ] as const
 type SortKey = (typeof SORT_OPTIONS)[number]['key']
 
+const SIZE_OPTIONS = [
+  { key: 'all', label: '전체 평수' },
+  { key: 'small', label: '소형 (~15평)', min: 0, max: 15 },
+  { key: 'mid', label: '중형 (16~30평)', min: 16, max: 30 },
+  { key: 'large', label: '대형 (31평+)', min: 31, max: Infinity },
+] as const
+type SizeKey = (typeof SIZE_OPTIONS)[number]['key']
+
 interface GalleryPageProps {
-  searchParams: { category?: string; q?: string; sort?: string }
+  searchParams: { category?: string; q?: string; sort?: string; size?: string }
 }
 
 export default function GalleryPage({ searchParams }: GalleryPageProps) {
-  const { category, q, sort = 'featured' } = searchParams
+  const { category, q, sort = 'featured', size } = searchParams
   const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'featured') as SortKey
+  const activeSize = (SIZE_OPTIONS.find((o) => o.key === size)?.key ?? 'all') as SizeKey
   const needle = q?.toLowerCase().trim() ?? ''
   let items = category ? PORTFOLIO.filter((p) => p.category === category) : PORTFOLIO
+  if (activeSize !== 'all') {
+    const sizeOpt = SIZE_OPTIONS.find((o) => o.key === activeSize)
+    if (sizeOpt && 'min' in sizeOpt) {
+      items = items.filter((p) => p.area >= sizeOpt.min && p.area <= sizeOpt.max)
+    }
+  }
   if (needle) {
     items = items.filter(
       (p) =>
@@ -107,53 +122,60 @@ export default function GalleryPage({ searchParams }: GalleryPageProps) {
             )}
           </form>
 
+          {/* 업종 필터 */}
           <div className="mt-4 flex flex-wrap gap-2">
-            <a
-              href={q ? `/gallery?q=${encodeURIComponent(q)}` : '/gallery'}
-              className={
-                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                (!category
-                  ? 'bg-gray-900 text-white'
-                  : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-              }
-            >
-              전체 ({PORTFOLIO.length})
-            </a>
-            {CATEGORIES.map((c) => {
+            {[{ key: '', label: `전체 (${PORTFOLIO.length})` }, ...CATEGORIES.map((c) => {
               const count = PORTFOLIO.filter((p) => p.category === c.key).length
-              if (count === 0) return null
+              return { key: c.key, label: `${c.label} (${count})`, count }
+            }).filter((c) => c.count > 0)].map((c) => {
+              const isActive = c.key === '' ? !category : category === c.key
+              const href = c.key === ''
+                ? `/gallery?${new URLSearchParams({ ...(activeSort !== 'featured' ? { sort: activeSort } : {}), ...(activeSize !== 'all' ? { size: activeSize } : {}), ...(q ? { q } : {}) }).toString()}` || '/gallery'
+                : `/gallery?${new URLSearchParams({ category: c.key, ...(activeSort !== 'featured' ? { sort: activeSort } : {}), ...(activeSize !== 'all' ? { size: activeSize } : {}), ...(q ? { q } : {}) }).toString()}`
               return (
                 <a
                   key={c.key}
-                  href={`/gallery?category=${c.key}${activeSort !== 'featured' ? `&sort=${activeSort}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`}
-                  className={
-                    'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                    (category === c.key
-                      ? 'bg-gray-900 text-white'
-                      : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-                  }
+                  href={href}
+                  className={'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
                 >
-                  {c.label} ({count})
+                  {c.label}
                 </a>
               )
             })}
           </div>
-          {/* Sort chips */}
+          {/* 평수 필터 */}
           <div className="mt-2 flex flex-wrap gap-2">
-            {SORT_OPTIONS.map((o) => (
-              <a
-                key={o.key}
-                href={`/gallery?${new URLSearchParams({ ...(category ? { category } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
-                className={
-                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
-                  (activeSort === o.key
-                    ? 'bg-gray-900 text-white'
-                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
-                }
-              >
-                {o.label}
-              </a>
-            ))}
+            {SIZE_OPTIONS.map((o) => {
+              const isActive = activeSize === o.key
+              const href = `/gallery?${new URLSearchParams({ ...(category ? { category } : {}), ...(o.key !== 'all' ? { size: o.key } : {}), ...(activeSort !== 'featured' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}` || '/gallery'
+              return (
+                <a
+                  key={o.key}
+                  href={href}
+                  className={'rounded-full px-3 py-1 text-xs font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {o.label}
+                </a>
+              )
+            })}
+          </div>
+          {/* 정렬 칩 */}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {SORT_OPTIONS.map((o) => {
+              const isActive = activeSort === o.key
+              return (
+                <a
+                  key={o.key}
+                  href={`/gallery?${new URLSearchParams({ ...(category ? { category } : {}), ...(activeSize !== 'all' ? { size: activeSize } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                  className={'rounded-full px-3 py-1 text-xs font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {o.label}
+                </a>
+              )
+            })}
           </div>
         </div>
       </section>
