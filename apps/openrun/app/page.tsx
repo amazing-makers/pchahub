@@ -13,10 +13,12 @@ import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { ServiceCard } from '@/components/service-card'
 import { CaseCard } from '@/components/case-card'
+import { InsightCard } from '@/components/insight-card'
 import { Testimonials } from '@/components/testimonials'
 import { SavedCasesSection } from '@/components/saved-cases-section'
 import { RecentlyViewedCases } from '@/components/recently-viewed-cases'
 import { FEATURED_PORTFOLIO, SERVICES, STATS, TESTIMONIALS } from '@/lib/mock-data'
+import { FEATURED_INSIGHTS } from '@/lib/mock-insights'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -162,6 +164,24 @@ export default function HomePage() {
               <CaseCard key={c.id} case={c} />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* 인사이트 */}
+      <section className="container mx-auto py-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="text-h2 font-bold text-gray-900">마케팅 인사이트</h2>
+            <p className="mt-1 text-sm text-gray-500">480개 캠페인 데이터 기반 실전 가이드</p>
+          </div>
+          <a href="/insights" className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+            전체 인사이트 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {FEATURED_INSIGHTS.slice(0, 3).map((i) => (
+            <InsightCard key={i.id} insight={i} />
+          ))}
         </div>
       </section>
 

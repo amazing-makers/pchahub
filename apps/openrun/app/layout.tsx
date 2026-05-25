@@ -10,8 +10,9 @@ export const metadata = buildSiteMetadata('openrun')
 const navItems = [
   { href: '/services', label: '서비스' },
   { href: '/portfolio', label: '사례' },
+  { href: '/pricing', label: '요금표' },
+  { href: '/insights', label: '인사이트' },
   { href: '/contact', label: '문의' },
-  { href: '/search', label: '검색' },
 ]
 
 const actions: HeaderAction[] = [
