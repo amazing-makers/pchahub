@@ -32,6 +32,9 @@ model User {
   listings      Listing[]
   reviews       Review[]
   comments      Comment[]
+  meetings      Meeting[]
+  intels        Intel[]
+  quotes        Quote[]
   accounts      Account[]
   sessions      Session[]
   createdAt     DateTime  @default(now())
@@ -277,6 +280,7 @@ model Contractor {
   reviewCount    Int         @default(0)
   projectCount   Int         @default(0)
   portfolios     Portfolio[]
+  quotes         Quote[]
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 }
@@ -422,4 +426,136 @@ model UserActivity {
 
   @@index([userId, createdAt])
   @@index([platform])
+}
+
+// ========================================
+// Meeting (jangsanote)
+// ========================================
+model Meeting {
+  id                  String        @id @default(cuid())
+  title               String
+  description         String        @db.Text
+  type                MeetingType
+  region              String
+  location            String
+  date                String
+  startTime           String
+  endTime             String?
+  maxParticipants     Int
+  currentParticipants Int           @default(0)
+  isFree              Boolean       @default(true)
+  feeWon              Int           @default(0)
+  status              MeetingStatus @default(UPCOMING)
+  hostId              String
+  host                User          @relation(fields: [hostId], references: [id])
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([region, status])
+}
+
+enum MeetingType {
+  OFFLINE
+  ONLINE
+  HYBRID
+}
+
+enum MeetingStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+// ========================================
+// Intel (jangsanote — 상권 인텔)
+// ========================================
+model Intel {
+  id          String      @id @default(cuid())
+  title       String
+  region      String
+  district    String
+  category    String
+  trend       IntelTrend
+  footTraffic FootTraffic
+  rentLevel   RentLevel
+  summary     String      @db.Text
+  content     String?     @db.Text
+  tags        String[]
+  views       Int         @default(0)
+  likes       Int         @default(0)
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([region, category])
+  @@index([trend])
+}
+
+enum IntelTrend {
+  UP
+  STABLE
+  DOWN
+}
+
+enum FootTraffic {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RentLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ========================================
+// Quote (gongganhansu — 인테리어 견적 요청)
+// ========================================
+model Quote {
+  id           String      @id @default(cuid())
+  name         String
+  phone        String
+  region       String
+  area         Float
+  budget       Int?
+  style        String?
+  notes        String?     @db.Text
+  contractorId String?
+  contractor   Contractor? @relation(fields: [contractorId], references: [id])
+  requesterId  String?
+  requester    User?       @relation(fields: [requesterId], references: [id])
+  status       QuoteStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+
+  @@index([status])
+}
+
+enum QuoteStatus {
+  PENDING
+  CONTACTED
+  QUOTED
+  ACCEPTED
+  DECLINED
+}
+
+// ========================================
+// GuideDocument (changupdocu)
+// ========================================
+model GuideDocument {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  category    String
+  fileUrl     String?
+  externalUrl String?
+  views       Int       @default(0)
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category, isPublished])
 }

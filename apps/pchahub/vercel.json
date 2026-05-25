@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sync-kftc",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}
