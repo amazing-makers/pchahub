@@ -112,51 +112,41 @@ export default function MagazinePage({ searchParams }: MagazinePageProps) {
 
           {/* 카테고리 필터 칩 */}
           <div className="mt-4 flex flex-wrap gap-2">
-            <a
-              href={`/magazine?${new URLSearchParams({ ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}` || '/magazine'}
-              className={
-                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                (!category
-                  ? 'bg-gray-900 text-white'
-                  : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-              }
-            >
-              전체 ({ARTICLES.length})
-            </a>
-            {categories.map((c) => {
-              const count = ARTICLES.filter((a) => a.category === c).length
+            {[{ key: '', label: `전체 (${ARTICLES.length})` }, ...categories.map((c) => ({
+              key: c,
+              label: `${c} (${ARTICLES.filter((a) => a.category === c).length})`,
+            }))].map((item) => {
+              const isActive = item.key === '' ? !category : category === item.key
+              const href = item.key === ''
+                ? `/magazine?${new URLSearchParams({ ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}` || '/magazine'
+                : `/magazine?${new URLSearchParams({ category: item.key, ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}`
               return (
                 <a
-                  key={c}
-                  href={`/magazine?${new URLSearchParams({ category: c, ...(activeSort !== 'recent' ? { sort: activeSort } : {}), ...(q ? { q } : {}) }).toString()}`}
-                  className={
-                    'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                    (category === c
-                      ? 'bg-gray-900 text-white'
-                      : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-                  }
+                  key={item.key}
+                  href={href}
+                  className={'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
                 >
-                  {c} ({count})
+                  {item.label}
                 </a>
               )
             })}
           </div>
           {/* 정렬 칩 */}
           <div className="mt-2 flex flex-wrap gap-2">
-            {SORT_OPTIONS.map((o) => (
-              <a
-                key={o.key}
-                href={`/magazine?${new URLSearchParams({ ...(category ? { category } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
-                className={
-                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
-                  (activeSort === o.key
-                    ? 'bg-gray-900 text-white'
-                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
-                }
-              >
-                {o.label}
-              </a>
-            ))}
+            {SORT_OPTIONS.map((o) => {
+              const isActive = activeSort === o.key
+              return (
+                <a
+                  key={o.key}
+                  href={`/magazine?${new URLSearchParams({ ...(category ? { category } : {}), sort: o.key, ...(q ? { q } : {}) }).toString()}`}
+                  className={'rounded-full px-3 py-1 text-xs font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {o.label}
+                </a>
+              )
+            })}
           </div>
         </div>
       </section>

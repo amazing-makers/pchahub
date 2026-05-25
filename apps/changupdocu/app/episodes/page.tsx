@@ -108,20 +108,19 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
 
           {/* Category chips */}
           <div className="mt-4 flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <a
-                key={c || 'all'}
-                href={c ? `/episodes?category=${c}${q ? `&q=${encodeURIComponent(q)}` : ''}` : `/episodes${q ? `?q=${encodeURIComponent(q)}` : ''}`}
-                className={
-                  'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                  ((c === '' && !category) || category === c
-                    ? 'bg-gray-900 text-white'
-                    : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-                }
-              >
-                {c === '' ? '전체' : CATEGORY_LABEL[c]}
-              </a>
-            ))}
+            {categories.map((c) => {
+              const isActive = (c === '' && !category) || category === c
+              return (
+                <a
+                  key={c || 'all'}
+                  href={c ? `/episodes?category=${c}${q ? `&q=${encodeURIComponent(q)}` : ''}` : `/episodes${q ? `?q=${encodeURIComponent(q)}` : ''}`}
+                  className={'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {c === '' ? '전체' : CATEGORY_LABEL[c]}
+                </a>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -163,20 +162,19 @@ export default function EpisodesPage({ searchParams }: EpisodesPageProps) {
             )}
           </div>
           <div className="flex gap-2 text-sm">
-            {SORT_OPTIONS.map((s) => (
-              <a
-                key={s.key}
-                href={makeHref(searchParams, s.key)}
-                className={
-                  'rounded-md px-2 py-1 transition-colors ' +
-                  (sort === s.key
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-600 hover:bg-gray-100')
-                }
-              >
-                {s.label}
-              </a>
-            ))}
+            {SORT_OPTIONS.map((s) => {
+              const isActive = sort === s.key
+              return (
+                <a
+                  key={s.key}
+                  href={makeHref(searchParams, s.key)}
+                  className={'rounded-md px-2 py-1 transition-colors ' + (isActive ? 'text-white' : 'text-gray-600 hover:bg-gray-100')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {s.label}
+                </a>
+              )
+            })}
           </div>
         </div>
         {results.length === 0 ? (
