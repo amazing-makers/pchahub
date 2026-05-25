@@ -12,6 +12,7 @@ const navItems = [
   { href: '/portfolio', label: '사례' },
   { href: '/pricing', label: '요금표' },
   { href: '/insights', label: '인사이트' },
+  { href: '/checklist', label: '오픈 체크리스트' },
   { href: '/contact', label: '문의' },
 ]
 

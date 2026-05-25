@@ -190,6 +190,35 @@ export default function HomePage() {
         <Testimonials testimonials={TESTIMONIALS} />
       </section>
 
+      {/* 체크리스트 티저 */}
+      <section className="container mx-auto pt-section">
+        <Card className="overflow-hidden border-gray-200">
+          <CardContent className="p-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p
+                  className="text-sm font-semibold uppercase tracking-wider"
+                  style={{ color: 'var(--brand-primary)' }}
+                >
+                  무료 리소스
+                </p>
+                <h2 className="mt-2 text-h3 font-bold text-gray-900">그랜드 오픈 완전 체크리스트</h2>
+                <p className="mt-1 max-w-lg text-sm text-gray-600">
+                  D-30부터 D+7까지 6단계 48개 항목. 오픈 전 놓치면 치명적인 것들만 모았습니다. 진행 상태가 자동 저장됩니다.
+                </p>
+              </div>
+              <a
+                href="/checklist"
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl px-6 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--brand-primary)' }}
+              >
+                체크리스트 보기 <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
       <section className="container mx-auto pb-section">
         <Card className="border-gray-200 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
           <CardContent className="p-10 text-center">

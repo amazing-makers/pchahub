@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/contact', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/pricing', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/insights', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/checklist', changeFrequency: 'monthly', priority: 0.8 },
     ...INSIGHTS.map((i) => ({
       path: `/insights/${i.id}`,
       lastModified: i.publishedAt,
