@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
   path: '/',
 })
 
-import { ArrowRight, BookOpen, Building2, Calculator, CheckCircle2, Flame, Handshake, MapPin, Sparkles, Users } from 'lucide-react'
+import { ArrowRight, BookOpen, Building2, Calculator, CheckCircle2, Flame, Handshake, ListChecks, MapPin, Sparkles, Users } from 'lucide-react'
 import { Badge, Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { SearchBar } from '@/components/search-bar'
@@ -266,7 +266,7 @@ export default async function HomePage() {
             브랜드 정보만으로는 부족합니다. 내 예산·상권·목표 수익으로 직접 시뮬레이션해보세요.
           </p>
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <a href="/scanner" className="group">
             <Card className="h-full transition-shadow hover:shadow-md">
               <CardContent className="p-6">
@@ -314,6 +314,22 @@ export default async function HomePage() {
                 </p>
                 <div className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-gray-700 group-hover:text-gray-900">
                   테마 보기 <ArrowRight className="h-3.5 w-3.5" />
+                </div>
+              </CardContent>
+            </Card>
+          </a>
+          <a href="/timeline" className="group">
+            <Card className="h-full transition-shadow hover:shadow-md">
+              <CardContent className="p-6">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600">
+                  <ListChecks className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-gray-900">창업 일정표</h3>
+                <p className="mt-1 text-sm text-gray-600">
+                  탐색→계약→인테리어→오픈. 7단계 전체 여정과 평균 소요 기간을 한눈에.
+                </p>
+                <div className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                  일정표 보기 <ArrowRight className="h-3.5 w-3.5" />
                 </div>
               </CardContent>
             </Card>

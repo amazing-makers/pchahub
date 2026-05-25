@@ -43,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     { path: '/scanner', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/calculator', changeFrequency: 'monthly', priority: 0.7 },
+    { path: '/timeline', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/for-brands', changeFrequency: 'monthly', priority: 0.6 },
     { path: '/about', changeFrequency: 'monthly', priority: 0.5 },
     ...BRANDS.map((b) => ({
