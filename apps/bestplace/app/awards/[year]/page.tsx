@@ -299,10 +299,8 @@ function CategoryLink({
   return (
     <a
       href={href}
-      className={
-        'block rounded-md px-3 py-1.5 text-sm transition-colors ' +
-        (active ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100')
-      }
+      className={'block rounded-md px-3 py-1.5 text-sm transition-colors ' + (active ? 'text-white' : 'text-gray-700 hover:bg-gray-100')}
+      style={active ? { background: 'var(--brand-primary)' } : undefined}
     >
       {children}
     </a>

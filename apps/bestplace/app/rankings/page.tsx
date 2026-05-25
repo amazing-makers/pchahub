@@ -23,12 +23,15 @@ import {
   awardsByYear,
 } from '@/lib/mock-data'
 
+const STORE_REGIONS = Array.from(new Set(STORES.map((s) => s.region))).sort()
+
 interface RankingsPageProps {
-  searchParams: { category?: string }
+  searchParams: { category?: string; region?: string }
 }
 
 export default function RankingsPage({ searchParams }: RankingsPageProps) {
   const selectedCategory = searchParams.category ?? ''
+  const selectedRegion = searchParams.region ?? ''
   const currentYear = new Date().getFullYear()
 
   // Global stats (always over full STORES set)
@@ -37,13 +40,14 @@ export default function RankingsPage({ searchParams }: RankingsPageProps) {
   const totalVisitors = STORES.reduce((s, st) => s + st.monthlyVisitors, 0)
   const regionCount = new Set(STORES.map((s) => s.region)).size
 
-  // Category-filtered stores base
-  const filteredBase = selectedCategory
+  // Category + region filtered base
+  let filteredBase = selectedCategory
     ? STORES.filter((s) => {
         const brand = BRANDS.find((b) => b.id === s.brandId)
         return brand?.category === selectedCategory
       })
-    : STORES
+    : [...STORES]
+  if (selectedRegion) filteredBase = filteredBase.filter((s) => s.region === selectedRegion)
 
   const topRated = [...filteredBase].sort((a, b) => b.rating - a.rating).slice(0, 10)
   const topVisitors = [...filteredBase].sort((a, b) => b.monthlyVisitors - a.monthlyVisitors).slice(0, 10)
@@ -83,31 +87,41 @@ export default function RankingsPage({ searchParams }: RankingsPageProps) {
           </p>
           {/* Category filter tabs */}
           <div className="mt-5 flex flex-wrap gap-2">
-            <a
-              href="/rankings"
-              className={
-                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                (!selectedCategory
-                  ? 'bg-gray-900 text-white'
-                  : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-              }
-            >
-              전체 업종
-            </a>
-            {CATEGORIES.map((cat) => (
-              <a
-                key={cat.key}
-                href={`/rankings?category=${cat.key}`}
-                className={
-                  'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' +
-                  (selectedCategory === cat.key
-                    ? 'bg-gray-900 text-white'
-                    : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')
-                }
-              >
-                {cat.label}
-              </a>
-            ))}
+            {[{ key: '', label: '전체 업종' }, ...CATEGORIES.map((c) => ({ key: c.key, label: c.label }))].map((cat) => {
+              const isActive = cat.key === '' ? !selectedCategory : selectedCategory === cat.key
+              const href = cat.key === ''
+                ? `/rankings${selectedRegion ? `?region=${selectedRegion}` : ''}`
+                : `/rankings?${new URLSearchParams({ category: cat.key, ...(selectedRegion ? { region: selectedRegion } : {}) }).toString()}`
+              return (
+                <a
+                  key={cat.key || 'all'}
+                  href={href}
+                  className={'rounded-full px-4 py-1.5 text-sm font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {cat.label}
+                </a>
+              )
+            })}
+          </div>
+          {/* Region filter */}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {[{ key: '', label: '전국' }, ...STORE_REGIONS.map((r) => ({ key: r, label: r }))].map((reg) => {
+              const isActive = reg.key === '' ? !selectedRegion : selectedRegion === reg.key
+              const href = reg.key === ''
+                ? `/rankings${selectedCategory ? `?category=${selectedCategory}` : ''}`
+                : `/rankings?${new URLSearchParams({ region: reg.key, ...(selectedCategory ? { category: selectedCategory } : {}) }).toString()}`
+              return (
+                <a
+                  key={reg.key || 'all'}
+                  href={href}
+                  className={'rounded-full px-3 py-1 text-xs font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50')}
+                  style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                >
+                  {reg.label}
+                </a>
+              )
+            })}
           </div>
         </div>
       </section>
