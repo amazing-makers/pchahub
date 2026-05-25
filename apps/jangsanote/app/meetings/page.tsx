@@ -10,6 +10,9 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 import { ArrowRight, BookOpen, Calendar, MapPin, Plus, Search, Star, Store } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { MEETINGS, MEETING_TYPE_LABEL, channelsByType, type MeetingType } from '@/lib/mock-data'
+import { getAllMeetings } from '@/lib/queries'
+
+export const dynamic = 'force-dynamic'
 import { formatNumber } from '@amakers/utils'
 import { MeetingCard } from '@/components/meeting-card'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
@@ -34,16 +37,17 @@ interface MeetingsPageProps {
   searchParams: { type?: string; region?: string; status?: string; q?: string; category?: string }
 }
 
-export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
+export default async function MeetingsPage({ searchParams }: MeetingsPageProps) {
   const { type = '', region = '전국', status = 'upcoming', q, category } = searchParams
   const needle = q?.toLowerCase().trim() ?? ''
   const categoryChannels = channelsByType('category')
 
-  let results = MEETINGS.slice()
-  if (status !== 'all') results = results.filter((m) => m.status === status)
-  if (type) results = results.filter((m) => m.type === type)
-  if (category) results = results.filter((m) => m.channelType === 'category' && m.channelKey === category)
-  if (region && region !== '전국') results = results.filter((m) => m.region === region)
+  let results = await getAllMeetings({
+    type: type || undefined,
+    region: region !== '전국' ? region : undefined,
+    status: status !== 'all' ? status : undefined,
+  })
+  if (category) results = results.filter((m) => (m as { channelKey?: string }).channelKey === category)
   if (needle) {
     results = results.filter(
       (m) =>

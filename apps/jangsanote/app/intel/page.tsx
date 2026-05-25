@@ -14,6 +14,9 @@ import {
   type IntelTrend,
   type RentLevel,
 } from '@/lib/mock-intel'
+import { getAllIntels } from '@/lib/queries'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '상권 인텔',
@@ -39,33 +42,11 @@ interface IntelPageProps {
   searchParams: { region?: string; category?: string; q?: string; trend?: string; traffic?: string; rent?: string; sort?: string }
 }
 
-export default function IntelPage({ searchParams }: IntelPageProps) {
+export default async function IntelPage({ searchParams }: IntelPageProps) {
   const { region, category, q, trend, traffic, rent, sort = 'latest' } = searchParams
   const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'latest') as SortKey
-  const needle = q?.toLowerCase().trim() ?? ''
 
-  let results = INTELS.slice()
-  if (region) results = results.filter((i) => i.region === region)
-  if (category) results = results.filter((i) => i.category === category)
-  if (trend) results = results.filter((i) => i.trend === trend)
-  if (traffic) results = results.filter((i) => i.footTraffic === traffic)
-  if (rent) results = results.filter((i) => i.rentLevel === rent)
-  if (needle) {
-    results = results.filter(
-      (i) =>
-        i.title.toLowerCase().includes(needle) ||
-        i.district.toLowerCase().includes(needle) ||
-        i.summary.toLowerCase().includes(needle) ||
-        i.tags.some((t) => t.toLowerCase().includes(needle)),
-    )
-  }
-  results = [...results].sort((a, b) => {
-    switch (activeSort) {
-      case 'views': return b.views - a.views
-      case 'likes': return b.likes - a.likes
-      default: return b.createdAt.localeCompare(a.createdAt)
-    }
-  })
+  const results = await getAllIntels({ region, category, trend, traffic, rent, q, sort: activeSort })
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://jangsanote.amakers.co.kr/intel',

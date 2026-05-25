@@ -127,26 +127,35 @@ model Listing {
   status          ListingStatus @default(ACTIVE)
   address         String
   detailAddress   String?
+  region          String?
+  district        String?
   latitude        Float?
   longitude       Float?
   area            Float
+  floor           String?
   rightFee        Int?
   deposit         Int?
   monthlyRent     Int?
+  salePrice       Int?
+  fitCategories   String[]
+  tags            String[]
   brandId         String?
   brand           Brand?        @relation(fields: [brandId], references: [id])
   monthlyRevenue  Int?
   revenueVerified Boolean       @default(false)
   isVerified      Boolean       @default(false)
+  isFeatured      Boolean       @default(false)
   verifiedAt      DateTime?
   ownerId         String
   owner           User          @relation(fields: [ownerId], references: [id])
   images          Image[]
   viewCount       Int           @default(0)
+  inquiryCount    Int           @default(0)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
   @@index([type, status])
+  @@index([region, status])
   @@index([brandId])
   @@index([latitude, longitude])
 }
@@ -168,24 +177,28 @@ enum ListingStatus {
 // Post (jangsanote)
 // ========================================
 model Post {
-  id          String      @id @default(cuid())
-  title       String
-  content     String      @db.Text
-  category    String
-  channelType ChannelType
-  channelKey  String
-  isAnonymous Boolean     @default(false)
-  isPinned    Boolean     @default(false)
-  authorId    String
-  author      User        @relation(fields: [authorId], references: [id])
-  views       Int         @default(0)
-  likes       Int         @default(0)
-  comments    Comment[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id           String      @id @default(cuid())
+  title        String
+  excerpt      String?
+  content      String      @db.Text
+  category     String
+  channelType  ChannelType
+  channelKey   String
+  isAnonymous  Boolean     @default(false)
+  isPinned     Boolean     @default(false)
+  isHot        Boolean     @default(false)
+  heroImageUrl String?
+  authorId     String
+  author       User        @relation(fields: [authorId], references: [id])
+  views        Int         @default(0)
+  likes        Int         @default(0)
+  comments     Comment[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@index([channelType, channelKey])
   @@index([authorId])
+  @@index([createdAt])
 }
 
 enum ChannelType {

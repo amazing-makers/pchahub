@@ -26,6 +26,9 @@ import {
   type ListingType,
 } from '@/lib/mock-data'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
+import { getAllListings } from '@/lib/queries'
+
+export const dynamic = 'force-dynamic'
 
 const REGIONS = [
   '서울',
@@ -55,44 +58,11 @@ const SOURCE_OPTIONS = [
   { key: 'changupmall', label: '창업몰' },
 ]
 
-export default function ListingsPage({ searchParams }: ListingsPageProps) {
+export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const { type, region, q, sort = 'recommended', fitCategory, source, page: pageStr } = searchParams
   const currentPage = Math.max(1, parseInt(pageStr ?? '1', 10))
 
-  let results = LISTINGS.slice()
-  if (type) results = results.filter((l) => l.type === type)
-  if (region) results = results.filter((l) => l.region === region)
-  if (fitCategory) results = results.filter((l) => l.fitCategories.includes(fitCategory))
-  if (source) {
-    if (source === 'own') results = results.filter((l) => !l.externalSource)
-    else results = results.filter((l) => l.externalSource?.name === source)
-  }
-  if (q) {
-    const needle = q.toLowerCase()
-    results = results.filter(
-      (l) =>
-        l.title.toLowerCase().includes(needle) ||
-        l.fullAddress.toLowerCase().includes(needle) ||
-        l.tags.some((t) => t.toLowerCase().includes(needle)),
-    )
-  }
-
-  results = [...results].sort((a, b) => {
-    switch (sort) {
-      case 'rent-asc':
-        return a.monthlyRent - b.monthlyRent
-      case 'rent-desc':
-        return b.monthlyRent - a.monthlyRent
-      case 'area-desc':
-        return b.area - a.area
-      case 'area-asc':
-        return a.area - b.area
-      case 'newest':
-        return b.createdAt.localeCompare(a.createdAt)
-      default:
-        return b.viewCount - a.viewCount
-    }
-  })
+  const results = await getAllListings({ type, region, fitCategory, source, q, sort: sort as Parameters<typeof getAllListings>[0]['sort'] })
 
   const totalCount       = results.length
   const totalPages       = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE))
