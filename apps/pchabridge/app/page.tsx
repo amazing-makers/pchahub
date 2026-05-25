@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('pchabridge', {
   path: '/',
 })
 
-import { ArrowRight, Shield, ShieldCheck, TrendingUp, Users } from 'lucide-react'
+import { ArrowRight, BarChart3, BookOpen, Shield, ShieldCheck, TrendingUp, Users } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { RoundCard } from '@/components/round-card'
@@ -252,6 +252,40 @@ export default function HomePage() {
           {featuredMA.map((m) => (
             <MACard key={m.id} listing={m} />
           ))}
+        </div>
+      </section>
+
+      {/* 딜플로우 & 가이드 */}
+      <section className="container mx-auto pt-section">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <a href="/dealflow" className="block">
+            <Card className="h-full border-gray-100 bg-gradient-to-br from-violet-50 to-white transition-shadow hover:shadow-md">
+              <CardContent className="p-6">
+                <BarChart3 className="h-8 w-8" style={{ color: 'var(--brand-primary)' }} />
+                <h2 className="mt-3 text-lg font-bold text-gray-900">딜플로우 리포트</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  현재 모집 중인 라운드 현황·업종별 분포·ROI 통계를 한눈에 확인하세요.
+                </p>
+                <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--brand-primary)' }}>
+                  시장 현황 보기 <ArrowRight className="h-3.5 w-3.5" />
+                </div>
+              </CardContent>
+            </Card>
+          </a>
+          <a href="/guide" className="block">
+            <Card className="h-full border-gray-100 transition-shadow hover:shadow-md">
+              <CardContent className="p-6">
+                <BookOpen className="h-8 w-8 text-gray-400" />
+                <h2 className="mt-3 text-lg font-bold text-gray-900">투자자 가이드</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  프랜차이즈 투자가 처음이라면? 절차·방식·위험 요소를 단계별로 안내합니다.
+                </p>
+                <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-gray-700">
+                  가이드 읽기 <ArrowRight className="h-3.5 w-3.5" />
+                </div>
+              </CardContent>
+            </Card>
+          </a>
         </div>
       </section>
 

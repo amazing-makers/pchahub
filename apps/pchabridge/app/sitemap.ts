@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/investments', changeFrequency: 'daily', priority: 0.9 },
     { path: '/ma', changeFrequency: 'daily', priority: 0.9 },
     { path: '/funding', changeFrequency: 'daily', priority: 0.8 },
+    { path: '/dealflow', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/guide', changeFrequency: 'monthly', priority: 0.7 },
     ...ROUNDS.map((r) => ({
       path: `/investments/${r.id}`,
       changeFrequency: 'weekly' as const,
