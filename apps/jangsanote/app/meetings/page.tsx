@@ -81,12 +81,21 @@ export default function MeetingsPage({ searchParams }: MeetingsPageProps) {
                 전국 자영업·가맹점주 + 전문가가 직접 여는 오프라인·온라인 모임. 무료부터 유료 강연까지.
               </p>
             </div>
-            <a href="/meetings/new">
-              <Button size="md" className="gap-1">
-                <Plus className="h-4 w-4" />
-                모임 만들기
-              </Button>
-            </a>
+            <div className="flex gap-2">
+              <a
+                href="/meetings/map"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <MapPin className="h-4 w-4 text-amber-500" />
+                지역 지도
+              </a>
+              <a href="/meetings/new">
+                <Button size="md" className="gap-1">
+                  <Plus className="h-4 w-4" />
+                  모임 만들기
+                </Button>
+              </a>
+            </div>
           </div>
 
           {/* 관심사(업종) 카테고리 — 소모임 스타일 발견 */}
@@ -376,10 +385,8 @@ function FilterLink({
   return (
     <a
       href={href}
-      className={
-        'block rounded-md px-3 py-1.5 text-sm transition-colors ' +
-        (active ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100')
-      }
+      className={'block rounded-md px-3 py-1.5 text-sm transition-colors ' + (active ? 'text-white' : 'text-gray-700 hover:bg-gray-100')}
+      style={active ? { background: 'var(--brand-primary)' } : undefined}
     >
       {children}
     </a>

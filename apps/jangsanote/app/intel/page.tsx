@@ -1,12 +1,18 @@
 import type { Metadata } from 'next'
-import { MapPin, Search } from 'lucide-react'
+import { MapPin, Search, SlidersHorizontal } from 'lucide-react'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { IntelCard } from '@/components/intel-card'
 import {
+  FOOT_TRAFFIC_LABEL,
   INTEL_CATEGORY_LABEL,
   INTEL_REGIONS,
   INTELS,
+  RENT_LEVEL_LABEL,
+  TREND_LABEL,
+  type FootTraffic,
   type IntelCategory,
+  type IntelTrend,
+  type RentLevel,
 } from '@/lib/mock-intel'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
@@ -22,17 +28,28 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
   ],
 })
 
+const SORT_OPTIONS = [
+  { key: 'latest', label: '최신 순' },
+  { key: 'views', label: '조회 많은 순' },
+  { key: 'likes', label: '좋아요 많은 순' },
+] as const
+type SortKey = (typeof SORT_OPTIONS)[number]['key']
+
 interface IntelPageProps {
-  searchParams: { region?: string; category?: string; q?: string }
+  searchParams: { region?: string; category?: string; q?: string; trend?: string; traffic?: string; rent?: string; sort?: string }
 }
 
 export default function IntelPage({ searchParams }: IntelPageProps) {
-  const { region, category, q } = searchParams
+  const { region, category, q, trend, traffic, rent, sort = 'latest' } = searchParams
+  const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'latest') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
 
   let results = INTELS.slice()
   if (region) results = results.filter((i) => i.region === region)
   if (category) results = results.filter((i) => i.category === category)
+  if (trend) results = results.filter((i) => i.trend === trend)
+  if (traffic) results = results.filter((i) => i.footTraffic === traffic)
+  if (rent) results = results.filter((i) => i.rentLevel === rent)
   if (needle) {
     results = results.filter(
       (i) =>
@@ -42,6 +59,13 @@ export default function IntelPage({ searchParams }: IntelPageProps) {
         i.tags.some((t) => t.toLowerCase().includes(needle)),
     )
   }
+  results = [...results].sort((a, b) => {
+    switch (activeSort) {
+      case 'views': return b.views - a.views
+      case 'likes': return b.likes - a.likes
+      default: return b.createdAt.localeCompare(a.createdAt)
+    }
+  })
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://jangsanote.amakers.co.kr/intel',
@@ -58,10 +82,18 @@ export default function IntelPage({ searchParams }: IntelPageProps) {
     const params = new URLSearchParams()
     if (next.region) params.set('region', next.region)
     if (next.category) params.set('category', next.category)
+    if (next.trend) params.set('trend', next.trend)
+    if (next.traffic) params.set('traffic', next.traffic)
+    if (next.rent) params.set('rent', next.rent)
+    if (next.sort && next.sort !== 'latest') params.set('sort', next.sort)
     if (next.q) params.set('q', next.q)
     const qs = params.toString()
     return qs ? `/intel?${qs}` : '/intel'
   }
+
+  const trendKeys = Object.keys(TREND_LABEL) as IntelTrend[]
+  const trafficKeys = Object.keys(FOOT_TRAFFIC_LABEL) as FootTraffic[]
+  const rentKeys = Object.keys(RENT_LEVEL_LABEL) as RentLevel[]
 
   return (
     <main className="bg-gray-50">
@@ -127,6 +159,33 @@ export default function IntelPage({ searchParams }: IntelPageProps) {
                 </FilterLink>
               ))}
             </FilterGroup>
+
+            <FilterGroup title="상권 트렌드">
+              <FilterLink href={makeHref({ trend: undefined })} active={!trend}>전체</FilterLink>
+              {trendKeys.map((k) => (
+                <FilterLink key={k} href={makeHref({ trend: k })} active={trend === k}>
+                  {TREND_LABEL[k]}
+                </FilterLink>
+              ))}
+            </FilterGroup>
+
+            <FilterGroup title="유동인구">
+              <FilterLink href={makeHref({ traffic: undefined })} active={!traffic}>전체</FilterLink>
+              {trafficKeys.map((k) => (
+                <FilterLink key={k} href={makeHref({ traffic: k })} active={traffic === k}>
+                  {FOOT_TRAFFIC_LABEL[k]}
+                </FilterLink>
+              ))}
+            </FilterGroup>
+
+            <FilterGroup title="임대료">
+              <FilterLink href={makeHref({ rent: undefined })} active={!rent}>전체</FilterLink>
+              {rentKeys.map((k) => (
+                <FilterLink key={k} href={makeHref({ rent: k })} active={rent === k}>
+                  {RENT_LEVEL_LABEL[k]}
+                </FilterLink>
+              ))}
+            </FilterGroup>
           </aside>
 
           {/* Main content */}
@@ -181,11 +240,33 @@ export default function IntelPage({ searchParams }: IntelPageProps) {
               ))}
             </div>
 
+            {/* Sort + advanced filter chips */}
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <SlidersHorizontal className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+              {SORT_OPTIONS.map((o) => {
+                const isActive = activeSort === o.key
+                return (
+                  <a
+                    key={o.key}
+                    href={makeHref({ sort: o.key })}
+                    className={'rounded-full px-3 py-1 text-xs font-medium transition-colors ' + (isActive ? 'text-white' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50')}
+                    style={isActive ? { background: 'var(--brand-primary)' } : undefined}
+                  >
+                    {o.label}
+                  </a>
+                )
+              })}
+              {(trend || traffic || rent) && (
+                <a href={makeHref({ trend: undefined, traffic: undefined, rent: undefined })} className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-500 hover:bg-gray-50">
+                  고급 필터 초기화
+                </a>
+              )}
+            </div>
             <div className="mb-3 text-sm font-semibold text-gray-700">
               {results.length}건
-              {(region || category) && (
+              {(region || category || trend || traffic || rent || q) && (
                 <a href="/intel" className="ml-2 text-xs font-normal text-gray-400 underline">
-                  필터 초기화
+                  전체 초기화
                 </a>
               )}
             </div>
@@ -225,10 +306,8 @@ function FilterLink({ href, active, children }: { href: string; active: boolean;
   return (
     <a
       href={href}
-      className={
-        'block rounded-md px-3 py-1.5 text-sm transition-colors ' +
-        (active ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100')
-      }
+      className={'block rounded-md px-3 py-1.5 text-sm transition-colors ' + (active ? 'text-white' : 'text-gray-700 hover:bg-gray-100')}
+      style={active ? { background: 'var(--brand-primary)' } : undefined}
     >
       {children}
     </a>
