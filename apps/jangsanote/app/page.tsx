@@ -8,6 +8,8 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
 })
 
 import { ArrowRight, BookOpen, Building2, Calendar, CalendarDays, ChefHat, Flame, HandCoins, MapPin, TrendingUp } from 'lucide-react'
+import { IntelCard } from '@/components/intel-card'
+import { INTELS } from '@/lib/mock-intel'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { ChannelList } from '@/components/channel-list'
@@ -284,6 +286,29 @@ export default function HomePage() {
           </aside>
         </div>
       </div>
+
+      {/* 상권 인텔 */}
+      <section className="border-t border-gray-100 bg-white py-section">
+        <div className="container mx-auto">
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-h4 font-bold text-gray-900">
+                <MapPin className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+                상권 인텔
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">발로 뛴 점주들의 실전 상권 분석 리포트</p>
+            </div>
+            <a href="/intel" className="inline-flex shrink-0 items-center gap-1 text-sm text-gray-600 hover:text-gray-900">
+              전체보기 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[...INTELS].sort((a, b) => b.likes - a.likes).slice(0, 4).map((i) => (
+              <IntelCard key={i.id} intel={i} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 정보 허브 — 레시피·축제·지원 */}
       <section className="space-y-10 border-t border-gray-100 bg-white py-section">

@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { buildSitemap } from '@amakers/design-system'
 import { CHANNELS, MEETINGS, POSTS } from '@/lib/mock-data'
 import { RECIPES } from '@/lib/hub-data'
+import { INTELS } from '@/lib/mock-intel'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const categoryChannels = CHANNELS.filter((c) => c.type === 'category')
@@ -17,6 +18,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/recipes', changeFrequency: 'daily', priority: 0.9 },
     { path: '/festivals', changeFrequency: 'daily', priority: 0.8 },
     { path: '/support', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/intel', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/intel/new', changeFrequency: 'monthly', priority: 0.5 },
+    ...INTELS.map((i) => ({
+      path: `/intel/${i.id}`,
+      lastModified: i.createdAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     ...categoryChannels.map((c) => ({
       path: `/categories/${c.key}`,
       changeFrequency: 'hourly' as const,
