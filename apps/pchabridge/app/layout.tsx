@@ -9,6 +9,7 @@ export const metadata = buildSiteMetadata('pchabridge')
 
 const navItems = [
   { href: '/investments', label: '투자 라운드' },
+  { href: '/portfolio', label: '포트폴리오' },
   { href: '/ma', label: 'M&A 매물' },
   { href: '/funding', label: '다점포 펀딩' },
   { href: '/dealflow', label: '딜플로우' },

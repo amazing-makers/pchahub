@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return buildSitemap('pchabridge', [
     { path: '/', changeFrequency: 'daily', priority: 1 },
     { path: '/investments', changeFrequency: 'daily', priority: 0.9 },
+    { path: '/portfolio', changeFrequency: 'daily', priority: 0.8 },
     { path: '/ma', changeFrequency: 'daily', priority: 0.9 },
     { path: '/funding', changeFrequency: 'daily', priority: 0.8 },
     { path: '/dealflow', changeFrequency: 'weekly', priority: 0.8 },
