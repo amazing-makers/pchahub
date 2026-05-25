@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/listings/map', changeFrequency: 'daily', priority: 0.8 },
     { path: '/areas', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/safe-deal', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/price-guide', changeFrequency: 'weekly', priority: 0.8 },
     ...LISTINGS.map((l) => ({
       path: `/listings/${l.id}`,
       lastModified: l.createdAt,

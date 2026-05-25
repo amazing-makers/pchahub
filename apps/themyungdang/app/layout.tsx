@@ -14,7 +14,7 @@ const navItems: HeaderNavItem[] = [
   { href: '/listings', label: '매물 목록' },
   { href: '/areas', label: '상권 분석' },
   { href: '/safe-deal', label: '안전 거래' },
-  { href: '/search', label: '검색' },
+  { href: '/price-guide', label: '시세 가이드' },
 ]
 
 const actions: HeaderAction[] = [

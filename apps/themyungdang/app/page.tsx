@@ -8,7 +8,7 @@ export const metadata: Metadata = buildPageMetadata('themyungdang', {
 })
 
 import dynamic from 'next/dynamic'
-import { ArrowRight, CheckCircle2, Eye, Map, Shield, Sparkles, TrendingUp } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Eye, Map, Shield, Sparkles, TrendingDown, TrendingUp } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { SearchBar } from '@/components/search-bar'
@@ -22,6 +22,7 @@ import {
   listingsByArea,
   popularListings,
 } from '@/lib/mock-data'
+import { AREA_PRICES, PRICE_STATS, TREND_COLOR } from '@/lib/mock-price-guide'
 
 import { ListingSectionSkeleton } from '@/components/skeletons'
 import { SavedListingsSection } from '@/components/saved-listings-section'
@@ -245,6 +246,74 @@ export default function HomePage() {
 
       {/* Saved listings — client island */}
       <SavedListingsSection />
+
+      {/* Price guide teaser */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <TrendingUp className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+              권리금 시세 가이드
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">상권·업종별 평균 권리금·보증금·월세 범위</p>
+          </div>
+          <a
+            href="/price-guide"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          >
+            전체 시세 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500">
+                  <th className="py-3 pl-4 pr-2 text-left">상권</th>
+                  <th className="px-3 py-3 text-left">권리금 범위</th>
+                  <th className="hidden px-3 py-3 text-left sm:table-cell">보증금 범위</th>
+                  <th className="px-3 py-3 pr-4 text-left">추이</th>
+                </tr>
+              </thead>
+              <tbody>
+                {AREA_PRICES.slice(0, 5).map((area) => {
+                  const trendColor = TREND_COLOR[area.trend]
+                  const TrendIcon = area.trend === 'up' ? TrendingUp : area.trend === 'down' ? TrendingDown : TrendingUp
+                  return (
+                    <tr key={area.areaKey} className="border-b border-gray-50 last:border-0 hover:bg-gray-50">
+                      <td className="py-3 pl-4 pr-2">
+                        <div className="text-sm font-semibold text-gray-900">{area.areaName}</div>
+                        <div className="text-xs text-gray-400">{area.region}</div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <span className="tabular-nums text-sm font-bold text-gray-900">
+                          {area.rightFeeMin.toLocaleString()}~{area.rightFeeMax.toLocaleString()}만원
+                        </span>
+                      </td>
+                      <td className="hidden px-3 py-3 sm:table-cell">
+                        <span className="tabular-nums text-sm text-gray-600">
+                          {area.depositMin.toLocaleString()}~{area.depositMax.toLocaleString()}만원
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 pr-4">
+                        <span className="inline-flex items-center gap-0.5 text-xs font-semibold" style={{ color: trendColor }}>
+                          <TrendIcon className="h-3 w-3" />
+                          {area.trendPct > 0 ? '+' : ''}{area.trendPct}%
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="border-t border-gray-100 bg-gray-50 px-4 py-3 text-center">
+            <a href="/price-guide" className="text-sm font-semibold hover:underline" style={{ color: 'var(--brand-primary)' }}>
+              전국 {AREA_PRICES.length}개 상권 전체 시세 보기 →
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* Safe deal */}
       <section className="container mx-auto pt-section">
