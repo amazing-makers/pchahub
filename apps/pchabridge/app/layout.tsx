@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -45,6 +45,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer platform="pchabridge" />
           <BackToTop />
           <MobileTabBar platform="pchabridge" />
+          <AiChatWidget
+            platform="pchabridge"
+            platformName="피차브릿지"
+            greeting="안녕하세요! 프랜차이즈 투자 라운드, 투자 검토 기준, M&A 관련 질문을 도와드릴게요 😊"
+            accentBg="bg-violet-700"
+            accentHoverBg="hover:bg-violet-800"
+          />
         </Providers>
       </body>
     </html>

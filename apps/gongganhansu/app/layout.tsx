@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -44,6 +44,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer platform="gongganhansu" />
           <BackToTop />
           <MobileTabBar platform="gongganhansu" />
+          <AiChatWidget
+            platform="gongganhansu"
+            platformName="공간한수"
+            greeting="안녕하세요! 창업 인테리어 비용, 시공사 선택, 업종별 공사 팁을 알려드릴게요 😊"
+            accentBg="bg-teal-600"
+            accentHoverBg="hover:bg-teal-700"
+          />
         </Providers>
       </body>
     </html>

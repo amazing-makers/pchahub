@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -46,6 +46,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <WriteFAB />
           <BackToTop />
           <MobileTabBar platform="jangsanote" />
+          <AiChatWidget
+            platform="jangsanote"
+            platformName="장사노트"
+            greeting="안녕하세요! 창업 커뮤니티, 상권 인텔리전스, 소상공인 정보를 도와드릴게요 😊"
+            accentBg="bg-amber-500"
+            accentHoverBg="hover:bg-amber-600"
+          />
         </Providers>
       </body>
     </html>

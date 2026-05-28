@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -50,6 +50,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <BackToTop />
           <CompareBar />
           <MobileTabBar platform="pchahub" />
+          <AiChatWidget
+            platform="pchahub"
+            platformName="pchahub"
+            greeting="안녕하세요! 프랜차이즈 창업 궁금한 점을 물어보세요. 브랜드 추천, 비용 계산, 계약 체크까지 도와드릴게요 😊"
+            accentBg="bg-indigo-600"
+            accentHoverBg="hover:bg-indigo-700"
+          />
         </Providers>
       </body>
     </html>

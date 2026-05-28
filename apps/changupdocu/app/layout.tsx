@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -45,6 +45,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer platform="changupdocu" />
           <BackToTop />
           <MobileTabBar platform="changupdocu" />
+          <AiChatWidget
+            platform="changupdocu"
+            platformName="창업도큐"
+            greeting="안녕하세요! 창업자 성공·실패 스토리, 브랜드 다큐 관련 콘텐츠를 안내해 드릴게요 😊"
+            accentBg="bg-purple-600"
+            accentHoverBg="hover:bg-purple-700"
+          />
         </Providers>
       </body>
     </html>

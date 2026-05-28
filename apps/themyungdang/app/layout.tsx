@@ -1,4 +1,4 @@
-import { Footer, MobileTabBar, type HeaderAction, type HeaderNavItem } from '@amakers/ui'
+import { Footer, MobileTabBar, AiChatWidget, type HeaderAction, type HeaderNavItem } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -51,6 +51,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastContainer />
           <BackToTop />
           <MobileTabBar platform="themyungdang" />
+          <AiChatWidget
+            platform="themyungdang"
+            platformName="더명당"
+            greeting="안녕하세요! 상가 매물, 권리금, 상권 분석에 대해 무엇이든 물어보세요 😊"
+            accentBg="bg-orange-600"
+            accentHoverBg="hover:bg-orange-700"
+          />
         </Providers>
       </body>
     </html>

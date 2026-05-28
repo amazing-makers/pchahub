@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -45,6 +45,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer platform="openrun" />
           <BackToTop />
           <MobileTabBar platform="openrun" />
+          <AiChatWidget
+            platform="openrun"
+            platformName="오픈런"
+            greeting="안녕하세요! 공공 개방 공간 검색, 예약 방법 등 궁금한 점을 물어보세요 😊"
+            accentBg="bg-sky-600"
+            accentHoverBg="hover:bg-sky-700"
+          />
         </Providers>
       </body>
     </html>

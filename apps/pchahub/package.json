@@ -17,6 +17,7 @@
     "@amakers/listings": "workspace:*",
     "@amakers/api-client": "workspace:*",
     "@amakers/utils": "workspace:*",
+    "@anthropic-ai/sdk": "^0.53.0",
     "next": "^14.2.21",
     "next-auth": "^4.24.11",
     "react": "^18.3.1",

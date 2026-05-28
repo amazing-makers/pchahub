@@ -1,4 +1,4 @@
-import { Header, Footer, MobileTabBar, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -44,6 +44,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer platform="bestplace" />
           <BackToTop />
           <MobileTabBar platform="bestplace" />
+          <AiChatWidget
+            platform="bestplace"
+            platformName="베스트플레이스"
+            greeting="안녕하세요! 매장 리뷰, 창업 후기, 좋은 점포 찾는 방법을 도와드릴게요 😊"
+            accentBg="bg-rose-600"
+            accentHoverBg="hover:bg-rose-700"
+          />
         </Providers>
       </body>
     </html>
