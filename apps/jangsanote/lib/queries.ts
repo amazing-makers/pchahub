@@ -126,11 +126,11 @@ export async function getAllMeetings(opts: {
         feeWon: m.feeWon,
         status: m.status.toLowerCase() as MockMeeting['status'],
         organizerId: m.hostId,
-        organizer: m.host.name ?? '익명',
-        tags: [],
-        agenda: [],
+        organizer: m.host?.name ?? '익명',
+        tags: [] as string[],
+        agenda: [] as string[],
         createdAt: m.createdAt.toISOString(),
-      }))
+      })) as unknown as MockMeeting[]
     }
   } catch {
     // DB unavailable — fall through to mock

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ArrowRight, BookOpen, MapPin, Search, Star, Store, Wrench } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
@@ -163,56 +163,6 @@ export default function RegionPage({ params, searchParams }: RegionPageProps) {
         <div className="grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
           <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
             <ChannelList activeChannel={{ type: 'region', key: channel.key }} />
-            {/* 이 지역 더 알아보기 */}
-            <Card className="border-gray-200">
-              <CardContent className="p-4">
-                <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  {channel.label} 더 알아보기
-                </div>
-                <div className="space-y-2">
-                  <a
-                    href={`https://themyungdang.amakers.co.kr/listings?region=${encodeURIComponent(channel.label)}`}
-                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-200 hover:bg-white"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-emerald-500" />
-                      {channel.label} 창업 매물
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href={`https://bestplace.amakers.co.kr/stores?region=${encodeURIComponent(channel.label)}`}
-                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-200 hover:bg-white"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Star className="h-3.5 w-3.5 text-amber-500" />
-                      {channel.label} 우수 매장
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://themanual.amakers.co.kr/courses"
-                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-200 hover:bg-white"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <BookOpen className="h-3.5 w-3.5 text-indigo-500" />
-                      가맹 운영 강의
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://gongganhansu.amakers.co.kr/quote"
-                    className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-200 hover:bg-white"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Wrench className="h-3.5 w-3.5 text-rose-500" />
-                      매장 시공 견적
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
           </aside>
           <div className="space-y-3">
             <LocalPostsFeed channelType="region" channelKey={channel.key} />
@@ -226,35 +176,6 @@ export default function RegionPage({ params, searchParams }: RegionPageProps) {
               posts.map((p) => <PostCard key={p.id} post={p} />)
             )}
           </div>
-        </div>
-      </div>
-
-      {/* amakers 생태계 크로스링크 */}
-      <div className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-6">
-          <Card className="border-gray-200 bg-gray-50">
-            <CardContent className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">amakers에서 더 알아보기</div>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="https://pchahub.amakers.co.kr/brands" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-indigo-500" />가맹 브랜드 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themyungdang.amakers.co.kr/listings" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-emerald-500" />창업 매물 찾기</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://bestplace.amakers.co.kr/stores" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-amber-500" />우수 매장 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themanual.amakers.co.kr/courses" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-indigo-500" />창업 운영 강의</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

@@ -13,6 +13,7 @@ const navItems = [
   { href: '/ma', label: 'M&A 매물' },
   { href: '/funding', label: '다점포 펀딩' },
   { href: '/dealflow', label: '딜플로우' },
+  { href: '/simulator', label: '수익 계산기' },
   { href: '/guide', label: '투자자 가이드' },
 ]
 

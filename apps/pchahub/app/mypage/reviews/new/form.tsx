@@ -96,7 +96,7 @@ export function ReviewForm({ presetBrandId, brands }: ReviewFormProps) {
             </div>
             <h2 className="mt-4 text-h3 font-bold text-gray-900">후기가 접수되었습니다</h2>
             <p className="mt-3 text-gray-600">
-              운영팀의 검수를 거쳐 영업일 2일 이내 브랜드 페이지와 장사노트 커뮤니티에 게시됩니다.
+              운영팀의 검수를 거쳐 영업일 2일 이내 브랜드 페이지와 커뮤니티에 게시됩니다.
               검수 진행 상황은 마이페이지에서 확인할 수 있습니다.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2">

@@ -255,6 +255,88 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Simulator teaser */}
+      <section className="container mx-auto pt-section">
+        <div className="rounded-2xl border border-gray-100 bg-gradient-to-br from-violet-50 via-white to-white p-8">
+          <div className="mb-2 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+            <span
+              className="text-sm font-semibold uppercase tracking-wider"
+              style={{ color: 'var(--brand-primary)' }}
+            >
+              수익 시뮬레이터
+            </span>
+          </div>
+          <h2 className="mt-1 text-h3 font-bold text-gray-900">투자 수익 미리 시뮬레이션</h2>
+          <p className="mt-2 max-w-xl text-sm text-gray-500">
+            투자금액·배당률·성장률을 조절하면 예상 CAGR과 총 수익이 즉시 계산됩니다.
+            아래는 대표 시나리오 예시입니다.
+          </p>
+
+          {/* Example result cards */}
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[
+              {
+                label: '보수적 시나리오',
+                investment: '1억원',
+                yield: '배당 8% · 성장 5%',
+                cagr: '연 12.4%',
+                profit: '3년 총 수익 4,180만원',
+                color: 'bg-blue-50 border-blue-100',
+                badge: '낮은 위험',
+                badgeColor: 'bg-blue-100 text-blue-700',
+              },
+              {
+                label: '표준 시나리오',
+                investment: '1억원',
+                yield: '배당 10% · 성장 10%',
+                cagr: '연 18.1%',
+                profit: '3년 총 수익 6,310만원',
+                color: 'bg-violet-50 border-violet-200',
+                badge: '중간 위험',
+                badgeColor: 'bg-violet-100 text-violet-700',
+              },
+              {
+                label: '성장형 시나리오',
+                investment: '1억원',
+                yield: '배당 12% · 성장 20%',
+                cagr: '연 27.2%',
+                profit: '3년 총 수익 10,440만원',
+                color: 'bg-amber-50 border-amber-100',
+                badge: '높은 위험',
+                badgeColor: 'bg-amber-100 text-amber-700',
+              },
+            ].map((s) => (
+              <div key={s.label} className={`rounded-xl border p-5 ${s.color}`}>
+                <div className="flex items-start justify-between">
+                  <p className="text-sm font-bold text-gray-900">{s.label}</p>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${s.badgeColor}`}>
+                    {s.badge}
+                  </span>
+                </div>
+                <p className="mt-1 text-xs text-gray-500">{s.investment} · {s.yield}</p>
+                <p className="mt-3 text-2xl font-black text-gray-900">{s.cagr}</p>
+                <p className="mt-0.5 text-xs font-medium text-gray-600">{s.profit}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-3 text-[11px] text-gray-400">
+            * 위 수치는 예시이며 실제 수익을 보장하지 않습니다.
+          </p>
+
+          <div className="mt-5">
+            <a
+              href="/simulator"
+              className="inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: 'var(--brand-primary)' }}
+            >
+              시뮬레이터 열기 <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 딜플로우 & 가이드 */}
       <section className="container mx-auto pt-section">
         <div className="grid gap-4 sm:grid-cols-2">

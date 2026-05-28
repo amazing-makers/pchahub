@@ -51,8 +51,8 @@ export default function DealflowPage() {
     if (!categoryMap[brand.category]) {
       categoryMap[brand.category] = { label: brand.categoryLabel, count: 0, raised: 0 }
     }
-    categoryMap[brand.category].count += brandRounds.length
-    categoryMap[brand.category].raised += brandRounds.reduce((s, r) => s + r.currentAmount, 0)
+    categoryMap[brand.category]!.count += brandRounds.length
+    categoryMap[brand.category]!.raised += brandRounds.reduce((s, r) => s + r.currentAmount, 0)
   }
   const categoryList = Object.entries(categoryMap)
     .map(([cat, v]) => ({ cat, ...v }))

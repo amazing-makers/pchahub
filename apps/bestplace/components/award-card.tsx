@@ -61,12 +61,6 @@ export function AwardCard({ award, compact = false }: AwardCardProps) {
               >
                 <Award className="h-3 w-3" /> 상장 보기
               </a>
-              <a
-                href={`https://pchahub.amakers.co.kr/brands/${award.brandId}`}
-                className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-gray-700 hover:bg-gray-50"
-              >
-                브랜드 정보 →
-              </a>
               {store && (
                 <a
                   href={`/stores/${store.id}`}

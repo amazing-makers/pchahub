@@ -23,8 +23,8 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
   ],
 })
 
-const latestYear = YEAR_STATS[YEAR_STATS.length - 1]
-const prevYear = YEAR_STATS[YEAR_STATS.length - 2]
+const latestYear = YEAR_STATS[YEAR_STATS.length - 1]!
+const prevYear = YEAR_STATS[YEAR_STATS.length - 2]!
 const brandGrowth = (((latestYear.totalBrands - prevYear.totalBrands) / prevYear.totalBrands) * 100).toFixed(1)
 const storeGrowth = (((latestYear.totalStores - prevYear.totalStores) / prevYear.totalStores) * 100).toFixed(1)
 const costGrowth = (((latestYear.avgStartupCost - prevYear.avgStartupCost) / prevYear.avgStartupCost) * 100).toFixed(1)
@@ -129,7 +129,7 @@ export default function TrendsPage() {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <h3 className="text-sm font-bold text-gray-900">{insight.title}</h3>
-                        <Badge variant="secondary" className="text-[10px]">{insight.tag}</Badge>
+                        <Badge variant="default" className="text-[10px]">{insight.tag}</Badge>
                       </div>
                       <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{insight.body}</p>
                     </div>

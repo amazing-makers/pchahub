@@ -21,7 +21,9 @@ function hasDatagoKey(): boolean {
   return Boolean(process.env.DATAGO_API_KEY ?? process.env.KFTC_API_KEY)
 }
 function hasRebKey(): boolean {
-  return Boolean(process.env.REB_API_KEY ?? process.env.DATAGO_API_KEY)
+  // REB는 data.go.kr과 완전히 별개 인증 시스템.
+  // REB_API_KEY만 확인 — DATAGO_API_KEY로 REB 호출하면 인증 오류.
+  return Boolean(process.env.REB_API_KEY)
 }
 
 /** 매물 목록 — 자체 등록 매물 + 국토부 실거래가 머지. */

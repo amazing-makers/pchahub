@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowRight, BookOpen, ChefHat, Clock, Eye, Flame, MapPin, Store, UtensilsCrossed } from 'lucide-react'
+import { ArrowLeft, ChefHat, Clock, Eye, Flame, UtensilsCrossed } from 'lucide-react'
 import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
   DIFFICULTY_LABEL,
@@ -223,60 +223,6 @@ export default function RecipePage({ params }: RecipePageProps) {
                 </section>
               )
             })()}
-
-            {/* amakers 생태계 크로스링크 */}
-            <Card className="border-gray-200 bg-gray-50">
-              <CardContent className="p-5">
-                <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  amakers에서 더 알아보기
-                </div>
-                <p className="mt-1 text-sm text-gray-600">
-                  이 레시피와 관련된 브랜드·강의·커뮤니티를 확인하세요.
-                </p>
-                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                  <a
-                    href={`https://pchahub.amakers.co.kr/brands?category=${recipe.category}`}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Store className="h-3.5 w-3.5 text-indigo-500" />
-                      관련 가맹 브랜드
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href={`/courses?category=${recipe.category}`}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <BookOpen className="h-3.5 w-3.5 text-amber-500" />
-                      운영·메뉴 강의
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://jangsanote.amakers.co.kr"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Store className="h-3.5 w-3.5 text-emerald-500" />
-                      점주 커뮤니티
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://themyungdang.amakers.co.kr/listings"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-rose-500" />
-                      입점 매물 찾기
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Source */}
             <div className="text-xs text-gray-400">

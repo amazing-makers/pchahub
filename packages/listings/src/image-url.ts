@@ -16,7 +16,9 @@ export function listingImageUrl(path: string | undefined): string {
   // dev에서 환경변수 미설정 시 더명당 dev 서버(localhost:3003)로 fallback —
   // 같은 머신에서 turbo로 모든 앱이 한 번에 떠 있고 사진 원본이 더명당에만 있어서.
   const envHost = process.env.NEXT_PUBLIC_LISTINGS_HOST?.replace(/\/$/, '')
-  const host = envHost ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:3003' : '')
+  const host = envHost ?? (process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3003'
+    : 'https://themyungdang.amakers.co.kr')
   return `${host}${path}`
 }
 

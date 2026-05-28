@@ -1,15 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
-  ArrowRight,
-  BookOpen,
   ChevronRight,
   Eye,
-  MapPin,
   MessageSquare,
-  Star,
-  Store,
-  Trophy,
 } from 'lucide-react'
 import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
@@ -245,19 +239,6 @@ export default function PostPage({ params }: PostPageProps) {
                   channelKey={post.channelKey}
                   channelName={channelName}
                 />
-                {post.channelType === 'category' && (
-                  <div className="mt-4 space-y-2 border-t border-gray-100 pt-4 text-sm">
-                    <a href={`https://pchahub.amakers.co.kr/categories/${post.channelKey}`} className="block text-gray-700 hover:text-gray-900">
-                      → 가맹 브랜드 (프차허브)
-                    </a>
-                    <a href={`https://themyungdang.amakers.co.kr/listings?category=${post.channelKey}`} className="block text-gray-700 hover:text-gray-900">
-                      → 입점 매물 (더명당)
-                    </a>
-                    <a href={`https://themanual.amakers.co.kr/courses?category=${post.channelKey}`} className="block text-gray-700 hover:text-gray-900">
-                      → 운영 강의 (더메뉴얼)
-                    </a>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>
@@ -287,88 +268,7 @@ export default function PostPage({ params }: PostPageProps) {
               </CardContent>
             </Card>
 
-            {/* amakers ecosystem — category 채널이면 관련 브랜드/매물/강의 link */}
-            {post.channelType === 'category' && (
-              <Card className="mt-4 border-amber-200 bg-amber-50">
-                <CardContent className="p-5">
-                  <div className="text-xs font-semibold uppercase tracking-wider text-amber-900">
-                    {channelName} 더 알아보기
-                  </div>
-                  <div className="mt-3 space-y-2">
-                    <a
-                      href={`https://pchahub.amakers.co.kr/categories/${post.channelKey}`}
-                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <Store className="h-3.5 w-3.5 text-indigo-500" />
-                        가맹 브랜드 (프차허브)
-                      </span>
-                      <ArrowRight className="h-3 w-3 text-gray-400" />
-                    </a>
-                    <a
-                      href={`https://themyungdang.amakers.co.kr/listings?category=${post.channelKey}`}
-                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-emerald-500" />
-                        입점 매물 (더명당)
-                      </span>
-                      <ArrowRight className="h-3 w-3 text-gray-400" />
-                    </a>
-                    <a
-                      href={`https://themanual.amakers.co.kr/courses?category=${post.channelKey}`}
-                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <BookOpen className="h-3.5 w-3.5 text-amber-600" />
-                        운영 강의 (더메뉴얼)
-                      </span>
-                      <ArrowRight className="h-3 w-3 text-gray-400" />
-                    </a>
-                    <a
-                      href={`https://bestplace.amakers.co.kr/stores?category=${post.channelKey}`}
-                      className="flex items-center justify-between rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:border-amber-300 hover:text-gray-900"
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <Trophy className="h-3.5 w-3.5 text-amber-500" />
-                        매장 보기 (베스트플레이스)
-                      </span>
-                      <ArrowRight className="h-3 w-3 text-gray-400" />
-                    </a>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </aside>
-        </div>
-      </div>
-
-      {/* amakers 생태계 크로스링크 */}
-      <div className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-6">
-          <Card className="border-gray-200 bg-gray-50">
-            <CardContent className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">amakers에서 더 알아보기</div>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="https://pchahub.amakers.co.kr/brands" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-indigo-500" />가맹 브랜드 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themyungdang.amakers.co.kr/listings" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-emerald-500" />창업 매물 찾기</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://bestplace.amakers.co.kr/stores" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-amber-500" />우수 매장 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themanual.amakers.co.kr/courses" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-rose-500" />창업 운영 강의</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

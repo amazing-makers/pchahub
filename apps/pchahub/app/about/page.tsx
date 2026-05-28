@@ -9,11 +9,6 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
 
 import { CheckCircle2, Layers, ShieldCheck, Sparkles, Target } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
-import { platformColors, type PlatformKey } from '@amakers/design-system'
-
-const PLATFORMS = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'pchahub')
 
 const PRINCIPLES = [
   {
@@ -74,7 +69,7 @@ export default function AboutPage() {
             <p className="mt-6 text-lg text-gray-600">
               프차허브는 가맹 사업과 자영업 운영을 둘러싼 정보 비대칭을 해소하기 위한
               <br className="hidden sm:inline" />
-              9개 전문 플랫폼의 가맹 정보·매칭 허브입니다.
+              프랜차이즈 통합 정보·매칭 플랫폼입니다.
             </p>
           </div>
         </div>
@@ -102,7 +97,7 @@ export default function AboutPage() {
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-h3 font-semibold text-gray-900">프차허브의 4가지 운영 원칙</h2>
             <p className="mt-3 text-gray-600">
-              9개 사이트가 공유하는 이 원칙 위에서 설계됩니다.
+              프차허브가 지향하는 투명한 프랜차이즈 생태계의 기준입니다.
             </p>
           </div>
           <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -129,7 +124,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-3xl">
           <h2 className="text-h3 font-semibold text-gray-900">pchahub의 역할</h2>
           <p className="mt-4 text-gray-700">
-            프차허브(pchahub)는 9개 전문 플랫폼 중에서 가맹 정보 검색과 매칭을 담당합니다.
+            프차허브(pchahub)는 가맹 정보 검색과 매칭에 특화된 프랜차이즈 플랫폼입니다.
             예비 가맹점주가 본인 조건에 맞는 브랜드를 발견하고, 본사가 검증된 후보와 효율적으로
             연결되도록 돕는 양면 마켓플레이스입니다.
           </p>
@@ -151,39 +146,24 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Other platforms */}
+      {/* Key numbers */}
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-h3 font-semibold text-gray-900">함께하는 8개 플랫폼</h2>
-            <p className="mt-3 text-gray-600">
-              가맹점 운영의 단계별로 전문 플랫폼이 담당합니다. 모두 한 계정으로 이용 가능합니다.
-            </p>
+            <h2 className="text-h3 font-semibold text-gray-900">프차허브 현황</h2>
+            <p className="mt-3 text-gray-600">공정거래위원회 정보공개서 + 자체 검증 데이터 기준</p>
           </div>
-          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {PLATFORMS.map(([key, p]) => (
-              <a key={key} href={`https://${p.domain}`} className="group">
-                <Card className="h-full transition-shadow hover:shadow-md">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className="h-9 w-9 shrink-0 rounded-lg"
-                        style={{ background: p.primary }}
-                        aria-hidden
-                      />
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-gray-900">
-                          {p.name}
-                        </div>
-                        <div className="truncate text-xs text-gray-500">{p.role}</div>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-xs text-gray-400 group-hover:text-gray-600">
-                      {p.domain} →
-                    </div>
-                  </CardContent>
-                </Card>
-              </a>
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[
+              { value: '5,000+', label: '등록 브랜드' },
+              { value: '200,000+', label: '전국 가맹점 수' },
+              { value: '30+', label: '창업 가이드 아티클' },
+              { value: '무료', label: '예비 창업자 이용료' },
+            ].map(({ value, label }) => (
+              <div key={label} className="rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+                <div className="text-3xl font-black tracking-tight text-gray-900">{value}</div>
+                <div className="mt-1.5 text-sm text-gray-500">{label}</div>
+              </div>
             ))}
           </div>
         </div>

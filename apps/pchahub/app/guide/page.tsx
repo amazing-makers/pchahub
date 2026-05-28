@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
-import { ArrowRight, BookOpen, ChevronRight, Clock, Flame, Tag } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronRight, Clock, Flame, MessageSquare, Tag } from 'lucide-react'
 import { Badge, Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
   GUIDE_ARTICLES,
@@ -9,6 +9,7 @@ import {
   type GuideCategory,
   type GuideArticle,
 } from '@/lib/guide-data'
+import { FEATURED_QAS } from '@/lib/franchisee-qa-data'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '창업 가이드 허브 — 단계별 프랜차이즈 창업 가이드',
@@ -133,6 +134,38 @@ export default function GuidePage({ searchParams }: GuidePageProps) {
 
       <div className="container mx-auto space-y-12 py-10">
 
+        {/* 단계별 창업 경로 — 전체 탭일 때만 표시 */}
+        {!activeCat && (
+          <section>
+            <div className="mb-5">
+              <h2 className="text-h4 font-semibold text-gray-900">단계별 창업 경로</h2>
+              <p className="mt-1 text-sm text-gray-500">준비 → 계약 → 운영 → 수익, 순서대로 읽으면 실수가 줄어듭니다</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {GUIDE_CATEGORIES.map((cat, idx) => (
+                <a key={cat.key} href={`/guide?cat=${cat.key}`} className="group relative">
+                  <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md">
+                    <div className="absolute right-4 top-3 text-[10px] font-bold text-gray-300">
+                      STEP {idx + 1}
+                    </div>
+                    <div
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-xl"
+                      style={{ background: cat.color + '18' }}
+                    >
+                      {cat.emoji}
+                    </div>
+                    <h3 className="mt-3 font-semibold text-gray-900">{cat.label}</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-500">{cat.description}</p>
+                    <div className="mt-3 flex items-center gap-1 text-xs font-medium text-gray-400 group-hover:text-gray-700">
+                      {GUIDE_CATEGORY_COUNTS[cat.key]}편 보기 <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* 추천 가이드 — 전체 탭일 때만 표시 */}
         {!activeCat && (
           <section>
@@ -162,6 +195,44 @@ export default function GuidePage({ searchParams }: GuidePageProps) {
             </section>
           )
         })}
+
+        {/* 가맹점주 Q&A 연결 */}
+        {!activeCat && (
+          <section className="rounded-3xl border border-gray-100 bg-gray-50 px-8 py-8">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm">
+                  <MessageSquare className="h-5 w-5" style={{ color: 'var(--brand-primary)' }} />
+                </div>
+                <div>
+                  <h2 className="text-h4 font-semibold text-gray-900">가맹점주 실전 Q&A</h2>
+                  <p className="mt-0.5 text-sm text-gray-500">이론으로 해결 안 되는 부분은 현직 점주의 답변에서 확인하세요</p>
+                </div>
+              </div>
+              <a href="/franchisee-qa" className="shrink-0 text-sm font-medium text-gray-700 hover:text-gray-900">
+                전체 보기 →
+              </a>
+            </div>
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {FEATURED_QAS.map((qa) => (
+                <a
+                  key={qa.id}
+                  href={`/franchisee-qa/${qa.id}`}
+                  className="group rounded-xl border border-gray-200 bg-white p-4 transition-shadow hover:shadow-sm"
+                >
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{qa.category}</div>
+                  <p className="mt-1.5 text-sm font-medium leading-snug text-gray-900 line-clamp-2 group-hover:text-indigo-700">
+                    {qa.question}
+                  </p>
+                  <div className="mt-3 flex items-center justify-between text-xs text-gray-400">
+                    <span className="truncate">{qa.answererProfile.split('(')[0]?.trim()}</span>
+                    <span className="shrink-0">👍 {qa.helpful}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* CTA — scanner + calculator */}
         <section className="rounded-3xl border border-gray-200 bg-white px-8 py-10">
@@ -206,23 +277,19 @@ export default function GuidePage({ searchParams }: GuidePageProps) {
 
 function FeaturedCard({ article }: { article: GuideArticle }) {
   const cat = GUIDE_CATEGORIES.find((c) => c.key === article.category)
+  const accentColor = cat?.color ?? '#6B7280'
   return (
     <a href={`/guide/${article.slug}`} className="group">
-      <Card className="h-full border-gray-200 transition-shadow hover:shadow-md">
-        <CardContent className="flex h-full flex-col p-5">
-          <div className="flex items-center gap-2">
-            {cat && (
-              <span
-                className="inline-flex h-7 w-7 items-center justify-center rounded-lg text-sm"
-                style={{ background: cat.color + '1a', color: cat.color }}
-                aria-hidden
-              >
-                {cat.emoji}
-              </span>
-            )}
-            <span className="text-xs text-gray-500">{cat?.label}</span>
-          </div>
-          <h3 className="mt-3 flex-1 text-sm font-semibold leading-snug text-gray-900 group-hover:underline">
+      <Card className="h-full overflow-hidden border-gray-200 transition-shadow hover:shadow-md">
+        <div
+          className="flex h-24 items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${accentColor}20, ${accentColor}45)` }}
+        >
+          <span className="text-5xl" aria-hidden>{cat?.emoji ?? '📌'}</span>
+        </div>
+        <CardContent className="flex flex-col p-5">
+          <span className="text-xs text-gray-500">{cat?.label}</span>
+          <h3 className="mt-1.5 flex-1 text-sm font-semibold leading-snug text-gray-900 group-hover:underline">
             {article.title}
           </h3>
           <div className="mt-3 flex items-center gap-1 text-xs text-gray-400">
@@ -258,10 +325,17 @@ function CategoryHeader({ cat, count }: { cat: GuideCategory; count: number }) {
 
 function ArticleCard({ article }: { article: GuideArticle }) {
   const cat = GUIDE_CATEGORIES.find((c) => c.key === article.category)
+  const accentColor = cat?.color ?? '#6B7280'
   return (
     <a href={`/guide/${article.slug}`} className="group">
-      <Card className="h-full border-gray-200 transition-shadow hover:shadow-md">
-        <CardContent className="flex h-full flex-col p-5">
+      <Card className="h-full overflow-hidden border-gray-200 transition-shadow hover:shadow-md">
+        <div
+          className="flex h-20 items-center justify-center"
+          style={{ background: `linear-gradient(135deg, ${accentColor}18, ${accentColor}38)` }}
+        >
+          <span className="text-4xl" aria-hidden>{cat?.emoji ?? '📌'}</span>
+        </div>
+        <CardContent className="flex flex-col p-5">
           <h3 className="flex-1 text-sm font-semibold leading-snug text-gray-900 group-hover:underline">
             {article.title}
           </h3>

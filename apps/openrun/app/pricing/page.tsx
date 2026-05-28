@@ -198,7 +198,7 @@ interface PricingPageProps {
 
 export default function PricingPage({ searchParams }: PricingPageProps) {
   const activeService = searchParams.service ?? 'grand-open'
-  const active = PRICING.find((p) => p.slug === activeService) ?? PRICING[0]
+  const active = (PRICING.find((p) => p.slug === activeService) ?? PRICING[0])!
 
   return (
     <main>
@@ -254,7 +254,7 @@ export default function PricingPage({ searchParams }: PricingPageProps) {
                 'relative overflow-hidden transition-shadow ' +
                 (tier.highlight ? 'ring-2 shadow-lg' : 'hover:shadow-md')
               }
-              style={tier.highlight ? { ringColor: active.accentColor } : undefined}
+              style={tier.highlight ? { ['--tw-ring-color' as string]: active.accentColor } : undefined}
             >
               {tier.highlight && (
                 <div

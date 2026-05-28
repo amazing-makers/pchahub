@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
+import { buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
   title: '프차허브 — 프랜차이즈 브랜드 정보 비교',
@@ -21,10 +21,8 @@ import { ListingCard } from '@/components/listing-card'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended, hasRealPhoto } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { getBrands } from '@/lib/kftc/source'
+import { FEATURED_QAS } from '@/lib/franchisee-qa-data'
 
-const otherPlatforms = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'pchahub')
 
 // 협찬 기업 — 프차허브 메인 화면 하단 노출
 const SPONSORS = [
@@ -57,9 +55,25 @@ export default async function HomePage() {
   // 카드 hero에 깔지 않도록.
   const photoBrands = allBrands.filter(hasRealPhoto)
   const trendingBrands = [...photoBrands].sort(compareBrandsRecommended).slice(0, 6)
-  const recruitingBrands = [...photoBrands]
-    .sort((a, b) => b.storeCount - a.storeCount)
+  const recruitingBrands = [...allBrands]
+    .sort((a, b) => {
+      const aHasPhoto = hasRealPhoto(a) ? 0 : 1
+      const bHasPhoto = hasRealPhoto(b) ? 0 : 1
+      if (aHasPhoto !== bHasPhoto) return aHasPhoto - bHasPhoto
+      return b.storeCount - a.storeCount
+    })
     .slice(0, 6)
+
+  // 상단 노출 광고 슬롯은 항상 6개 — FEATURED_BRANDS가 부족하면 photoBrands 상위로 보충
+  const AD_SLOTS = 6
+  const featuredIds = new Set(FEATURED_BRANDS.map((b) => b.id))
+  const featuredBrands = [
+    ...FEATURED_BRANDS,
+    ...photoBrands
+      .filter((b) => !featuredIds.has(b.id))
+      .sort(compareBrandsRecommended)
+      .slice(0, Math.max(0, AD_SLOTS - FEATURED_BRANDS.length)),
+  ].slice(0, AD_SLOTS)
   const orgJsonLd = buildOrganizationJsonLd({
     name: '프차허브',
     url: 'https://pchahub.amakers.co.kr',
@@ -170,13 +184,18 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured (paid) placements */}
-      {FEATURED_BRANDS.length > 0 && (
+      {/* Featured (paid) placements — 항상 6개 슬롯 */}
+      {featuredBrands.length > 0 && (
         <section className="container mx-auto pt-section">
           <div className="mb-6 flex items-end justify-between">
             <div>
-              <h2 className="text-h3 font-semibold text-gray-900">주목받는 가맹 브랜드</h2>
-              <p className="mt-1 text-sm text-gray-500">광고 · 본사가 상단 노출 신청한 브랜드</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-h3 font-semibold text-gray-900">주목받는 가맹 브랜드</h2>
+                <span className="inline-flex items-center rounded-md border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-700">
+                  광고
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-gray-500">본사가 상단 노출 신청한 브랜드 · 유료 광고 포함</p>
             </div>
             <a
               href="/brands"
@@ -186,8 +205,8 @@ export default async function HomePage() {
             </a>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURED_BRANDS.map((b) => (
-              <BrandCard key={b.id} brand={b} featured />
+            {featuredBrands.map((b) => (
+              <BrandCard key={b.id} brand={b} featured={featuredIds.has(b.id)} />
             ))}
           </div>
         </section>
@@ -453,6 +472,63 @@ export default async function HomePage() {
         )
       })()}
 
+      {/* 가맹점주 솔직 Q&A */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="text-h3 font-semibold text-gray-900">가맹점주 솔직 Q&A</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              현직 점주가 직접 답하는 계약·수익·운영·리스크 이야기
+            </p>
+          </div>
+          <a href="/franchisee-qa" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
+            전체 Q&A <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURED_QAS.map((qa) => {
+            const categoryColor: Record<string, string> = {
+              '계약 조건': 'bg-blue-100 text-blue-700',
+              '수익성': 'bg-green-100 text-green-700',
+              '본사 지원': 'bg-purple-100 text-purple-700',
+              '운영 실무': 'bg-orange-100 text-orange-700',
+              '리스크': 'bg-red-100 text-red-700',
+            }
+            return (
+              <a key={qa.id} href={`/franchisee-qa/${qa.id}`} className="group block">
+                <Card className="h-full transition-shadow group-hover:shadow-md">
+                  <CardContent className="flex h-full flex-col p-5">
+                    <div className="mb-3 flex flex-wrap gap-1.5">
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${categoryColor[qa.category] ?? 'bg-gray-100 text-gray-600'}`}>
+                        {qa.category}
+                      </span>
+                      <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                        {qa.brandCategory}
+                      </span>
+                    </div>
+                    <p className="mb-2 text-sm font-bold leading-snug text-gray-900 group-hover:text-indigo-700 line-clamp-2">
+                      Q. {qa.question}
+                    </p>
+                    <p className="flex-1 text-xs leading-relaxed text-gray-500 line-clamp-2">
+                      {qa.answer}
+                    </p>
+                    <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-400">
+                      <span className="truncate">{qa.answererProfile}</span>
+                      <span className="ml-2 shrink-0 font-medium">👍 {qa.helpful}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </a>
+            )
+          })}
+        </div>
+        <div className="mt-4 text-center sm:hidden">
+          <a href="/franchisee-qa" className="text-sm text-gray-600 hover:text-gray-900">
+            전체 Q&A 보기 →
+          </a>
+        </div>
+      </section>
+
       {/* HQ CTA */}
       <section className="container mx-auto pt-section">
         <div className="overflow-hidden rounded-3xl border border-gray-200 bg-gray-900 px-8 py-12 text-white">
@@ -548,6 +624,32 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* 자주 묻는 질문 */}
+      <section className="bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {[
+                { q: '프차허브는 어떤 서비스인가요?', a: '국내 프랜차이즈 브랜드 정보, 매물, 창업 가이드, 상권 인텔을 한 곳에서 제공하는 통합 창업 플랫폼입니다. 예비 창업자부터 본사까지 모든 참여자를 연결합니다.' },
+                { q: '브랜드 정보는 어떻게 업데이트되나요?', a: '공정거래위원회(KFTC) 가맹사업 정보공개서 데이터를 기반으로 매일 자동 업데이트하며, 본사가 직접 정보를 수정·보완할 수 있습니다.' },
+                { q: '창업 스캐너란 무엇인가요?', a: '관심 업종·지역·예산을 입력하면 매칭되는 브랜드와 매물을 자동으로 분석해 추천하는 AI 기반 도구입니다. 무료로 이용할 수 있습니다.' },
+                { q: '매물은 어떻게 등록하나요?', a: '명당거래소에서 양도·임대 매물을 등록할 수 있습니다. 등록 후 프차허브 매물 탭에도 자동 노출됩니다.' },
+                { q: '본사 광고·파트너십 문의는 어떻게 하나요?', a: '네비게이션 \'본사 솔루션\'에서 광고·데이터 분석·가맹 모집 서비스를 확인하고 문의할 수 있습니다.' },
+              ].map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 뉴스레터 */}
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
@@ -563,33 +665,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Other platforms */}
-      <section className="container mx-auto py-section">
-        <div className="mb-4">
-          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {otherPlatforms.map(([key, p]) => (
-            <a key={key} href={`https://${p.domain}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="h-7 w-7 shrink-0 rounded-md"
-                      style={{ background: p.primary }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-gray-900">{p.name}</div>
-                      <div className="truncate text-xs text-gray-500">{p.role}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </a>
-          ))}
-        </div>
-      </section>
     </main>
   )
 }

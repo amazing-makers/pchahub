@@ -52,28 +52,21 @@ export async function GET(req: NextRequest) {
   for (const item of items) {
     if (!item.frnChrgNm) continue
 
-    await prisma.brand.upsert({
-      where: { name: item.frnChrgNm },
-      create: {
-        name: item.frnChrgNm,
-        category: item.indutyNm ?? '기타',
-        hqName: item.cmpnNm ?? item.frnChrgNm,
-        hqContact: item.telNo,
-        websiteUrl: item.homepageUrl,
-        storeCount: parseInt(item.totalStoreCount ?? '0', 10) || 0,
-        isVerified: true,
-        verifiedAt: new Date(),
-      },
-      update: {
-        category: item.indutyNm ?? '기타',
-        hqName: item.cmpnNm ?? item.frnChrgNm,
-        hqContact: item.telNo,
-        websiteUrl: item.homepageUrl,
-        storeCount: parseInt(item.totalStoreCount ?? '0', 10) || 0,
-        isVerified: true,
-        verifiedAt: new Date(),
-      },
-    })
+    const brandData = {
+      category: item.indutyNm ?? '기타',
+      hqName: item.cmpnNm ?? item.frnChrgNm,
+      hqContact: item.telNo,
+      websiteUrl: item.homepageUrl,
+      storeCount: parseInt(item.totalStoreCount ?? '0', 10) || 0,
+      isVerified: true,
+      verifiedAt: new Date(),
+    }
+    const existing = await prisma.brand.findFirst({ where: { name: item.frnChrgNm } })
+    if (existing) {
+      await prisma.brand.update({ where: { id: existing.id }, data: brandData })
+    } else {
+      await prisma.brand.create({ data: { name: item.frnChrgNm, ...brandData } })
+    }
     upserted++
   }
 

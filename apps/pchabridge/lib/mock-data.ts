@@ -20,6 +20,8 @@ export interface MockInvestmentRound {
   type: RoundType
   brandId: string
   status: RoundStatus
+  /** DART 고유번호 — 설정 시 실 재무제표로 연 매출 보강 */
+  dartCorpCode?: string
   /** Target raise (만원 — 10K KRW) */
   targetAmount: number
   /** Already committed (만원) */
@@ -50,6 +52,8 @@ export interface MockInvestmentRound {
 export interface MockMAListing {
   id: string
   brandId: string
+  /** DART 고유번호 — 설정 시 실 재무제표로 연 매출 보강 */
+  dartCorpCode?: string
   /** Asking price (만원) */
   askingPrice: number
   /** TTM revenue (만원/year) */

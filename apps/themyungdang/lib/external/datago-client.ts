@@ -118,9 +118,11 @@ function normalizeEnvelope<TItem>(raw: unknown, endpointPath: string): DataGoKrE
 const REB_BASE = 'https://www.reb.or.kr/r-one/openapi'
 
 function getRebKey(): string {
-  const key = process.env.REB_API_KEY ?? process.env.DATAGO_API_KEY ?? process.env.KFTC_API_KEY
+  // REB는 reb.or.kr R-ONE 포털에서 별도 발급.
+  // data.go.kr 키는 REB API에서 작동하지 않음.
+  const key = process.env.REB_API_KEY
   if (!key) {
-    throw new Error('REB_API_KEY (또는 통합 API 키) 환경변수가 설정되지 않았습니다.')
+    throw new Error('REB_API_KEY가 설정되지 않았습니다. https://www.reb.or.kr/r-one/openapi/openApiApply.do 에서 발급하세요.')
   }
   return key
 }

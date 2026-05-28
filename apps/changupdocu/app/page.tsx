@@ -9,7 +9,6 @@ export const metadata: Metadata = buildPageMetadata('changupdocu', {
 
 import { ArrowRight, Flame, Mic, PlayCircle, Search } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
-import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { EpisodeCardWithSave } from '@/components/episode-card-with-save'
 import { ArticleCard } from '@/components/article-card'
 import { SeriesCard } from '@/components/series-card'
@@ -31,10 +30,6 @@ import {
 } from '@/lib/mock-data'
 import { FEATURED_SERIES } from '@/lib/mock-series'
 import { formatNumber } from '@amakers/utils'
-
-const otherPlatforms = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'changupdocu')
 
 const FEATURED_CATEGORIES: EpisodeCategory[] = ['success', 'failure', 'brand']
 
@@ -222,6 +217,59 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 창업 여정 미리보기 */}
+      <section className="border-y border-gray-100 bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="text-h3 font-semibold text-gray-900">창업 여정 미리보기</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                준비기부터 성장기까지 — 프랜차이즈 창업 5단계 전체 로드맵
+              </p>
+            </div>
+            <a
+              href="/timeline"
+              className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex"
+            >
+              전체 타임라인 <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {[
+              { order: 1, phase: '준비기', duration: '1-3개월', color: 'bg-blue-500', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', desc: '시장조사·브랜드 선택·자금 계획' },
+              { order: 2, phase: '계약기', duration: '2-4주', color: 'bg-purple-500', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200', desc: '가맹계약 검토·임대차 계약' },
+              { order: 3, phase: '구축기', duration: '1-3개월', color: 'bg-orange-500', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200', desc: '인테리어·설비·인허가' },
+              { order: 4, phase: '오픈기', duration: '2-4주', color: 'bg-pink-500', bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-200', desc: '사전마케팅·직원교육·오픈이벤트' },
+              { order: 5, phase: '성장기', duration: '지속', color: 'bg-green-500', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', desc: '운영 최적화·재투자' },
+            ].map((p) => (
+              <a
+                key={p.order}
+                href="/timeline"
+                className={`group flex items-center gap-3 rounded-xl border ${p.border} ${p.bg} px-4 py-3 transition-shadow hover:shadow-sm`}
+              >
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${p.color}`}
+                >
+                  {p.order}
+                </span>
+                <div>
+                  <div className={`text-sm font-bold ${p.text}`}>
+                    {p.phase}
+                    <span className="ml-1.5 text-xs font-normal opacity-70">{p.duration}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">{p.desc}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-5 text-center sm:hidden">
+            <a href="/timeline" className="text-sm text-gray-600 hover:text-gray-900">
+              전체 타임라인 보러가기 →
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Recent episodes */}
       <section className="container mx-auto pt-section">
         <div className="mb-6 flex items-end justify-between">
@@ -353,35 +401,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Other platforms */}
-      <section className="container mx-auto py-section">
-        <div className="mb-4">
-          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {otherPlatforms.map(([key, p]) => (
-            <a key={key} href={`https://${p.domain}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="h-7 w-7 shrink-0 rounded-md"
-                      style={{ background: p.primary }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-gray-900">
-                        {p.name}
-                      </div>
-                      <div className="truncate text-xs text-gray-500">{p.role}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </a>
-          ))}
-        </div>
-      </section>
     </main>
   )
 }

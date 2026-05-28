@@ -81,6 +81,23 @@ export default async function IntelPage({ searchParams }: IntelPageProps) {
       <JsonLd data={listJsonLd} />
       <JsonLd data={breadcrumbs} />
 
+      {/* Dashboard banner */}
+      <section className="border-b border-blue-100 bg-blue-50">
+        <div className="container mx-auto py-3">
+          <a
+            href="/intel/dashboard"
+            className="group flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <span className="flex items-center gap-2 text-sm font-semibold text-blue-800">
+              📊 전국 상권 동향을 한눈에 — 상권 대시보드 보기
+            </span>
+            <span className="shrink-0 text-sm font-medium text-blue-600 group-hover:underline">
+              바로가기 →
+            </span>
+          </a>
+        </div>
+      </section>
+
       {/* Header */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">

@@ -9,7 +9,6 @@ export const metadata: Metadata = buildPageMetadata('openrun', {
 
 import { ArrowRight, BarChart3, Search, Target, Zap } from 'lucide-react'
 import { Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
-import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { formatNumber } from '@amakers/utils'
 import { ServiceCard } from '@/components/service-card'
 import { CaseCard } from '@/components/case-card'
@@ -17,12 +16,9 @@ import { InsightCard } from '@/components/insight-card'
 import { Testimonials } from '@/components/testimonials'
 import { SavedCasesSection } from '@/components/saved-cases-section'
 import { RecentlyViewedCases } from '@/components/recently-viewed-cases'
-import { FEATURED_PORTFOLIO, SERVICES, STATS, TESTIMONIALS } from '@/lib/mock-data'
+import { FEATURED_PORTFOLIO, FAQS, PROCESS_STEPS, SERVICES, STATS, TESTIMONIALS } from '@/lib/mock-data'
 import { FEATURED_INSIGHTS } from '@/lib/mock-insights'
-
-const otherPlatforms = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'openrun')
+import { FEATURED_STORIES } from '@/lib/stories-data'
 
 const STAT_BLOCKS = [
   { label: '누적 캠페인', value: `${formatNumber(STATS.campaigns)}건` },
@@ -167,6 +163,68 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 성공 스토리 */}
+      <section className="container mx-auto py-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="text-h2 font-bold text-gray-900">성공 스토리</h2>
+            <p className="mt-1 text-sm text-gray-500">업주들이 직접 전하는 오픈 성공 이야기</p>
+          </div>
+          <a
+            href="/stories"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          >
+            전체 스토리 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {FEATURED_STORIES.map((story) => {
+            const topMetric = story.metrics[0] ?? null
+            const INDUSTRY_COLORS: Record<string, string> = {
+              카페: 'bg-amber-100 text-amber-800',
+              치킨: 'bg-orange-100 text-orange-800',
+              한식: 'bg-red-100 text-red-800',
+              일식: 'bg-blue-100 text-blue-800',
+              분식: 'bg-yellow-100 text-yellow-800',
+              디저트: 'bg-pink-100 text-pink-800',
+              주점: 'bg-purple-100 text-purple-800',
+            }
+            const industryColor = INDUSTRY_COLORS[story.industry] ?? 'bg-gray-100 text-gray-700'
+            return (
+              <a key={story.slug} href={`/stories/${story.slug}`} className="group block">
+                <Card className="h-full overflow-hidden transition-shadow hover:shadow-lg">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">
+                    <img
+                      src={story.coverImage}
+                      alt={story.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <span
+                      className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-xs font-bold ${industryColor}`}
+                    >
+                      {story.industry}
+                    </span>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="text-sm font-bold leading-snug text-gray-900 line-clamp-2 group-hover:text-[var(--brand-primary)] transition-colors">
+                      {story.title}
+                    </h3>
+                    <div className="mt-1.5 text-xs text-gray-500">
+                      {story.ownerName} · {story.ownerRegion}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2">
+                      <span className="text-xs text-gray-500">{topMetric?.label}</span>
+                      <span className="text-sm font-black text-gray-900">{topMetric?.value}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </a>
+            )
+          })}
+        </div>
+      </section>
+
       {/* 인사이트 */}
       <section className="container mx-auto py-section">
         <div className="mb-6 flex items-end justify-between">
@@ -188,6 +246,53 @@ export default function HomePage() {
       <section className="container mx-auto py-section">
         <h2 className="mb-8 text-h2 font-bold text-gray-900">고객 후기</h2>
         <Testimonials testimonials={TESTIMONIALS} />
+      </section>
+
+      {/* 캠페인 진행 방식 */}
+      <section className="border-y border-gray-100 bg-gray-50">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
+              Process
+            </p>
+            <h2 className="mt-3 text-h2 font-bold text-gray-900">캠페인 진행 방식</h2>
+            <p className="mt-3 text-gray-600">복잡한 절차 없이 4단계로 오픈런 캠페인이 시작됩니다</p>
+          </div>
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {PROCESS_STEPS.map((s) => (
+              <div key={s.step} className="relative rounded-2xl border border-gray-200 bg-white p-6">
+                <div
+                  className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full text-sm font-black text-white"
+                  style={{ background: 'var(--brand-primary)' }}
+                >
+                  {s.step}
+                </div>
+                <h3 className="text-sm font-bold text-gray-900">{s.title}</h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-500">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {FAQS.map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 체크리스트 티저 */}
@@ -253,34 +358,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto pb-section">
-        <div className="mb-4">
-          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {otherPlatforms.map(([key, p]) => (
-            <a key={key} href={`https://${p.domain}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="h-7 w-7 shrink-0 rounded-md"
-                      style={{ background: p.primary }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-gray-900">
-                        {p.name}
-                      </div>
-                      <div className="truncate text-xs text-gray-500">{p.role}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </a>
-          ))}
-        </div>
-      </section>
     </main>
   )
 }

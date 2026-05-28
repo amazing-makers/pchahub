@@ -14,7 +14,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
   ],
 })
 
-import { ArrowRight, BookOpen, ChevronLeft, ChevronRight, Map, Star, Store, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Map, X } from 'lucide-react'
 import { formatNumber } from '@amakers/utils'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { ListingCard } from '@/components/listing-card'
@@ -26,7 +26,7 @@ import {
   type ListingType,
 } from '@/lib/mock-data'
 import { MobileFilterToggle } from '@/components/mobile-filter-toggle'
-import { getAllListings } from '@/lib/queries'
+import { getAllListings, type ListingSort } from '@/lib/queries'
 
 export const dynamic = 'force-dynamic'
 
@@ -62,7 +62,8 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const { type, region, q, sort = 'recommended', fitCategory, source, page: pageStr } = searchParams
   const currentPage = Math.max(1, parseInt(pageStr ?? '1', 10))
 
-  const results = await getAllListings({ type, region, fitCategory, source, q, sort: sort as Parameters<typeof getAllListings>[0]['sort'] })
+  const results = await getAllListings({ type, region, fitCategory, source, q, sort: sort as ListingSort | undefined })
+
 
   const totalCount       = results.length
   const totalPages       = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE))
@@ -491,35 +492,6 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               />
             )}
           </div>
-        </div>
-      </div>
-
-      {/* amakers 생태계 크로스링크 */}
-      <div className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-6">
-          <Card className="border-gray-200 bg-gray-50">
-            <CardContent className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">amakers에서 더 알아보기</div>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="https://pchahub.amakers.co.kr/brands" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-indigo-500" />가맹 브랜드 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://bestplace.amakers.co.kr/stores" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-amber-500" />우수 매장 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themanual.amakers.co.kr/courses" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-rose-500" />창업 운영 강의</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://jangsanote.amakers.co.kr" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-emerald-500" />점주 커뮤니티</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

@@ -15,7 +15,7 @@ const ROLE_META: Record<string, { label: string; icon: typeof Search; welcome: s
     tips: [
       '브랜드 필터로 업종·투자금·지역을 좁혀 보세요',
       '관심 브랜드에 상담 신청을 보내면 본사가 직접 답변해 드려요',
-      '장사노트 커뮤니티에서 현직 점주의 리얼 후기를 확인하세요',
+      '커뮤니티에서 현직 점주의 리얼 후기를 확인하세요',
     ],
   },
   franchisee: {
@@ -23,11 +23,11 @@ const ROLE_META: Record<string, { label: string; icon: typeof Search; welcome: s
     icon: Building2,
     welcome: '운영 정보와 커뮤니티가 준비되어 있어요',
     cta: '커뮤니티 바로가기',
-    ctaHref: 'https://jangsanote.amakers.co.kr',
+    ctaHref: '/community',
     tips: [
       '내 브랜드 정보를 즐겨찾기로 바로 접근하세요',
-      '장사노트에서 같은 브랜드 점주와 소통할 수 있어요',
-      '더명당에서 매물 정보를 한눈에 확인하세요',
+      '커뮤니티에서 같은 브랜드 점주와 정보를 나눠보세요',
+      '매물 탭에서 창업·이전 매물 정보를 한눈에 확인하세요',
     ],
   },
   hq: {
@@ -38,20 +38,20 @@ const ROLE_META: Record<string, { label: string; icon: typeof Search; welcome: s
     ctaHref: '/brands/new',
     tips: [
       '브랜드 프로필을 완성하면 예비 창업자에게 더 많이 노출돼요',
-      '오픈런에서 개점·판촉 캠페인을 설계할 수 있어요',
-      '창업다큐에 인터뷰를 신청해 브랜드 스토리를 전달하세요',
+      '광고 상품으로 카테고리 상단 노출·우선 매칭을 빠르게 늘리세요',
+      '브랜드 소개 페이지에 스토리를 채워 예비 점주의 신뢰를 높이세요',
     ],
   },
   contractor: {
     label: '시공·협력사',
     icon: Hammer,
     welcome: '포트폴리오로 가맹점 시공 수주를 늘리세요',
-    cta: '포트폴리오 등록하기',
-    ctaHref: 'https://gongganhansu.amakers.co.kr/contractors',
+    cta: '광고 상품 보기',
+    ctaHref: '/for-brands/ads',
     tips: [
-      '공간한수에 시공 포트폴리오를 등록해 두세요',
-      '더명당 신규 임대 매물에 시공 견적을 제안할 수 있어요',
-      '오픈런 캠페인과 연계해 개점 패키지를 제공해 보세요',
+      '시공 포트폴리오를 등록해 예비 점주에게 먼저 보여지세요',
+      '매물 정보를 확인하고 시공 수요를 미리 파악하세요',
+      '개점 시공 패키지를 본사와 협의해 가맹점 전용 혜택을 만드세요',
     ],
   },
 }

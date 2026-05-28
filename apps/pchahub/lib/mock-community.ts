@@ -14,6 +14,8 @@ export interface MockDiscussion {
   comments: number
   /** Optionally tagged with a brand id. */
   brandId?: string
+  /** Cover image URL for card display */
+  coverImage?: string
 }
 
 export const DISCUSSIONS: MockDiscussion[] = [
@@ -29,6 +31,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     views: 1842,
     comments: 38,
     brandId: 'b2',
+    coverImage: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd2',
@@ -42,6 +45,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     views: 924,
     comments: 21,
     brandId: 'b1',
+    coverImage: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd3',
@@ -54,6 +58,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     createdAt: '2026-04-08',
     views: 3210,
     comments: 67,
+    coverImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd4',
@@ -66,6 +71,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     createdAt: '2026-04-05',
     views: 5640,
     comments: 92,
+    coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd5',
@@ -78,6 +84,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     createdAt: '2026-04-02',
     views: 2156,
     comments: 44,
+    coverImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd6',
@@ -90,6 +97,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     createdAt: '2026-03-28',
     views: 1422,
     comments: 29,
+    coverImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd7',
@@ -102,6 +110,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     createdAt: '2026-03-20',
     views: 4180,
     comments: 73,
+    coverImage: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=640&q=80',
   },
   {
     id: 'd8',
@@ -115,6 +124,7 @@ export const DISCUSSIONS: MockDiscussion[] = [
     views: 7240,
     comments: 128,
     brandId: 'b1',
+    coverImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=640&q=80',
   },
 ]
 

@@ -14,11 +14,69 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
   ],
 })
 
-import { ArrowRight, BookOpen, Eye, MapPin, MessageSquare, Search, Star, Store, ThumbsUp } from 'lucide-react'
+import { AlertCircle, ArrowRight, Bell, CalendarDays, Eye, MessageSquare, Search, ThumbsUp, TrendingUp } from 'lucide-react'
 import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { DISCUSSIONS, QUESTIONS } from '@/lib/mock-community'
 import { LocalCommunityPosts } from './local-posts'
+
+const MARKET_INTEL = [
+  {
+    id: 'mi1',
+    title: '홍대·신촌 상권 공실률 급등 — 카페·디저트 신규 진입 주의',
+    tag: '상권 경보',
+    urgent: true,
+    date: '2026-05-24',
+  },
+  {
+    id: 'mi2',
+    title: '2026년 2분기 배달앱 수수료 인상 예고 — 배달 비중 높은 매장 손익 재계산 필요',
+    tag: '플랫폼 변화',
+    urgent: true,
+    date: '2026-05-22',
+  },
+  {
+    id: 'mi3',
+    title: '소상공인 정책자금 5월 신청 마감 임박 — 잔여 한도 40% 소진',
+    tag: '정책 자금',
+    urgent: false,
+    date: '2026-05-20',
+  },
+  {
+    id: 'mi4',
+    title: '치킨·한식 업종 폐업률 전년比 8%p 개선 — 상반기 통계',
+    tag: '업종 동향',
+    urgent: false,
+    date: '2026-05-18',
+  },
+]
+
+const COMMUNITY_EVENTS = [
+  {
+    id: 'ev1',
+    title: '프랜차이즈 계약서 핵심 조항 세미나',
+    date: '2026-06-07 (토) 오후 2시',
+    location: '서울 강남구 코엑스 B홀',
+    spots: 40,
+    remaining: 12,
+  },
+  {
+    id: 'ev2',
+    title: '카페 창업 예비 점주 네트워킹 — 현직 점주 3인 패널',
+    date: '2026-06-14 (토) 오전 11시',
+    location: '서울 마포구 (장소 추후 공지)',
+    spots: 30,
+    remaining: 8,
+  },
+  {
+    id: 'ev3',
+    title: '치킨·분식 상권 분석 워크숍 (소상공인진흥공단 협력)',
+    date: '2026-06-21 (토) 오후 3시',
+    location: '부산 해운대구 벡스코',
+    spots: 60,
+    remaining: 31,
+  },
+]
 
 const CATEGORY_LABELS: Record<string, string> = {
   experience: '창업 후기',
@@ -86,7 +144,7 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
         <div className="container mx-auto py-8">
           <h1 className="text-h3 font-bold text-gray-900">프랜차이즈 커뮤니티</h1>
           <p className="mt-1 text-sm text-gray-500">
-            가맹점주·예비창업자·전문가가 모인 프랜차이즈 창업 커뮤니티입니다.
+            가맹점주·예비창업자·업계 전문가가 함께하는 창업 커뮤니티. 토론·후기·상권 인텔을 나누세요.
           </p>
           <form method="GET" action="/community" className="mt-5 flex max-w-lg gap-2">
             {tab !== 'discussions' && <input type="hidden" name="tab" value={tab} />}
@@ -141,6 +199,78 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
               <span className="text-xl font-black tracking-tight text-gray-900">{QUESTIONS.length}건</span>
               <span className="text-[11px] font-semibold text-gray-700">전문가 Q&A</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 시장 인텔 — 상권·업종 긴급 공지 */}
+      <section className="border-b border-gray-100 bg-amber-50">
+        <div className="container mx-auto py-5">
+          <div className="mb-3 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-amber-600" />
+            <span className="text-sm font-semibold text-amber-800">상권 · 업종 인텔</span>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {MARKET_INTEL.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-start gap-2.5 rounded-xl border border-amber-100 bg-white p-3"
+              >
+                {item.urgent && (
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
+                )}
+                {!item.urgent && (
+                  <Bell className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
+                )}
+                <div className="min-w-0">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-amber-600">{item.tag}</div>
+                  <p className="mt-0.5 text-xs font-medium leading-snug text-gray-800 line-clamp-2">{item.title}</p>
+                  <div className="mt-1 text-[10px] text-gray-400">{item.date}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 커뮤니티 이벤트 · 모임 */}
+      <section className="border-b border-gray-100 bg-white">
+        <div className="container mx-auto py-5">
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4" style={{ color: 'var(--brand-primary)' }} />
+              <span className="text-sm font-semibold text-gray-900">예정된 모임 · 세미나</span>
+            </div>
+            <a href="/community/events" className="text-xs text-gray-500 hover:text-gray-800">전체 보기 →</a>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {COMMUNITY_EVENTS.map((ev) => (
+              <div
+                key={ev.id}
+                className="w-64 shrink-0 rounded-xl border border-gray-200 p-4"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="flex-1 text-sm font-semibold leading-snug text-gray-900 line-clamp-2">{ev.title}</h3>
+                </div>
+                <div className="mt-2 space-y-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1.5">
+                    <CalendarDays className="h-3 w-3 shrink-0" />
+                    {ev.date}
+                  </div>
+                  <div className="line-clamp-1">{ev.location}</div>
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-xs text-gray-400">잔여 {ev.remaining}/{ev.spots}석</span>
+                  <a
+                    href="/community/events"
+                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-white"
+                    style={{ background: 'var(--brand-primary)' }}
+                  >
+                    신청
+                  </a>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -221,30 +351,42 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
                 href={`/community/${d.id}`}
                 className="block"
               >
-                <Card className="border-gray-200 transition-shadow hover:shadow-sm">
-                  <CardContent className="p-5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant={d.category === 'tip' ? 'primary' : 'default'}>
-                        {CATEGORY_LABELS[d.category]}
-                      </Badge>
-                      <span className="text-xs text-gray-500">{d.createdAt}</span>
-                    </div>
-                    <h3 className="mt-2 text-base font-semibold text-gray-900">{d.title}</h3>
-                    <p className="mt-1.5 line-clamp-2 text-sm text-gray-600">{d.excerpt}</p>
-                    <div className="mt-3 flex items-center justify-between border-t border-gray-50 pt-3 text-xs text-gray-500">
-                      <span>{d.author}</span>
-                      <span className="inline-flex items-center gap-3">
-                        <span className="inline-flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {formatNumber(d.views)}
+                <Card className="overflow-hidden border-gray-200 transition-shadow hover:shadow-sm">
+                  <div className="flex">
+                    {d.coverImage && (
+                      <div className="w-28 shrink-0 sm:w-36">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={d.coverImage}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <CardContent className="flex-1 p-5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={d.category === 'tip' ? 'primary' : 'default'}>
+                          {CATEGORY_LABELS[d.category]}
+                        </Badge>
+                        <span className="text-xs text-gray-500">{d.createdAt}</span>
+                      </div>
+                      <h3 className="mt-2 text-base font-semibold text-gray-900">{d.title}</h3>
+                      <p className="mt-1.5 line-clamp-2 text-sm text-gray-600">{d.excerpt}</p>
+                      <div className="mt-3 flex items-center justify-between border-t border-gray-50 pt-3 text-xs text-gray-500">
+                        <span>{d.author}</span>
+                        <span className="inline-flex items-center gap-3">
+                          <span className="inline-flex items-center gap-1">
+                            <Eye className="h-3 w-3" />
+                            {formatNumber(d.views)}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <MessageSquare className="h-3 w-3" />
+                            {d.comments}
+                          </span>
                         </span>
-                        <span className="inline-flex items-center gap-1">
-                          <MessageSquare className="h-3 w-3" />
-                          {d.comments}
-                        </span>
-                      </span>
-                    </div>
-                  </CardContent>
+                      </div>
+                    </CardContent>
+                  </div>
                 </Card>
               </a>
             ))}
@@ -267,34 +409,6 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
         </div>
       </div>
 
-      {/* amakers 생태계 크로스링크 */}
-      <div className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-6">
-          <Card className="border-gray-200 bg-gray-50">
-            <CardContent className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">amakers에서 더 알아보기</div>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="https://themyungdang.amakers.co.kr/listings" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-emerald-500" />창업 매물 찾기</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://bestplace.amakers.co.kr/stores" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-amber-500" />우수 매장 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themanual.amakers.co.kr/courses" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-indigo-500" />창업 운영 강의</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://jangsanote.amakers.co.kr" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-rose-500" />점주 커뮤니티</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
 
       {/* 뉴스레터 */}
       <section className="border-t border-gray-100 bg-gray-50">

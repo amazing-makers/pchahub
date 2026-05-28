@@ -13,6 +13,7 @@ const navItems = [
   { href: '/experiences', label: '체험단·기자단' },
   { href: '/stores', label: '매장 디렉토리' },
   { href: '/rankings', label: '랭킹' },
+  { href: '/stories', label: '브랜드 스토리' },
 ]
 
 const actions: HeaderAction[] = [

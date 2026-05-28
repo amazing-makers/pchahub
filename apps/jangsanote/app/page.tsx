@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from 'next'
-import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd, platformColors, type PlatformKey } from '@amakers/design-system'
+import { buildFaqPageJsonLd, buildOrganizationJsonLd, buildPageMetadata, buildWebSiteJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('jangsanote', {
   title: '장사노트 — 자영업·가맹점주 커뮤니티',
@@ -7,7 +7,7 @@ export const metadata: Metadata = buildPageMetadata('jangsanote', {
   path: '/',
 })
 
-import { ArrowRight, BookOpen, Building2, Calendar, CalendarDays, ChefHat, Flame, HandCoins, MapPin, TrendingUp } from 'lucide-react'
+import { ArrowRight, Calendar, CalendarDays, ChefHat, Flame, HandCoins, MapPin } from 'lucide-react'
 import { IntelCard } from '@/components/intel-card'
 import { INTELS } from '@/lib/mock-intel'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
@@ -32,10 +32,6 @@ import { LocalPostsFeed } from './local-posts-feed'
 import { SavedPostsSection } from '@/components/saved-posts-section'
 import { RecentlyViewedPosts } from '@/components/recently-viewed-posts'
 import { RecentlyViewedMeetings } from '@/components/recently-viewed-meetings'
-
-const otherPlatforms = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'jangsanote')
 
 const FAQS = [
   {
@@ -218,71 +214,6 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-gray-200">
-              <CardContent className="p-4">
-                <div
-                  className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: 'var(--brand-primary)' }}
-                >
-                  amakers 생태계
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  창업·운영 단계별 전문 플랫폼
-                </p>
-                <div className="mt-3 space-y-1.5">
-                  <a
-                    href="https://pchahub.amakers.co.kr"
-                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Building2 className="h-3 w-3 text-indigo-500" />
-                      브랜드 가맹 정보 (프차허브)
-                    </span>
-                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://themyungdang.amakers.co.kr/listings"
-                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-3 w-3 text-rose-500" />
-                      입지 매물 (더명당)
-                    </span>
-                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://themanual.amakers.co.kr/courses"
-                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <BookOpen className="h-3 w-3 text-amber-500" />
-                      운영 강의 (더메뉴얼)
-                    </span>
-                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://bestplace.amakers.co.kr"
-                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <TrendingUp className="h-3 w-3 text-emerald-500" />
-                      베스트 매장 (베스트플레이스)
-                    </span>
-                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://pchabridge.amakers.co.kr/investments"
-                    className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 px-2.5 py-2 text-xs text-gray-700 hover:border-gray-200 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <TrendingUp className="h-3 w-3 text-violet-500" />
-                      투자 라운드 (프차브릿지)
-                    </span>
-                    <ArrowRight className="h-2.5 w-2.5 text-gray-400" />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
           </aside>
         </div>
       </div>
@@ -411,33 +342,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Other platforms */}
-      <section className="container mx-auto py-section">
-        <div className="mb-4">
-          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {otherPlatforms.map(([key, p]) => (
-            <a key={key} href={`https://${p.domain}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="h-7 w-7 shrink-0 rounded-md"
-                      style={{ background: p.primary }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-gray-900">{p.name}</div>
-                      <div className="truncate text-xs text-gray-500">{p.role}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </a>
-          ))}
-        </div>
-      </section>
     </main>
   )
 }

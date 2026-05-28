@@ -7,10 +7,9 @@ export const metadata: Metadata = buildPageMetadata('bestplace', {
   path: '/',
 })
 
-import { ArrowRight, Award, CalendarDays, Flame, Sparkles, Trophy } from 'lucide-react'
+import { ArrowRight, Award, BookOpen, CalendarDays, Flame, Sparkles, Trophy } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
-import { platformColors, type PlatformKey } from '@amakers/design-system'
 import { AwardCard } from '@/components/award-card'
 import { StoreCard } from '@/components/store-card'
 import { RankingList } from '@/components/ranking-list'
@@ -26,10 +25,7 @@ import {
 } from '@/lib/mock-data'
 import { openCampaigns } from '@/lib/mock-experiences'
 import { CURRENT_MONTHLY_BEST, MONTH_LABEL } from '@/lib/mock-monthly-best'
-
-const otherPlatforms = (
-  Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
-).filter(([key]) => key !== 'bestplace')
+import { FEATURED_BRAND_STORIES } from '@/lib/brand-stories-data'
 
 const FAQS = [
   {
@@ -334,6 +330,66 @@ export default function HomePage() {
         </Card>
       </section>
 
+      {/* 브랜드 창업 스토리 */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="inline-flex items-center gap-2 text-h3 font-semibold text-gray-900">
+              <BookOpen className="h-6 w-6 text-amber-500" />
+              브랜드 창업 스토리
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">노점·골목집에서 전국구 프랜차이즈로 성장한 실제 여정</p>
+          </div>
+          <a
+            href="/stories"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          >
+            전체 스토리 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {FEATURED_BRAND_STORIES.map((story) => (
+            <a key={story.slug} href={`/stories/${story.slug}`} className="group block">
+              <Card className="h-full overflow-hidden border-gray-200 transition-shadow hover:shadow-md">
+                <div className="relative h-36 overflow-hidden bg-gray-100">
+                  <img
+                    src={story.coverImage}
+                    alt={story.brandName}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-gray-700 backdrop-blur-sm">
+                    {story.category}
+                  </span>
+                </div>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-sm font-bold text-gray-900 group-hover:text-[var(--brand-primary)] transition-colors">
+                      {story.brandName}
+                    </span>
+                    <span className="shrink-0 text-[10px] text-gray-400">{story.foundedYear}년</span>
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-gray-500">창업자 {story.founder}</p>
+                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-gray-600">{story.excerpt}</p>
+                  <div className="mt-3 flex items-center gap-3 border-t border-gray-100 pt-2.5">
+                    <span className="text-xs text-gray-500">{story.storeCount.toLocaleString()}개 매장</span>
+                    <span className="text-xs font-semibold text-emerald-600">+{story.revenueGrowthPct}% 성장</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          ))}
+        </div>
+        <div className="mt-4 text-center">
+          <a
+            href="/stories"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            10개 브랜드 스토리 전체 보기 <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+      </section>
+
       {/* 자주 묻는 질문 */}
       <section className="border-t border-gray-100 bg-white">
         <div className="container mx-auto py-section">
@@ -369,38 +425,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Other platforms */}
-      <section className="container mx-auto py-section">
-        <div className="mb-4">
-          <h2 className="text-h4 font-semibold text-gray-900">amakers의 다른 플랫폼</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            가맹 정보·매물·교육·커뮤니티 — 가맹점 운영 단계별 전문 플랫폼
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
-          {otherPlatforms.map(([key, p]) => (
-            <a key={key} href={`https://${p.domain}`} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className="h-7 w-7 shrink-0 rounded-md"
-                      style={{ background: p.primary }}
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold text-gray-900">
-                        {p.name}
-                      </div>
-                      <div className="truncate text-xs text-gray-500">{p.role}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </a>
-          ))}
-        </div>
-      </section>
     </main>
   )
 }

@@ -1,14 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
-  ArrowRight,
-  BookOpen,
   ChevronRight,
   Clock,
-  MapPin,
   MessageCircle,
   Star,
-  Store,
 } from 'lucide-react'
 import { Badge, Button, Card, CardContent, MobileCTA, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
@@ -240,56 +236,6 @@ export default function MentorDetailPage({ params }: MentorDetailProps) {
               hourlyRate={mentor.hourlyRate}
             />
 
-            {/* amakers 생태계 크로스링크 */}
-            <Card className="border-gray-200 bg-gray-50">
-              <CardContent className="p-4">
-                <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                  amakers에서 더 알아보기
-                </div>
-                <div className="space-y-2">
-                  <a
-                    href={`/courses?mentor=${mentor.id}`}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <BookOpen className="h-3.5 w-3.5 text-amber-500" />
-                      {mentor.name} 멘토 강의
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://pchahub.amakers.co.kr/brands"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <Store className="h-3.5 w-3.5 text-indigo-500" />
-                      가맹 브랜드 정보
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://jangsanote.amakers.co.kr"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
-                      점주 커뮤니티
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                  <a
-                    href="https://themyungdang.amakers.co.kr/listings"
-                    className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="h-3.5 w-3.5 text-rose-500" />
-                      입점 매물 찾기
-                    </span>
-                    <ArrowRight className="h-3 w-3 text-gray-400" />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
           </aside>
         </div>
       </div>

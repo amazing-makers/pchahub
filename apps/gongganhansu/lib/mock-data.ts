@@ -1255,3 +1255,18 @@ export function insightById(id: string): MockInsight | undefined {
 export function portfolioByContractor(contractorId: string): MockPortfolioItem[] {
   return PORTFOLIO.filter((p) => p.contractorId === contractorId)
 }
+
+export const PROCESS_STEPS = [
+  { step: 1, title: '무료 상담', desc: '요구사항·예산·레퍼런스 수집. 당일 또는 익일 상담 일정을 확정합니다.' },
+  { step: 2, title: '현장 실측', desc: '전문 플래너가 직접 방문해 상세 도면·견적·공사 일정을 확정합니다.' },
+  { step: 3, title: '시공 진행', desc: '단계별 진척 사진을 실시간 공유. 야간·새벽 시공으로 영업 영향 최소화.' },
+  { step: 4, title: '완공 & AS', desc: '완공 점검 후 1년 하자 보증 제공. 주요 구조물은 3년 보증 적용.' },
+]
+
+export const FAQS: { q: string; a: string }[] = [
+  { q: '견적 신청 후 얼마나 걸리나요?', a: '현장 실측 후 영업일 기준 3~5일 내 상세 견적서를 드립니다. 도면이 있으면 방문 전 온라인 개략 견적도 가능합니다.' },
+  { q: '영업 중 시공이 가능한가요?', a: '야간·새벽 집중 작업을 통해 영업 중 시공이 가능합니다. 상황에 맞춰 작업 시간대를 협의해 드립니다.' },
+  { q: '하자 보증 기간은 어떻게 되나요?', a: '완공 후 기본 1년 하자 보증을 제공합니다. 주요 구조물·설비 공사는 3년 보증이 적용됩니다.' },
+  { q: '컨셉 기획부터 함께 할 수 있나요?', a: '네, 컨설팅·디자인·시공·AS까지 원스톱으로 진행합니다. 레퍼런스 이미지만 있어도 기획부터 함께 시작할 수 있습니다.' },
+  { q: '지방 시공도 가능한가요?', a: '현재 서울·수도권·광역시 위주로 운영 중입니다. 지방의 경우 출장비가 별도 산정될 수 있으니 상담 시 안내해 드립니다.' },
+]

@@ -6,6 +6,7 @@ import { formatNumber } from '@amakers/utils'
 import type { MockListing } from '@/lib/mock-data'
 import { TYPE_LABEL } from '@/lib/mock-data'
 import { useFavorites } from '@/hooks/use-favorites'
+import { SaveListingButton } from './save-listing-button'
 
 function formatManwon(manwon: number): string {
   if (manwon >= 10000) {
@@ -37,6 +38,10 @@ export function ListingCard({ listing, featured = false }: ListingCardProps) {
 
           {/* ── Hero image ────────────────────────────────────────────────── */}
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+            {/* Save (찜) button — top right */}
+            <div className="absolute top-2 right-2 z-10">
+              <SaveListingButton listingId={listing.id} size="sm" />
+            </div>
             {listing.images[0] ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,7 +75,7 @@ export function ListingCard({ listing, featured = false }: ListingCardProps) {
 
             {/* Verified */}
             {listing.verified && (
-              <span className="absolute right-3 top-3 inline-flex items-center gap-0.5 rounded-full bg-blue-500/95 px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
+              <span className="absolute right-3 top-12 inline-flex items-center gap-0.5 rounded-full bg-blue-500/95 px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
                 <CheckCircle2 className="h-3 w-3" />
                 실사 완료
               </span>

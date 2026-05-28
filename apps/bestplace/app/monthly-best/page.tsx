@@ -94,7 +94,7 @@ export default function MonthlyBestPage({ searchParams }: { searchParams: Search
             {[
               { value: `${entries.length}개`, label: '이달 선정 매장' },
               { value: `${rank1.length}개`, label: '카테고리 1위' },
-              { value: formatNumber(entries.reduce((s, e) => s + parseInt(e.metrics[0].value.replace(/[^0-9]/g, '')), 0)), label: '이달 총 방문객' },
+              { value: formatNumber(entries.reduce((s, e) => s + parseInt((e.metrics[0]?.value ?? '0').replace(/[^0-9]/g, '')), 0)), label: '이달 총 방문객' },
             ].map(({ value, label }) => (
               <div key={label} className="px-6 py-4">
                 <span className="text-xl font-black tracking-tight text-gray-900">{value}</span>

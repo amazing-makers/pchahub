@@ -3,15 +3,12 @@ import { notFound } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import {
   ArrowLeft,
-  ArrowRight,
-  BookOpen,
   Building2,
   CheckCircle2,
   Clock,
   Eye,
   MapPin,
   MessageSquare,
-  Store,
   TrendingUp,
 } from 'lucide-react'
 import { Badge, Card, CardContent, MobileCTA, NewsletterForm } from '@amakers/ui'
@@ -323,62 +320,6 @@ export default function ListingDetailPage({ params }: ListingDetailProps) {
       {/* Track this view + show recently-viewed grid */}
       <TrackView listingId={listing.id} />
       <RecentlyViewedSection currentId={listing.id} />
-
-      {/* amakers 생태계 크로스링크 */}
-      <section className="container mx-auto py-8">
-        <Card className="border-gray-200 bg-gray-50">
-          <CardContent className="p-6">
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              amakers에서 더 알아보기
-            </div>
-            <p className="mt-1 text-sm text-gray-600">
-              이 매물과 함께 확인하면 좋은 창업 정보입니다.
-            </p>
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              <a
-                href="https://pchahub.amakers.co.kr/brands"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <Store className="h-3.5 w-3.5 text-indigo-500" />
-                  가맹 브랜드 탐색
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://gongganhansu.amakers.co.kr/quote"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5 text-violet-500" />
-                  인테리어 견적 받기
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://themanual.amakers.co.kr/courses"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <BookOpen className="h-3.5 w-3.5 text-amber-500" />
-                  창업 운영 강의
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://jangsanote.amakers.co.kr"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
-                  점주 커뮤니티 (장사노트)
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
 
       {/* 뉴스레터 CTA */}
       <section className="border-t border-gray-100 bg-gray-50">

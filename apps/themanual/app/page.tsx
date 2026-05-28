@@ -34,6 +34,7 @@ import { KNOWHOW_ITEMS } from '@/lib/knowhow'
 import { RECIPES } from '@/lib/recipes'
 import { FEATURED_EVENTS, EVENT_TYPE_LABEL, formatEventDate, type EventType } from '@/lib/mock-events'
 import { formatNumber } from '@amakers/utils'
+import { ROADMAP_STAGES } from '@/lib/roadmap-data'
 
 const otherPlatforms = (
   Object.entries(platformColors) as Array<[PlatformKey, (typeof platformColors)[PlatformKey]]>
@@ -314,6 +315,57 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* 창업 로드맵 teaser */}
+      <section className="container mx-auto pt-section">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h2 className="text-h3 font-semibold text-gray-900">창업 로드맵</h2>
+            <p className="mt-1 text-sm text-gray-500">창업 준비부터 운영까지 — 6단계 완벽 가이드</p>
+          </div>
+          <a
+            href="/roadmap"
+            className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+          >
+            전체 로드맵 보기 <ArrowRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          {/* Stage chips row */}
+          <div className="flex flex-wrap gap-3">
+            {ROADMAP_STAGES.map((stage) => (
+              <a
+                key={stage.id}
+                href="/roadmap"
+                className={`group inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 transition-shadow hover:shadow-md ${stage.borderColorClass} ${stage.bgLightClass}`}
+              >
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-black text-white ${stage.colorClass}`}
+                >
+                  {stage.order}
+                </span>
+                <div>
+                  <div className={`text-sm font-bold ${stage.textColorClass}`}>{stage.title}</div>
+                  <div className="text-[10px] text-gray-400">{stage.duration}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+            <div className="flex gap-5 text-sm text-gray-500">
+              <span>총 소요 기간 <strong className="text-gray-900">약 4-6개월</strong></span>
+              <span className="hidden sm:inline">학습 항목 <strong className="text-gray-900">30+</strong>개</span>
+            </div>
+            <a
+              href="/roadmap"
+              className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ background: 'var(--brand-primary)' }}
+            >
+              전체 로드맵 보기 → <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* pchahub bridge */}
       <section className="container mx-auto pt-section">

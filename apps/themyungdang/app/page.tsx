@@ -26,6 +26,7 @@ import { AREA_PRICES, PRICE_STATS, TREND_COLOR } from '@/lib/mock-price-guide'
 
 import { ListingSectionSkeleton } from '@/components/skeletons'
 import { SavedListingsSection } from '@/components/saved-listings-section'
+import { SavedListingsWidget } from '@/components/saved-listings-widget'
 
 const RecentlyViewedSection = dynamic(
   () => import('@/components/recently-viewed').then((m) => m.RecentlyViewedSection),
@@ -132,6 +133,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── 찜한 매물 위젯 (client, shows only when items saved) ────────── */}
+      <SavedListingsWidget />
 
       {/* ── 핵심 지표 바 ──────────────────────────────────────────────────── */}
       <section className="border-b border-gray-100 bg-white">
@@ -351,6 +355,32 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      {/* 자주 묻는 질문 */}
+      <section className="bg-white">
+        <div className="container mx-auto py-section">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-h3 font-bold text-gray-900">자주 묻는 질문</h2>
+            <div className="mt-8 divide-y divide-gray-100 rounded-2xl border border-gray-100">
+              {[
+                { q: '매물 정보는 어떻게 업데이트되나요?', a: '등록 점주가 직접 업데이트하며, 운영팀이 주 1회 허위 매물 여부를 점검합니다. 실시간 알림으로 신규 매물을 가장 빠르게 확인할 수 있습니다.' },
+                { q: '권리금은 어떻게 산정되나요?', a: '상권 위치·월 매출·잔여 계약 기간·시설 상태를 종합해 산정합니다. 시세 가이드에서 지역별 평균 권리금을 확인하시면 기준값으로 활용할 수 있습니다.' },
+                { q: '안전 거래는 어떻게 이루어지나요?', a: '계약금·잔금을 직접 전달하지 않고 제3자 에스크로 계좌에 예치한 뒤, 양도·양수 완료 확인 후 지급됩니다. 허위 매물 피해를 원천 차단합니다.' },
+                { q: '양도인 가이드는 무엇인가요?', a: '매물 등록부터 계약 체결, 인수인계, 폐업 신고까지 단계별 절차를 안내합니다. 처음 양도하시는 분도 혼자 진행할 수 있도록 서식 파일을 제공합니다.' },
+                { q: '중개 수수료가 있나요?', a: '매물 열람은 무료입니다. 계약 성사 시 수수료 구조는 안전 거래 페이지에서 확인하실 수 있습니다.' },
+              ].map((f, i) => (
+                <details key={i} className="group px-5 py-4">
+                  <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-gray-900 marker:content-['']">
+                    {f.q}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-600">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 뉴스레터 */}

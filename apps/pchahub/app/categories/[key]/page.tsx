@@ -213,49 +213,49 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         <Card className="mt-6 border-gray-200 bg-gray-50">
           <CardContent className="p-6">
             <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              amakers에서 더 알아보기
+              함께 활용하면 좋은 기능
             </div>
             <p className="mt-1 text-sm text-gray-600">
-              {category.label} 브랜드의 매장 현황·인테리어·운영 정보를 함께 확인하세요.
+              {category.label} 브랜드 탐색을 더 효율적으로 이어가세요.
             </p>
             <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               <a
-                href={`https://bestplace.amakers.co.kr/stores?category=${category.key}`}
+                href={`/brands?category=${category.key}`}
                 className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
                 <span className="inline-flex items-center gap-1.5">
                   <Star className="h-3.5 w-3.5 text-amber-500" />
-                  우수 매장 보기
+                  브랜드 전체 보기
                 </span>
                 <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>
               <a
-                href="https://gongganhansu.amakers.co.kr/quote"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <ArrowRight className="h-3.5 w-3.5 text-slate-500" />
-                  매장 인테리어 견적
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://themanual.amakers.co.kr/knowhow"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <BookOpen className="h-3.5 w-3.5 text-amber-600" />
-                  운영 노하우
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://themyungdang.amakers.co.kr/listings"
+                href="/listings"
                 className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
               >
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5 text-emerald-500" />
                   입점 매물 찾기
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+              <a
+                href="/guide?cat=ops"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5 text-amber-600" />
+                  운영 노하우 가이드
+                </span>
+                <ArrowRight className="h-3 w-3 text-gray-400" />
+              </a>
+              <a
+                href="/calculator"
+                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <ArrowRight className="h-3.5 w-3.5 text-indigo-500" />
+                  수익 계산해보기
                 </span>
                 <ArrowRight className="h-3 w-3 text-gray-400" />
               </a>

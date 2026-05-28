@@ -12,12 +12,10 @@ import {
   Clock,
   FileText,
   Globe,
-  GraduationCap,
-  Hammer,
-  Heart,
+
   MapPin,
   Megaphone,
-  Newspaper,
+
   Phone,
   Shield,
   Sparkles,
@@ -152,7 +150,6 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
             <RecentOpeningsSection detail={detail} brand={brand} />
             <StoreHistorySection detail={detail} />
             <ReviewsSection brand={brand} detail={detail} avgRating={avgRating} />
-            <AmakersEcosystemSection brand={brand} />
             <FAQSection faqs={detail.faqs} />
             {relatedBrands.length > 0 && (
               <RelatedSection brands={relatedBrands} category={brand.categoryLabel} />
@@ -164,231 +161,7 @@ export default async function BrandDetailPage({ params }: BrandDetailPageProps) 
           </aside>
         </div>
       </div>
-
-      {/* amakers 생태계 크로스링크 */}
-      <div className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-6">
-          <Card className="border-gray-200 bg-gray-50">
-            <CardContent className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">amakers에서 더 알아보기</div>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="https://themyungdang.amakers.co.kr/listings" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-emerald-500" />창업 매물 찾기</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://bestplace.amakers.co.kr/stores" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-amber-500" />우수 매장 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themanual.amakers.co.kr/courses" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-indigo-500" />창업 운영 강의</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://jangsanote.amakers.co.kr" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-rose-500" />점주 커뮤니티</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* 뉴스레터 CTA */}
-      <section className="border-t border-gray-100 bg-gray-50">
-        <div className="container mx-auto py-section">
-          <div className="mx-auto max-w-xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'var(--brand-primary)' }}>
-              Newsletter
-            </p>
-            <h2 className="mt-3 text-h4 font-bold text-gray-900">신규 가맹 브랜드 소식을 받아보세요</h2>
-            <p className="mt-2 text-sm text-gray-500">인기 브랜드 창업 조건·공개 마감·가맹비 변동 소식을 격주로 보내드립니다.</p>
-            <NewsletterForm />
-            <p className="mt-3 text-xs text-gray-400">언제든 구독 해제 가능 · 스팸 없음</p>
-          </div>
-        </div>
-      </section>
-
-      {/* 모바일 고정 CTA — 핵심 전환 액션을 항상 노출 (하단 탭바 위) */}
-      <MobileCTA
-        label="가맹 상담 신청"
-        href={`/inquiry?brand=${brand.id}`}
-        secondary={{ label: '수익 계산', href: `/calculator?brand=${brand.id}` }}
-      />
     </main>
-  )
-}
-
-// ========================================================================
-// Hero
-// ========================================================================
-
-function BrandHero({
-  brand,
-  detail,
-  totalCost,
-  avgRating,
-}: {
-  brand: MockBrand
-  detail: BrandDetail
-  totalCost: number
-  avgRating: number
-}) {
-  // 가맹사업 연수 계산
-  const jngYrs = brand.jngBizStartYear
-    ? new Date().getFullYear() - brand.jngBizStartYear
-    : new Date().getFullYear() - detail.hq.franchiseStartYear
-  // 폐점률 계산 (closedCount / storeCount × 100)
-  const closureRate = brand.closedCount && brand.storeCount > 0
-    ? ((brand.closedCount / brand.storeCount) * 100).toFixed(1)
-    : null
-  // KFTC 실 API 평균매출 (있으면 우선 사용)
-  const avgMonthlySales = brand.avgAnnualSales
-    ? Math.round(brand.avgAnnualSales / 12)
-    : detail.revenue.averageMonthly
-
-  const stats = [
-    {
-      label: '매장 수',
-      value: `${formatNumber(brand.storeCount)}개`,
-      sub: brand.newOpenCount
-        ? `이번 해 +${brand.newOpenCount}개 신규`
-        : `+${brand.growthRate}% (전년 대비)`,
-      subColor: 'text-emerald-600',
-    },
-    {
-      label: '평균 월매출',
-      value: avgMonthlySales > 0 ? `${formatNumber(avgMonthlySales)}만` : '정보 없음',
-      sub: avgMonthlySales > 0
-        ? `연 ${formatNumber(avgMonthlySales * 12)}만 (공정위 공시)`
-        : '창업 상담 시 확인',
-      subColor: avgMonthlySales > 0 ? 'text-gray-500' : 'text-gray-400',
-    },
-    {
-      label: '총 창업비',
-      value: totalCost > 0 ? `${formatNumber(totalCost)}만` : '상담 문의',
-      sub: totalCost > 0 ? `권장 면적 ${detail.costs.recommendedArea}평` : '',
-      subColor: 'text-gray-500',
-    },
-    {
-      label: '월 로열티',
-      value:
-        detail.costs.royaltyType === 'none'
-          ? '없음'
-          : detail.costs.royaltyType === 'percentage'
-            ? `${detail.costs.royaltyValue}%`
-            : `${formatNumber(detail.costs.royaltyValue)}만`,
-      sub: detail.costs.royaltyType === 'percentage' ? '매출 대비' : '고정',
-      subColor: 'text-gray-500',
-    },
-    {
-      label: '가맹사업',
-      value: `${jngYrs}년차`,
-      sub: `${brand.jngBizStartYear ?? detail.hq.franchiseStartYear}년 시작`,
-      subColor: 'text-gray-500',
-    },
-    closureRate
-      ? {
-          label: '폐점률',
-          value: `${closureRate}%`,
-          sub: `폐점 ${brand.closedCount}개 / 전체 ${brand.storeCount}개`,
-          subColor: parseFloat(closureRate) < 5 ? 'text-emerald-600' : parseFloat(closureRate) < 15 ? 'text-amber-600' : 'text-rose-500',
-        }
-      : {
-          label: '점주 평가',
-          value: `${avgRating.toFixed(1)} / 5`,
-          sub: `${detail.reviews.length}개 후기`,
-          subColor: 'text-gray-500',
-        },
-  ]
-
-  // heroImage가 있으면 항상 표시 (카테고리 대표 Unsplash도 포함)
-  const showHeroPhoto = !!brand.heroImage
-  // 슬라이더에 보여줄 사진들 — hero(대표) + store(매장) 중복 제거
-  const heroImages = showHeroPhoto
-    ? Array.from(new Set([detail.photos.hero, ...detail.photos.store].filter(Boolean)))
-    : []
-
-  return (
-    <section className="border-b border-gray-200 bg-white">
-      {/* Hero photo area — 컨테이너 내부에 두고 모서리 둥글림. 사진 안 잘림 + 슬라이더. */}
-      <div className="container mx-auto px-4 pt-6">
-        <div className="overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-100">
-          {showHeroPhoto ? (
-            <BrandHeroSlider images={heroImages} alt={`${brand.name} 매장 사진`} />
-          ) : (
-            // 진짜 사진 없음 — 브랜드 컬러 블록 + 큰 모노그램만 가운데 (BrandHeroSlider와 같은 비율)
-            <div
-              className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden sm:aspect-[3/2] sm:max-h-[520px]"
-              style={{ background: brand.logoColor }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-black/20" />
-              <BrandLogo brand={brand} size="xl" bordered className="relative z-10" />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Brand identity card — 사진 아래 별도 행 (overlay 안 함) */}
-      <div className="container mx-auto px-4 pt-6">
-        <div className="flex items-start gap-4">
-          <BrandLogo brand={brand} size="xl" bordered />
-          <div className="min-w-0 flex-1 pt-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-h2 font-bold text-gray-900">{brand.name}</h1>
-              {brand.hqVerified && (
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
-                  <CheckCircle2 className="h-3 w-3" />
-                  협회 등록
-                </span>
-              )}
-              {brand.recruiting && (
-                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                  가맹 모집중
-                </span>
-              )}
-            </div>
-            <div className="mt-1 text-sm text-gray-500">
-              {brand.categoryLabel} · {detail.hq.companyName} · 본사 {brand.hqRegion}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto py-8">
-        <nav className="flex items-center gap-1 text-sm text-gray-500">
-          <a href="/brands" className="hover:text-gray-900">
-            브랜드 검색
-          </a>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <a href={`/categories/${brand.category}`} className="hover:text-gray-900">
-            {brand.categoryLabel}
-          </a>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-gray-700">{brand.name}</span>
-        </nav>
-
-        <div className="mt-5 max-w-3xl">
-          <p className="text-base text-gray-700">{brand.description}</p>
-          <div className="mt-4">
-            <BrandActions brandId={brand.id} brandName={brand.name} />
-          </div>
-        </div>
-
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-xl border border-gray-100 bg-gray-50 p-4"
-            >
-              <div className="text-xs text-gray-500">{s.label}</div>
-              <div className="mt-1 text-h4 font-bold text-gray-900">{s.value}</div>
-              <div className={`mt-1 text-xs ${s.subColor}`}>{s.sub}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   )
 }
 
@@ -795,116 +568,6 @@ function FAQSection({ faqs }: { faqs: BrandFAQ[] }) {
   )
 }
 
-// ========================================================================
-// Amakers Ecosystem — cross-links to other 8 sites
-// ========================================================================
-
-function AmakersEcosystemSection({ brand }: { brand: MockBrand }) {
-  const links: Array<{
-    site: string
-    href: string
-    icon: typeof Store
-    title: string
-    sub: string
-    accent: string
-  }> = [
-    {
-      site: 'bestplace',
-      href: `https://bestplace.amakers.co.kr/stores?brand=${brand.name}`,
-      icon: Store,
-      title: '이 브랜드 매장 보러가기',
-      sub: '전국 인증 매장 + 어워드 수상 매장 (베스트플레이스)',
-      accent: '#EAB308',
-    },
-    {
-      site: 'themanual',
-      href: `https://themanual.amakers.co.kr/courses?category=${brand.category}`,
-      icon: GraduationCap,
-      title: `${brand.categoryLabel} 운영 강의`,
-      sub: '점주 양성 코스 · 본사 운영 매뉴얼 (더메뉴얼)',
-      accent: '#3B82F6',
-    },
-    {
-      site: 'gongganhansu',
-      href: `https://gongganhansu.amakers.co.kr/contractors?specialty=${brand.category}`,
-      icon: Hammer,
-      title: `${brand.categoryLabel} 시공사`,
-      sub: '본사 가이드라인 통과 검증된 인테리어 시공사 (공간의한수)',
-      accent: '#64748B',
-    },
-    {
-      site: 'themyungdang',
-      href: `https://themyungdang.amakers.co.kr/listings?category=${brand.category}`,
-      icon: MapPin,
-      title: `${brand.categoryLabel} 입점 매물`,
-      sub: '양도·신규임대 매물 + 상권 분석 (더명당)',
-      accent: '#10B981',
-    },
-    {
-      site: 'jangsanote',
-      href: `https://jangsanote.amakers.co.kr/categories/${brand.category}`,
-      icon: Heart,
-      title: '점주 커뮤니티',
-      sub: `${brand.categoryLabel}방 · 점주 후기 + 모임 + 노하우 (장사노트)`,
-      accent: '#F59E0B',
-    },
-    {
-      site: 'changupdocu',
-      href: `https://changupdocu.amakers.co.kr/episodes?brand=${encodeURIComponent(brand.name)}`,
-      icon: Newspaper,
-      title: '미디어 · 매거진',
-      sub: '브랜드 다큐멘터리 + 시장 분석 기사 (창업다큐)',
-      accent: '#F43F5E',
-    },
-    {
-      site: 'openrun',
-      href: 'https://openrun.amakers.co.kr/services/grand-open',
-      icon: Megaphone,
-      title: '오픈 마케팅 캠페인',
-      sub: '신규 오픈 30일 패키지 + SNS·인플루언서 (오픈런)',
-      accent: '#F97316',
-    },
-    {
-      site: 'pchabridge',
-      href: 'https://pchabridge.amakers.co.kr',
-      icon: TrendingUp,
-      title: '투자 라운드 · M&A',
-      sub: '본사 투자 라운드 + 매각 매물 (프차브릿지)',
-      accent: '#8B5CF6',
-    },
-  ]
-
-  return (
-    <SectionCard
-      title="amakers에서 이어가기"
-      subtitle={`${brand.name}에 대한 정보·매장·운영·투자까지 amakers 전체 플랫폼에서`}
-    >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {links.map((l) => (
-          <a
-            key={l.site}
-            href={l.href}
-            className="group flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-all hover:border-gray-300 hover:shadow-sm"
-          >
-            <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-              style={{ background: l.accent }}
-            >
-              <l.icon className="h-5 w-5 text-white" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1 text-sm font-semibold text-gray-900">
-                {l.title}
-                <ArrowRight className="h-3 w-3 text-gray-400 group-hover:text-gray-700" />
-              </div>
-              <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">{l.sub}</p>
-            </div>
-          </a>
-        ))}
-      </div>
-    </SectionCard>
-  )
-}
 
 // ========================================================================
 // Related Brands
@@ -919,6 +582,59 @@ function RelatedSection({ brands, category }: { brands: MockBrand[]; category: s
         ))}
       </div>
     </SectionCard>
+  )
+}
+
+// ========================================================================
+// Brand Hero — page header with logo, stats, CTA
+// ========================================================================
+
+function BrandHero({
+  brand,
+  detail,
+  totalCost,
+  avgRating,
+}: {
+  brand: MockBrand
+  detail: BrandDetail
+  totalCost: number
+  avgRating: number
+}) {
+  return (
+    <section className="border-b border-gray-200 bg-white">
+      <div className="container mx-auto py-8">
+        <div className="flex flex-wrap items-start gap-4">
+          <BrandLogo brand={brand} size="lg" />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-h2 font-bold text-gray-900">{brand.name}</h1>
+              <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600">
+                {brand.categoryLabel}
+              </span>
+              {brand.recruiting && (
+                <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                  모집 중
+                </span>
+              )}
+            </div>
+            <p className="mt-2 max-w-2xl text-sm text-gray-600">{brand.description}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-gray-700">
+              <span className="flex items-center gap-1">
+                <Store className="h-4 w-4 text-gray-400" />
+                매장 {brand.storeCount.toLocaleString()}개
+              </span>
+              <span className="flex items-center gap-1">
+                <Star className="h-4 w-4 text-amber-400" />
+                {avgRating.toFixed(1)} ({detail.reviews.length}개 후기)
+              </span>
+              <span className="flex items-center gap-1">
+                총 창업비 약 {formatNumber(totalCost)}만원
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 

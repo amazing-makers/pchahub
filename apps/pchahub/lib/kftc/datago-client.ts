@@ -19,9 +19,10 @@
 const SHARED_BASE = 'https://apis.data.go.kr/1130000'
 
 function getServiceKey(): string {
-  const key = process.env.KFTC_API_KEY
+  // DATAGO_API_KEY 우선, 없으면 KFTC_API_KEY 폴백 (하위 호환)
+  const key = process.env.DATAGO_API_KEY ?? process.env.KFTC_API_KEY
   if (!key) {
-    throw new Error('KFTC_API_KEY 환경변수가 설정되지 않았습니다.')
+    throw new Error('DATAGO_API_KEY (또는 KFTC_API_KEY) 환경변수가 설정되지 않았습니다.')
   }
   return key
 }

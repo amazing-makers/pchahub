@@ -3,7 +3,7 @@
 import { prisma } from '@amakers/db'
 import { LISTINGS, type MockListing } from '@amakers/listings'
 
-type ListingSort = 'recommended' | 'newest' | 'rent-asc' | 'rent-desc' | 'area-desc' | 'area-asc'
+export type ListingSort = 'recommended' | 'newest' | 'rent-asc' | 'rent-desc' | 'area-desc' | 'area-asc'
 
 function mapDbListing(l: Awaited<ReturnType<typeof prisma.listing.findMany>>[number]): MockListing {
   return {
@@ -27,7 +27,7 @@ function mapDbListing(l: Awaited<ReturnType<typeof prisma.listing.findMany>>[num
     monthlyRevenue: l.monthlyRevenue ?? undefined,
     revenueVerified: l.revenueVerified,
     footTraffic: 0,
-    availableFrom: l.createdAt.toISOString().split('T')[0],
+    availableFrom: l.createdAt.toISOString().split('T')[0] ?? '',
     verified: l.isVerified,
     featured: l.isFeatured,
     viewCount: l.viewCount,

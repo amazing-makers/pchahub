@@ -195,23 +195,15 @@ export default async function RegionsPage() {
               </p>
               <h2 className="mt-2 text-h3 font-bold text-gray-900">창업 매물도 확인해보세요</h2>
               <p className="mt-2 text-gray-600">
-                지역별 브랜드 현황을 파악했다면, 더명당에서 해당 지역 창업 매물(양도·신규임대)을
-                확인해보세요.
+                지역별 브랜드 현황을 파악했다면, 해당 지역 창업 매물(양도·신규임대)도 함께 확인해보세요.
               </p>
             </div>
             <div className="flex flex-col justify-center gap-3 sm:flex-row lg:flex-col xl:flex-row">
               <a href="/listings" className="flex-1">
                 <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-gray-200 px-5 py-4 text-center transition-colors hover:border-gray-400 hover:bg-gray-50">
                   <MapPin className="h-5 w-5 text-gray-600" />
-                  <div className="mt-1.5 text-sm font-semibold text-gray-900">창업 매물 ({`pchahub`})</div>
+                  <div className="mt-1.5 text-sm font-semibold text-gray-900">창업 매물 보기</div>
                   <div className="mt-0.5 text-xs text-gray-500">양도·신규임대 매물 탐색</div>
-                </div>
-              </a>
-              <a href="https://themyungdang.amakers.co.kr/listings" className="flex-1">
-                <div className="flex h-full flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-center transition-colors hover:bg-emerald-100">
-                  <MapPin className="h-5 w-5 text-emerald-600" />
-                  <div className="mt-1.5 text-sm font-semibold text-emerald-900">더명당 매물</div>
-                  <div className="mt-0.5 text-xs text-emerald-700">상권 분석 + 지도 기반 탐색</div>
                 </div>
               </a>
             </div>

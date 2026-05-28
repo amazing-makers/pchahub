@@ -31,7 +31,8 @@
         "KFTC_API_KEY",
         "DATAGO_API_KEY",
         "REB_API_KEY",
-        "NTS_API_KEY"
+        "NTS_API_KEY",
+        "CRON_SECRET"
       ]
     },
     "dev": {

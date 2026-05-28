@@ -1,19 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
-  ArrowRight,
   Award,
-  BookOpen,
   Calendar,
   CheckCircle2,
   ChevronRight,
   MapPin,
   Star,
-  Store,
   Users,
-  Wrench,
 } from 'lucide-react'
-import { Badge, BrandLogo, Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
+import { Badge, BrandLogo, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
   buildBreadcrumbsJsonLd,
   buildLocalBusinessJsonLd,
@@ -132,13 +128,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
               {brand && (
                 <div className="mt-1 flex items-center gap-2">
                   <BrandLogo brand={brand} size="sm" />
-                  <a
-                    href={`https://pchahub.amakers.co.kr/brands/${brand.id}`}
-                    className="inline-flex items-center gap-1 text-sm text-gray-700 hover:underline"
-                  >
-                    {brand.name} (프차허브에서 브랜드 정보)
-                    <ArrowRight className="h-3 w-3" />
-                  </a>
+                  <span className="text-sm text-gray-700">{brand.name}</span>
                 </div>
               )}
               <div className="mt-2 inline-flex items-center gap-1 text-sm text-gray-600">
@@ -271,14 +261,6 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
                   </div>
                   <p className="mt-2 text-sm text-gray-700">{store.recentReview.text}</p>
                 </div>
-                <div className="mt-3 text-center text-xs text-gray-500">
-                  <a
-                    href="https://jangsanote.amakers.co.kr"
-                    className="inline-flex items-center gap-1 hover:text-gray-900"
-                  >
-                    장사노트에서 점주 후기 더 보기 →
-                  </a>
-                </div>
               </SectionCard>
             )}
 
@@ -364,78 +346,7 @@ export default function StoreDetailPage({ params }: StoreDetailProps) {
 
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-20 lg:self-start">
-            <Card className="border-gray-200 shadow-sm">
-              <CardContent className="space-y-4 p-5">
-                <div>
-                  <div className="text-xs text-gray-500">amakers 통합 정보</div>
-                  <div className="mt-1 text-sm text-gray-700">
-                    이 매장의 브랜드 · 매물 · 운영 · 커뮤니티 정보가 amakers 안에서 함께 제공됩니다.
-                  </div>
-                </div>
-                {brand && (
-                  <a href={`https://pchahub.amakers.co.kr/brands/${brand.id}`} className="block">
-                    <Button size="md" variant="outline" className="w-full justify-between gap-1">
-                      <span>{brand.name} 브랜드 정보</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </a>
-                )}
-                <a href="https://themyungdang.amakers.co.kr/listings" className="block">
-                  <Button size="md" variant="outline" className="w-full justify-between gap-1">
-                    <span>{store.region} 매물 보기</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </a>
-                <a href="https://jangsanote.amakers.co.kr" className="block">
-                  <Button size="md" variant="outline" className="w-full justify-between gap-1">
-                    <span>점주 커뮤니티 (장사노트)</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </a>
-                <a href={`https://themanual.amakers.co.kr/courses?category=${brand?.category}`} className="block">
-                  <Button size="md" variant="outline" className="w-full justify-between gap-1">
-                    <span>{brand?.categoryLabel} 운영 강의</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </a>
-                <a href={`https://gongganhansu.amakers.co.kr/contractors?specialty=${brand?.category ?? ''}`} className="block">
-                  <Button size="md" variant="outline" className="w-full justify-between gap-1">
-                    <span>매장 시공사 찾기 (공간의한수)</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </a>
-              </CardContent>
-            </Card>
           </aside>
-        </div>
-      </div>
-
-      {/* amakers 생태계 크로스링크 */}
-      <div className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-6">
-          <Card className="border-gray-200 bg-gray-50">
-            <CardContent className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">amakers에서 더 알아보기</div>
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <a href="https://pchahub.amakers.co.kr/brands" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Store className="h-3.5 w-3.5 text-indigo-500" />가맹 브랜드 탐색</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://gongganhansu.amakers.co.kr/quote" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><Wrench className="h-3.5 w-3.5 text-rose-500" />매장 시공 견적</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://themanual.amakers.co.kr/courses" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5 text-amber-500" />창업 운영 강의</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a href="https://jangsanote.amakers.co.kr" className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900">
-                  <span className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-emerald-500" />점주 커뮤니티</span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

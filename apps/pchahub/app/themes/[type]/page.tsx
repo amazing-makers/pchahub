@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { AlertCircle, ArrowRight, BookOpen, ChevronRight, MapPin, MessageSquare, Store } from 'lucide-react'
 import { Card, CardContent, NewsletterForm } from '@amakers/ui'
@@ -145,88 +145,6 @@ export default function ThemePage({ params }: ThemePageProps) {
               ))}
             </div>
           )}
-        </div>
-
-        {/* amakers 생태계 크로스링크 */}
-        <Card className="border-gray-200 bg-gray-50">
-          <CardContent className="p-6">
-            <div className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              amakers에서 더 알아보기
-            </div>
-            <p className="mt-1 text-sm text-gray-600">
-              {theme.label} 브랜드에 관심 있으신가요? 관련 정보를 한 곳에서 확인하세요.
-            </p>
-            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              <a
-                href={`https://themanual.amakers.co.kr/courses?category=${theme.key}`}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <BookOpen className="h-3.5 w-3.5 text-amber-500" />
-                  운영·창업 강의
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://themyungdang.amakers.co.kr/listings"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-rose-500" />
-                  창업 매물 찾기
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href={`https://bestplace.amakers.co.kr/stores`}
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <Store className="h-3.5 w-3.5 text-indigo-500" />
-                  우수 매장 탐색
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-              <a
-                href="https://jangsanote.amakers.co.kr"
-                className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-              >
-                <span className="inline-flex items-center gap-1.5">
-                  <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
-                  점주 커뮤니티
-                </span>
-                <ArrowRight className="h-3 w-3 text-gray-400" />
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Related themes */}
-        <div>
-          <h2 className="text-h4 font-semibold text-gray-900">다른 테마</h2>
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {otherThemes.map((t) => (
-              <a key={t.key} href={`/themes/${t.key}`} className="group">
-                <Card className="h-full transition-shadow hover:shadow-md">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 group-hover:bg-gray-200">
-                        <ThemeIcon iconKey={t.iconKey} className="h-4 w-4 text-gray-700" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-gray-900">
-                          {t.label}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {THEME_COUNTS[t.key] ?? 0}개 브랜드
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </a>
-            ))}
-          </div>
         </div>
       </div>
 

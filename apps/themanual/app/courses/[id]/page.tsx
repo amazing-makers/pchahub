@@ -2,14 +2,11 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
-  ArrowRight,
   CheckCircle2,
   ChevronRight,
   Clock,
-  MessageSquare,
   PlayCircle,
   Star,
-  Store,
   Users,
 } from 'lucide-react'
 import { Badge, Card, CardContent, MobileCTA, NewsletterForm } from '@amakers/ui'
@@ -320,51 +317,6 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
               </SectionCard>
             )}
 
-            {/* amakers 생태계 크로스링크 */}
-            <SectionCard title="amakers에서 더 알아보기">
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <a
-                  href={`https://pchahub.amakers.co.kr/brands?category=${course.category}`}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <Store className="h-3.5 w-3.5 text-indigo-500" />
-                    {category?.label ?? ''} 브랜드 정보
-                  </span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a
-                  href={`https://bestplace.amakers.co.kr/stores`}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <Star className="h-3.5 w-3.5 text-amber-500" />
-                    베스트 매장 어워드
-                  </span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a
-                  href="https://changupdocu.amakers.co.kr/episodes"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <PlayCircle className="h-3.5 w-3.5 text-rose-500" />
-                    창업 성공·실패 다큐
-                  </span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-                <a
-                  href="https://jangsanote.amakers.co.kr"
-                  className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition-colors hover:border-gray-300 hover:text-gray-900"
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
-                    점주 커뮤니티 (장사노트)
-                  </span>
-                  <ArrowRight className="h-3 w-3 text-gray-400" />
-                </a>
-              </div>
-            </SectionCard>
           </div>
           <div className="hidden lg:block" />
         </div>
