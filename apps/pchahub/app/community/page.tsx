@@ -15,7 +15,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 })
 
 import { AlertCircle, ArrowRight, Bell, CalendarDays, Eye, MessageSquare, Search, ThumbsUp, TrendingUp } from 'lucide-react'
-import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
+import { Badge, Card, CardContent, NewsletterForm, PageAiChat } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { DISCUSSIONS, QUESTIONS } from '@/lib/mock-community'
 import { LocalCommunityPosts } from './local-posts'
@@ -411,6 +411,23 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
 
 
       {/* 뉴스레터 */}
+      {/* AI 도우미 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-8">
+          <div className="mx-auto max-w-xl">
+            <h2 className="mb-1 text-center text-base font-bold text-gray-900">커뮤니티 AI에게 물어보세요</h2>
+            <p className="mb-4 text-center text-xs text-gray-500">창업 고민, 브랜드 비교, 상권 분석 등 궁금한 점을 질문해 보세요</p>
+            <PageAiChat
+              greeting="안녕하세요! 창업 커뮤니티에서 나누는 고민들, AI가 먼저 도와드릴게요. 어떤 점이 궁금하세요? 😊"
+              placeholder="예) 치킨 vs 커피 브랜드, 어떤 게 수익이 더 좋을까요?"
+              accentBg="bg-indigo-600"
+              accentHoverBg="hover:bg-indigo-700"
+              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
+            />
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
           <div className="mx-auto max-w-xl text-center">

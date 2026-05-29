@@ -9,15 +9,11 @@ import './globals.css'
 export const metadata = buildSiteMetadata('pchahub')
 
 const navItems = [
-  { href: '/brands', label: '브랜드 검색' },
+  { href: '/brands', label: '브랜드 탐색' },   // 지역별 탐색·시장 트렌드 흡수
   { href: '/listings', label: '매물' },
   { href: '/guide', label: '창업 가이드' },
-  { href: '/trends', label: '시장 트렌드' },
-  { href: '/regions', label: '지역별 탐색' },
-  { href: '/scanner', label: '창업 스캐너' },
-  { href: '/calculator', label: '수익 계산기' },
-  { href: '/community', label: '커뮤니티' },
-  { href: '/franchisee-qa', label: '가맹 Q&A' },
+  { href: '/scanner', label: '창업 도구' },    // 수익 계산기 흡수
+  { href: '/community', label: '커뮤니티' },   // 가맹 Q&A 흡수
 ]
 
 const actions: HeaderAction[] = [
@@ -52,10 +48,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MobileTabBar platform="pchahub" />
           <AiChatWidget
             platform="pchahub"
-            platformName="pchahub"
+            platformName="프차허브"
             greeting="안녕하세요! 프랜차이즈 창업 궁금한 점을 물어보세요. 브랜드 추천, 비용 계산, 계약 체크까지 도와드릴게요 😊"
             accentBg="bg-indigo-600"
             accentHoverBg="hover:bg-indigo-700"
+            helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
           />
         </Providers>
       </body>

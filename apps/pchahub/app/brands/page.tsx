@@ -16,7 +16,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 
 import { ArrowRight, BookOpen, MapPin, Search, Star, Store } from 'lucide-react'
 import { formatNumber } from '@amakers/utils'
-import { Card, CardContent, MobileFilterDrawer, NewsletterForm } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer, NewsletterForm, PageAiChat } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
 import { BrandSaveButton } from '@/components/brand-save-button'
 import { CompareButton } from '@/components/compare-button'
@@ -436,6 +436,23 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
         </div>
       </div>
 
+
+      {/* AI 도우미 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-8">
+          <div className="mx-auto max-w-xl">
+            <h2 className="mb-1 text-center text-base font-bold text-gray-900">브랜드 선택 고민된다면 AI에게 물어보세요</h2>
+            <p className="mb-4 text-center text-xs text-gray-500">예산·업종·지역을 말하면 맞는 브랜드를 추천해 드려요</p>
+            <PageAiChat
+              greeting="안녕하세요! 브랜드 탐색 중이신가요? 예산, 희망 업종, 지역을 알려주시면 딱 맞는 프랜차이즈를 추천해 드릴게요 😊"
+              placeholder="예) 3천만원 이하로 서울에서 카페 창업 하고 싶어요"
+              accentBg="bg-indigo-600"
+              accentHoverBg="hover:bg-indigo-700"
+              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* 뉴스레터 */}
       <section className="border-t border-gray-100 bg-gray-50">

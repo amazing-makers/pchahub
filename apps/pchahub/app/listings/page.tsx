@@ -15,7 +15,7 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 })
 
 import { ArrowRight, BookOpen, MapPin, Plus, Search, Star, Store } from 'lucide-react'
-import { Card, CardContent, NewsletterForm } from '@amakers/ui'
+import { Card, CardContent, NewsletterForm, PageAiChat } from '@amakers/ui'
 import { CATEGORIES } from '@/lib/mock-data'
 import { LISTINGS } from '@/lib/mock-listings'
 import { ListingCard } from '@/components/listing-card'
@@ -339,6 +339,23 @@ export default function ListingsPage({ searchParams }: ListingsPageProps) {
 
 
       {/* 뉴스레터 */}
+      {/* AI 도우미 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-8">
+          <div className="mx-auto max-w-xl">
+            <h2 className="mb-1 text-center text-base font-bold text-gray-900">매물 찾기 어려우시면 AI에게 물어보세요</h2>
+            <p className="mb-4 text-center text-xs text-gray-500">원하는 지역·업종·예산을 말하면 맞는 매물 조건을 안내해 드려요</p>
+            <PageAiChat
+              greeting="안녕하세요! 어떤 매물을 찾고 계신가요? 지역, 업종, 보증금·월세 범위를 알려주시면 도움드릴게요 😊"
+              placeholder="예) 강남 30평 이하 보증금 5천 이하 카페 매물"
+              accentBg="bg-indigo-600"
+              accentHoverBg="hover:bg-indigo-700"
+              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
+            />
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
           <div className="mx-auto max-w-xl text-center">

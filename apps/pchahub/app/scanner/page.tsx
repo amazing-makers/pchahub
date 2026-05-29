@@ -8,6 +8,7 @@ export const metadata: Metadata = buildPageMetadata('pchahub', {
 })
 
 import { ScannerWizard } from './wizard'
+import { PageAiChat } from '@amakers/ui'
 
 const breadcrumbs = buildBreadcrumbsJsonLd({
   items: [
@@ -41,6 +42,23 @@ export default function ScannerPage() {
       <div className="container mx-auto py-8">
         <ScannerWizard />
       </div>
+
+      {/* AI 도우미 */}
+      <section className="border-t border-gray-100 bg-white">
+        <div className="container mx-auto py-8">
+          <div className="mx-auto max-w-xl">
+            <h2 className="mb-1 text-center text-base font-bold text-gray-900">스캐너 결과가 궁금하다면 AI에게 물어보세요</h2>
+            <p className="mb-4 text-center text-xs text-gray-500">추천 브랜드 비교, 예상 수익, 계약 주의사항 등 자세히 안내해 드려요</p>
+            <PageAiChat
+              greeting="창업 스캐너로 브랜드를 찾고 계신가요? 결과 해석이나 추가 비교가 필요하면 질문해 주세요 😊"
+              placeholder="예) 스캐너에서 나온 브랜드 A와 B 중 어떤 게 더 나을까요?"
+              accentBg="bg-indigo-600"
+              accentHoverBg="hover:bg-indigo-700"
+              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
+            />
+          </div>
+        </div>
+      </section>
     </main>
   )
 }
