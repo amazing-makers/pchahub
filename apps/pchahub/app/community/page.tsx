@@ -15,9 +15,10 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 })
 
 import { AlertCircle, ArrowRight, Bell, CalendarDays, Eye, MessageSquare, Search, ThumbsUp, TrendingUp } from 'lucide-react'
-import { Badge, Card, CardContent, NewsletterForm, PageAiChat } from '@amakers/ui'
+import { Badge, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import { formatNumber } from '@amakers/utils'
 import { DISCUSSIONS, QUESTIONS } from '@/lib/mock-community'
+import { FRANCHISEE_QAS } from '@/lib/franchisee-qa-data'
 import { LocalCommunityPosts } from './local-posts'
 
 const MARKET_INTEL = [
@@ -93,12 +94,12 @@ const SORT_OPTIONS = [
 type SortKey = (typeof SORT_OPTIONS)[number]['key']
 
 interface CommunityPageProps {
-  searchParams: { tab?: string; q?: string; sort?: string }
+  searchParams: { tab?: string; q?: string; sort?: string; category?: string }
 }
 
 export default function CommunityPage({ searchParams }: CommunityPageProps) {
   const tab = searchParams.tab ?? 'discussions'
-  const { q, sort = 'recent' } = searchParams
+  const { q, sort = 'recent', category: activeCategory } = searchParams
   const activeSort = (SORT_OPTIONS.find((o) => o.key === sort)?.key ?? 'recent') as SortKey
   const needle = q?.toLowerCase().trim() ?? ''
 
@@ -126,6 +127,19 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
           qItem.answeredBy.toLowerCase().includes(needle),
       )
     : QUESTIONS
+
+  // 가맹점주 경험담 필터링
+  const filteredFranchiseeQAs = FRANCHISEE_QAS.filter((qa) => {
+    if (activeCategory && qa.category !== activeCategory) return false
+    if (!needle) return true
+    return (
+      qa.question.toLowerCase().includes(needle) ||
+      qa.answer.toLowerCase().includes(needle) ||
+      qa.brandName.toLowerCase().includes(needle) ||
+      qa.answererProfile.toLowerCase().includes(needle)
+    )
+  })
+  const franchiseeCategories = [...new Set(FRANCHISEE_QAS.map((q) => q.category))]
 
   const listJsonLd = buildItemListJsonLd({
     url: 'https://pchahub.amakers.co.kr/community',
@@ -196,8 +210,8 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
               <span className="text-[11px] font-semibold text-gray-700">전체 댓글</span>
             </div>
             <div className="flex flex-col items-center gap-0.5 px-4 py-2 text-center">
-              <span className="text-xl font-black tracking-tight text-gray-900">{QUESTIONS.length}건</span>
-              <span className="text-[11px] font-semibold text-gray-700">전문가 Q&A</span>
+              <span className="text-xl font-black tracking-tight text-gray-900">{FRANCHISEE_QAS.length}건</span>
+              <span className="text-[11px] font-semibold text-gray-700">점주 경험담</span>
             </div>
           </div>
         </div>
@@ -283,6 +297,9 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
           <TabLink href={`/community?${new URLSearchParams({ tab: 'questions', ...(q ? { q } : {}) }).toString()}`} active={tab === 'questions'}>
             전문가 Q&A ({filteredQuestions.length})
           </TabLink>
+          <TabLink href={`/community?${new URLSearchParams({ tab: 'franchisee-qa', ...(q ? { q } : {}) }).toString()}`} active={tab === 'franchisee-qa'}>
+            점주 경험담 ({filteredFranchiseeQAs.length})
+          </TabLink>
         </div>
         {tab === 'discussions' && (
           <div className="mb-4 flex flex-wrap gap-2">
@@ -303,7 +320,84 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
           </div>
         )}
 
-        {tab === 'questions' ? (
+        {tab === 'franchisee-qa' ? (
+          <div className="space-y-4">
+            {/* 카테고리 필터 */}
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={`/community?${new URLSearchParams({ tab: 'franchisee-qa', ...(q ? { q } : {}) }).toString()}`}
+                className={
+                  'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                  (!activeCategory
+                    ? 'bg-gray-900 text-white'
+                    : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                }
+              >
+                전체
+              </a>
+              {franchiseeCategories.map((cat) => (
+                <a
+                  key={cat}
+                  href={`/community?${new URLSearchParams({ tab: 'franchisee-qa', category: cat, ...(q ? { q } : {}) }).toString()}`}
+                  className={
+                    'rounded-full px-3 py-1 text-xs font-medium transition-colors ' +
+                    (activeCategory === cat
+                      ? 'bg-gray-900 text-white'
+                      : 'border border-gray-200 bg-white text-gray-600 hover:border-gray-300')
+                  }
+                >
+                  {cat}
+                </a>
+              ))}
+            </div>
+
+            {filteredFranchiseeQAs.length === 0 ? (
+              <p className="py-10 text-center text-sm text-gray-500">
+                {q ? `"${q}" 검색 결과가 없습니다` : '등록된 경험담이 없습니다'}
+              </p>
+            ) : filteredFranchiseeQAs.map((qa) => (
+              <Card key={qa.id} className="border-gray-200">
+                <CardContent className="p-5">
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                      {qa.brandName}
+                    </span>
+                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600">
+                      {qa.category}
+                    </span>
+                    {qa.featured && (
+                      <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                        추천 답변
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <span className="mt-0.5 shrink-0 text-base font-bold" style={{ color: 'var(--brand-primary)' }}>Q</span>
+                    <h3 className="text-base font-semibold text-gray-900">{qa.question}</h3>
+                  </div>
+                  <div className="mt-3 flex items-start gap-2.5">
+                    <span className="mt-0.5 shrink-0 text-base font-bold text-gray-400">A</span>
+                    <p className="text-sm leading-relaxed text-gray-700">{qa.answer}</p>
+                  </div>
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-3">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                      <span>{qa.answererProfile}</span>
+                      <span className="text-gray-300">·</span>
+                      <span>{qa.answeredAt}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {qa.tags.slice(0, 3).map((tag) => (
+                        <span key={tag} className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-500">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : tab === 'questions' ? (
           <div className="space-y-3">
             {filteredQuestions.length === 0 ? (
               <p className="py-10 text-center text-sm text-gray-500">
@@ -409,24 +503,6 @@ export default function CommunityPage({ searchParams }: CommunityPageProps) {
         </div>
       </div>
 
-
-      {/* 뉴스레터 */}
-      {/* AI 도우미 */}
-      <section className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-8">
-          <div className="mx-auto max-w-xl">
-            <h2 className="mb-1 text-center text-base font-bold text-gray-900">커뮤니티 AI에게 물어보세요</h2>
-            <p className="mb-4 text-center text-xs text-gray-500">창업 고민, 브랜드 비교, 상권 분석 등 궁금한 점을 질문해 보세요</p>
-            <PageAiChat
-              greeting="안녕하세요! 창업 커뮤니티에서 나누는 고민들, AI가 먼저 도와드릴게요. 어떤 점이 궁금하세요? 😊"
-              placeholder="예) 치킨 vs 커피 브랜드, 어떤 게 수익이 더 좋을까요?"
-              accentBg="bg-indigo-600"
-              accentHoverBg="hover:bg-indigo-700"
-              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
-            />
-          </div>
-        </div>
-      </section>
 
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">

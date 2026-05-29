@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { buildBreadcrumbsJsonLd, buildItemListJsonLd, buildPageMetadata, JsonLd } from '@amakers/design-system'
 import { ArrowRight, BookOpen, ChevronRight, Clock, Flame, MessageSquare, Tag } from 'lucide-react'
-import { Badge, Button, Card, CardContent, NewsletterForm, PageAiChat } from '@amakers/ui'
+import { Badge, Button, Card, CardContent, NewsletterForm } from '@amakers/ui'
 import {
   GUIDE_ARTICLES,
   GUIDE_CATEGORIES,
@@ -256,19 +256,6 @@ export default function GuidePage({ searchParams }: GuidePageProps) {
               </a>
             </div>
           </div>
-        </section>
-
-        {/* AI 도우미 */}
-        <section className="rounded-3xl border border-gray-100 bg-white px-8 py-8">
-          <h2 className="mb-1 text-center text-base font-bold text-gray-900">창업 가이드 AI에게 물어보세요</h2>
-          <p className="mb-4 text-center text-xs text-gray-500">단계별 창업 절차, 계약 주의사항, 수익 계산 등 무엇이든 질문하세요</p>
-          <PageAiChat
-            greeting="안녕하세요! 창업 가이드에서 궁금한 점이 있으신가요? 절차, 비용, 계약, 운영 등 무엇이든 질문해 주세요 😊"
-            placeholder="예) 가맹 계약서에서 꼭 확인해야 할 항목이 뭔가요?"
-            accentBg="bg-indigo-600"
-            accentHoverBg="hover:bg-indigo-700"
-            helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
-          />
         </section>
 
         {/* 뉴스레터 */}

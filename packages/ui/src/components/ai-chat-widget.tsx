@@ -56,6 +56,13 @@ export function AiChatWidget({
     if (!open) setHelpanyMode(false)
   }, [open])
 
+  /* ── open via external event (e.g. header AI 상담 button) ── */
+  useEffect(() => {
+    const handler = () => setOpen(true)
+    window.addEventListener('openAiChat', handler)
+    return () => window.removeEventListener('openAiChat', handler)
+  }, [])
+
   const sendMessage = useCallback(async () => {
     const text = input.trim()
     if (!text || streaming) return

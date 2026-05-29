@@ -2,6 +2,7 @@ import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
+import { AiChatTriggerButton } from '@/components/ai-chat-trigger'
 import { BackToTop } from '@/components/back-to-top'
 import { CompareBar } from '@/components/compare-bar'
 import './globals.css'
@@ -38,7 +39,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             navItems={navItems}
             actions={actions}
             showRole={false}
-            rightSlot={<HeaderUserMenu actions={actions} />}
+            rightSlot={
+              <div className="flex items-center gap-2">
+                <AiChatTriggerButton />
+                <HeaderUserMenu actions={actions} />
+              </div>
+            }
           />
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-gray-900 focus:shadow-md">본문으로 이동</a>
           <div id="main-content" className="flex-1">{children}</div>

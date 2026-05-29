@@ -16,13 +16,14 @@ const breadcrumbs = buildBreadcrumbsJsonLd({
 
 import { ArrowRight, BookOpen, MapPin, Search, Star, Store } from 'lucide-react'
 import { formatNumber } from '@amakers/utils'
-import { Card, CardContent, MobileFilterDrawer, NewsletterForm, PageAiChat } from '@amakers/ui'
+import { Card, CardContent, MobileFilterDrawer, NewsletterForm } from '@amakers/ui'
 import { BrandCard } from '@/components/brand-card'
 import { BrandSaveButton } from '@/components/brand-save-button'
 import { CompareButton } from '@/components/compare-button'
 import { CATEGORIES, FEATURED_BRANDS, compareBrandsRecommended } from '@/lib/mock-data'
 import { getBrands, getDataSourceLabel } from '@/lib/kftc/source'
 import { KOREAN_REGIONS } from '@/lib/regions-data'
+import { CATEGORY_TRENDS, YEAR_STATS, REGION_SHARES } from '@/lib/trends-data'
 
 // 카테고리별 이모지 아이콘
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -48,7 +49,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
 }
 
 interface BrandsPageProps {
-  searchParams: { category?: string; region?: string; q?: string; sort?: string; page?: string }
+  searchParams: { category?: string; region?: string; q?: string; sort?: string; page?: string; tab?: string }
 }
 
 const PAGE_SIZE = 48
@@ -57,7 +58,7 @@ export const revalidate = 3600 // 1시간 캐시
 
 export default async function BrandsPage({ searchParams }: BrandsPageProps) {
   const [allBrands, dataSource] = await Promise.all([getBrands(), Promise.resolve(getDataSourceLabel())])
-  const { category: activeCategory, region: activeRegion, q, sort = 'recommended', page } = searchParams
+  const { category: activeCategory, region: activeRegion, q, sort = 'recommended', page, tab = 'brands' } = searchParams
   const pageNum = Math.max(1, parseInt(page ?? '1', 10) || 1)
 
   // 검색어·카테고리 필터 시 featured 포함 전체 대상, 조건 없는 기본 목록만 광고섹션과 중복 방지로 featured 제외
@@ -110,10 +111,187 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
     items: pagedResults.map((b) => ({ name: b.name, url: `https://pchahub.amakers.co.kr/brands/${b.id}` })),
   })
 
+  // 시장 트렌드 탭
+  if (tab === 'trends') {
+    const latest = YEAR_STATS[YEAR_STATS.length - 1]!
+    const prev = YEAR_STATS[YEAR_STATS.length - 2]!
+    return (
+      <main className="bg-gray-50">
+        <JsonLd data={breadcrumbs} />
+        {/* 탭 네비게이션 */}
+        <BrandsTabNav tab={tab} />
+        <div className="container mx-auto space-y-10 py-10">
+          {/* 연도별 통계 KPI */}
+          <section>
+            <h2 className="mb-5 text-h4 font-bold text-gray-900">📊 가맹 시장 연도별 통계</h2>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { label: '전체 가맹 브랜드', value: latest.totalBrands.toLocaleString(), sub: `전년 대비 +${(latest.totalBrands - prev.totalBrands).toLocaleString()}`, up: true },
+                { label: '전국 가맹 매장', value: latest.totalStores.toLocaleString(), sub: `${Math.round(((latest.totalStores - prev.totalStores) / prev.totalStores) * 100 * 10) / 10}% 성장`, up: true },
+                { label: '평균 창업비용', value: `${latest.avgStartupCost.toLocaleString()}만원`, sub: `전년 대비 +${(latest.avgStartupCost - prev.avgStartupCost).toLocaleString()}만원`, up: false },
+                { label: '신규 진입 브랜드', value: `${latest.newBrands}개`, sub: `폐업 ${latest.exitedBrands}개`, up: true },
+              ].map(({ label, value, sub, up }) => (
+                <Card key={label} className="border-gray-200 bg-white">
+                  <CardContent className="p-5">
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">{label}</div>
+                    <div className="mt-2 text-2xl font-black tracking-tight text-gray-900">{value}</div>
+                    <div className={`mt-1 text-xs font-medium ${up ? 'text-emerald-600' : 'text-amber-600'}`}>{sub}</div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <p className="mt-2 text-right text-xs text-gray-400">공정거래위원회 가맹사업 정보공개서 기준 · {latest.year}년</p>
+          </section>
+
+          {/* 업종별 트렌드 */}
+          <section>
+            <h2 className="mb-5 text-h4 font-bold text-gray-900">🏪 업종별 트렌드</h2>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[...CATEGORY_TRENDS].sort((a, b) => b.growthRate - a.growthRate).map((ct) => (
+                <Card key={ct.category} className="border-gray-200 bg-white">
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{ct.emoji}</span>
+                        <span className="font-semibold text-gray-900">{ct.category}</span>
+                      </div>
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold ${
+                          ct.growthRate >= 10 ? 'bg-emerald-100 text-emerald-700' :
+                          ct.growthRate >= 0 ? 'bg-blue-50 text-blue-700' :
+                          'bg-red-50 text-red-700'
+                        }`}
+                      >
+                        {ct.growthRate >= 0 ? '+' : ''}{ct.growthRate}%
+                      </span>
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-600">
+                      <div><span className="font-semibold text-gray-800">{ct.brands}</span> 브랜드</div>
+                      <div><span className="font-semibold text-gray-800">{ct.storeCount.toLocaleString()}</span> 매장</div>
+                      <div>평균 창업비 <span className="font-semibold text-gray-800">{ct.avgStartupCost.toLocaleString()}만</span></div>
+                      <div>폐업률 <span className={`font-semibold ${ct.closureRate >= 15 ? 'text-red-600' : 'text-gray-800'}`}>{ct.closureRate}%</span></div>
+                    </div>
+                    <a
+                      href={`/brands?category=${encodeURIComponent(ct.category)}`}
+                      className="mt-3 block text-right text-xs font-medium text-indigo-600 hover:underline"
+                    >
+                      브랜드 보기 →
+                    </a>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          {/* 지역별 매장 비중 */}
+          <section>
+            <h2 className="mb-5 text-h4 font-bold text-gray-900">🗺️ 지역별 매장 분포</h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {REGION_SHARES.map((r) => (
+                <div key={r.region} className="rounded-xl border border-gray-200 bg-white p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-gray-900">{r.region}</span>
+                    <span className={`text-xs font-bold ${r.growth >= 10 ? 'text-emerald-600' : 'text-blue-600'}`}>
+                      +{r.growth}%
+                    </span>
+                  </div>
+                  <div className="mt-2 text-sm font-bold text-gray-900">{r.storeCount.toLocaleString()}개</div>
+                  <div className="mt-1 text-xs text-gray-500">전국 비중 {r.share}%</div>
+                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      className="h-full rounded-full bg-indigo-500"
+                      style={{ width: `${(r.share / 25) * 100}%` }}
+                    />
+                  </div>
+                  <a href={`/brands?tab=regions&region=${r.region}`} className="mt-2 block text-right text-[10px] text-gray-400 hover:text-indigo-600">
+                    탐색 →
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+    )
+  }
+
+  // 지역별 탐색 탭
+  if (tab === 'regions') {
+    const selectedRegion = searchParams.region
+    const regionBrands = selectedRegion
+      ? allBrands.filter((b) => b.hqRegion === selectedRegion)
+      : []
+    return (
+      <main className="bg-gray-50">
+        <JsonLd data={breadcrumbs} />
+        <BrandsTabNav tab={tab} />
+        <div className="container mx-auto py-10">
+          {selectedRegion ? (
+            <>
+              <div className="mb-6 flex items-center gap-3">
+                <a href="/brands?tab=regions" className="text-sm text-gray-500 hover:text-gray-800">← 전체 지역</a>
+                <h2 className="text-h4 font-bold text-gray-900">📍 {selectedRegion} 본사 브랜드 ({regionBrands.length}개)</h2>
+              </div>
+              {regionBrands.length === 0 ? (
+                <Card><CardContent className="p-10 text-center text-sm text-gray-500">해당 지역 브랜드 정보가 없습니다.</CardContent></Card>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {regionBrands.slice(0, 48).map((b) => (
+                    <a key={b.id} href={`/brands/${b.id}`} className="group rounded-xl border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg" style={{ background: b.logoColor + '22' }}>
+                          {b.categoryLabel.slice(0, 1)}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="truncate font-semibold text-gray-900 group-hover:text-indigo-700">{b.name}</div>
+                          <div className="text-xs text-gray-500">{b.categoryLabel}</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                        <span>창업비 {b.startupCost.toLocaleString()}만</span>
+                        <span>{b.storeCount}개 매장</span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 className="mb-6 text-h4 font-bold text-gray-900">🗺️ 지역별 브랜드 탐색</h2>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {KOREAN_REGIONS.map((r) => {
+                  const count = allBrands.filter((b) => b.hqRegion === r.key).length
+                  const regionData = REGION_SHARES.find((rs) => rs.region === r.shortLabel)
+                  return (
+                    <a
+                      key={r.key}
+                      href={`/brands?tab=regions&region=${r.key}`}
+                      className="group rounded-2xl border border-gray-200 bg-white p-5 text-center transition-all hover:border-indigo-300 hover:shadow-md"
+                    >
+                      <div className="text-2xl">📍</div>
+                      <div className="mt-2 font-semibold text-gray-900 group-hover:text-indigo-700">{r.shortLabel}</div>
+                      <div className="mt-0.5 text-xs text-gray-500">{count}개 브랜드</div>
+                      {regionData && (
+                        <div className="mt-1 text-[10px] font-semibold text-emerald-600">+{regionData.growth}% 성장</div>
+                      )}
+                    </a>
+                  )
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={listJsonLd} />
       <JsonLd data={breadcrumbs} />
+      {/* ── 탭 네비게이션 ── */}
+      <BrandsTabNav tab={tab} />
       {/* ── 통합 검색 헤더 ── */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-6">
@@ -437,23 +615,6 @@ export default async function BrandsPage({ searchParams }: BrandsPageProps) {
       </div>
 
 
-      {/* AI 도우미 */}
-      <section className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-8">
-          <div className="mx-auto max-w-xl">
-            <h2 className="mb-1 text-center text-base font-bold text-gray-900">브랜드 선택 고민된다면 AI에게 물어보세요</h2>
-            <p className="mb-4 text-center text-xs text-gray-500">예산·업종·지역을 말하면 맞는 브랜드를 추천해 드려요</p>
-            <PageAiChat
-              greeting="안녕하세요! 브랜드 탐색 중이신가요? 예산, 희망 업종, 지역을 알려주시면 딱 맞는 프랜차이즈를 추천해 드릴게요 😊"
-              placeholder="예) 3천만원 이하로 서울에서 카페 창업 하고 싶어요"
-              accentBg="bg-indigo-600"
-              accentHoverBg="hover:bg-indigo-700"
-              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
-            />
-          </div>
-        </div>
-      </section>
-
       {/* 뉴스레터 */}
       <section className="border-t border-gray-100 bg-gray-50">
         <div className="container mx-auto py-section">
@@ -496,6 +657,36 @@ function makeHref(
   if (next.page && next.page !== '1') params.set('page', next.page)
   const qs = params.toString()
   return qs ? `/brands?${qs}` : '/brands'
+}
+
+function BrandsTabNav({ tab }: { tab: string }) {
+  const tabs = [
+    { key: 'brands', href: '/brands', label: '🔍 브랜드 검색' },
+    { key: 'trends', href: '/brands?tab=trends', label: '📈 시장 트렌드' },
+    { key: 'regions', href: '/brands?tab=regions', label: '🗺️ 지역별 탐색' },
+  ]
+  return (
+    <div className="border-b border-gray-200 bg-white">
+      <div className="container mx-auto">
+        <div className="flex gap-1 py-2">
+          {tabs.map((t) => (
+            <a
+              key={t.key}
+              href={t.href}
+              className={
+                'flex shrink-0 items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors ' +
+                (tab === t.key
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-600 hover:bg-gray-100')
+              }
+            >
+              {t.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {

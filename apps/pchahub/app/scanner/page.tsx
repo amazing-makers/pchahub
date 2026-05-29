@@ -1,64 +1,85 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { buildBreadcrumbsJsonLd, buildPageMetadata, buildSoftwareApplicationJsonLd, JsonLd } from '@amakers/design-system'
 
 export const metadata: Metadata = buildPageMetadata('pchahub', {
-  title: '창업 스캐너',
-  description: '7가지 질문에 답하면 자본·운영 조건에 맞는 프랜차이즈 브랜드를 자동으로 추천해 드립니다. 협회 정보공개서 데이터 기반.',
+  title: '창업 도구 — 스캐너 & 수익 계산기',
+  description: '7가지 질문에 답하면 자본·운영 조건에 맞는 프랜차이즈 브랜드를 자동으로 추천. 수익 계산기로 예상 수익도 바로 확인하세요.',
   path: '/scanner',
 })
 
 import { ScannerWizard } from './wizard'
-import { PageAiChat } from '@amakers/ui'
+import { CalculatorForm } from '../calculator/form'
 
 const breadcrumbs = buildBreadcrumbsJsonLd({
   items: [
     { name: '프차허브', url: 'https://pchahub.amakers.co.kr' },
-    { name: '창업 스캐너', url: 'https://pchahub.amakers.co.kr/scanner' },
+    { name: '창업 도구', url: 'https://pchahub.amakers.co.kr/scanner' },
   ],
 })
 
 const scannerJsonLd = buildSoftwareApplicationJsonLd({
-  name: '프차허브 창업 스캐너',
-  description: '7가지 질문에 답하면 자본·운영 조건에 맞는 프랜차이즈 브랜드 Top 3를 추천해 드립니다. 협회 정보공개서 데이터 기반.',
+  name: '프차허브 창업 도구',
+  description: '창업 스캐너 & 수익 계산기. 7가지 질문으로 맞춤 브랜드 추천, 예상 수익 시뮬레이션.',
   url: 'https://pchahub.amakers.co.kr/scanner',
   applicationCategory: 'BusinessApplication',
   price: 'Free',
 })
 
-export default function ScannerPage() {
+interface ScannerPageProps {
+  searchParams: { tab?: string; brand?: string }
+}
+
+export default function ScannerPage({ searchParams }: ScannerPageProps) {
+  const tab = searchParams.tab ?? 'scanner'
+
   return (
     <main className="bg-gray-50">
       <JsonLd data={scannerJsonLd} />
       <JsonLd data={breadcrumbs} />
+
+      {/* 헤더 */}
       <section className="border-b border-gray-200 bg-white">
         <div className="container mx-auto py-8">
-          <h1 className="text-h3 font-bold text-gray-900">창업 스캐너</h1>
+          <h1 className="text-h3 font-bold text-gray-900">창업 도구</h1>
           <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            7개 질문에 답하면 자본·업종·운영 조건에 가장 잘 맞는 가맹 브랜드 Top 3를 추천해 드립니다.
-            추천 이유와 점수까지 함께 보여드립니다.
+            창업 스캐너로 내 조건에 맞는 브랜드를 찾고, 수익 계산기로 예상 수익을 미리 계산해 보세요.
           </p>
-        </div>
-      </section>
-      <div className="container mx-auto py-8">
-        <ScannerWizard />
-      </div>
 
-      {/* AI 도우미 */}
-      <section className="border-t border-gray-100 bg-white">
-        <div className="container mx-auto py-8">
-          <div className="mx-auto max-w-xl">
-            <h2 className="mb-1 text-center text-base font-bold text-gray-900">스캐너 결과가 궁금하다면 AI에게 물어보세요</h2>
-            <p className="mb-4 text-center text-xs text-gray-500">추천 브랜드 비교, 예상 수익, 계약 주의사항 등 자세히 안내해 드려요</p>
-            <PageAiChat
-              greeting="창업 스캐너로 브랜드를 찾고 계신가요? 결과 해석이나 추가 비교가 필요하면 질문해 주세요 😊"
-              placeholder="예) 스캐너에서 나온 브랜드 A와 B 중 어떤 게 더 나을까요?"
-              accentBg="bg-indigo-600"
-              accentHoverBg="hover:bg-indigo-700"
-              helpanyCompanyId="cmokx2zoe000o135jibr31y5p"
-            />
+          {/* 탭 네비게이션 */}
+          <div className="mt-5 flex gap-1">
+            <a
+              href="/scanner"
+              className={
+                'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ' +
+                (tab === 'scanner'
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-600 hover:bg-gray-100')
+              }
+            >
+              ✨ 브랜드 스캐너
+            </a>
+            <a
+              href="/scanner?tab=calculator"
+              className={
+                'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ' +
+                (tab === 'calculator'
+                  ? 'bg-gray-900 text-white'
+                  : 'text-gray-600 hover:bg-gray-100')
+              }
+            >
+              🧮 수익 계산기
+            </a>
           </div>
         </div>
       </section>
+
+      <div className="container mx-auto py-8">
+        {tab === 'calculator' ? (
+          <CalculatorForm initialBrandId={searchParams.brand} />
+        ) : (
+          <ScannerWizard />
+        )}
+      </div>
     </main>
   )
 }
