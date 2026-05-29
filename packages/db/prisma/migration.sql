@@ -1,6 +1,33 @@
 -- amakers Platform — 신규 모델 마이그레이션
 -- Supabase SQL 에디터에 붙여넣고 Run 클릭
 
+-- ─── Inquiry 테이블 신설 (2026-05-29) ─────────────────────────────
+DO $$ BEGIN
+  CREATE TYPE "InquiryStatus" AS ENUM ('PENDING','IN_PROGRESS','RESOLVED','CLOSED');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+CREATE TABLE IF NOT EXISTS "Inquiry" (
+    "id"         TEXT NOT NULL,
+    "platform"   TEXT NOT NULL,
+    "type"       TEXT NOT NULL DEFAULT 'general',
+    "name"       TEXT NOT NULL,
+    "email"      TEXT NOT NULL,
+    "phone"      TEXT,
+    "subject"    TEXT NOT NULL,
+    "message"    TEXT NOT NULL,
+    "status"     "InquiryStatus" NOT NULL DEFAULT 'PENDING',
+    "metadata"   JSONB,
+    "adminNote"  TEXT,
+    "resolvedAt" TIMESTAMP(3),
+    "createdAt"  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt"  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Inquiry_pkey" PRIMARY KEY ("id")
+);
+
+CREATE INDEX IF NOT EXISTS "Inquiry_platform_status_idx"    ON "Inquiry"("platform", "status");
+CREATE INDEX IF NOT EXISTS "Inquiry_platform_createdAt_idx" ON "Inquiry"("platform", "createdAt");
+CREATE INDEX IF NOT EXISTS "Inquiry_email_idx"              ON "Inquiry"("email");
+
 -- ─── Post 테이블 컬럼 추가 ────────────────────────────────────────
 ALTER TABLE "Post" ADD COLUMN IF NOT EXISTS "excerpt"      TEXT;
 ALTER TABLE "Post" ADD COLUMN IF NOT EXISTS "isHot"        BOOLEAN NOT NULL DEFAULT false;

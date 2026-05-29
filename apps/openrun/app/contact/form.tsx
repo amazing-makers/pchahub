@@ -56,7 +56,7 @@ export function ContactForm() {
     state.services.length > 0 &&
     state.agreed
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
 
@@ -90,6 +90,33 @@ export function ContactForm() {
       window.localStorage.setItem(INQUIRIES_KEY, JSON.stringify([inquiry, ...existing].slice(0, 20)))
     } catch {
       // ignore
+    }
+
+    // DB 저장
+    try {
+      await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: state.contactName,
+          email: state.email,
+          phone: state.phone,
+          subject: state.brandName
+            ? `[${state.role === 'hq' ? '본사' : '가맹점주'}] ${state.brandName}`
+            : '공간 이용 문의',
+          message: state.message || state.services.join(', '),
+          type: 'space',
+          metadata: {
+            role: state.role,
+            brandName: state.brandName,
+            services: state.services,
+            budget: state.budget,
+            timeline: state.timeline,
+          },
+        }),
+      })
+    } catch {
+      // ignore — localStorage already saved
     }
 
     setSubmitted(true)

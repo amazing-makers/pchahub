@@ -555,6 +555,37 @@ enum QuoteStatus {
 }
 
 // ========================================
+// Inquiry (9개 앱 공유 — 고객 문의)
+// ========================================
+model Inquiry {
+  id         String        @id @default(cuid())
+  platform   String        // pchahub | themanual | bestplace | ...
+  type       String        @default("general")
+  name       String
+  email      String
+  phone      String?
+  subject    String
+  message    String        @db.Text
+  status     InquiryStatus @default(PENDING)
+  metadata   Json?         // platform-specific extra fields
+  adminNote  String?       @db.Text
+  resolvedAt DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@index([platform, status])
+  @@index([platform, createdAt])
+  @@index([email])
+}
+
+enum InquiryStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// ========================================
 // GuideDocument (changupdocu)
 // ========================================
 model GuideDocument {

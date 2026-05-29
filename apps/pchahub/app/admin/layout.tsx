@@ -8,6 +8,7 @@ import {
   Building2,
   ChevronRight,
   LayoutDashboard,
+  MessageSquare,
   Settings,
   ShieldCheck,
   Users,
@@ -27,6 +28,11 @@ const NAV = [
     label: '사용자 관리',
     href: '/admin/users',
     icon: Users,
+  },
+  {
+    label: '문의 관리',
+    href: '/admin/inquiries',
+    icon: MessageSquare,
   },
   {
     label: '브랜드 승인',

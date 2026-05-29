@@ -98,6 +98,56 @@ export async function getUpcomingMeetings(region?: string) {
   })
 }
 
+/** 고객 문의 생성 */
+export async function createInquiry(data: {
+  platform: string
+  type?: string
+  name: string
+  email: string
+  phone?: string
+  subject: string
+  message: string
+  metadata?: Record<string, unknown>
+}) {
+  return prisma.inquiry.create({ data })
+}
+
+/** 플랫폼 문의 목록 (관리자용) */
+export async function getInquiries(opts: {
+  platform: string
+  status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED'
+  take?: number
+  skip?: number
+} = { platform: 'pchahub' }) {
+  const { platform, status, take = 30, skip = 0 } = opts
+  return prisma.inquiry.findMany({
+    where: {
+      platform,
+      ...(status ? { status } : {}),
+    },
+    orderBy: { createdAt: 'desc' },
+    take,
+    skip,
+  })
+}
+
+/** 단건 문의 조회 */
+export async function getInquiry(id: string) {
+  return prisma.inquiry.findUnique({ where: { id } })
+}
+
+/** 문의 상태·노트 업데이트 (관리자용) */
+export async function updateInquiry(
+  id: string,
+  data: {
+    status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED'
+    adminNote?: string
+    resolvedAt?: Date | null
+  }
+) {
+  return prisma.inquiry.update({ where: { id }, data })
+}
+
 /** jangsanote 상권 인텔 목록 */
 export async function getIntels(opts: {
   region?: string

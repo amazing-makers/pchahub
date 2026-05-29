@@ -6,8 +6,6 @@ import { CheckCircle2 } from 'lucide-react'
 import { Button, Card, CardContent } from '@amakers/ui'
 import { BRANDS } from '@/lib/mock-data'
 
-const KEY = 'pchahub:inquiries'
-
 const ROLE_OPTIONS = [
   { value: 'prospect', label: '예비 창업자' },
   { value: 'franchisee', label: '기존 가맹점주' },
@@ -36,30 +34,42 @@ export function InquiryPageContent() {
   const [region, setRegion] = useState('')
   const [message, setMessage] = useState('')
   const [done, setDone] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setSubmitting(true)
+    setError('')
     try {
-      const raw = window.localStorage.getItem(KEY)
-      const existing: unknown[] = raw ? JSON.parse(raw) : []
-      const entry = {
-        id: `inq-${Date.now()}`,
-        brandId,
-        brandName: brand?.name ?? brandId,
-        name,
-        phone,
-        email,
-        role,
-        budget,
-        region,
-        message,
-        status: 'pending',
-        statusLabel: '본사 응답 대기',
-        createdAt: new Date().toISOString().slice(0, 10),
+      const subject = brand
+        ? `[${brand.name}] 가맹 상담 신청`
+        : '가맹 상담 신청'
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name, email, phone, subject, message,
+          type: 'franchise',
+          metadata: {
+            brandId: brandId || undefined,
+            brandName: brand?.name,
+            role,
+            budget,
+            region,
+          },
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error ?? `오류 (${res.status})`)
       }
-      window.localStorage.setItem(KEY, JSON.stringify([entry, ...existing].slice(0, 20)))
-    } catch { /* ignore */ }
-    setDone(true)
+      setDone(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '제출 중 오류가 발생했습니다.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (done) {
@@ -169,8 +179,11 @@ export function InquiryPageContent() {
               style={{ '--tw-ring-color': 'var(--brand-primary)' } as React.CSSProperties}
             />
           </div>
-          <Button type="submit" size="lg" className="w-full">
-            가맹 상담 신청
+          {error && (
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-center text-xs text-red-600">{error}</p>
+          )}
+          <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+            {submitting ? '신청 중…' : '가맹 상담 신청'}
           </Button>
           <p className="text-center text-xs text-gray-400">
             개인정보는 가맹 상담 목적으로만 사용됩니다
