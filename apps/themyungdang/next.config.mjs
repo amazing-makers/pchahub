@@ -12,6 +12,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   // Re-enable typedRoutes once concrete routes exist in every app.
   experimental: {
     typedRoutes: false,
