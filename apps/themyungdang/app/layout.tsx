@@ -1,4 +1,4 @@
-import { Footer, MobileTabBar, AiChatWidget, type HeaderAction, type HeaderNavItem } from '@amakers/ui'
+import { Footer, MobileTabBar, AiChatWidget, AiChatTriggerLink, type HeaderAction, type HeaderNavItem } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
@@ -44,7 +44,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ActiveHeader
             navItems={navItems}
             actions={actions}
-            rightSlot={<HeaderUserMenu actions={actions} />}
+            rightSlot={
+              <div className="flex items-center gap-3">
+                <AiChatTriggerLink />
+                <HeaderUserMenu actions={actions} />
+              </div>
+            }
           />
           <div id="main-content" className="flex-1">{children}</div>
           <Footer platform="themyungdang" />

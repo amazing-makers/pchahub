@@ -1,8 +1,7 @@
-import { Header, Footer, MobileTabBar, AiChatWidget, type HeaderAction } from '@amakers/ui'
+import { Header, Footer, MobileTabBar, AiChatWidget, AiChatTriggerLink, type HeaderAction } from '@amakers/ui'
 import { buildSiteMetadata } from '@amakers/design-system'
 import { Providers } from './providers'
 import { HeaderUserMenu } from '@/components/header-user-menu'
-import { AiChatTriggerButton } from '@/components/ai-chat-trigger'
 import { BackToTop } from '@/components/back-to-top'
 import { CompareBar } from '@/components/compare-bar'
 import './globals.css'
@@ -40,8 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             actions={actions}
             showRole={false}
             rightSlot={
-              <div className="flex items-center gap-2">
-                <AiChatTriggerButton />
+              <div className="flex items-center gap-3">
+                <AiChatTriggerLink />
                 <HeaderUserMenu actions={actions} />
               </div>
             }
