@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { buildSitemap } from '@amakers/design-system'
 import { AVAILABLE_YEARS, AWARDS, STORES } from '@/lib/mock-data'
 import { CAMPAIGNS } from '@/lib/mock-experiences'
+import { BRAND_STORIES } from '@/lib/brand-stories-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return buildSitemap('bestplace', [
@@ -11,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/stores', changeFrequency: 'daily', priority: 0.9 },
     { path: '/awards', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/rankings', changeFrequency: 'daily', priority: 0.8 },
+    { path: '/stories', changeFrequency: 'monthly', priority: 0.8 },
     ...AVAILABLE_YEARS.map((y) => ({
       path: `/awards/${y}`,
       changeFrequency: 'monthly' as const,
@@ -30,6 +32,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       path: `/certificate/${a.id}`,
       changeFrequency: 'yearly' as const,
       priority: 0.5,
+    })),
+    ...BRAND_STORIES.map((s) => ({
+      path: `/stories/${s.slug}`,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
     })),
   ])
 }

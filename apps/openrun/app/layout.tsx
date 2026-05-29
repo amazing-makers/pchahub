@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AiChatWidget
             platform="openrun"
             platformName="오픈런"
-            greeting="안녕하세요! 공공 개방 공간 검색, 예약 방법 등 궁금한 점을 물어보세요 😊"
+            greeting="안녕하세요! 그랜드 오픈 캠페인, 가맹 모집 마케팅, SNS·광고 전략에 대해 궁금한 점을 물어보세요 😊"
             accentBg="bg-sky-600"
             accentHoverBg="hover:bg-sky-700"
           />

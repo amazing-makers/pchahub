@@ -14,6 +14,17 @@ try {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      // 구 독립 페이지 → 탭 기반 URL로 301 리다이렉트 (SEO 링크 주스 통합)
+      { source: '/calculator', destination: '/scanner?tab=calculator', permanent: true },
+      { source: '/franchisee-qa', destination: '/community?tab=franchisee-qa', permanent: true },
+      { source: '/franchisee-qa/:id', destination: '/community?tab=franchisee-qa', permanent: true },
+      { source: '/trends', destination: '/brands?tab=trends', permanent: true },
+      { source: '/regions', destination: '/brands?tab=regions', permanent: true },
+      { source: '/regions/:region', destination: '/brands?tab=regions', permanent: true },
+    ]
+  },
   transpilePackages: [
     '@amakers/ui',
     '@amakers/auth',
