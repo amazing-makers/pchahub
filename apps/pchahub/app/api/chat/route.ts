@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
   }
 
   const lastMessage = messages[messages.length - 1]
+  if (!lastMessage) return NextResponse.json({ error: 'No message' }, { status: 400 })
   const history = messages.slice(0, -1).map((m) => ({
     role: m.role === 'user' ? 'user' as const : 'model' as const,
     parts: [{ text: m.content }],

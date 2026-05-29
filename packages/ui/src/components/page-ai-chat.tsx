@@ -94,9 +94,12 @@ export function PageAiChat({
             const { text: chunk } = JSON.parse(payload) as { text: string }
             setMessages((prev) => {
               const next = [...prev]
-              next[next.length - 1] = {
-                role: 'assistant',
-                content: next[next.length - 1].content + chunk,
+              const last = next[next.length - 1]
+              if (last) {
+                next[next.length - 1] = {
+                  role: 'assistant',
+                  content: last.content + chunk,
+                }
               }
               return next
             })

@@ -109,7 +109,13 @@ export async function createInquiry(data: {
   message: string
   metadata?: Record<string, unknown>
 }) {
-  return prisma.inquiry.create({ data })
+  return prisma.inquiry.create({
+    data: {
+      ...data,
+      // Prisma Json 필드: Record<string, unknown>을 InputJsonValue로 캐스팅
+      metadata: data.metadata as Parameters<typeof prisma.inquiry.create>[0]['data']['metadata'],
+    },
+  })
 }
 
 /** 플랫폼 문의 목록 (관리자용) */

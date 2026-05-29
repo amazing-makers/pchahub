@@ -305,7 +305,7 @@ export default async function HomePage() {
               </CardContent>
             </Card>
           </a>
-          <a href="/calculator" className="group">
+          <a href="/scanner?tab=calculator" className="group">
             <Card className="h-full transition-shadow hover:shadow-md">
               <CardContent className="p-6">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500">
@@ -416,7 +416,7 @@ export default async function HomePage() {
               내가 창업할 지역의 브랜드 현황·평균 창업비·인기 업종을 한눈에
             </p>
           </div>
-          <a href="/regions" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
+          <a href="/brands?tab=regions" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
             전국 지도 보기 <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
@@ -424,14 +424,14 @@ export default async function HomePage() {
           {['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'].map((region) => (
             <a
               key={region}
-              href={`/regions/${encodeURIComponent(region)}`}
+              href={`/brands?tab=regions&region=${encodeURIComponent(region)}`}
               className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-50"
             >
               {region}
             </a>
           ))}
           <a
-            href="/regions"
+            href="/brands?tab=regions"
             className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-500 transition-colors hover:border-gray-400"
           >
             전체 지도 →
@@ -481,7 +481,7 @@ export default async function HomePage() {
               현직 점주가 직접 답하는 계약·수익·운영·리스크 이야기
             </p>
           </div>
-          <a href="/franchisee-qa" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
+          <a href="/community?tab=franchisee-qa" className="hidden items-center gap-1 text-sm text-gray-600 hover:text-gray-900 sm:inline-flex">
             전체 Q&A <ArrowRight className="h-3.5 w-3.5" />
           </a>
         </div>
@@ -495,7 +495,7 @@ export default async function HomePage() {
               '리스크': 'bg-red-100 text-red-700',
             }
             return (
-              <a key={qa.id} href={`/franchisee-qa/${qa.id}`} className="group block">
+              <a key={qa.id} href={`/community?tab=franchisee-qa`} className="group block">
                 <Card className="h-full transition-shadow group-hover:shadow-md">
                   <CardContent className="flex h-full flex-col p-5">
                     <div className="mb-3 flex flex-wrap gap-1.5">
@@ -523,7 +523,7 @@ export default async function HomePage() {
           })}
         </div>
         <div className="mt-4 text-center sm:hidden">
-          <a href="/franchisee-qa" className="text-sm text-gray-600 hover:text-gray-900">
+          <a href="/community?tab=franchisee-qa" className="text-sm text-gray-600 hover:text-gray-900">
             전체 Q&A 보기 →
           </a>
         </div>

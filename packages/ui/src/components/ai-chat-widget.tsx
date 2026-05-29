@@ -110,9 +110,12 @@ export function AiChatWidget({
             const { text } = JSON.parse(payload) as { text: string }
             setMessages((prev) => {
               const next = [...prev]
-              next[next.length - 1] = {
-                role: 'assistant',
-                content: next[next.length - 1].content + text,
+              const last = next[next.length - 1]
+              if (last) {
+                next[next.length - 1] = {
+                  role: 'assistant',
+                  content: last.content + text,
+                }
               }
               return next
             })
